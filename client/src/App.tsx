@@ -14,12 +14,14 @@ import AuditCases from "@/pages/audit-cases";
 import Anomalies from "@/pages/anomalies";
 import AuditTrailPage from "@/pages/audit-trail";
 import Reports from "@/pages/reports";
+import Reconciliation from "@/pages/reconciliation";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/expenses" component={Expenses} />
+      <Route path="/reconciliation" component={Reconciliation} />
       <Route path="/cases" component={AuditCases} />
       <Route path="/anomalies" component={Anomalies} />
       <Route path="/audit-trail" component={AuditTrailPage} />

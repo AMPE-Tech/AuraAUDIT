@@ -6,6 +6,7 @@ import {
   ScrollText,
   FileBarChart,
   Shield,
+  ArrowRightLeft,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -24,6 +25,7 @@ import {
 const mainItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Despesas", url: "/expenses", icon: Receipt },
+  { title: "Reconciliacao", url: "/reconciliation", icon: ArrowRightLeft },
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
   { title: "Anomalias", url: "/anomalies", icon: AlertTriangle },
 ];

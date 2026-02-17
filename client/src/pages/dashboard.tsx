@@ -2,21 +2,28 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 import {
   Receipt,
   AlertTriangle,
   TrendingDown,
   FolderSearch,
-  Plane,
-  Hotel,
-  Utensils,
   ArrowUpRight,
   ArrowDownRight,
   ShieldAlert,
   CheckCircle,
   Clock,
+  Monitor,
+  Database,
+  CreditCard,
+  FileCheck,
+  Scale,
+  Search,
+  ShieldCheck,
+  Workflow,
+  CalendarDays,
 } from "lucide-react";
-import { formatCurrency, formatDate, getStatusLabel, getCategoryLabel, getSeverityLabel, getAnomalyTypeLabel } from "@/lib/formatters";
+import { formatCurrency, formatDate, getCategoryLabel, getSeverityLabel, getAnomalyTypeLabel } from "@/lib/formatters";
 import type { Expense, AuditCase, Anomaly } from "@shared/schema";
 import {
   BarChart,
@@ -111,6 +118,27 @@ const CHART_COLORS = [
   "hsl(240, 60%, 38%)",
 ];
 
+const CHRONOGRAM = [
+  { phase: "Fase 01", days: "Dias 1-2", title: "Revisao de Escopo", description: "Alinhamento de objetivos, validacao de premissas, definicao dos criterios de auditoria", status: "completed" },
+  { phase: "Fase 02", days: "Dias 3-5", title: "Coleta de Dados", description: "Coleta das bases de dados, extracoes dos sistemas OBT, Backoffice e relatorios", status: "completed" },
+  { phase: "Fase 03", days: "Dias 6-10", title: "Reconciliacao", description: "Cruzamento e reconciliacao das informacoes, identificacao de inconsistencias e vulnerabilidades", status: "in_progress" },
+  { phase: "Fase 04", days: "Dias 11-12", title: "Apresentacao dos Resultados", description: "Consolidacao dos achados e preparacao do material executivo", status: "pending" },
+  { phase: "Fase 05", days: "Dias 13-14", title: "Ajustes e Validacoes", description: "Refinamento das analises e consolidacao das recomendacoes", status: "pending" },
+  { phase: "Fase 06", days: "Dia 15", title: "Entrega Final", description: "Entrega do relatorio executivo e tecnico final", status: "pending" },
+];
+
+const AUDIT_SCOPE_ITEMS = [
+  { icon: FileCheck, label: "Conformidade com politicas internas e melhores praticas" },
+  { icon: Workflow, label: "Governanca dos processos de viagens corporativas" },
+  { icon: Database, label: "Integridade e consistencia dos dados entre OBT, Backoffice e faturamento" },
+  { icon: Scale, label: "Aderencia contratual com fornecedores e parceiros" },
+  { icon: ShieldCheck, label: "Analise de controles, excecoes, aprovacoes e alcadas" },
+  { icon: Search, label: "Identificacao de falhas operacionais recorrentes" },
+  { icon: ShieldAlert, label: "Mapeamento de vulnerabilidades financeiras e sistemicas" },
+  { icon: AlertTriangle, label: "Avaliacao de riscos de perdas, desperdicios ou exposicoes" },
+  { icon: TrendingDown, label: "Oportunidades de otimizacao de processos e reducao de custos" },
+];
+
 export default function Dashboard() {
   const { data: expenses, isLoading: loadingExpenses } = useQuery<Expense[]>({
     queryKey: ["/api/expenses"],
@@ -184,9 +212,47 @@ export default function Dashboard() {
           Dashboard de Auditoria
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Visao geral das despesas corporativas e indicadores de auditoria forense
+          Auditoria Forense - Viagens Corporativas | Grupo Stabia
         </p>
       </div>
+
+      <Card>
+        <CardContent className="p-5">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary/10">
+              <Monitor className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold" data-testid="text-project-overview">Visao Geral do Projeto</h2>
+              <p className="text-xs text-muted-foreground">Exercicios 2024 e 2025</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="p-3 rounded-md bg-background">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Volume 2024</p>
+              <p className="text-lg font-bold" data-testid="text-volume-2024">R$ 51.327.894,23</p>
+            </div>
+            <div className="p-3 rounded-md bg-background">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Volume 2025</p>
+              <p className="text-lg font-bold" data-testid="text-volume-2025">R$ 39.639.788,66</p>
+            </div>
+            <div className="p-3 rounded-md bg-background">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">OBT</p>
+              <div className="flex flex-wrap gap-1 mt-1">
+                <Badge variant="outline" className="text-[10px]">Reserve</Badge>
+                <Badge variant="outline" className="text-[10px]">Argo</Badge>
+              </div>
+            </div>
+            <div className="p-3 rounded-md bg-background">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Backoffice</p>
+              <div className="flex flex-wrap gap-1 mt-1">
+                <Badge variant="outline" className="text-[10px]">Wintour (2024)</Badge>
+                <Badge variant="outline" className="text-[10px]">Stur (2025)</Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {isLoading ? (
@@ -199,12 +265,12 @@ export default function Dashboard() {
         ) : (
           <>
             <StatCard
-              title="Total Despesas"
+              title="Total Analisado"
               value={formatCurrency(totalExpenses)}
-              subtitle="ultimo trimestre"
+              subtitle="amostra auditada"
               icon={Receipt}
               trend="up"
-              trendValue="12%"
+              trendValue="R$ 90.9M total"
             />
             <StatCard
               title="Anomalias Detectadas"
@@ -217,7 +283,7 @@ export default function Dashboard() {
             <StatCard
               title="Economia Identificada"
               value={formatCurrency(totalSavings)}
-              subtitle="oportunidades"
+              subtitle="oportunidades de savings"
               icon={TrendingDown}
               trend="down"
               trendValue="potencial"
@@ -231,6 +297,41 @@ export default function Dashboard() {
           </>
         )}
       </div>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <CalendarDays className="w-4 h-4 text-primary" />
+            Cronograma de Referencia - 15 Dias
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {CHRONOGRAM.map((item) => (
+              <div
+                key={item.phase}
+                className="p-3 rounded-md bg-background"
+                data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}
+              >
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-[10px] font-mono">{item.phase}</Badge>
+                    <span className="text-[11px] text-muted-foreground">{item.days}</span>
+                  </div>
+                  <Badge
+                    variant={item.status === "completed" ? "default" : item.status === "in_progress" ? "secondary" : "outline"}
+                    className="text-[10px]"
+                  >
+                    {item.status === "completed" ? "Concluido" : item.status === "in_progress" ? "Em Andamento" : "Pendente"}
+                  </Badge>
+                </div>
+                <p className="text-sm font-medium">{item.title}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2">
@@ -331,6 +432,29 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Search className="w-4 h-4 text-primary" />
+            Abrangencia Tecnica da Auditoria
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            {AUDIT_SCOPE_ITEMS.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-2.5 p-3 rounded-md bg-background"
+                data-testid={`scope-item-${i}`}
+              >
+                <item.icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <span className="text-xs text-muted-foreground leading-relaxed">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
@@ -518,7 +642,7 @@ export default function Dashboard() {
                       variant={c.status === "open" ? "default" : c.status === "in_progress" ? "secondary" : "outline"}
                       className="text-[10px] shrink-0"
                     >
-                      {getStatusLabel(c.status)}
+                      {c.status === "open" ? "Aberto" : c.status === "in_progress" ? "Em Andamento" : "Encerrado"}
                     </Badge>
                   </div>
                 ))}

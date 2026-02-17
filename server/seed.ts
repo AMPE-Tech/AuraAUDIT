@@ -3,8 +3,9 @@ import { expenses, auditCases, anomalies, auditTrail } from "@shared/schema";
 import { createHash } from "crypto";
 import { sql } from "drizzle-orm";
 
-function hash(data: any): string {
-  return createHash("sha256").update(JSON.stringify(data) + Date.now().toString() + Math.random()).digest("hex");
+function hash(data: any, timestamp: string): string {
+  const payload = JSON.stringify({ ...data, _ts: timestamp });
+  return createHash("sha256").update(payload).digest("hex");
 }
 
 export async function seedDatabase() {
@@ -200,6 +201,8 @@ export async function seedDatabase() {
 
   await db.insert(anomalies).values(sampleAnomalies);
 
+  const seedTimestamp = new Date().toISOString();
+
   const trailEntries = createdExpenses.slice(0, 5).map((exp) => ({
     userId: "system",
     action: "create",
@@ -207,7 +210,7 @@ export async function seedDatabase() {
     entityId: exp.id,
     dataBefore: null,
     dataAfter: exp as any,
-    integrityHash: hash(exp),
+    integrityHash: hash(exp, seedTimestamp),
     ipAddress: "127.0.0.1",
   }));
 
@@ -219,7 +222,7 @@ export async function seedDatabase() {
       entityId: c.id,
       dataBefore: null,
       dataAfter: c as any,
-      integrityHash: hash(c),
+      integrityHash: hash(c, seedTimestamp),
       ipAddress: "127.0.0.1",
     }))
   );
@@ -231,7 +234,7 @@ export async function seedDatabase() {
     entityId: createdExpenses[8].id,
     dataBefore: { status: "pending" } as any,
     dataAfter: { status: "flagged", riskLevel: "critical" } as any,
-    integrityHash: hash({ action: "flag", id: createdExpenses[8].id }),
+    integrityHash: hash({ action: "flag", id: createdExpenses[8].id }, seedTimestamp),
     ipAddress: "192.168.1.50",
   });
 
@@ -242,7 +245,7 @@ export async function seedDatabase() {
     entityId: "resolved-anomaly",
     dataBefore: { resolved: false } as any,
     dataAfter: { resolved: true, resolvedBy: "Marcos Oliveira" } as any,
-    integrityHash: hash({ action: "resolve" }),
+    integrityHash: hash({ action: "resolve" }, seedTimestamp),
     ipAddress: "192.168.1.55",
   });
 
