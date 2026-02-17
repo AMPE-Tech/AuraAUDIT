@@ -1,0 +1,117 @@
+PROPOSTA TÉCNICA
+
+ESCOPO
+
+A auditoria será conduzida de forma independente, técnica, estruturada e baseada em evidências, contemplando os seguintes elementos:
+
+
+Período Analisado
+
+Exercício de 2024
+Exercício de 2025
+
+
+Ambientes e Sistemas Envolvidos
+
+OBT (Online Booking Tool):
+Reserve
+Argo
+Backoffice:
+Wintour (2024)
+Stur (2025)
+
+
+Volume Financeiro Auditado
+
+2024: R$ 51.327.894,23
+2025: R$ 39.639.788,66
+
+
+Abrangência Técnica da Auditoria
+
+a.	Conformidade com políticas internas e melhores práticas de mercado
+b.	Governança dos processos de viagens corporativas
+c.	Integridade e consistência dos dados entre OBT, Backoffice e faturamento
+d.	Aderência contratual com fornecedores e parceiros
+e.	Análise de controles, exceções, aprovações e alçadas
+f.	Identificação de falhas operacionais recorrentes
+g.	Mapeamento de vulnerabilidades financeiras e sistêmicas
+h.	Avaliação de riscos de perdas, desperdícios ou exposições indevidas
+i.	Oportunidades de otimização de processos e redução de custos
+
+
+ 
+Metodologia de Trabalho
+
+A metodologia aplicada seguirá padrões utilizados em projetos de auditoria corporativa de grande porte, estruturada nas seguintes etapas:
+
+i.	Diagnóstico Inicial e Entendimento do Ambiente
+ii.	Coleta, consolidação e cruzamento de dados
+iii.	Análise técnica, financeira e operacional
+iv.	Identificação de falhas, riscos e vulnerabilidades
+v.	Validação de achados com as áreas envolvidas
+vi.	Elaboração de relatório executivo e técnico
+vii.	Apresentação dos resultados e recomendações
+
+
+Entregáveis
+
+i.	Ao final do projeto, serão entregues:
+ii.	Relatório executivo consolidado
+iii.	Relatório técnico detalhado com achados, evidências e análises
+iv.	Mapeamento de riscos e vulnerabilidades
+v.	Recomendações práticas para correção e melhoria
+vi.	Plano de ação sugerido, priorizado por impacto e risco
+vii.	Governança, Confidencialidade e Independência
+
+
+Governança, Confidencialidade e Independência
+
+i.	Confidencialidade das informações
+ii.	Independência técnica
+iii.	Rastreabilidade Jurídica dados analisados
+iv.	Transparência metodológica
+v.	Cadeia de Custodia
+
+
+Considerações Finais
+
+Esta proposta foi estruturada para apoiar o Grupo Stabia na elevação do nível de controle, governança e eficiência de sua gestão de viagens corporativas, fornecendo uma visão clara, técnica e acionável sobre o cenário atual e seus pontos de melhoria.
+
+
+________________________________________
+
+
+
+ 
+CRONOGRAMA DE REFERÊNCIA - 15 DIAS
+
+Fase	Prazo	Etapa	Descrição
+Fase 01	Dias 1–2	Revisão de Escopo	Revisão final do escopo do projeto, alinhamento de objetivos, validação das premissas, definição dos critérios de auditoria e confirmação dos acessos necessários.
+Fase 02	Dias 3–5	Coleta de Dados	Coleta estruturada das bases de dados, extrações dos sistemas (OBT, Backoffice, relatórios financeiros e operacionais) e organização das informações para análise.
+Fase 03	Dias 6–10	Reconciliação	Cruzamento e reconciliação das informações coletadas, identificação de inconsistências, falhas operacionais, vulnerabilidades financeiras e oportunidades de recuperação ou economia.
+Fase 04	Dias 11–12	Apresentação dos Resultados	Consolidação dos achados, validação preliminar dos resultados e preparação do material executivo com os valores, riscos e oportunidades identificadas.
+Fase 05	Dias 13–14	Ajustes e Validações	Ajustes finais dos achados com base em validações junto às áreas envolvidas, refinamento das análises e consolidação das recomendações.
+Fase 06	Dia 15	Entrega Final	Entrega do relatório executivo e técnico final, apresentação formal dos resultados e encaminhamento das recomendações e próximos passos.
+________________________________________
+Observação Importante
+Os prazos acima consideram a disponibilização tempestiva dos acessos, bases de dados e documentos necessários para execução das atividades.
+
+________________________________________
+
+ 
+PROPOSTA TÉCNICA
+
+
+Documentação e acessos necessários 
+
+1)	Contrato com Prestadores e Clientes;
+2)	Back office agência;
+3)	Adm BSPLink, voeGol, voeAzul e demais cias integradas; Portais adm redes hoteleiras, operadores e consolidadores; Todos os acordos corporativos, cias, hotelaria, banco etc; Sistema de OBT’s e GDS’s;
+4)	Controle de Reembolso e crédito conciliados;
+5)	Relatórios gerenciais de pagamentos realizados e pendentes; Relatório gerenciais de receitas recebidas e pendentes; Extratos originais dos Cartões de Créditos utilizados;
+6)	Reservas originais e faturas de hospedagens pagas; 
+7)	Relatório de cobrança FEE, Rebate, Comnssões e Incentivos.
+
+As atividades serão iniciadas somente após confirmação dos acessos e disponibilidade da documentação.
+
