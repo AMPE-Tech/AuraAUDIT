@@ -1,0 +1,256 @@
+Abaixo está a **mesma página**, com a inclusão (bem posicionada e “audit-grade”) de **Cadeia de Custódia + Rastreabilidade Jurídica** para Compliance e Jurídico.
+
+---
+
+# AuraAudit — Serviços de Auditoria em Viagens e Eventos Corporativos
+
+## O que fazemos
+
+O AuraAudit é uma solução de **auditoria online** para **viagens corporativas (T&E)** e **eventos corporativos (MICE)**. Atuamos com foco em **redução de custo**, **compliance**, **controle financeiro** e **rastreabilidade** — com entregáveis claros, evidências organizadas e indicadores executivos.
+
+### Cadeia de Custódia & Rastreabilidade Jurídica (Compliance e Legal)
+
+Além da auditoria operacional e financeira, o AuraAudit opera com **Cadeia de Custódia digital**, garantindo **rastreabilidade jurídica** das evidências para suportar **Compliance, Jurídico, Auditoria Interna e Controles**.
+
+**O que isso significa na prática**
+
+* Preservamos evidências em formato **raw** (originais) e versões normalizadas para auditoria
+* Mantemos **trilha completa**: origem → coleta → transformação → análise → relatório
+* Aplicamos **identificação única** por caso/transação e registro de eventos (logs)
+* Organizamos **pacotes de evidência (Evidence Packs)** prontos para fiscalização, disputas e investigações internas
+
+---
+
+## Para Empresas (Cliente Corporativo)
+
+### 1) Auditoria Financeira & Conciliação (núcleo)
+
+Auditoria contínua das despesas de viagens e eventos para identificar **cobranças indevidas**, **inconsistências** e **oportunidades de economia**.
+
+**O que auditamos**
+
+* Conciliação **4 vias**: Reserva/PNR/TKT/EMD + Fatura da agência/TMC + Cartão/VCN + Reembolso/Expense
+* Taxas e fees: emissão, remarcação, cancelamento, service fee, markups e cobranças acessórias
+* Hotelaria: diárias, impostos, taxas, no-show, folios e cobranças extras
+* Locação: categoria, seguros, extras, multas, combustível e divergências
+
+**Entregas**
+
+* Relatório de divergências (classificado por tipo e severidade)
+* Cálculo de overcharge / valores recuperáveis
+* Plano de correção (processo + parametrização + comportamento)
+
+---
+
+### 2) Auditoria de Política (Policy Compliance)
+
+Verificação automatizada da aderência à política de viagens e eventos.
+
+**O que auditamos**
+
+* Classe/teto/antecedência/fornecedor preferencial
+* Fluxo de aprovação e alçadas
+* Exceções: justificativa, aprovador, reincidência e impacto
+* “Leakage”: compras fora do canal, fora do OBT, fora do acordo
+
+**Entregas**
+
+* Score de compliance por área/centro de custo
+* Heatmap de exceções e reincidências
+* Recomendações de ajustes na política e no fluxo
+
+---
+
+### 3) Auditoria de Contratos & Acordos Corporativos
+
+Validação do que foi **contratado** versus o que está sendo **praticado**.
+
+**O que auditamos**
+
+* Contrato com agência/TMC: SLAs, fee model, regras de faturamento, responsabilidades
+* Acordos com companhias aéreas/hotéis/locadoras: descontos, metas, rebates, condições
+* Riscos comerciais: conflitos de interesse e incentivos não transparentes
+
+**Entregas**
+
+* Matriz “contratado vs executado”
+* Não conformidades contratuais e riscos
+* Recomendações de renegociação e governança
+
+---
+
+### 4) SLA, Qualidade Operacional & Dados
+
+Medição de performance de atendimento e integridade de dados.
+
+**O que auditamos**
+
+* SLA de emissão e pós-venda (trocas/cancelamentos/créditos)
+* Atendimento 24/7, reacomodação e tempo de resposta
+* Qualidade dos dados (campos críticos, IDs, anexos, consistência)
+
+**Entregas**
+
+* Scorecard mensal de SLA e qualidade
+* Ranking de causas raiz (processo, sistema, operação)
+* Checklist de padronização e melhoria contínua
+
+---
+
+### 5) Antifraude & Anomalias (Controles)
+
+Detecção de padrões atípicos e potenciais abusos.
+
+**O que auditamos**
+
+* Duplicidades e cobranças repetidas
+* Tarifas acima do esperado / inconsistências por rota e perfil
+* Gastos fora do padrão por viajante/unidade
+* Falhas de segregação (solicita/aprova/emite/paga)
+
+**Entregas**
+
+* Alertas classificados (baixo/médio/alto)
+* Evidência do caso e trilha de decisão
+* Recomendações de controles internos
+
+---
+
+## Para Agências / TMC (Evolução para Primeira Linha)
+
+### 1) Programa de Maturidade “Audit-Ready”
+
+Diagnóstico completo e roadmap para elevar padrão operacional e governança.
+
+**Avaliação**
+
+* Processos (emissão, pós-venda, faturamento, reembolsos)
+* Dados e integrações (OBT, GDS/NDC, ERP do cliente, VCN)
+* Controles, compliance e rastreabilidade
+* Qualidade do atendimento e SLAs
+
+**Entregas**
+
+* Relatório de maturidade + plano 30/60/90 dias
+* Padronização de rotinas e checklists
+* Modelo de indicadores (KPI/OKR) e rituais operacionais
+
+---
+
+### 2) Billing Analítico & Conciliação Padrão
+
+Implantação do padrão de faturamento e conciliação que grandes clientes exigem.
+
+**O que implementamos**
+
+* Fatura analítica “linha a linha” por transação/serviço
+* Regras de conciliação e chaves de match (IDs)
+* Gestão de exceções e trilhas de auditoria
+
+**Entregas**
+
+* Template de fatura analítica e regras de validação
+* Fluxo de conciliação (operacional + financeiro)
+* Indicadores de qualidade e redução de retrabalho
+
+---
+
+### 3) SLA & Atendimento (Operação de Alta Performance)
+
+Estruturação de SLAs e melhoria de produtividade.
+
+**O que ajustamos**
+
+* Organização de filas (queues) e prioridades
+* Fluxo de urgência, reacomodação e 24/7
+* Redução de erros e tempo de ciclo (TMA/FCR)
+
+**Entregas**
+
+* Scorecard de performance
+* Playbook operacional e padrões de atendimento
+* Relatório de melhorias e ganhos
+
+---
+
+### 4) LGPD & Governança de Dados
+
+Adequação para atender corporações exigentes em privacidade e segurança.
+
+**O que implementamos**
+
+* Políticas e controles de acesso
+* Retenção e minimização de dados
+* Trilha de auditoria de operações críticas
+* Kit documental para contratos e auditorias
+
+---
+
+## Eventos Corporativos (MICE) — Auditoria Especializada
+
+Auditoria completa do ciclo de eventos: **sourcing → contratação → execução → fechamento**.
+
+**O que auditamos**
+
+* RFP e concorrência (mínimo de propostas e critérios)
+* Orçamento vs realizado (variações, aditivos, extras)
+* Contratos de venue, A/V, cenografia, A&B, hospedagem de grupo
+* Conciliação de faturas, notas, comprovantes e reembolsos
+
+**Entregas**
+
+* Matriz comparativa de propostas com justificativas
+* Trilha de aprovações e governança
+* Pacote de evidências do evento (Evidence Pack)
+
+---
+
+## Como funciona (online)
+
+1. **Onboarding & Mapeamento**: sistemas, fornecedores, contratos e política
+2. **Coleta/Integração**: importação por API, SFTP/CSV ou upload controlado
+3. **Cadeia de Custódia**: registro de origem, logs, evidências raw e trilha de transformação
+4. **Auditoria Automatizada + Revisão Técnica**: regras + validação humana onde necessário
+5. **Relatórios & Ações**: divergências, recomendações e plano de correção
+6. **Monitoramento Contínuo**: indicadores, alertas e melhoria contínua
+
+---
+
+## Entregáveis padrão (o que você recebe)
+
+* **Dashboard executivo** (custos, compliance, SLA, riscos)
+* **Relatório de divergências** (classificado por tipo e severidade)
+* **Savings Report** (oportunidades e recuperações com evidência)
+* **Plano de ação 30/60/90 dias**
+* **Evidence Packs** por caso/evento (**pacotes rastreáveis para Compliance e Jurídico**)
+
+---
+
+## Modelos de contratação
+
+* **Assinatura mensal** (monitoramento contínuo)
+* **Projeto fechado** (diagnóstico e implantação)
+* **Success fee** (sobre valores recuperados, com regra clara e transparência)
+* **Por volume** (por transações/PNRs/faturas/eventos)
+
+---
+
+## FAQ (Perguntas frequentes)
+
+**Vocês precisam acessar meus sistemas?**
+Preferencialmente via integração (API/SFTP). Quando não for possível, trabalhamos com exportações (CSV) ou upload controlado.
+
+**Isso atende demandas de Compliance e Jurídico?**
+Sim. O AuraAudit mantém **Cadeia de Custódia digital** e organiza evidências em **Evidence Packs**, facilitando auditorias, disputas, investigações internas e validações formais.
+
+**Vocês conseguem auditar múltiplas moedas e países?**
+Sim. O escopo inicial pode ser LATAM e expandir por entidade/país.
+
+---
+
+## Chamada para ação
+
+**Quer ver o AuraAudit operando no seu cenário?**
+Solicite um diagnóstico inicial com amostra de dados (faturas/PNRs/folios) e receba um relatório com **divergências, oportunidades** e **evidências rastreáveis**.
+
+---

@@ -2,107 +2,265 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useLocation } from "wouter";
 import {
-  Plane,
-  FileText,
-  Building2,
-  Phone,
-  Car,
-  Heart,
-  ShoppingCart,
-  Briefcase,
-  TrendingUp,
   Shield,
+  ShieldCheck,
   Search,
-  ArrowRight,
+  Scale,
+  Database,
+  TrendingUp,
   BarChart3,
-  PieChart,
-  Target,
   Award,
+  Target,
+  ChevronDown,
   ChevronRight,
   ClipboardCheck,
-  Presentation,
   FileSignature,
   Upload,
   ListChecks,
+  Presentation,
   Settings,
   Eye,
-  Scale,
-  Database,
-  ShieldCheck,
   Globe,
   Monitor,
   CreditCard,
   Hotel,
   CalendarDays,
   Network,
+  Plane,
+  Building2,
+  Car,
+  Phone,
+  Heart,
+  ShoppingCart,
+  Briefcase,
+  FileText,
+  CheckCircle2,
+  AlertTriangle,
+  Lock,
+  Users,
+  Zap,
+  Receipt,
+  ArrowRight,
+  HelpCircle,
+  MessageSquare,
+  Layers,
+  Handshake,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
-const AUDIT_CATEGORIES = [
+const DIFFERENTIALS = [
+  { icon: Scale, title: "Independencia", description: "Atuacao imparcial — o proprio cliente habilita quem e o que sera auditado" },
+  { icon: Database, title: "Base de Evidencias", description: "Toda analise fundamentada em dados concretos e rastreabilidade completa" },
+  { icon: ShieldCheck, title: "Cadeia de Custodia", description: "Conformidade com Lei 13.964/2019 — integridade e admissibilidade juridica" },
+  { icon: Search, title: "Metodologia Forense", description: "Cruzamento multi-sistema, deteccao de padroes e analise de anomalias" },
+];
+
+const CORPORATE_SERVICES = [
   {
-    id: "travel_events",
-    title: "Viagens e Eventos",
-    description: "Passagens aereas, hospedagem, alimentacao, transporte e eventos corporativos.",
-    icon: Plane,
-    color: "bg-blue-500",
-    active: true,
+    id: "financial",
+    title: "Auditoria Financeira & Conciliacao",
+    icon: Receipt,
+    badge: "Nucleo",
+    description: "Auditoria continua das despesas de viagens e eventos para identificar cobrancas indevidas, inconsistencias e oportunidades de economia.",
+    auditItems: [
+      "Conciliacao 4 vias: Reserva/PNR/TKT/EMD + Fatura TMC + Cartao/VCN + Reembolso/Expense",
+      "Taxas e fees: emissao, remarcacao, cancelamento, service fee, markups e cobrancas acessorias",
+      "Hotelaria: diarias, impostos, taxas, no-show, folios e cobrancas extras",
+      "Locacao: categoria, seguros, extras, multas, combustivel e divergencias",
+    ],
+    deliverables: [
+      "Relatorio de divergencias (classificado por tipo e severidade)",
+      "Calculo de overcharge / valores recuperaveis",
+      "Plano de correcao (processo + parametrizacao + comportamento)",
+    ],
   },
   {
-    id: "corporate_expenses",
-    title: "Despesas Corporativas",
-    description: "Despesas operacionais, cartoes corporativos, reembolsos e adiantamentos.",
-    icon: Briefcase,
-    color: "bg-emerald-500",
-    active: false,
+    id: "policy",
+    title: "Auditoria de Politica (Policy Compliance)",
+    icon: ClipboardCheck,
+    badge: "Compliance",
+    description: "Verificacao automatizada da aderencia a politica de viagens e eventos.",
+    auditItems: [
+      "Classe/teto/antecedencia/fornecedor preferencial",
+      "Fluxo de aprovacao e alcadas",
+      "Excecoes: justificativa, aprovador, reincidencia e impacto",
+      "Leakage: compras fora do canal, fora do OBT, fora do acordo",
+    ],
+    deliverables: [
+      "Score de compliance por area/centro de custo",
+      "Heatmap de excecoes e reincidencias",
+      "Recomendacoes de ajustes na politica e no fluxo",
+    ],
   },
   {
-    id: "third_party_contracts",
-    title: "Contratos com Terceiros",
-    description: "Contratos de servicos, fornecedores, SLAs e conformidade contratual.",
-    icon: FileText,
-    color: "bg-violet-500",
-    active: false,
+    id: "contracts",
+    title: "Auditoria de Contratos & Acordos Corporativos",
+    icon: FileSignature,
+    badge: "Contratos",
+    description: "Validacao do que foi contratado versus o que esta sendo praticado.",
+    auditItems: [
+      "Contrato com agencia/TMC: SLAs, fee model, regras de faturamento, responsabilidades",
+      "Acordos com cias aereas/hoteis/locadoras: descontos, metas, rebates, condicoes",
+      "Riscos comerciais: conflitos de interesse e incentivos nao transparentes",
+    ],
+    deliverables: [
+      "Matriz 'contratado vs executado'",
+      "Nao conformidades contratuais e riscos",
+      "Recomendacoes de renegociacao e governanca",
+    ],
   },
   {
-    id: "travel_agencies",
-    title: "Agencias de Viagens",
-    description: "Fees, rebates, acordos comerciais e gestao de agencias corporativas.",
-    icon: Building2,
-    color: "bg-amber-500",
-    active: false,
+    id: "sla",
+    title: "SLA, Qualidade Operacional & Dados",
+    icon: BarChart3,
+    badge: "Operacional",
+    description: "Medicao de performance de atendimento e integridade de dados.",
+    auditItems: [
+      "SLA de emissao e pos-venda (trocas/cancelamentos/creditos)",
+      "Atendimento 24/7, reacomodacao e tempo de resposta",
+      "Qualidade dos dados (campos criticos, IDs, anexos, consistencia)",
+    ],
+    deliverables: [
+      "Scorecard mensal de SLA e qualidade",
+      "Ranking de causas raiz (processo, sistema, operacao)",
+      "Checklist de padronizacao e melhoria continua",
+    ],
   },
   {
-    id: "telecom",
-    title: "Telecomunicacoes",
-    description: "Telefonia, dados, cloud, licencas de software e infraestrutura de TI.",
-    icon: Phone,
-    color: "bg-cyan-500",
-    active: false,
+    id: "antifraud",
+    title: "Antifraude & Anomalias (Controles)",
+    icon: AlertTriangle,
+    badge: "Controles",
+    description: "Deteccao de padroes atipicos e potenciais abusos.",
+    auditItems: [
+      "Duplicidades e cobrancas repetidas",
+      "Tarifas acima do esperado / inconsistencias por rota e perfil",
+      "Gastos fora do padrao por viajante/unidade",
+      "Falhas de segregacao (solicita/aprova/emite/paga)",
+    ],
+    deliverables: [
+      "Alertas classificados (baixo/medio/alto)",
+      "Evidencia do caso e trilha de decisao",
+      "Recomendacoes de controles internos",
+    ],
+  },
+];
+
+const TMC_SERVICES = [
+  {
+    id: "maturity",
+    title: "Programa de Maturidade 'Audit-Ready'",
+    icon: TrendingUp,
+    description: "Diagnostico completo e roadmap para elevar padrao operacional e governanca.",
+    items: [
+      "Processos (emissao, pos-venda, faturamento, reembolsos)",
+      "Dados e integracoes (OBT, GDS/NDC, ERP do cliente, VCN)",
+      "Controles, compliance e rastreabilidade",
+      "Qualidade do atendimento e SLAs",
+    ],
+    deliverables: [
+      "Relatorio de maturidade + plano 30/60/90 dias",
+      "Padronizacao de rotinas e checklists",
+      "Modelo de indicadores (KPI/OKR) e rituais operacionais",
+    ],
   },
   {
-    id: "fleet_logistics",
-    title: "Frota e Logistica",
-    description: "Frota propria, locacao de veiculos, combustivel e logistica.",
-    icon: Car,
-    color: "bg-orange-500",
-    active: false,
+    id: "billing",
+    title: "Billing Analitico & Conciliacao Padrao",
+    icon: Receipt,
+    description: "Implantacao do padrao de faturamento e conciliacao que grandes clientes exigem.",
+    items: [
+      "Fatura analitica 'linha a linha' por transacao/servico",
+      "Regras de conciliacao e chaves de match (IDs)",
+      "Gestao de excecoes e trilhas de auditoria",
+    ],
+    deliverables: [
+      "Template de fatura analitica e regras de validacao",
+      "Fluxo de conciliacao (operacional + financeiro)",
+      "Indicadores de qualidade e reducao de retrabalho",
+    ],
   },
   {
-    id: "benefits_hr",
-    title: "Beneficios",
-    description: "Saude, odonto, vida, folha de pagamento e conformidade trabalhista.",
-    icon: Heart,
-    color: "bg-rose-500",
-    active: false,
+    id: "sla_tmc",
+    title: "SLA & Atendimento (Operacao de Alta Performance)",
+    icon: Zap,
+    description: "Estruturacao de SLAs e melhoria de produtividade.",
+    items: [
+      "Organizacao de filas (queues) e prioridades",
+      "Fluxo de urgencia, reacomodacao e 24/7",
+      "Reducao de erros e tempo de ciclo (TMA/FCR)",
+    ],
+    deliverables: [
+      "Scorecard de performance",
+      "Playbook operacional e padroes de atendimento",
+      "Relatorio de melhorias e ganhos",
+    ],
   },
   {
-    id: "procurement",
-    title: "Suprimentos e Compras",
-    description: "Compras, cotacoes, licitacoes, estoque e gestao de fornecedores.",
-    icon: ShoppingCart,
-    color: "bg-indigo-500",
-    active: false,
+    id: "lgpd",
+    title: "LGPD & Governanca de Dados",
+    icon: Lock,
+    description: "Adequacao para atender corporacoes exigentes em privacidade e seguranca.",
+    items: [
+      "Politicas e controles de acesso",
+      "Retencao e minimizacao de dados",
+      "Trilha de auditoria de operacoes criticas",
+      "Kit documental para contratos e auditorias",
+    ],
+    deliverables: [],
+  },
+];
+
+const MICE_AUDIT_ITEMS = [
+  "RFP e concorrencia (minimo de propostas e criterios)",
+  "Orcamento vs realizado (variacoes, aditivos, extras)",
+  "Contratos de venue, A/V, cenografia, A&B, hospedagem de grupo",
+  "Conciliacao de faturas, notas, comprovantes e reembolsos",
+];
+
+const MICE_DELIVERABLES = [
+  "Matriz comparativa de propostas com justificativas",
+  "Trilha de aprovacoes e governanca",
+  "Pacote de evidencias do evento (Evidence Pack)",
+];
+
+const METHODOLOGY_STAGES = [
+  { step: 1, title: "Onboarding & Mapeamento", icon: FileSignature, description: "Sistemas, fornecedores, contratos e politica" },
+  { step: 2, title: "Coleta / Integracao", icon: Upload, description: "Importacao por API, SFTP/CSV ou upload controlado" },
+  { step: 3, title: "Cadeia de Custodia", icon: ShieldCheck, description: "Registro de origem, logs, evidencias raw e trilha de transformacao" },
+  { step: 4, title: "Auditoria + Revisao Tecnica", icon: ListChecks, description: "Regras automatizadas + validacao humana onde necessario" },
+  { step: 5, title: "Relatorios & Acoes", icon: Presentation, description: "Divergencias, recomendacoes e plano de correcao" },
+  { step: 6, title: "Monitoramento Continuo", icon: Eye, description: "Indicadores, alertas e melhoria continua" },
+];
+
+const STANDARD_DELIVERABLES = [
+  { title: "Dashboard executivo", description: "Custos, compliance, SLA, riscos" },
+  { title: "Relatorio de divergencias", description: "Classificado por tipo e severidade" },
+  { title: "Savings Report", description: "Oportunidades e recuperacoes com evidencia" },
+  { title: "Plano de acao 30/60/90 dias", description: "Acoes priorizadas e responsaveis" },
+  { title: "Evidence Packs", description: "Pacotes rastreáveis para Compliance e Juridico" },
+];
+
+const PRICING_MODELS = [
+  { title: "Assinatura mensal", description: "Monitoramento continuo", badge: "Recorrente" },
+  { title: "Projeto fechado", description: "Diagnostico e implantacao", badge: "Pontual" },
+  { title: "Success fee", description: "Sobre valores recuperados, com regra clara e transparencia", badge: "Performance" },
+  { title: "Por volume", description: "Por transacoes/PNRs/faturas/eventos", badge: "Escala" },
+];
+
+const FAQ_ITEMS = [
+  {
+    question: "Voces precisam acessar meus sistemas?",
+    answer: "Preferencialmente via integracao (API/SFTP). Quando nao for possivel, trabalhamos com exportacoes (CSV) ou upload controlado.",
+  },
+  {
+    question: "Isso atende demandas de Compliance e Juridico?",
+    answer: "Sim. O AuraAudit mantem Cadeia de Custodia digital e organiza evidencias em Evidence Packs, facilitando auditorias, disputas, investigacoes internas e validacoes formais.",
+  },
+  {
+    question: "Voces conseguem auditar multiplas moedas e paises?",
+    answer: "Sim. O escopo inicial pode ser LATAM e expandir por entidade/pais.",
   },
 ];
 
@@ -110,30 +268,6 @@ const MAIN_CLIENTS = [
   "Novo Nordisk", "Natura", "Abbott", "BRF", "Samsung", "iFood",
   "Bayer", "Odebrecht", "Pirelli", "Boehringer Ingelheim", "Gerdau",
   "L'Oreal", "Lilly", "AstraZeneca", "Petrobras",
-];
-
-const DIFFERENTIALS = [
-  { icon: Scale, title: "Independencia", description: "Atuacao imparcial, o proprio cliente que habilita quem e o que sera auditado, sem interferencia da plataforma" },
-  { icon: Database, title: "Base de Evidencias", description: "Toda analise fundamentada em dados concretos e rastreabilidade completa" },
-  { icon: ShieldCheck, title: "Cadeia de Custodia", description: "Conformidade com Lei 13.964/2019 — integridade e admissibilidade juridica" },
-  { icon: Search, title: "Metodologia Forense", description: "Cruzamento multi-sistema, deteccao de padroes e analise de anomalias" },
-];
-
-const METHODOLOGY_STAGES = [
-  { step: 1, title: "Contratacao do Servico", icon: FileSignature, description: "Contratacao online com formalizacao do escopo, prazos e entregaveis" },
-  { step: 2, title: "Coleta de Dados", icon: Upload, description: "Upload dos dados e/ou conexao via API com multiplas fontes e sistemas" },
-  { step: 3, title: "Reconciliacao AuraAudit", icon: ListChecks, description: "Cruzamento e analise forense dos dados — o cliente seleciona os itens a conciliar" },
-  { step: 4, title: "Apresentacao dos Resultados", icon: Presentation, description: "Relatorio executivo com achados, recomendacoes e cronograma do projeto" },
-  { step: 5, title: "Ajustes", icon: Settings, description: "Refinamento das analises e consolidacao das recomendacoes com as areas envolvidas" },
-  { step: 6, title: "Monitoramento", icon: Eye, description: "Acompanhamento continuo da implementacao das recomendacoes e acoes corretivas" },
-];
-
-const INCONSISTENCY_TYPES = [
-  { name: "Fraude", percentage: 8, color: "bg-red-500" },
-  { name: "Retencoes", percentage: 25, color: "bg-blue-500" },
-  { name: "Reembolso", percentage: 20, color: "bg-emerald-500" },
-  { name: "Cobranca Fee", percentage: 30, color: "bg-amber-500" },
-  { name: "Acordos Corporativos", percentage: 17, color: "bg-violet-500" },
 ];
 
 const LATAM_ECOSYSTEM_CATEGORIES = [
@@ -158,39 +292,181 @@ const LATAM_COUNTRIES = [
   { name: "Peru", code: "PE" },
 ];
 
-const YEARLY_PERFORMANCE = [
-  { year: "2015", value: 45 },
-  { year: "2016", value: 68 },
-  { year: "2017", value: 95 },
-  { year: "2018", value: 120 },
-  { year: "2019", value: 230 },
-];
+function ExpandableServiceCard({ service }: { service: typeof CORPORATE_SERVICES[0] }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Card data-testid={`card-service-${service.id}`}>
+      <CardHeader className="pb-3 cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 shrink-0">
+              <service.icon className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-sm">{service.title}</CardTitle>
+                <Badge variant="secondary" className="text-[10px]">{service.badge}</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mt-0.5">{service.description}</p>
+            </div>
+          </div>
+          <Button variant="ghost" size="icon" className="shrink-0" data-testid={`button-expand-${service.id}`}>
+            {expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          </Button>
+        </div>
+      </CardHeader>
+      {expanded && (
+        <CardContent className="pt-0 space-y-4">
+          <Separator />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">O que auditamos</p>
+            <div className="space-y-1.5">
+              {service.auditItems.map((item) => (
+                <div key={item} className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                  <span className="text-xs text-muted-foreground">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">Entregas</p>
+            <div className="space-y-1.5">
+              {service.deliverables.map((item) => (
+                <div key={item} className="flex items-start gap-2">
+                  <FileText className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
+                  <span className="text-xs text-muted-foreground">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </CardContent>
+      )}
+    </Card>
+  );
+}
+
+function ExpandableTmcCard({ service }: { service: typeof TMC_SERVICES[0] }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Card data-testid={`card-tmc-${service.id}`}>
+      <CardHeader className="pb-3 cursor-pointer" onClick={() => setExpanded(!expanded)}>
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-amber-500/10 shrink-0">
+              <service.icon className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <CardTitle className="text-sm">{service.title}</CardTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">{service.description}</p>
+            </div>
+          </div>
+          <Button variant="ghost" size="icon" className="shrink-0" data-testid={`button-expand-tmc-${service.id}`}>
+            {expanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          </Button>
+        </div>
+      </CardHeader>
+      {expanded && (
+        <CardContent className="pt-0 space-y-4">
+          <Separator />
+          <div>
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">
+              {service.id === "lgpd" ? "O que implementamos" : service.id === "sla_tmc" ? "O que ajustamos" : service.id === "billing" ? "O que implementamos" : "Avaliacao"}
+            </p>
+            <div className="space-y-1.5">
+              {service.items.map((item) => (
+                <div key={item} className="flex items-start gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 mt-0.5 shrink-0" />
+                  <span className="text-xs text-muted-foreground">{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          {service.deliverables.length > 0 && (
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">Entregas</p>
+              <div className="space-y-1.5">
+                {service.deliverables.map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <FileText className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
+                    <span className="text-xs text-muted-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      )}
+    </Card>
+  );
+}
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [, setLocation] = useLocation();
-
-  const activeCategory = AUDIT_CATEGORIES.find(c => c.id === selectedCategory);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
 
   return (
     <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
+
       <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
             <Shield className="w-6 h-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight" data-testid="text-page-title">AuraAUDIT</h1>
-            <p className="text-sm text-muted-foreground">Auditoria Forense em Despesas</p>
+            <h1 className="text-2xl font-bold tracking-tight" data-testid="text-page-title">AuraAudit</h1>
+            <p className="text-sm text-muted-foreground">Servicos de Auditoria em Viagens e Eventos Corporativos</p>
           </div>
         </div>
-        <p className="text-muted-foreground max-w-3xl mt-3 leading-relaxed">
-          Somos especialistas em auditoria forense corporativa, com atuacao independente em todas as areas de despesas
-          de uma organizacao. Nossa metodologia e tecnica, estruturada e baseada em evidencias, garantindo
-          rastreabilidade completa e conformidade com a Lei 13.964/2019 (Cadeia de Custodia Digital).
-          Identificamos inconsistencias, recuperamos valores e otimizamos processos em qualquer categoria de gastos.
-        </p>
       </div>
+
+      <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
+        <CardContent className="p-6 space-y-3">
+          <div className="flex items-center gap-2">
+            <Target className="w-5 h-5 text-primary" />
+            <h2 className="text-base font-semibold">O que fazemos</h2>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-4xl">
+            O AuraAudit e uma solucao de <span className="font-medium text-foreground">auditoria online</span> para{" "}
+            <span className="font-medium text-foreground">viagens corporativas (T&E)</span> e{" "}
+            <span className="font-medium text-foreground">eventos corporativos (MICE)</span>. Atuamos com foco em{" "}
+            reducao de custo, compliance, controle financeiro e rastreabilidade — com entregaveis claros,
+            evidencias organizadas e indicadores executivos.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="border-amber-200 dark:border-amber-900/50 bg-gradient-to-r from-amber-50/50 via-transparent to-transparent dark:from-amber-950/20">
+        <CardContent className="p-6 space-y-4">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <h2 className="text-base font-semibold">Cadeia de Custodia & Rastreabilidade Juridica</h2>
+            <Badge variant="outline" className="text-[10px]">Compliance e Legal</Badge>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed max-w-4xl">
+            Alem da auditoria operacional e financeira, o AuraAudit opera com{" "}
+            <span className="font-medium text-foreground">Cadeia de Custodia digital</span>, garantindo{" "}
+            rastreabilidade juridica das evidencias para suportar Compliance, Juridico, Auditoria Interna e Controles.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
+              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+              <span className="text-xs text-muted-foreground">Evidencias em formato <span className="font-medium">raw</span> (originais) e versoes normalizadas para auditoria</span>
+            </div>
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
+              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+              <span className="text-xs text-muted-foreground"><span className="font-medium">Trilha completa</span>: origem → coleta → transformacao → analise → relatorio</span>
+            </div>
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
+              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+              <span className="text-xs text-muted-foreground"><span className="font-medium">Identificacao unica</span> por caso/transacao e registro de eventos (logs)</span>
+            </div>
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
+              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+              <span className="text-xs text-muted-foreground"><span className="font-medium">Evidence Packs</span> prontos para fiscalizacao, disputas e investigacoes internas</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border-blue-200 dark:border-blue-900">
@@ -243,201 +519,73 @@ export default function Home() {
 
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Target className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">Areas de Auditoria</h2>
+          <Building2 className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold">Para Empresas (Cliente Corporativo)</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Atuamos em todas as categorias de despesas corporativas. Selecione uma area para conhecer mais detalhes.
+          Servicos de auditoria para empresas que contratam viagens e eventos corporativos.
         </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {AUDIT_CATEGORIES.map((category) => (
-            <Card
-              key={category.id}
-              data-testid={`card-audit-category-${category.id}`}
-              className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
-                selectedCategory === category.id
-                  ? "ring-2 ring-primary shadow-md"
-                  : "hover:border-primary/50"
-              }`}
-              onClick={() => setSelectedCategory(selectedCategory === category.id ? null : category.id)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${category.color} shrink-0`}>
-                    <category.icon className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-sm font-semibold leading-tight">{category.title}</h3>
-                    <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{category.description}</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  {category.active ? (
-                    <Badge variant="default" className="text-[10px]" data-testid={`badge-active-${category.id}`}>Ativo</Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-[10px]" data-testid={`badge-available-${category.id}`}>Disponivel</Badge>
-                  )}
-                  <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform ${
-                    selectedCategory === category.id ? "rotate-90" : ""
-                  }`} />
-                </div>
-              </CardContent>
-            </Card>
+        <div className="space-y-3">
+          {CORPORATE_SERVICES.map((service) => (
+            <ExpandableServiceCard key={service.id} service={service} />
           ))}
         </div>
       </div>
 
-      {selectedCategory === "travel_events" && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          <Separator />
+      <Separator />
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Plane className="w-5 h-5 text-blue-500" />
-              <h2 className="text-lg font-semibold">Viagens e Eventos Corporativos</h2>
-            </div>
-            <button
-              onClick={() => setLocation("/dashboard")}
-              className="flex items-center gap-1 text-sm text-primary hover:underline"
-              data-testid="link-go-to-dashboard"
-            >
-              Acessar Dashboard
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          <Card>
-            <CardContent className="p-6">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                A auditoria de viagens e eventos corporativos e conduzida de forma independente, tecnica,
-                estruturada e baseada em evidencias. O trabalho contempla a analise forense de despesas com
-                passagens aereas, hospedagem, alimentacao, transporte terrestre, locacao de veiculos, seguros
-                viagem e eventos corporativos. A metodologia inclui cruzamento de dados entre sistemas OBT
-                (Online Booking Tool), backoffice das agencias, companhias aereas, redes hoteleiras, locadoras,
-                GDS (Sabre/Amadeus), BSPlink e cartoes corporativos, identificando inconsistencias como fraudes,
-                retencoes indevidas, reembolsos incorretos, cobrancas de fees nao autorizadas e descumprimento
-                de acordos corporativos.
-              </p>
-            </CardContent>
-          </Card>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <PieChart className="w-4 h-4 text-primary" />
-                  Principais Inconsistencias
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {INCONSISTENCY_TYPES.map((item) => (
-                  <div key={item.name} className="space-y-1" data-testid={`inconsistency-${item.name.toLowerCase().replace(/\s/g, '-')}`}>
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{item.name}</span>
-                      <span className="font-medium">{item.percentage}%</span>
-                    </div>
-                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full ${item.color} transition-all duration-500`}
-                        style={{ width: `${item.percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-primary" />
-                  Performance Historica (Pre-Pandemia)
-                </CardTitle>
-                <p className="text-xs text-muted-foreground">Valores revisados em milhoes R$</p>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-end gap-3 h-40">
-                  {YEARLY_PERFORMANCE.map((item) => {
-                    const maxVal = Math.max(...YEARLY_PERFORMANCE.map(y => y.value));
-                    const heightPct = (item.value / maxVal) * 100;
-                    return (
-                      <div key={item.year} className="flex-1 flex flex-col items-center gap-1">
-                        <span className="text-xs font-medium text-muted-foreground">{item.value}</span>
-                        <div className="w-full relative" style={{ height: `${heightPct}%` }}>
-                          <div className="absolute inset-0 bg-primary/80 rounded-t-md" />
-                        </div>
-                        <span className="text-xs text-muted-foreground">{item.year}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Handshake className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          <h2 className="text-lg font-semibold">Para Agencias / TMC (Evolucao para Primeira Linha)</h2>
         </div>
-      )}
-
-      {selectedCategory && selectedCategory !== "travel_events" && (
-        <div className="animate-in fade-in duration-300">
-          <Separator className="mb-6" />
-          <Card>
-            <CardContent className="p-8 text-center">
-              <div className={`flex items-center justify-center w-16 h-16 rounded-full mx-auto mb-4 ${activeCategory?.color}/10`}>
-                {activeCategory && <activeCategory.icon className={`w-8 h-8 ${activeCategory.color.replace('bg-', 'text-')}`} />}
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{activeCategory?.title}</h3>
-              <p className="text-sm text-muted-foreground max-w-lg mx-auto mb-4">{activeCategory?.description}</p>
-              <Badge variant="outline">Em breve</Badge>
-              <p className="text-xs text-muted-foreground mt-3">
-                Esta area de auditoria sera habilitada em breve com dados, metodologia e resultados especificos.
-              </p>
-            </CardContent>
-          </Card>
+        <p className="text-sm text-muted-foreground">
+          Programas de maturidade e padronizacao para agencias de viagens corporativas.
+        </p>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          {TMC_SERVICES.map((service) => (
+            <ExpandableTmcCard key={service.id} service={service} />
+          ))}
         </div>
-      )}
+      </div>
 
       <Separator />
 
-      <div className="space-y-4" data-testid="section-latam-reach">
+      <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Globe className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">Cobertura Nacional e LATAM</h2>
+          <CalendarDays className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+          <h2 className="text-lg font-semibold">Eventos Corporativos (MICE) — Auditoria Especializada</h2>
         </div>
-        <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
-          Cobertura completa do ecossistema corporativo de despesas, desde GDS e OBTs ate eventos corporativos (MICE), com atuacao em toda a America Latina.
+        <p className="text-sm text-muted-foreground">
+          Auditoria completa do ciclo de eventos: sourcing → contratacao → execucao → fechamento.
         </p>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {LATAM_ECOSYSTEM_CATEGORIES.map((cat) => (
-            <div
-              key={cat.name}
-              className="flex items-center gap-2 p-3 rounded-lg bg-muted/50"
-              data-testid={`latam-category-${cat.name.toLowerCase().replace(/[\s/]/g, '-')}`}
-            >
-              <cat.icon className="w-4 h-4 text-primary shrink-0" />
-              <span className="text-sm font-medium">{cat.name}</span>
+        <Card>
+          <CardContent className="p-5 space-y-4">
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">O que auditamos</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {MICE_AUDIT_ITEMS.map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-violet-600 mt-0.5 shrink-0" />
+                    <span className="text-xs text-muted-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2 pt-2">
-          <span className="text-sm text-muted-foreground mr-1" data-testid="text-latam-countries-label">Atuacao LATAM:</span>
-          {LATAM_COUNTRIES.map((country) => (
-            <Badge
-              key={country.code}
-              variant="outline"
-              className="text-xs"
-              data-testid={`badge-country-${country.code.toLowerCase()}`}
-            >
-              {country.code} {country.name}
-            </Badge>
-          ))}
-        </div>
-
-        <p className="text-xs text-muted-foreground pt-1" data-testid="text-market-anchors">
-          Referencia de mercado: ABRACORP e ALAGEV
-        </p>
+            <Separator />
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">Entregas</p>
+              <div className="space-y-1.5">
+                {MICE_DELIVERABLES.map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <FileText className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
+                    <span className="text-xs text-muted-foreground">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <Separator />
@@ -445,10 +593,9 @@ export default function Home() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <ClipboardCheck className="w-4 h-4 text-primary" />
-            Metodologia AuraAUDIT
+            <Settings className="w-4 h-4 text-primary" />
+            Como funciona (online)
           </CardTitle>
-          <p className="text-xs text-muted-foreground">Processo padronizado aplicado em todas as areas de auditoria</p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -476,6 +623,85 @@ export default function Home() {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
+            <Layers className="w-4 h-4 text-primary" />
+            Entregaveis padrao (o que voce recebe)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {STANDARD_DELIVERABLES.map((item) => (
+              <div key={item.title} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50" data-testid={`deliverable-${item.title.toLowerCase().replace(/\s/g, '-')}`}>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">{item.title}</p>
+                  <p className="text-xs text-muted-foreground">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <CreditCard className="w-4 h-4 text-primary" />
+            Modelos de contratacao
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {PRICING_MODELS.map((model) => (
+              <div key={model.title} className="p-4 rounded-lg border bg-card text-center" data-testid={`pricing-${model.title.toLowerCase().replace(/\s/g, '-')}`}>
+                <Badge variant="secondary" className="text-[10px] mb-2">{model.badge}</Badge>
+                <p className="text-sm font-semibold">{model.title}</p>
+                <p className="text-xs text-muted-foreground mt-1">{model.description}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Separator />
+
+      <div className="space-y-4" data-testid="section-latam-reach">
+        <div className="flex items-center gap-2">
+          <Globe className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold">Cobertura Nacional e LATAM</h2>
+        </div>
+        <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
+          Cobertura completa do ecossistema corporativo de despesas, desde GDS e OBTs ate eventos corporativos (MICE), com atuacao em toda a America Latina.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          {LATAM_ECOSYSTEM_CATEGORIES.map((cat) => (
+            <div
+              key={cat.name}
+              className="flex items-center gap-2 p-3 rounded-lg bg-muted/50"
+              data-testid={`latam-category-${cat.name.toLowerCase().replace(/[\s/]/g, '-')}`}
+            >
+              <cat.icon className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-sm font-medium">{cat.name}</span>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-wrap items-center gap-2 pt-2">
+          <span className="text-sm text-muted-foreground mr-1" data-testid="text-latam-countries-label">Atuacao LATAM:</span>
+          {LATAM_COUNTRIES.map((country) => (
+            <Badge key={country.code} variant="outline" className="text-xs" data-testid={`badge-country-${country.code.toLowerCase()}`}>
+              {country.code} {country.name}
+            </Badge>
+          ))}
+        </div>
+        <p className="text-xs text-muted-foreground pt-1" data-testid="text-market-anchors">
+          Referencia de mercado: ABRACORP e ALAGEV
+        </p>
+      </div>
+
+      <Separator />
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
             <Award className="w-4 h-4 text-primary" />
             Principais Cases
           </CardTitle>
@@ -495,6 +721,57 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </CardContent>
+      </Card>
+
+      <Separator />
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <HelpCircle className="w-4 h-4 text-primary" />
+            FAQ (Perguntas frequentes)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {FAQ_ITEMS.map((faq, index) => (
+            <div key={index} className="border rounded-lg" data-testid={`faq-${index}`}>
+              <button
+                className="w-full flex items-center justify-between p-4 text-left"
+                onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                data-testid={`button-faq-${index}`}
+              >
+                <span className="text-sm font-medium">{faq.question}</span>
+                {expandedFaq === index ? (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+                ) : (
+                  <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+                )}
+              </button>
+              {expandedFaq === index && (
+                <div className="px-4 pb-4">
+                  <p className="text-sm text-muted-foreground">{faq.answer}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card className="border-primary/30 bg-gradient-to-r from-primary/5 via-primary/3 to-transparent">
+        <CardContent className="p-6 text-center space-y-4">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto">
+            <MessageSquare className="w-6 h-6 text-primary" />
+          </div>
+          <h3 className="text-lg font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit operando no seu cenario?</h3>
+          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+            Solicite um diagnostico inicial com amostra de dados (faturas/PNRs/folios)
+            e receba um relatorio com divergencias, oportunidades e evidencias rastreaveis.
+          </p>
+          <Button className="mt-2" data-testid="button-cta-contact">
+            Solicitar Diagnostico
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
         </CardContent>
       </Card>
 
