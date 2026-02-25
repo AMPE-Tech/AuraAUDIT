@@ -305,10 +305,10 @@ const FAQ_ITEMS = [
   },
 ];
 
-const MAIN_CLIENTS = [
-  "Novo Nordisk", "Natura", "Abbott", "BRF", "Samsung", "iFood",
-  "Bayer", "Odebrecht", "Pirelli", "Boehringer Ingelheim", "Gerdau",
-  "L'Oreal", "Lilly", "AstraZeneca", "Petrobras",
+const MAIN_SEGMENTS = [
+  "Farmaceutica", "Cosmeticos", "Alimentos & Bebidas", "Tecnologia", "Servicos",
+  "Energia & Oil & Gas", "Automotivo", "Siderurgia & Mineracao", "Quimica & Agro", "Bancos & Financeiro",
+  "Varejo & E-commerce", "Saude & Hospitalar", "Engenharia & Construcao", "Seguros", "Telecomunicacoes",
 ];
 
 const LATAM_ECOSYSTEM_CATEGORIES = [
@@ -887,18 +887,18 @@ export default function Home() {
             Principais Cases
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            Mais de R$ 448 milhoes em economia e recuperacao, de R$ 2,8 bilhoes revisados — media superior a 16%.
+            +300 cases em praticamente todos os segmentos — R$ 2,8 bilhoes revisados com media superior a 16% de resultado.
           </p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-            {MAIN_CLIENTS.map((client) => (
+            {MAIN_SEGMENTS.map((segment) => (
               <div
-                key={client}
+                key={segment}
                 className="flex items-center justify-center px-3 py-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
-                data-testid={`client-case-${client.toLowerCase().replace(/\s/g, '-')}`}
+                data-testid={`segment-case-${segment.toLowerCase().replace(/[\s&/]/g, '-')}`}
               >
-                <span className="text-sm font-medium text-center">{client}</span>
+                <span className="text-sm font-medium text-center">{segment}</span>
               </div>
             ))}
           </div>
