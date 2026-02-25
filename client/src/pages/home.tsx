@@ -103,7 +103,7 @@ const HERO_RADAR_DATA = [
 ];
 
 const DIFFERENTIALS = [
-  { icon: Scale, title: "Independencia", description: "Atuacao imparcial — o proprio cliente habilita quem e o que sera auditado" },
+  { icon: Scale, title: "Independencia", description: "Atuacao imparcial — o algoritmo com IA generativa audita e apresenta o resultado, consultor e cliente monitoram entregaveis" },
   { icon: Database, title: "Base de Evidencias", description: "Toda analise fundamentada em dados concretos e rastreabilidade completa" },
   { icon: ShieldCheck, title: "Cadeia de Custodia", description: "Conformidade com Lei 13.964/2019 — integridade e admissibilidade juridica" },
   { icon: Search, title: "Metodologia Forense", description: "Cruzamento multi-sistema, deteccao de padroes e analise de anomalias" },
