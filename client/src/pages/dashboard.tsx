@@ -146,7 +146,7 @@ const AUDIT_STEPS = [
   { step: 1, icon: Upload, title: "Upload dos Dados", time: "~10 min", description: "Cliente faz upload dos arquivos ou conecta via API" },
   { step: 2, icon: ListChecks, title: "Selecao do Escopo", time: "~5 min", description: "Escolha das categorias e itens a reconciliar" },
   { step: 3, icon: Zap, title: "Processamento", time: "~30 min", description: "Cruzamento automatizado e deteccao de anomalias" },
-  { step: 4, icon: FileBarChart, title: "Resultados", time: "Imediato", description: "Relatorio executivo com achados e recomendacoes" },
+  { step: 4, icon: FileBarChart, title: "Resultados", time: "Imediato", description: "Relatorio executivo com desconformidades e recomendacoes" },
 ];
 
 const AUDIT_SCOPE_ITEMS = [
