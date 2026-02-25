@@ -951,7 +951,7 @@ export default function Home() {
           </div>
           <h3 className="text-lg font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit operando no seu cenario?</h3>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-            Solicite um diagnostico inicial com amostra de dados (faturas/PNRs/folios)
+            Faca voce mesmo um diagnostico inicial com amostra de dados (faturas cartoes/relatorio gerencia/contrato de prestacao de servicos — principais clausulas)
             e receba um relatorio com divergencias, oportunidades e evidencias rastreaveis.
           </p>
           <Button className="mt-2" data-testid="button-cta-contact">
