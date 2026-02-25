@@ -349,13 +349,6 @@ export default function ClientLatamScope() {
               </Badge>
             ))}
           </div>
-          <Separator className="my-4" />
-          <p className="text-xs text-muted-foreground">
-            Atuacao alinhada com as diretrizes da <span className="font-medium">ABRACORP</span> (Associacao
-            Brasileira de Agencias de Viagens Corporativas) e <span className="font-medium">ALAGEV</span> (Alianca
-            Latino-Americana de Gestao de Eventos e Viagens Corporativas), referencias do mercado de viagens
-            corporativas na America Latina.
-          </p>
         </CardContent>
       </Card>
 

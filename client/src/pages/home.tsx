@@ -692,9 +692,6 @@ export default function Home() {
             </Badge>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground pt-1" data-testid="text-market-anchors">
-          Referencia de mercado: ABRACORP e ALAGEV
-        </p>
       </div>
 
       <Separator />
