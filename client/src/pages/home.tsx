@@ -266,6 +266,119 @@ const TMC_SERVICES = [
 ];
 
 
+const PRODUCT_CATALOG = [
+  {
+    id: "travel_events",
+    title: "Viagens e Eventos",
+    icon: Plane,
+    color: "text-blue-600 dark:text-blue-400",
+    bgColor: "bg-blue-100 dark:bg-blue-900/50",
+    description: "Passagens aereas, hospedagem, alimentacao, transporte terrestre, locacao de veiculos, seguros viagem e eventos corporativos (MICE).",
+    highlights: ["Cruzamento multi-sistema (OBT, backoffice, GDS, BSPlink)", "Deteccao de fraudes e retencoes indevidas", "Reconciliacao com cartoes corporativos"],
+  },
+  {
+    id: "corporate_expenses",
+    title: "Despesas Corporativas",
+    icon: Briefcase,
+    color: "text-emerald-600 dark:text-emerald-400",
+    bgColor: "bg-emerald-100 dark:bg-emerald-900/50",
+    description: "Cartoes corporativos, reembolsos, adiantamentos e despesas operacionais com foco em conformidade e recuperacao de valores.",
+    highlights: ["Analise de cartoes corporativos", "Cruzamento com politicas internas", "Deteccao de despesas duplicadas"],
+  },
+  {
+    id: "third_party_contracts",
+    title: "Contratos com Terceiros",
+    icon: FileText,
+    color: "text-violet-600 dark:text-violet-400",
+    bgColor: "bg-violet-100 dark:bg-violet-900/50",
+    description: "Contratos de servicos, fornecedores, SLAs e conformidade contratual — identificando desvios e oportunidades de economia.",
+    highlights: ["Analise de SLAs e penalidades", "Deteccao de sobrepreco", "Benchmark de mercado"],
+  },
+  {
+    id: "telecom",
+    title: "Telecomunicacoes",
+    icon: Phone,
+    color: "text-cyan-600 dark:text-cyan-400",
+    bgColor: "bg-cyan-100 dark:bg-cyan-900/50",
+    description: "Telefonia, dados, cloud, licencas de software e infraestrutura de TI — otimizando custos e identificando cobrancas indevidas.",
+    highlights: ["Auditoria de faturas e licencas", "Otimizacao de planos e pacotes", "Deteccao de servicos inativos"],
+  },
+  {
+    id: "fleet_logistics",
+    title: "Frota e Logistica",
+    icon: Car,
+    color: "text-orange-600 dark:text-orange-400",
+    bgColor: "bg-orange-100 dark:bg-orange-900/50",
+    description: "Frota propria, locacao de veiculos, combustivel e operacoes logisticas com foco em eficiencia e conformidade.",
+    highlights: ["Analise de custos de frota", "Verificacao de consumo", "Otimizacao de rotas"],
+  },
+  {
+    id: "benefits_hr",
+    title: "Beneficios e RH",
+    icon: Heart,
+    color: "text-rose-600 dark:text-rose-400",
+    bgColor: "bg-rose-100 dark:bg-rose-900/50",
+    description: "Planos de saude, odontologico, seguro vida, vale transporte e refeicao — identificando inconsistencias e valores a recuperar.",
+    highlights: ["Analise de sinistralidade", "Verificacao de elegibilidade", "Conformidade trabalhista"],
+  },
+  {
+    id: "procurement",
+    title: "Suprimentos e Compras",
+    icon: ShoppingCart,
+    color: "text-indigo-600 dark:text-indigo-400",
+    bgColor: "bg-indigo-100 dark:bg-indigo-900/50",
+    description: "Processos de compras, cotacoes, licitacoes, gestao de estoque e relacionamento com fornecedores.",
+    highlights: ["Auditoria de cotacoes e concorrencias", "Deteccao de conflitos de interesse", "Avaliacao de fornecedores"],
+  },
+  {
+    id: "continuous_monitoring",
+    title: "Monitoramento Continuo",
+    icon: Eye,
+    color: "text-teal-600 dark:text-teal-400",
+    bgColor: "bg-teal-100 dark:bg-teal-900/50",
+    description: "Acompanhamento preventivo de transacoes e processos com alertas em tempo real e dashboards executivos.",
+    highlights: ["Alertas em tempo real", "Dashboards personalizados", "Indicadores de risco e tendencias"],
+  },
+];
+
+function ProductCatalogCard({ product }: { product: typeof PRODUCT_CATALOG[0] }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Card
+      className="cursor-pointer hover:shadow-md transition-shadow"
+      onClick={() => setExpanded(!expanded)}
+      data-testid={`product-card-${product.id}`}
+    >
+      <CardContent className="p-4 space-y-3">
+        <div className="flex items-center gap-3">
+          <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${product.bgColor}`}>
+            <product.icon className={`w-5 h-5 ${product.color}`} />
+          </div>
+          <h3 className="text-sm font-semibold leading-tight">{product.title}</h3>
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">{product.description}</p>
+        {expanded && (
+          <div className="space-y-1.5 pt-1 border-t">
+            {product.highlights.map((item) => (
+              <div key={item} className="flex items-start gap-2">
+                <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
+                <span className="text-[11px] text-muted-foreground">{item}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <button
+          className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+          data-testid={`product-expand-${product.id}`}
+        >
+          {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+          {expanded ? "Recolher" : "Saiba mais"}
+        </button>
+      </CardContent>
+    </Card>
+  );
+}
+
 const METHODOLOGY_STAGES = [
   { step: 1, title: "Onboarding & Mapeamento", icon: FileSignature, description: "Sistemas, fornecedores, contratos e politica" },
   { step: 2, title: "Coleta / Integracao", icon: Upload, description: "Importacao por API, SFTP/CSV ou upload controlado" },
@@ -751,6 +864,23 @@ export default function Home() {
         <div className="space-y-3">
           {CORPORATE_SERVICES.map((service) => (
             <ExpandableServiceCard key={service.id} service={service} />
+          ))}
+        </div>
+      </div>
+
+      <Separator />
+
+      <div className="space-y-4" data-testid="section-products-catalog">
+        <div className="flex items-center gap-2">
+          <Layers className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold">Auditoria Forense e Independente em:</h2>
+        </div>
+        <p className="text-sm text-muted-foreground max-w-3xl">
+          Solucoes especializadas por categoria de despesa — cada projeto e desenhado sob medida para o contexto e maturidade do cliente.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {PRODUCT_CATALOG.map((product) => (
+            <ProductCatalogCard key={product.id} product={product} />
           ))}
         </div>
       </div>
