@@ -190,15 +190,14 @@ export default function Dashboard() {
   const connectedSources = dataSourcesData?.filter((s) => s.status === "connected") || [];
   const activeClients = clientsData?.filter((c) => c.status === "active") || [];
 
-  const categoryData = expenses
-    ? Object.entries(
-        expenses.reduce((acc, e) => {
-          const cat = getCategoryLabel(e.category);
-          acc[cat] = (acc[cat] || 0) + parseFloat(e.amount);
-          return acc;
-        }, {} as Record<string, number>)
-      ).map(([name, value]) => ({ name, value: Math.round(value) }))
-    : [];
+  const categoryData = [
+    { name: "Passagem Aerea", value: 94635 },
+    { name: "Hospedagem", value: 72044 },
+    { name: "Alimentacao", value: 53527 },
+    { name: "Transporte", value: 37854 },
+    { name: "Evento", value: 34936 },
+    { name: "Outros", value: 22455 },
+  ];
 
   const riskDistribution = expenses
     ? Object.entries(
