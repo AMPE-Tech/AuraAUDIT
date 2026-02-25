@@ -1024,7 +1024,7 @@ export default function Home() {
       <div className="space-y-4" data-testid="section-modules">
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-semibold">Modulos & Add-ons</h2>
+          <h2 className="text-sm font-semibold">Plano fixo mensal + Modulos & Add-ons</h2>
         </div>
         <p className="text-xs text-muted-foreground max-w-3xl">
           O AuraAudit funciona em camadas: a assinatura base (Pass) garante auditoria continua, e voce adiciona servicos de IA sob demanda, pagando apenas pelo que usar.
