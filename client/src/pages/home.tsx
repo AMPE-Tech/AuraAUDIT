@@ -583,6 +583,21 @@ export default function Home() {
         </CardContent>
       </Card>
 
+      <div className="space-y-4" data-testid="section-products-catalog">
+        <div className="flex items-center gap-2">
+          <Layers className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold">Auditoria Forense e Independente em:</h2>
+        </div>
+        <p className="text-sm text-muted-foreground max-w-3xl">
+          Solucoes especializadas por categoria de despesa — cada projeto e desenhado sob medida para o contexto e maturidade do cliente.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {PRODUCT_CATALOG.map((product) => (
+            <ProductCatalogCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary" />
@@ -864,23 +879,6 @@ export default function Home() {
         <div className="space-y-3">
           {CORPORATE_SERVICES.map((service) => (
             <ExpandableServiceCard key={service.id} service={service} />
-          ))}
-        </div>
-      </div>
-
-      <Separator />
-
-      <div className="space-y-4" data-testid="section-products-catalog">
-        <div className="flex items-center gap-2">
-          <Layers className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">Auditoria Forense e Independente em:</h2>
-        </div>
-        <p className="text-sm text-muted-foreground max-w-3xl">
-          Solucoes especializadas por categoria de despesa — cada projeto e desenhado sob medida para o contexto e maturidade do cliente.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {PRODUCT_CATALOG.map((product) => (
-            <ProductCatalogCard key={product.id} product={product} />
           ))}
         </div>
       </div>
