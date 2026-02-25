@@ -658,38 +658,90 @@ export default function Home() {
         </div>
       </div>
 
-      <Card className="border-amber-200 dark:border-amber-900/50 bg-gradient-to-r from-amber-50/50 via-transparent to-transparent dark:from-amber-950/20">
-        <CardContent className="p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-            <h2 className="text-base font-semibold">Cadeia de Custodia & Rastreabilidade Juridica</h2>
-            <Badge variant="outline" className="text-[10px]">Compliance e Legal</Badge>
+      <div className="relative overflow-hidden rounded-xl border border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="banner-chain-custody">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(245,158,11,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(16,185,129,0.04),transparent_50%)]" />
+        <div className="relative p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-7 h-7 rounded-md bg-amber-500/20">
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-100">Cadeia de Custodia & Rastreabilidade Juridica</p>
+                <p className="text-[10px] text-slate-400">Lei 13.964/2019 — Integridade e admissibilidade juridica das evidencias</p>
+              </div>
+            </div>
+            <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/30 text-[10px]">Compliance</Badge>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed max-w-4xl">
-            Alem da auditoria operacional e financeira, o AuraAudit opera com{" "}
-            <span className="font-medium text-foreground">Cadeia de Custodia digital</span>, garantindo{" "}
-            rastreabilidade juridica das evidencias para suportar Compliance, Juridico, Auditoria Interna e Controles.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
-              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-              <span className="text-xs text-muted-foreground">Evidencias em formato <span className="font-medium">raw</span> (originais) e versoes normalizadas para auditoria</span>
+
+          <div className="rounded-lg bg-slate-800/50 border border-slate-700/30 p-4 space-y-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-3.5 h-3.5 text-amber-400" />
+              <p className="text-[11px] font-medium text-slate-200">Registro de Evidencia — Exemplo Ilustrativo</p>
             </div>
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
-              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-              <span className="text-xs text-muted-foreground"><span className="font-medium">Trilha completa</span>: origem → coleta → transformacao → analise → relatorio</span>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <p className="text-[9px] text-slate-500 uppercase tracking-wider">UUID do Caso</p>
+                <div className="font-mono text-[11px] text-blue-400 bg-slate-900/60 rounded px-2.5 py-1.5 border border-slate-700/40">
+                  a3f8c2e1-7b4d-4e9a-b6f0-2d8e1c3a5f7b
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <p className="text-[9px] text-slate-500 uppercase tracking-wider">Timestamp (ISO 8601)</p>
+                <div className="font-mono text-[11px] text-emerald-400 bg-slate-900/60 rounded px-2.5 py-1.5 border border-slate-700/40">
+                  2025-02-25T14:32:08.000Z
+                </div>
+              </div>
             </div>
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
-              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-              <span className="text-xs text-muted-foreground"><span className="font-medium">Identificacao unica</span> por caso/transacao e registro de eventos (logs)</span>
+
+            <div className="space-y-1.5">
+              <p className="text-[9px] text-slate-500 uppercase tracking-wider">Hash SHA-256 (Integridade)</p>
+              <div className="font-mono text-[10px] text-amber-300 bg-slate-900/60 rounded px-2.5 py-1.5 border border-amber-500/20 break-all leading-relaxed">
+                e3b0c44298fc1c149afbf4c8996fb924...27ae41e4649b934ca495991b7852b855
+              </div>
             </div>
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-background/60">
-              <CheckCircle2 className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
-              <span className="text-xs text-muted-foreground"><span className="font-medium">Evidence Packs</span> prontos para fiscalizacao, disputas e investigacoes internas</span>
+
+            <div className="grid grid-cols-3 gap-2">
+              <div className="space-y-1">
+                <p className="text-[9px] text-slate-500 uppercase tracking-wider">Tipo</p>
+                <div className="text-[10px] text-slate-300 bg-slate-900/60 rounded px-2 py-1 border border-slate-700/40">Fatura Cartao</div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[9px] text-slate-500 uppercase tracking-wider">Origem</p>
+                <div className="text-[10px] text-slate-300 bg-slate-900/60 rounded px-2 py-1 border border-slate-700/40">Bradesco EBTA</div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[9px] text-slate-500 uppercase tracking-wider">Status</p>
+                <div className="text-[10px] text-emerald-400 bg-emerald-500/10 rounded px-2 py-1 border border-emerald-500/20 flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Integro</div>
+              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+          <div className="rounded-lg bg-slate-800/30 border border-slate-700/20 p-3">
+            <p className="text-[9px] text-slate-500 uppercase tracking-wider mb-3">Trilha de Custodia</p>
+            <div className="flex items-center gap-0">
+              {[
+                { label: "Coleta", sub: "Raw file", color: "text-blue-400", bg: "bg-blue-500/15 border-blue-500/30" },
+                { label: "Registro", sub: "UUID + Hash", color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/30" },
+                { label: "Validacao", sub: "SHA-256", color: "text-purple-400", bg: "bg-purple-500/15 border-purple-500/30" },
+                { label: "Analise", sub: "Cruzamento", color: "text-cyan-400", bg: "bg-cyan-500/15 border-cyan-500/30" },
+                { label: "Relatorio", sub: "Evidence Pack", color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/30" },
+              ].map((step, i) => (
+                <div key={step.label} className="flex items-center flex-1">
+                  <div className={`flex-1 rounded-md border ${step.bg} p-2 text-center`}>
+                    <p className={`text-[10px] font-medium ${step.color}`}>{step.label}</p>
+                    <p className="text-[8px] text-slate-500 mt-0.5">{step.sub}</p>
+                  </div>
+                  {i < 4 && <ArrowRight className="w-3 h-3 text-slate-600 mx-1 shrink-0" />}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-[10px] text-slate-500 text-center">Cada evidencia recebe identificacao unica, hash de integridade e registro imutavel — admissivel para Compliance, Juridico e Auditoria Interna</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {DIFFERENTIALS.map((item) => (
