@@ -349,20 +349,20 @@ function ProductCatalogCard({ product }: { product: typeof PRODUCT_CATALOG[0] })
       onClick={() => setExpanded(!expanded)}
       data-testid={`product-card-${product.id}`}
     >
-      <CardContent className="p-4 space-y-3">
-        <div className="flex items-center gap-3">
-          <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${product.bgColor}`}>
-            <product.icon className={`w-5 h-5 ${product.color}`} />
+      <CardContent className="p-3 space-y-2">
+        <div className="flex items-center gap-2">
+          <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${product.bgColor}`}>
+            <product.icon className={`w-4 h-4 ${product.color}`} />
           </div>
-          <h3 className="text-sm font-semibold leading-tight">{product.title}</h3>
+          <h3 className="text-xs font-semibold leading-tight">{product.title}</h3>
         </div>
-        <p className="text-xs text-muted-foreground leading-relaxed">{product.description}</p>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">{product.description}</p>
         {expanded && (
-          <div className="space-y-1.5 pt-1 border-t">
+          <div className="space-y-1 pt-1 border-t">
             {product.highlights.map((item) => (
-              <div key={item} className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                <span className="text-[11px] text-muted-foreground">{item}</span>
+              <div key={item} className="flex items-start gap-1.5">
+                <CheckCircle2 className="w-2.5 h-2.5 text-primary mt-0.5 shrink-0" />
+                <span className="text-[10px] text-muted-foreground">{item}</span>
               </div>
             ))}
           </div>
@@ -569,10 +569,10 @@ export default function Home() {
       <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-2">
-            <Target className="w-5 h-5 text-primary" />
-            <h2 className="text-base font-semibold">O que fazemos</h2>
+            <Target className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">O que fazemos</h2>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed max-w-4xl">
+          <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
             Uma <span className="font-medium text-foreground">plataforma forense de auditoria online</span> que detecta desconformidades e desperdicios em{" "}
             <span className="font-medium text-foreground">despesas corporativas</span>, automatiza a coleta e a conciliacao de evidencias e entrega{" "}
             <span className="font-medium text-foreground">trilhas auditaveis</span>, alertas em tempo real,{" "}
@@ -581,10 +581,10 @@ export default function Home() {
             <span className="font-medium text-foreground">dashboards executivos</span> e monitoramento continuo — no padrao que Compliance exige.
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
-            <Button variant="default" data-testid="button-how-it-works" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button variant="default" size="sm" className="text-xs" data-testid="button-how-it-works" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>
               Ver como funciona
             </Button>
-            <Button variant="outline" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button variant="outline" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
               Solicitar diagnostico
             </Button>
           </div>
@@ -593,8 +593,8 @@ export default function Home() {
 
       <div className="space-y-4" data-testid="section-products-catalog">
         <div className="flex items-center gap-2">
-          <Layers className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">Categorias Auditaveis</h2>
+          <Layers className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold">Categorias Auditaveis</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {PRODUCT_CATALOG.map((product) => (
@@ -605,37 +605,37 @@ export default function Home() {
 
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold" data-testid="text-performance-title">Performance</h2>
+          <TrendingUp className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold" data-testid="text-performance-title">Performance</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="border-blue-200 dark:border-blue-900">
             <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-3">
-                <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-2">
+                <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
-              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
-              <p className="text-sm text-muted-foreground mt-1">Media de Resultado</p>
+              <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
+              <p className="text-xs text-muted-foreground mt-1">Media de Resultado</p>
               <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
             </CardContent>
           </Card>
           <Card className="border-emerald-200 dark:border-emerald-900">
             <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-3">
-                <BarChart3 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-2">
+                <BarChart3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-reviewed">+2,8 BI</p>
-              <p className="text-sm text-muted-foreground mt-1">Revisados</p>
+              <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-reviewed">+2,8 BI</p>
+              <p className="text-xs text-muted-foreground mt-1">Revisados</p>
               <p className="text-xs text-muted-foreground">em volume financeiro total</p>
             </CardContent>
           </Card>
           <Card className="border-amber-200 dark:border-amber-900">
             <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-3">
-                <Award className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+              <div className="flex items-center justify-center w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-2">
+                <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
-              <p className="text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
-              <p className="text-sm text-muted-foreground mt-1">Economizados</p>
+              <p className="text-xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
+              <p className="text-xs text-muted-foreground mt-1">Economizados</p>
               <p className="text-xs text-muted-foreground">media do total revisado</p>
             </CardContent>
           </Card>
@@ -875,10 +875,10 @@ export default function Home() {
 
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">Para Empresas</h2>
+          <Building2 className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold">Para Empresas</h2>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Servicos de auditoria forense para empresas com despesas corporativas recorrentes.
         </p>
         <div className="space-y-3">
@@ -892,10 +892,10 @@ export default function Home() {
 
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Handshake className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-          <h2 className="text-lg font-semibold">Para Fornecedores</h2>
+          <Handshake className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+          <h2 className="text-sm font-semibold">Para Fornecedores</h2>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Programa para maturidade e padronizacao de fornecedores corporativos — diagnostico, governanca, billing e adequacao operacional.
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -983,10 +983,10 @@ export default function Home() {
 
       <div className="space-y-4" data-testid="section-latam-reach">
         <div className="flex items-center gap-2">
-          <Globe className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">Cobertura Nacional e LATAM</h2>
+          <Globe className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold">Cobertura Nacional e LATAM</h2>
         </div>
-        <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
+        <p className="text-xs text-muted-foreground max-w-3xl leading-relaxed">
           Cobertura completa do ecossistema corporativo de despesas, com atuacao em toda a America Latina.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
@@ -1077,8 +1077,8 @@ export default function Home() {
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto">
             <MessageSquare className="w-6 h-6 text-primary" />
           </div>
-          <h3 id="cta-diagnostico" className="text-lg font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit operando no seu cenario?</h3>
-          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+          <h3 id="cta-diagnostico" className="text-sm font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit operando no seu cenario?</h3>
+          <p className="text-xs text-muted-foreground max-w-xl mx-auto">
             Faca voce mesmo um diagnostico inicial com amostra de dados (faturas cartoes/relatorio gerencia/contrato de prestacao de servicos — principais clausulas)
             e receba um relatorio com divergencias, oportunidades e evidencias rastreaveis.
           </p>
