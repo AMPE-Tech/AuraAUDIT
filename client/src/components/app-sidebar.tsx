@@ -9,6 +9,7 @@ import {
   ArrowRightLeft,
   Users,
   Plug,
+  Home,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -25,7 +26,8 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Inicio", url: "/", icon: Home },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Despesas", url: "/expenses", icon: Receipt },
   { title: "Reconciliacao", url: "/reconciliation", icon: ArrowRightLeft },
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
@@ -54,8 +56,8 @@ export function AppSidebar() {
               <Shield className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-sm font-semibold tracking-tight">Aura Audit</h1>
-              <p className="text-[11px] text-muted-foreground">Auditoria Forense</p>
+              <h1 className="text-sm font-semibold tracking-tight">AuraAUDIT</h1>
+              <p className="text-[11px] text-muted-foreground">Auditoria Forense em Despesas</p>
             </div>
           </div>
         </Link>

@@ -115,7 +115,7 @@ export default function Reports() {
               <div className="flex items-center gap-3 mb-4">
                 <Shield className="w-6 h-6 text-primary" />
                 <div>
-                  <h2 className="text-lg font-bold">Aura Audit - Relatorio de Auditoria Forense</h2>
+                  <h2 className="text-lg font-bold">AuraAUDIT - Relatorio de Auditoria Forense em Despesas</h2>
                   <p className="text-xs text-muted-foreground">
                     Viagens Corporativas - Exercicios 2024 e 2025 | Grupo Stabia
                   </p>

@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import NotFound from "@/pages/not-found";
+import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import Expenses from "@/pages/expenses";
 import AuditCases from "@/pages/audit-cases";
@@ -21,7 +22,8 @@ import Integrations from "@/pages/integrations";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/" component={Home} />
+      <Route path="/dashboard" component={Dashboard} />
       <Route path="/expenses" component={Expenses} />
       <Route path="/reconciliation" component={Reconciliation} />
       <Route path="/cases" component={AuditCases} />

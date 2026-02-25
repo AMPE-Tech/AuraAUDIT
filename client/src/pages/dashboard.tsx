@@ -212,7 +212,7 @@ export default function Dashboard() {
           Dashboard de Auditoria
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Auditoria Forense - Viagens Corporativas | Grupo Stabia
+          AuraAUDIT - Auditoria Forense em Despesas | Grupo Stabia
         </p>
       </div>
 

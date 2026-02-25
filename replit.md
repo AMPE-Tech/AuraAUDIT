@@ -11,6 +11,7 @@ Aura Audit is a forensic audit platform for corporate travel and event expenses,
 - **State Management**: TanStack React Query
 
 ## Key Features
+- Home page with 8 audit category cards (Viagens/Eventos, Despesas, Contratos, Agencias, Telecom, Frota, Beneficios, Suprimentos), performance metrics, cases, methodology stages
 - Dashboard with KPI metrics, systems overview (OBT/Backoffice), financial volumes, 15-day chronogram, audit scope areas
 - Client registration (travel agencies and corporate companies) with CNPJ, contacts, status management
 - Data source integrations hub: Banco Bradesco EBTA, travel agencies, airlines, hotel chains, car rentals, insurers, GDS Sabre, GDS Amadeus, BSPlink
@@ -24,7 +25,7 @@ Aura Audit is a forensic audit platform for corporate travel and event expenses,
 ## Project Structure
 ```
 client/src/
-  pages/         - Dashboard, Expenses, Reconciliation, AuditCases, Anomalies, AuditTrail, Reports, Clients, Integrations
+  pages/         - Home, Dashboard, Expenses, Reconciliation, AuditCases, Anomalies, AuditTrail, Reports, Clients, Integrations
   components/    - AppSidebar, ThemeProvider, ThemeToggle, UI components
   lib/           - formatters, queryClient, utils
 shared/
@@ -63,7 +64,21 @@ server/
 - Analysis areas: Policy compliance, governance, data integrity, contract adherence, controls/approvals, operational failures, financial vulnerabilities, risk assessment, optimization opportunities
 - Reconciliation: OBT vs Backoffice, credit cards vs reservations, BSP vs airlines, hotel vs invoices, fee/rebate divergences
 
+## Routes
+- `/` - Home (audit categories, performance metrics, cases, methodology)
+- `/dashboard` - Dashboard (project KPIs, systems, chronogram, scope areas)
+- `/expenses` - Expense management
+- `/reconciliation` - Cross-system data reconciliation
+- `/cases` - Audit case management
+- `/anomalies` - Anomaly detection
+- `/audit-trail` - Immutable audit trail
+- `/reports` - Structured audit reports
+- `/clients` - Client registration
+- `/integrations` - Data source integrations hub
+
 ## Recent Changes
+- 2026-02-25: Added Home page with 8 audit categories, performance metrics (16%, R$2.8BI, R$448MI), cases, methodology stages
+- 2026-02-25: Moved Dashboard from `/` to `/dashboard`, Home now at `/`
 - 2026-02-25: Added client registration module (travel agencies + corporate companies)
 - 2026-02-25: Added data source integrations hub (Bradesco EBTA, travel agencies, airlines, hotels, car rentals, insurers, GDS Sabre/Amadeus, BSPlink)
 - 2026-02-25: Added sidebar section "Cadastro & Integracoes" with Clients and Integrations pages
