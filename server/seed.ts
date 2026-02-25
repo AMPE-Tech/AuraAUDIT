@@ -1,16 +1,46 @@
 import { db } from "./db";
-import { expenses, auditCases, anomalies, auditTrail, clients, dataSources } from "@shared/schema";
+import { expenses, auditCases, anomalies, auditTrail, clients, dataSources, users } from "@shared/schema";
 import { createHash } from "crypto";
 import { sql } from "drizzle-orm";
+import bcrypt from "bcrypt";
 
 function hash(data: any, timestamp: string): string {
   const payload = JSON.stringify({ ...data, _ts: timestamp });
   return createHash("sha256").update(payload).digest("hex");
 }
 
+async function seedUsers(clientIds: Record<string, string>) {
+  const existingUsers = await db.select({ id: users.id }).from(users).limit(1);
+  if (existingUsers.length > 0) return;
+
+  console.log("Seeding users...");
+  const adminHash = await bcrypt.hash("aura2025!", 10);
+  const stabiaHash = await bcrypt.hash("stabia2025!", 10);
+
+  await db.insert(users).values([
+    {
+      username: "admin",
+      password: adminHash,
+      fullName: "Administrador AuraAUDIT",
+      role: "admin",
+      clientId: null,
+    },
+    {
+      username: "stabia",
+      password: stabiaHash,
+      fullName: "Grupo Stabia",
+      role: "client",
+      clientId: clientIds["Petrobras S.A."] || null,
+    },
+  ]);
+}
+
 export async function seedDatabase() {
   const existingExpenses = await db.select({ id: expenses.id }).from(expenses).limit(1);
-  if (existingExpenses.length > 0) return;
+  if (existingExpenses.length > 0) {
+    await seedUsers({});
+    return;
+  }
 
   console.log("Seeding database with sample data...");
 
@@ -530,6 +560,12 @@ export async function seedDatabase() {
   });
 
   await db.insert(auditTrail).values(trailEntries);
+
+  const clientIdMap: Record<string, string> = {};
+  for (const c of createdClients) {
+    clientIdMap[c.name] = c.id;
+  }
+  await seedUsers(clientIdMap);
 
   console.log("Database seeded successfully!");
 }

@@ -13,10 +13,7 @@ import {
   ArrowDownRight,
   ShieldAlert,
   CheckCircle,
-  Clock,
-  Monitor,
   Database,
-  CreditCard,
   FileCheck,
   Scale,
   Search,
@@ -28,7 +25,6 @@ import {
   Award,
   Plug,
   Users,
-  Plane,
   PieChart,
 } from "lucide-react";
 import { formatCurrency, formatDate, getCategoryLabel, getSeverityLabel, getAnomalyTypeLabel } from "@/lib/formatters";
@@ -268,43 +264,6 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <Card className="border-primary/20">
-        <CardContent className="p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <Plane className="w-5 h-5 text-primary" />
-            <h2 className="text-sm font-semibold" data-testid="text-project-overview">Projeto Atual - Grupo Stabia</h2>
-            <Badge variant="secondary" className="text-[10px]">Viagens e Eventos</Badge>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="p-3 rounded-md bg-muted/50">
-              <p className="text-lg font-bold text-blue-600 dark:text-blue-400" data-testid="text-volume-2024">R$ 51,3 MI</p>
-              <p className="text-[11px] text-muted-foreground">Volume 2024</p>
-            </div>
-            <div className="p-3 rounded-md bg-muted/50">
-              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-volume-2025">R$ 39,6 MI</p>
-              <p className="text-[11px] text-muted-foreground">Volume 2025</p>
-            </div>
-            <div className="p-3 rounded-md bg-muted/50">
-              <p className="text-lg font-bold text-violet-600 dark:text-violet-400" data-testid="text-volume-total">R$ 90,9 MI</p>
-              <p className="text-[11px] text-muted-foreground">Volume Total</p>
-            </div>
-            <div className="p-3 rounded-md bg-muted/50">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">OBT</p>
-              <div className="flex flex-wrap gap-1">
-                <Badge variant="outline" className="text-[10px]">Reserve</Badge>
-                <Badge variant="outline" className="text-[10px]">Argo</Badge>
-              </div>
-            </div>
-            <div className="p-3 rounded-md bg-muted/50">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Backoffice</p>
-              <div className="flex flex-wrap gap-1">
-                <Badge variant="outline" className="text-[10px]">Wintour (2024)</Badge>
-                <Badge variant="outline" className="text-[10px]">Stur (2025)</Badge>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {isLoading ? (

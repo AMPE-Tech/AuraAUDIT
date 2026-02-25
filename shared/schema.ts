@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   fullName: text("full_name").notNull(),
   role: text("role").notNull().default("auditor"),
+  clientId: varchar("client_id"),
 });
 
 export const expenses = pgTable("expenses", {
