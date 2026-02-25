@@ -107,7 +107,7 @@ const MAIN_CLIENTS = [
 ];
 
 const DIFFERENTIALS = [
-  { icon: Scale, title: "Independencia", description: "Atuacao imparcial, sem vinculo com fornecedores ou operadores auditados" },
+  { icon: Scale, title: "Independencia", description: "Atuacao imparcial, o proprio cliente que habilita quem e o que sera auditado, sem vinculo da plataforma com fornecedores ou operadores auditados" },
   { icon: Database, title: "Base de Evidencias", description: "Toda analise fundamentada em dados concretos e rastreabilidade completa" },
   { icon: ShieldCheck, title: "Cadeia de Custodia", description: "Conformidade com Lei 13.964/2019 — integridade e admissibilidade juridica" },
   { icon: Search, title: "Metodologia Forense", description: "Cruzamento multi-sistema, deteccao de padroes e analise de anomalias" },
