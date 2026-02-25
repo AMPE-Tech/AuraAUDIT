@@ -397,12 +397,6 @@ const STANDARD_DELIVERABLES = [
   { title: "Evidence Packs", description: "Pacotes rastreáveis para Compliance e Juridico" },
 ];
 
-const PRICING_MODELS = [
-  { title: "Assinatura mensal", description: "Monitoramento continuo", badge: "Recorrente" },
-  { title: "Projeto fechado", description: "Diagnostico e implantacao", badge: "Pontual" },
-  { title: "Success fee", description: "Sobre valores recuperados, com regra clara e transparencia", badge: "Performance" },
-  { title: "Por volume", description: "Por transacoes/PNRs/faturas/eventos", badge: "Escala" },
-];
 
 const FAQ_ITEMS = [
   {
@@ -962,42 +956,6 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-primary/20">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-primary" />
-            Modelos de contratacao
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {PRICING_MODELS.map((model) => (
-              <div key={model.title} className="p-4 rounded-lg border bg-card text-center" data-testid={`pricing-${model.title.toLowerCase().replace(/\s/g, '-')}`}>
-                <Badge variant="secondary" className="text-[10px] mb-2">{model.badge}</Badge>
-                <p className="text-sm font-semibold">{model.title}</p>
-                <p className="text-xs text-muted-foreground mt-1">{model.description}</p>
-              </div>
-            ))}
-          </div>
-          <div className="flex items-center justify-between bg-muted/50 rounded-lg p-4">
-            <div>
-              <p className="text-xs font-medium">AuraAudit Pass — assinatura mensal</p>
-              <p className="text-[11px] text-muted-foreground">US$ 250/mes + taxa progressiva por volume. CAP US$ 3.000/mes.</p>
-            </div>
-            <div className="flex gap-2 shrink-0">
-              <Button variant="outline" size="sm" className="text-xs" onClick={() => window.location.href = '/subscription'} data-testid="button-cta-simulate-cost">
-                <Calculator className="w-3 h-3 mr-1" />
-                Simular custo
-              </Button>
-              <Button size="sm" className="text-xs" onClick={() => window.location.href = '/subscription'} data-testid="button-cta-subscribe-pricing">
-                Assinar
-                <ArrowRight className="w-3 h-3 ml-1" />
-              </Button>
-            </div>
           </div>
         </CardContent>
       </Card>
