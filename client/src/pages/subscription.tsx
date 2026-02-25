@@ -29,8 +29,8 @@ function rateForVam(vam: number): number {
 }
 
 function calculateTotal(vam: number): { fixed: number; excess: number; rate: number; variable: number; subtotal: number; total: number } {
-  const fixed = 250;
-  const excess = Math.max(0, vam - 25000);
+  const fixed = 99;
+  const excess = Math.max(0, vam - 10000);
   const rate = rateForVam(vam);
   const subtotal = fixed + rate * excess;
   const total = Math.min(3000, subtotal);
@@ -49,7 +49,7 @@ const RATE_TIERS = [
 
 export default function Subscription() {
   const { toast } = useToast();
-  const [vamSlider, setVamSlider] = useState(25000);
+  const [vamSlider, setVamSlider] = useState(10000);
   const [companyName, setCompanyName] = useState("");
   const [companyCnpj, setCompanyCnpj] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -94,7 +94,7 @@ export default function Subscription() {
   const simulated = calculateTotal(vamSlider);
 
   const examples = [
-    { vam: 25000, label: "US$ 25k" },
+    { vam: 10000, label: "US$ 10k" },
     { vam: 100000, label: "US$ 100k" },
     { vam: 500000, label: "US$ 500k" },
     { vam: 1000000, label: "US$ 1M" },
@@ -124,11 +124,11 @@ export default function Subscription() {
           <CardContent className="space-y-4">
             <div>
               <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-bold" data-testid="text-price">US$ 250</span>
+                <span className="text-3xl font-bold" data-testid="text-price">US$ 99</span>
                 <span className="text-sm text-muted-foreground">/mes</span>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Para auditar ate <strong>US$ 25.000/mes</strong>. Acima disso, taxa progressiva sobre o excedente.
+                Para auditar ate <strong>US$ 10.000/mes</strong>. Acima disso, taxa progressiva sobre o excedente.
               </p>
             </div>
 
@@ -153,7 +153,7 @@ export default function Subscription() {
               {showTiers && (
                 <div className="bg-muted/50 rounded-lg p-3 space-y-1" data-testid="section-tiers">
                   <p className="text-[10px] text-muted-foreground mb-2">
-                    A aliquota incide sobre o excedente acima de US$ 25.000 (VAM - 25.000), conforme o VAM do mes:
+                    A aliquota incide sobre o excedente acima de US$ 10.000 (VAM - 10.000), conforme o VAM do mes:
                   </p>
                   {RATE_TIERS.map((tier) => (
                     <div key={tier.label} className="flex items-center justify-between text-xs">
@@ -284,7 +284,7 @@ export default function Subscription() {
             </div>
 
             <div className="bg-muted/30 rounded p-2 text-[10px] text-muted-foreground">
-              <strong>Formula:</strong> min(3.000, 250 + rate(VAM) x max(0, VAM - 25.000))
+              <strong>Formula:</strong> min(3.000, 99 + rate(VAM) x max(0, VAM - 10.000))
             </div>
 
             <Button
@@ -309,7 +309,7 @@ export default function Subscription() {
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {[
-              { vam: 25000, desc: "Franquia" },
+              { vam: 10000, desc: "Franquia" },
               { vam: 100000, desc: "0,30%" },
               { vam: 500000, desc: "0,26%" },
               { vam: 1500000, desc: "CAP aplica" },
@@ -383,7 +383,7 @@ export default function Subscription() {
                 data-testid="checkbox-accept-terms"
               />
               <label htmlFor="acceptTerms" className="text-[11px] leading-tight cursor-pointer">
-                Li e aceito os Termos de Adesao do AuraAudit Pass: US$ 250/mes, franquia ate US$ 25.000 auditados/mes e adicional progressivo sobre o excedente (0,30% ate US$ 100k; 0,28% ate US$ 300k; 0,26% ate US$ 600k; 0,24% ate US$ 800k; 0,22% ate US$ 1M; 0,20% acima de US$ 1M), com CAP de US$ 3.000/mes.
+                Li e aceito os Termos de Adesao do AuraAudit Pass: US$ 99/mes, franquia ate US$ 10.000 auditados/mes e adicional progressivo sobre o excedente (0,30% ate US$ 100k; 0,28% ate US$ 300k; 0,26% ate US$ 600k; 0,24% ate US$ 800k; 0,22% ate US$ 1M; 0,20% acima de US$ 1M), com CAP de US$ 3.000/mes.
               </label>
             </div>
           </div>
@@ -399,7 +399,7 @@ export default function Subscription() {
               "Processando..."
             ) : (
               <>
-                Assinar AuraAudit Pass — US$ 250/mes
+                Assinar AuraAudit Pass — US$ 99/mes
                 <ArrowRight className="w-4 h-4 ml-2" />
               </>
             )}

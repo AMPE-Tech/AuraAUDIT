@@ -7,10 +7,10 @@ import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClie
 import { z } from "zod";
 
 const PRICING = {
-  MONTHLY_FIXED_USD: 250,
-  FRANCHISE_USD: 25000,
+  MONTHLY_FIXED_USD: 99,
+  FRANCHISE_USD: 10000,
   CAP_USD: 3000,
-  TERMS_VERSION: "1.1.0",
+  TERMS_VERSION: "1.2.0",
 };
 
 export function rateForVam(vam: number): number {
@@ -48,10 +48,10 @@ Versao: ${PRICING.TERMS_VERSION}
 3) Dados, VAM e Deduplicacao: VAM (Valor Auditado Mensal) = soma dos valores monetarios das transacoes/despesas efetivamente processadas pela Plataforma no mes. Deduplicacao aplicada quando possivel para evitar contagem em duplicidade. Relatorio Mensal de Consumo (VAM) com memoria de calculo.
 
 4) Preco, cobranca, faixas e CAP (teto):
-- Mensalidade fixa: US$ 250/mes
-- Franquia: ate US$ 25.000 de VAM/mes sem variavel
+- Mensalidade fixa: US$ 99/mes
+- Franquia: ate US$ 10.000 de VAM/mes sem variavel
 - Variavel (progressiva): aliquota conforme VAM do mes sobre o excedente:
-  Excedente = max(0, VAM - 25.000)
+  Excedente = max(0, VAM - 10.000)
 - CAP mensal: total (fixo + variavel) limitado a US$ 3.000/mes
 
 Faixas de aliquota (rate(VAM)) — continuas:
@@ -62,7 +62,7 @@ Faixas de aliquota (rate(VAM)) — continuas:
   VAM <= US$ 1.000.000 -> 0,22%
   VAM > US$ 1.000.000 -> 0,20%
 
-Formula: min(3000, 250 + rate(VAM) x max(0, VAM - 25.000))
+Formula: min(3000, 99 + rate(VAM) x max(0, VAM - 10.000))
 
 5) Evidencias, trilhas e rastreabilidade: A Plataforma registra logs e metadados (trilhas auditaveis) e preserva evidencias (cadeia de custodia). O Servico nao constitui parecer juridico.
 

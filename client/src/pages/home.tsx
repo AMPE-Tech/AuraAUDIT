@@ -865,7 +865,7 @@ export default function Home() {
       </div>
 
       <div className="flex items-center justify-center gap-3 py-2">
-        <p className="text-xs text-muted-foreground">A partir de <strong className="text-foreground">US$ 250/mes</strong> — sem pegadinhas, sem sustos.</p>
+        <p className="text-xs text-muted-foreground">A partir de <strong className="text-foreground">US$ 99/mes</strong> — sem pegadinhas, sem sustos.</p>
         <Button variant="outline" size="sm" className="text-xs" onClick={() => window.location.href = '/subscription'} data-testid="button-cta-pricing-inline-1">
           Ver plano
           <ArrowRight className="w-3 h-3 ml-1" />

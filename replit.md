@@ -116,10 +116,10 @@ GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo, Concur, Cytric, Navan, Tra
 
 ## Subscription System (AuraAudit Pass)
 - **Plan**: AuraAudit Pass — single plan, self-service subscription
-- **Pricing**: US$ 250/month fixed + progressive rate on VAM excess above US$ 25,000/month, CAP US$ 3,000/month
+- **Pricing**: US$ 99/month fixed + progressive rate on VAM excess above US$ 10,000/month, CAP US$ 3,000/month
 - **Rate tiers (continuous)**: VAM<=100k: 0.30%, <=300k: 0.28%, <=600k: 0.26%, <=800k: 0.24%, <=1M: 0.22%, >1M: 0.20%
-- **Formula**: `min(3000, 250 + rateForVam(VAM) * max(0, VAM - 25000))`
-- **Terms version**: 1.1.0
+- **Formula**: `min(3000, 99 + rateForVam(VAM) * max(0, VAM - 10000))`
+- **Terms version**: 1.2.0
 - **Checkout**: Stripe integration with terms acceptance (SHA-256 hash, IP, user-agent)
 - **Tables**: `terms_acceptance`, `monthly_consumption`, `billing_runs` (+ stripe schema managed by stripe-replit-sync)
 - **Routes**: `/subscription` (pricing + checkout), `/subscription/success`, `/subscription/cancel`
