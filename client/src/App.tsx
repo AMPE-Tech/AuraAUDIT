@@ -28,6 +28,7 @@ import Reports from "@/pages/reports";
 import Reconciliation from "@/pages/reconciliation";
 import Clients from "@/pages/clients";
 import Integrations from "@/pages/integrations";
+import AiAssistant from "@/pages/ai-assistant";
 import Login from "@/pages/login";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,7 @@ function AdminRouter() {
       <Route path="/reports" component={Reports} />
       <Route path="/clients" component={Clients} />
       <Route path="/integrations" component={Integrations} />
+      <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -63,6 +65,7 @@ function ClientRouter() {
       <Route path="/products" component={ClientProducts} />
       <Route path="/contract" component={ClientContract} />
       <Route path="/latam-scope" component={ClientLatamScope} />
+      <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={ClientDashboard} />
     </Switch>
   );

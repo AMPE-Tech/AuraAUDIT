@@ -6,6 +6,7 @@ Aura Audit is a forensic audit platform for corporate travel and event expenses,
 ## Architecture
 - **Frontend**: React + Vite + TailwindCSS + shadcn/ui + Recharts
 - **Backend**: Express.js + Node.js
+- **AI**: OpenAI via Replit AI Integrations (gpt-5.2)
 - **Database**: PostgreSQL with Drizzle ORM
 - **Routing**: wouter (frontend), Express routes (backend)
 - **State Management**: TanStack React Query
@@ -38,7 +39,7 @@ server/
 ```
 
 ## Database Tables
-- users, expenses, audit_cases, anomalies, audit_trail, clients, data_sources
+- users, expenses, audit_cases, anomalies, audit_trail, clients, data_sources, conversations, messages
 
 ## API Endpoints
 - GET/POST /api/expenses, PATCH /api/expenses/:id
@@ -47,6 +48,7 @@ server/
 - GET/POST /api/clients, GET /api/clients/:id, GET /api/clients/type/:type, PATCH /api/clients/:id
 - GET/POST /api/data-sources, GET /api/data-sources/:id, GET /api/data-sources/client/:clientId, PATCH /api/data-sources/:id
 - GET /api/audit-trail
+- GET/POST /api/ai/conversations, GET/DELETE /api/ai/conversations/:id, POST /api/ai/conversations/:id/messages (SSE streaming)
 
 ## Data Source Integration Types
 - **bradesco_ebta**: Banco Bradesco EBTA corporate credit card data
@@ -100,6 +102,9 @@ server/
 GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo Solutions, SAP Concur, Amadeus Cytric, GetThere/Serko, Neo/Amex GBT, Navan, TravelPerk, Lemontech, Onfly, VOLL), TMC (CVC Corp, Flytour, BRT, Copastur, Rextur, Alatur JTB, Avipam, Travelcare), Mid/Backoffice (Wintour, STUR/STUR CORP, SAP S/4HANA, Oracle Cloud, Totvs Protheus, Benner), Pagamentos (Bradesco EBTA, Itau, Santander, B2, WEX, AirPlus, Conferma Pay, Stripe), Cias Aereas (LATAM, GOL, Azul, AA, United, Copa, Avianca, Aeromexico, JetSmart, BSPlink), Hotelaria (Accor, Atlantica, Marriott, Hilton, IHG, Wyndham, Blue Tree, Nacional Inn, Windsor, Bourbon), Car Rental (Localiza Hertz, Movida, Unidas, Foco, Avis, Budget, Enterprise, National), Seguros (Porto Seguro, Allianz, Assist Card, Travel Ace, GTA, Affinity, Coris, April), MICE (MCI Group, GL Events, Embratur, InEvent, Sympla, Eventbrite, Cvent)
 
 ## Recent Changes
+- 2026-02-25: Added AuraAI generative assistant (GPT-5.2) specialized in T&E audit, compliance, methodology — accessible via sidebar for admin and client
+- 2026-02-25: Added BI dashboard hero banner on Home page with area/bar/pie/radar charts
+- 2026-02-25: Added visual chain of custody section with UUID, SHA-256 hash, timestamp examples
 - 2026-02-25: Restructured Home page per DPO spec: O que fazemos, Cadeia de Custodia, 5 corporate services, 4 TMC services, MICE audit, methodology, deliverables, pricing, FAQ, CTA
 - 2026-02-25: Added Painel do Projeto page with rich dashboard panels (area chart, radar, bar, pie, progress bars, vendor grid)
 - 2026-02-25: Added LATAM Scope page with 10 ecosystem categories, 80+ providers, expandable cards with audit items and evidence types

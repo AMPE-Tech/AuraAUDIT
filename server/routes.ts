@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { createHash } from "crypto";
 import { insertExpenseSchema, insertAuditCaseSchema, insertAnomalySchema, insertClientSchema, insertDataSourceSchema } from "@shared/schema";
 import { z } from "zod";
+import { registerAiChatRoutes } from "./ai-chat";
 
 function generateIntegrityHash(data: any, timestamp: string): string {
   const payload = JSON.stringify({ ...data, _ts: timestamp });
@@ -312,6 +313,8 @@ export async function registerRoutes(
     const trail = await storage.getAuditTrail();
     res.json(trail);
   });
+
+  registerAiChatRoutes(app);
 
   return httpServer;
 }
