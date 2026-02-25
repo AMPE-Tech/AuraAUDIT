@@ -19,7 +19,7 @@ async function seedUsers(clientIds: Record<string, string>) {
 
   await db.insert(users).values([
     {
-      username: "admin",
+      username: "nml.costa@gmail.com",
       password: adminHash,
       fullName: "Administrador AuraAUDIT",
       role: "admin",
