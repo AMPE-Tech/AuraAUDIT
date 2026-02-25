@@ -106,7 +106,18 @@ server/
 ## LATAM Ecosystem Categories (15)
 GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo Solutions, SAP Concur, Amadeus Cytric, GetThere/Serko, Neo/Amex GBT, Navan, TravelPerk, Lemontech, Onfly, VOLL), TMC (CVC Corp, Flytour, BRT, Copastur, Rextur, Alatur JTB, Avipam, Travelcare), ERP/Backoffice (SAP S/4FI, Oracle EBS AP, TOTVS Protheus, Microsoft Dynamics, Benner, Regente, Stur, Wintour), Pagamentos (IVT, EBTA, HCard, CTA, CTAH, Purchasing, VCN, TAR, Conferma Pay, B2, WEX, AirPlus), Cias Aereas (LATAM, GOL, Azul, AA, United, Copa, Avianca, Aeromexico, JetSmart, BSPlink), Hotelaria (Accor, Atlantica, Marriott, Hilton, IHG, Wyndham, Blue Tree, Nacional Inn, Windsor, Bourbon), Car Rental (Localiza Hertz, Movida, Unidas, Foco, Avis, Budget, Enterprise, National), Seguros (Porto Seguro, Allianz, Assist Card, Travel Ace, GTA, Affinity, Coris, April), MICE (MCI Group, GL Events, Embratur, InEvent, Sympla, Eventbrite, Cvent), BSM (Coupa, Concur, Cvent, Veeva, BSPlink, Conferma, B2B, Paytrack, Mobi), eSIGN (DocuSign, Effect, AdobeSign, D4Sign, ClickSign), BI (Power BI, QlikView, Tableau, Cognos), Logistics (Paytrack Air/Hotel/Train/Taxi), Others (AZB, LOS, MDGx, Espider, Webuy, Cora, ICE, Selas, Certis, CSM)
 
+## Subscription System (AuraAudit Pass)
+- **Plan**: AuraAudit Pass — single plan, self-service subscription
+- **Pricing**: US$ 250/month fixed + 0.30% on VAM excess above US$ 25,000/month, CAP US$ 3,000/month
+- **Formula**: `min(3000, 250 + 0.003 * max(0, VAM - 25000))`
+- **Checkout**: Stripe integration with terms acceptance (SHA-256 hash, IP, user-agent)
+- **Tables**: `terms_acceptance`, `monthly_consumption`, `billing_runs` (+ stripe schema managed by stripe-replit-sync)
+- **Routes**: `/subscription` (pricing + checkout), `/subscription/success`, `/subscription/cancel`
+- **API**: `GET /api/stripe/pricing`, `GET /api/stripe/terms`, `POST /api/stripe/checkout`, `POST /api/stripe/simulate-vam`, `GET /api/stripe/billing`, `GET /api/stripe/terms-accepted`
+- **Files**: `server/stripeClient.ts`, `server/webhookHandlers.ts`, `server/stripe-routes.ts`, `client/src/pages/subscription.tsx`, `client/src/pages/subscription-success.tsx`, `client/src/pages/subscription-cancel.tsx`
+
 ## Recent Changes
+- 2026-02-25: Implemented AuraAudit Pass subscription system with Stripe checkout, terms acceptance, VAM simulator, billing dashboard (CAP US$ 3,000)
 - 2026-02-25: Added Servicos page with DPO-spec service catalog (P0-P3 priority levels, 10 services, recommended sales order)
 - 2026-02-25: Moved AuraAI assistant to floating widget (bottom-right button) — available on every page for both admin and client, removed from sidebars
 - 2026-02-25: Added AuraAI generative assistant (GPT-5.2) specialized in T&E audit, compliance, methodology

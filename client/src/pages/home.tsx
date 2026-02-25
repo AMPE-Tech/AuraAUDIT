@@ -587,7 +587,7 @@ export default function Home() {
             <Button variant="outline" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
               Solicitar diagnostico
             </Button>
-            <Button variant="outline" size="sm" className="text-xs" data-testid="button-monthly-subscription" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button variant="outline" size="sm" className="text-xs" data-testid="button-monthly-subscription" onClick={() => window.location.href = '/subscription'}>
               Assinatura mensal
             </Button>
           </div>

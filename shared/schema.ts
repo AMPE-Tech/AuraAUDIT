@@ -193,6 +193,63 @@ export const insertProposalSchema = createInsertSchema(proposals).omit({
 export type InsertProposal = z.infer<typeof insertProposalSchema>;
 export type Proposal = typeof proposals.$inferSelect;
 
+export const termsAcceptance = pgTable("terms_acceptance", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  userId: varchar("user_id").notNull(),
+  companyName: text("company_name"),
+  companyCnpj: text("company_cnpj"),
+  termsVersion: text("terms_version").notNull(),
+  termsTextSha256: text("terms_text_sha256").notNull(),
+  termsTextSnapshot: text("terms_text_snapshot"),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  acceptedAt: timestamp("accepted_at").notNull().defaultNow(),
+});
+
+export const monthlyConsumption = pgTable("monthly_consumption", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  userId: varchar("user_id"),
+  periodRef: text("period_ref").notNull(),
+  vamTotal: decimal("vam_total", { precision: 14, scale: 2 }).notNull().default("0"),
+  txCount: integer("tx_count").notNull().default(0),
+  dedupeMethod: text("dedupe_method").default("hash"),
+  variableUsd: decimal("variable_usd", { precision: 10, scale: 2 }).notNull().default("0"),
+  totalUsd: decimal("total_usd", { precision: 10, scale: 2 }).notNull().default("0"),
+  stripeInvoiceId: text("stripe_invoice_id"),
+  reportJson: jsonb("report_json"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const billingRuns = pgTable("billing_runs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  userId: varchar("user_id"),
+  periodRef: text("period_ref").notNull(),
+  status: text("status").notNull().default("pending"),
+  vamTotal: decimal("vam_total", { precision: 14, scale: 2 }).default("0"),
+  variableUsd: decimal("variable_usd", { precision: 10, scale: 2 }).default("0"),
+  totalUsd: decimal("total_usd", { precision: 10, scale: 2 }).default("0"),
+  stripeInvoiceId: text("stripe_invoice_id"),
+  logJson: jsonb("log_json"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertTermsAcceptanceSchema = createInsertSchema(termsAcceptance).omit({
+  id: true,
+  acceptedAt: true,
+});
+
+export const insertMonthlyConsumptionSchema = createInsertSchema(monthlyConsumption).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertBillingRunSchema = createInsertSchema(billingRuns).omit({
+  id: true,
+  createdAt: true,
+});
+
 export const insertConversationSchema = createInsertSchema(conversations).omit({
   id: true,
   createdAt: true,
@@ -221,3 +278,9 @@ export type InsertConversation = z.infer<typeof insertConversationSchema>;
 export type Conversation = typeof conversations.$inferSelect;
 export type InsertMessage = z.infer<typeof insertMessageSchema>;
 export type Message = typeof messages.$inferSelect;
+export type InsertTermsAcceptance = z.infer<typeof insertTermsAcceptanceSchema>;
+export type TermsAcceptance = typeof termsAcceptance.$inferSelect;
+export type InsertMonthlyConsumption = z.infer<typeof insertMonthlyConsumptionSchema>;
+export type MonthlyConsumption = typeof monthlyConsumption.$inferSelect;
+export type InsertBillingRun = z.infer<typeof insertBillingRunSchema>;
+export type BillingRun = typeof billingRuns.$inferSelect;
