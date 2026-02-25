@@ -1077,10 +1077,9 @@ export default function Home() {
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto">
             <MessageSquare className="w-6 h-6 text-primary" />
           </div>
-          <h3 id="cta-diagnostico" className="text-sm font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit operando no seu cenario?</h3>
+          <h3 id="cta-diagnostico" className="text-sm font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit no seu cenario?</h3>
           <p className="text-xs text-muted-foreground max-w-xl mx-auto">
-            Faca voce mesmo um diagnostico inicial com amostra de dados (faturas cartoes/relatorio gerencia/contrato de prestacao de servicos — principais clausulas)
-            e receba um relatorio com divergencias, oportunidades e evidencias rastreaveis.
+            Envie uma amostra de dados e receba um diagnostico com divergencias, oportunidades e evidencias rastreaveis.
           </p>
           <Button className="mt-2" data-testid="button-cta-contact">
             Solicitar Diagnostico
