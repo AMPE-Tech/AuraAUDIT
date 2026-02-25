@@ -64,9 +64,9 @@ server/
 - Analysis areas: Policy compliance, governance, data integrity, contract adherence, controls/approvals, operational failures, financial vulnerabilities, risk assessment, optimization opportunities
 - Reconciliation: OBT vs Backoffice, credit cards vs reservations, BSP vs airlines, hotel vs invoices, fee/rebate divergences
 
-## Routes
+## Routes (Admin)
 - `/` - Home (audit categories, performance metrics, cases, methodology)
-- `/dashboard` - Dashboard (project KPIs, systems, chronogram, scope areas)
+- `/dashboard` - Dashboard (project KPIs, online audit timeline, scope areas)
 - `/expenses` - Expense management
 - `/reconciliation` - Cross-system data reconciliation
 - `/cases` - Audit case management
@@ -76,15 +76,36 @@ server/
 - `/clients` - Client registration
 - `/integrations` - Data source integrations hub
 
+## Routes (Client Portal)
+- `/dashboard` - Client project dashboard (volumes, metrics, charts, anomalies)
+- `/systems` - Systems used in the project (OBT/Backoffice)
+- `/expense-types` - Expense types offered vs contracted
+- `/integrations` - Integrations offered vs used in project
+- `/products` - Products & services catalog with contracted highlights
+- `/contract` - Contract summary, scope, deliverables, SLA, terms
+
+## Authentication
+- Admin: `nml.costa@gmail.com` / `aura2025!` — full platform access
+- Client: `stabia` / `stabia2025!` — Grupo Stabia client portal
+- Backend: express-session + bcrypt + connect-pg-simple
+- Auth context: client/src/lib/auth.tsx
+- Server auth: server/auth.ts (setupAuth, requireAuth, requireAdmin)
+
+## Client Portal Sidebar Sections
+- **Projeto**: Dashboard, Sistemas
+- **Auditoria**: Tipos de Despesas, Integracoes
+- **Comercial**: Produtos & Servicos, Contrato
+
 ## Recent Changes
+- 2026-02-25: Built full client portal with sidebar, 6 pages (dashboard, systems, expense types, integrations, products, contract)
+- 2026-02-25: Added authentication (login/logout/session) with role-based routing (admin vs client)
+- 2026-02-25: Redesigned dashboard cronograma as online audit timeline (~45 min process)
+- 2026-02-25: Restructured Home page: general audit intro at top, category-specific content on card click
 - 2026-02-25: Added Home page with 8 audit categories, performance metrics (16%, R$2.8BI, R$448MI), cases, methodology stages
-- 2026-02-25: Moved Dashboard from `/` to `/dashboard`, Home now at `/`
 - 2026-02-25: Added client registration module (travel agencies + corporate companies)
 - 2026-02-25: Added data source integrations hub (Bradesco EBTA, travel agencies, airlines, hotels, car rentals, insurers, GDS Sabre/Amadeus, BSPlink)
-- 2026-02-25: Added sidebar section "Cadastro & Integracoes" with Clients and Integrations pages
-- 2026-02-25: All new modules include AuraDue chain of custody (SHA-256 hashing, audit trail logging per Lei 13.964/2019)
+- 2026-02-25: All modules include AuraDue chain of custody (SHA-256 hashing, audit trail logging per Lei 13.964/2019)
 - 2026-02-17: Added Reconciliation page for cross-system data analysis
-- 2026-02-17: Updated Dashboard with project overview, chronogram, and audit scope areas
 - 2026-02-17: Updated Reports with full proposal deliverables structure
 - 2026-02-17: Enforced Zod validation on all write endpoints
 - 2026-02-17: Made integrity hashes deterministic using ISO timestamps

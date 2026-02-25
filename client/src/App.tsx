@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { ClientSidebar } from "@/components/client-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AuthProvider, useAuth } from "@/lib/auth";
@@ -12,6 +13,11 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import ClientDashboard from "@/pages/client-dashboard";
+import ClientSystems from "@/pages/client-systems";
+import ClientExpenseTypes from "@/pages/client-expense-types";
+import ClientIntegrations from "@/pages/client-integrations";
+import ClientProducts from "@/pages/client-products";
+import ClientContract from "@/pages/client-contract";
 import Expenses from "@/pages/expenses";
 import AuditCases from "@/pages/audit-cases";
 import Anomalies from "@/pages/anomalies";
@@ -24,7 +30,6 @@ import Login from "@/pages/login";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 function AdminRouter() {
   return (
@@ -49,9 +54,12 @@ function ClientRouter() {
     <Switch>
       <Route path="/" component={ClientDashboard} />
       <Route path="/dashboard" component={ClientDashboard} />
-      <Route>
-        <ClientDashboard />
-      </Route>
+      <Route path="/systems" component={ClientSystems} />
+      <Route path="/expense-types" component={ClientExpenseTypes} />
+      <Route path="/integrations" component={ClientIntegrations} />
+      <Route path="/products" component={ClientProducts} />
+      <Route path="/contract" component={ClientContract} />
+      <Route component={ClientDashboard} />
     </Switch>
   );
 }
@@ -66,32 +74,34 @@ function AuthenticatedApp() {
 
   if (user?.role === "client") {
     return (
-      <div className="min-h-screen bg-background">
-        <header className="flex items-center justify-between gap-2 p-3 border-b sticky top-0 z-50 bg-background">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold">AuraAUDIT</span>
-            <Badge variant="secondary" className="text-[10px]">Cliente</Badge>
+      <SidebarProvider style={sidebarStyle as React.CSSProperties}>
+        <div className="flex h-screen w-full">
+          <ClientSidebar />
+          <div className="flex flex-col flex-1 min-w-0">
+            <header className="flex items-center justify-between gap-2 p-2 border-b sticky top-0 z-50 bg-background">
+              <SidebarTrigger data-testid="button-client-sidebar-toggle" />
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <User className="w-4 h-4" />
+                  <span data-testid="text-user-name">{user.fullName}</span>
+                </div>
+                <ThemeToggle />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={logout}
+                  data-testid="button-logout"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            </header>
+            <main className="flex-1 overflow-auto">
+              <ClientRouter />
+            </main>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <User className="w-4 h-4" />
-              <span data-testid="text-user-name">{user.fullName}</span>
-            </div>
-            <ThemeToggle />
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={logout}
-              data-testid="button-logout"
-            >
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </div>
-        </header>
-        <main>
-          <ClientRouter />
-        </main>
-      </div>
+        </div>
+      </SidebarProvider>
     );
   }
 
