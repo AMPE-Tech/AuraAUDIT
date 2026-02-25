@@ -25,6 +25,10 @@ import {
   Database,
   Presentation,
   FileSignature,
+  Upload,
+  ListChecks,
+  Settings,
+  Eye,
 } from "lucide-react";
 
 const AUDIT_CATEGORIES = [
@@ -109,10 +113,12 @@ const INCONSISTENCY_TYPES = [
 ];
 
 const METHODOLOGY_STAGES = [
-  { step: 1, title: "Assinatura do Contrato", icon: FileSignature, description: "Formalizacao do escopo, prazos e entregaveis" },
-  { step: 2, title: "Coleta de Dados", icon: Database, description: "Obtencao de dados de multiplas fontes e sistemas" },
-  { step: 3, title: "Reconciliacao", icon: Search, description: "Cruzamento e analise forense dos dados coletados" },
-  { step: 4, title: "Apresentacao dos Resultados", icon: Presentation, description: "Relatorio executivo com achados e recomendacoes" },
+  { step: 1, title: "Contratacao do Servico", icon: FileSignature, description: "Contratacao online com formalizacao do escopo, prazos e entregaveis" },
+  { step: 2, title: "Coleta de Dados", icon: Upload, description: "Upload dos dados e/ou conexao via API com multiplas fontes e sistemas" },
+  { step: 3, title: "Reconciliacao AuraAudit", icon: ListChecks, description: "Cruzamento e analise forense dos dados — o cliente seleciona os itens a conciliar" },
+  { step: 4, title: "Apresentacao dos Resultados", icon: Presentation, description: "Relatorio executivo com achados, recomendacoes e cronograma do projeto" },
+  { step: 5, title: "Ajustes", icon: Settings, description: "Refinamento das analises e consolidacao das recomendacoes com as areas envolvidas" },
+  { step: 6, title: "Monitoramento", icon: Eye, description: "Acompanhamento continuo da implementacao das recomendacoes e acoes corretivas" },
 ];
 
 const YEARLY_PERFORMANCE = [
@@ -321,11 +327,11 @@ export default function Home() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <ClipboardCheck className="w-4 h-4 text-primary" />
-                Principais Etapas
+                Principais Etapas do AuraAUDIT
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {METHODOLOGY_STAGES.map((stage, index) => (
                   <div key={stage.step} className="relative" data-testid={`stage-${stage.step}`}>
                     <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
@@ -336,7 +342,7 @@ export default function Home() {
                       <h4 className="text-sm font-semibold">{stage.title}</h4>
                       <p className="text-xs text-muted-foreground mt-1">{stage.description}</p>
                     </div>
-                    {index < METHODOLOGY_STAGES.length - 1 && (
+                    {index < METHODOLOGY_STAGES.length - 1 && index !== 2 && (
                       <div className="hidden lg:flex absolute top-1/2 -right-2 transform -translate-y-1/2 z-10">
                         <ArrowRight className="w-4 h-4 text-muted-foreground" />
                       </div>

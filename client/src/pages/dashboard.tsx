@@ -143,12 +143,12 @@ const INCONSISTENCY_TYPES = [
 ];
 
 const CHRONOGRAM = [
-  { phase: "Fase 01", days: "Dias 1-2", title: "Revisao de Escopo", description: "Alinhamento de objetivos, validacao de premissas, definicao dos criterios", status: "completed" },
-  { phase: "Fase 02", days: "Dias 3-5", title: "Coleta de Dados", description: "Extracoes dos sistemas OBT, Backoffice e relatorios gerenciais", status: "completed" },
-  { phase: "Fase 03", days: "Dias 6-10", title: "Reconciliacao", description: "Cruzamento e reconciliacao, identificacao de inconsistencias", status: "in_progress" },
-  { phase: "Fase 04", days: "Dias 11-12", title: "Apresentacao", description: "Consolidacao dos achados e material executivo", status: "pending" },
-  { phase: "Fase 05", days: "Dias 13-14", title: "Ajustes", description: "Refinamento e consolidacao das recomendacoes", status: "pending" },
-  { phase: "Fase 06", days: "Dia 15", title: "Entrega Final", description: "Relatorio executivo e tecnico final", status: "pending" },
+  { phase: "Fase 01", days: "Dias 1-2", title: "Revisao de Escopo", description: "Revisao final do escopo do projeto, alinhamento de objetivos, validacao das premissas, definicao dos criterios de auditoria e confirmacao dos acessos necessarios.", status: "completed" },
+  { phase: "Fase 02", days: "Dias 3-5", title: "Coleta de Dados", description: "Coleta estruturada das bases de dados, extracoes dos sistemas (OBT, Backoffice, relatorios financeiros e operacionais) e organizacao das informacoes para analise.", status: "completed" },
+  { phase: "Fase 03", days: "Dias 6-10", title: "Reconciliacao", description: "Cruzamento e reconciliacao das informacoes coletadas, identificacao de inconsistencias, falhas operacionais, vulnerabilidades financeiras e oportunidades de recuperacao ou economia.", status: "in_progress" },
+  { phase: "Fase 04", days: "Dias 11-12", title: "Apresentacao dos Resultados", description: "Consolidacao dos achados, validacao preliminar dos resultados e preparacao do material executivo com os valores, riscos e oportunidades identificadas.", status: "pending" },
+  { phase: "Fase 05", days: "Dias 13-14", title: "Ajustes e Validacoes", description: "Ajustes finais dos achados com base em validacoes junto as areas envolvidas, refinamento das analises e consolidacao das recomendacoes.", status: "pending" },
+  { phase: "Fase 06", days: "Dia 15", title: "Entrega Final", description: "Entrega do relatorio executivo e tecnico final, apresentacao formal dos resultados e encaminhamento das recomendacoes e proximos passos.", status: "pending" },
 ];
 
 const AUDIT_SCOPE_ITEMS = [
@@ -591,7 +591,7 @@ export default function Dashboard() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
               <CalendarDays className="w-4 h-4 text-primary" />
-              Cronograma - 15 Dias
+              Cronograma de Referencia - 15 Dias
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -611,9 +611,14 @@ export default function Dashboard() {
                     </Badge>
                   </div>
                   <p className="text-sm font-medium">{item.title}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{item.description}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">{item.description}</p>
                 </div>
               ))}
+            </div>
+            <div className="mt-3 p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900">
+              <p className="text-[11px] text-muted-foreground">
+                <span className="font-semibold">Observacao Importante:</span> Os prazos acima consideram a disponibilizacao tempestiva dos acessos, bases de dados e documentos necessarios para execucao das atividades.
+              </p>
             </div>
           </CardContent>
         </Card>
