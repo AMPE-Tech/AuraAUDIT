@@ -10,7 +10,6 @@ import {
   Users,
   Plug,
   Home,
-  Sparkles,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -43,7 +42,6 @@ const cadastroItems = [
 const systemItems = [
   { title: "Trilha de Auditoria", url: "/audit-trail", icon: ScrollText },
   { title: "Relatorios", url: "/reports", icon: FileBarChart },
-  { title: "AuraAI Assistente", url: "/ai-assistant", icon: Sparkles },
 ];
 
 export function AppSidebar() {

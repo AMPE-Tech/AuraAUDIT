@@ -30,6 +30,7 @@ import Clients from "@/pages/clients";
 import Integrations from "@/pages/integrations";
 import AiAssistant from "@/pages/ai-assistant";
 import Login from "@/pages/login";
+import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { LogOut, User } from "lucide-react";
@@ -107,6 +108,7 @@ function AuthenticatedApp() {
               <ClientRouter />
             </main>
           </div>
+          <FloatingAiChat />
         </div>
       </SidebarProvider>
     );
@@ -139,6 +141,7 @@ function AuthenticatedApp() {
             <AdminRouter />
           </main>
         </div>
+        <FloatingAiChat />
       </div>
     </SidebarProvider>
   );

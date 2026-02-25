@@ -8,7 +8,6 @@ import {
   Shield,
   Globe,
   BarChart3,
-  Sparkles,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useAuth } from "@/lib/auth";
@@ -43,9 +42,6 @@ const comercialItems = [
   { title: "Ecossistema LATAM", url: "/latam-scope", icon: Globe },
 ];
 
-const iaItems = [
-  { title: "AuraAI Assistente", url: "/ai-assistant", icon: Sparkles },
-];
 
 export function ClientSidebar() {
   const [location] = useLocation();
@@ -101,12 +97,6 @@ export function ClientSidebar() {
           <SidebarGroupLabel>Comercial</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderMenuItems(comercialItems)}</SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-        <SidebarGroup>
-          <SidebarGroupLabel>Inteligencia Artificial</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>{renderMenuItems(iaItems)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
