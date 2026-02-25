@@ -324,13 +324,16 @@ export default function Dashboard() {
             {isLoading ? (
               <Skeleton className="h-[220px] w-full" />
             ) : categoryData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={220}>
-                <BarChart data={categoryData}>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart data={categoryData} margin={{ bottom: 20 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis
                     dataKey="name"
-                    tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
+                    tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }}
                     axisLine={{ stroke: "hsl(var(--border))" }}
+                    interval={0}
+                    angle={-25}
+                    textAnchor="end"
                   />
                   <YAxis
                     tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
