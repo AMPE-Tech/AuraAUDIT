@@ -48,6 +48,59 @@ import {
   Handshake,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  Radar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+const HERO_AREA_DATA = [
+  { m: "Jan", v: 42, e: 5.8 },
+  { m: "Fev", v: 38, e: 4.9 },
+  { m: "Mar", v: 51, e: 8.2 },
+  { m: "Abr", v: 47, e: 7.1 },
+  { m: "Mai", v: 55, e: 9.8 },
+  { m: "Jun", v: 49, e: 8.4 },
+  { m: "Jul", v: 58, e: 11.2 },
+  { m: "Ago", v: 53, e: 9.6 },
+];
+
+const HERO_BAR_DATA = [
+  { cat: "Aereo", val: 38 },
+  { cat: "Hotel", val: 24 },
+  { cat: "Eventos", val: 15 },
+  { cat: "Transp.", val: 12 },
+  { cat: "Alim.", val: 11 },
+];
+
+const HERO_PIE_DATA = [
+  { name: "Conforme", value: 68 },
+  { name: "Excecao", value: 22 },
+  { name: "Critico", value: 10 },
+];
+const HERO_PIE_COLORS = ["hsl(145, 65%, 42%)", "hsl(38, 92%, 50%)", "hsl(0, 72%, 51%)"];
+
+const HERO_RADAR_DATA = [
+  { s: "Politica", v: 78 },
+  { s: "Aprovacoes", v: 85 },
+  { s: "Comprov.", v: 72 },
+  { s: "Limites", v: 81 },
+  { s: "Preferen.", v: 65 },
+  { s: "Antecede.", v: 70 },
+];
 
 const DIFFERENTIALS = [
   { icon: Scale, title: "Independencia", description: "Atuacao imparcial — o proprio cliente habilita quem e o que sera auditado" },
@@ -434,6 +487,136 @@ export default function Home() {
           </p>
         </CardContent>
       </Card>
+
+      <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" data-testid="banner-dashboard-preview">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(59,130,246,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_left,_rgba(16,185,129,0.06),transparent_50%)]" />
+        <div className="relative p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center w-7 h-7 rounded-md bg-blue-500/20">
+                <BarChart3 className="w-4 h-4 text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-100">Dashboard AuraAudit</p>
+                <p className="text-[10px] text-slate-400">Visao executiva em tempo real dos resultados da auditoria</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">Live</Badge>
+              <Badge className="bg-slate-700/60 text-slate-300 border-slate-600/40 text-[10px]">Atualizado agora</Badge>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider">Volume Auditado</p>
+              <p className="text-lg font-bold text-slate-100 mt-0.5">R$ 4,2M</p>
+              <p className="text-[10px] text-emerald-400 flex items-center gap-0.5 mt-0.5"><TrendingUp className="w-3 h-3" /> +12% vs anterior</p>
+            </div>
+            <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider">Economia</p>
+              <p className="text-lg font-bold text-emerald-400 mt-0.5">R$ 672K</p>
+              <p className="text-[10px] text-emerald-400 flex items-center gap-0.5 mt-0.5"><TrendingUp className="w-3 h-3" /> 16% savings rate</p>
+            </div>
+            <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider">Anomalias</p>
+              <p className="text-lg font-bold text-amber-400 mt-0.5">23</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">5 criticas, 8 altas</p>
+            </div>
+            <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider">Compliance</p>
+              <p className="text-lg font-bold text-blue-400 mt-0.5">78%</p>
+              <p className="text-[10px] text-slate-400 mt-0.5">Aderencia a politica</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-12 gap-3">
+            <div className="col-span-5 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-2">Evolucao Mensal — Despesas vs Economia</p>
+              <ResponsiveContainer width="100%" height={140}>
+                <AreaChart data={HERO_AREA_DATA}>
+                  <defs>
+                    <linearGradient id="heroGradV" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="heroGradE" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.1)" />
+                  <XAxis dataKey="m" tick={{ fontSize: 9, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 9, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                  <Area type="monotone" dataKey="v" stroke="#3b82f6" fill="url(#heroGradV)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="e" stroke="#10b981" fill="url(#heroGradE)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+              <div className="flex gap-4 justify-center mt-1">
+                <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-500" /><span className="text-[9px] text-slate-400">Despesas (R$M)</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500" /><span className="text-[9px] text-slate-400">Economia (R$M)</span></div>
+              </div>
+            </div>
+
+            <div className="col-span-3 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-2">Despesas por Categoria</p>
+              <ResponsiveContainer width="100%" height={140}>
+                <BarChart data={HERO_BAR_DATA} layout="vertical" barCategoryGap={4}>
+                  <XAxis type="number" hide />
+                  <YAxis type="category" dataKey="cat" tick={{ fontSize: 9, fill: "#94a3b8" }} axisLine={false} tickLine={false} width={45} />
+                  <Bar dataKey="val" radius={[0, 4, 4, 0]} barSize={14}>
+                    {HERO_BAR_DATA.map((_, i) => (
+                      <Cell key={`bar-${i}`} fill={i === 0 ? "#3b82f6" : i === 1 ? "#6366f1" : i === 2 ? "#8b5cf6" : i === 3 ? "#a78bfa" : "#c4b5fd"} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              <p className="text-[9px] text-slate-500 text-center mt-1">% do volume total</p>
+            </div>
+
+            <div className="col-span-2 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Status</p>
+              <ResponsiveContainer width="100%" height={110}>
+                <PieChart>
+                  <Pie data={HERO_PIE_DATA} cx="50%" cy="50%" innerRadius={25} outerRadius={42} paddingAngle={3} dataKey="value" strokeWidth={0}>
+                    {HERO_PIE_DATA.map((_, i) => (
+                      <Cell key={`pie-${i}`} fill={HERO_PIE_COLORS[i]} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="space-y-1 mt-1">
+                {HERO_PIE_DATA.map((item, i) => (
+                  <div key={item.name} className="flex items-center justify-between">
+                    <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: HERO_PIE_COLORS[i] }} /><span className="text-[9px] text-slate-400">{item.name}</span></div>
+                    <span className="text-[9px] text-slate-300 font-medium">{item.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="col-span-2 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+              <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Compliance</p>
+              <ResponsiveContainer width="100%" height={120}>
+                <RadarChart cx="50%" cy="50%" outerRadius="65%" data={HERO_RADAR_DATA}>
+                  <PolarGrid stroke="rgba(148,163,184,0.15)" />
+                  <PolarAngleAxis dataKey="s" tick={{ fontSize: 7, fill: "#94a3b8" }} />
+                  <Radar dataKey="v" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.15} strokeWidth={1.5} />
+                </RadarChart>
+              </ResponsiveContainer>
+              <p className="text-[9px] text-slate-500 text-center">Radar de aderencia</p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-1">
+            <p className="text-[10px] text-slate-500">Dados ilustrativos — dashboard personalizado por projeto</p>
+            <div className="flex items-center gap-1">
+              <Shield className="w-3 h-3 text-slate-500" />
+              <span className="text-[10px] text-slate-500">Cadeia de Custodia Digital</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <Card className="border-amber-200 dark:border-amber-900/50 bg-gradient-to-r from-amber-50/50 via-transparent to-transparent dark:from-amber-950/20">
         <CardContent className="p-6 space-y-4">
