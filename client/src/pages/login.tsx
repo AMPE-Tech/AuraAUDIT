@@ -3,21 +3,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Shield, LogIn, Eye, EyeOff } from "lucide-react";
+import { Shield, LogIn, Eye, EyeOff, UserPlus } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
 
 export default function Login() {
+  const [mode, setMode] = useState<"login" | "register">("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
   const [, navigate] = useLocation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password) return;
 
@@ -36,6 +38,44 @@ export default function Login() {
     }
   };
 
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username || !password || !fullName) return;
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, fullName }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || "Erro ao cadastrar");
+      }
+      toast({
+        title: "Conta criada!",
+        description: "Bem-vindo ao AuraAudit",
+      });
+      await login(username, password);
+      navigate("/dashboard");
+    } catch (err: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro no cadastro",
+        description: err.message || "Nao foi possivel criar a conta",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const resetForm = () => {
+    setUsername("");
+    setPassword("");
+    setFullName("");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md space-y-6">
@@ -44,65 +84,146 @@ export default function Login() {
             <Shield className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight" data-testid="text-login-title">AuraAUDIT</h1>
-          <p className="text-sm text-muted-foreground">Auditoria Forense em Despesas</p>
+          <p className="text-sm text-muted-foreground">Auditoria Forense Independente</p>
         </div>
 
         <Card>
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg text-center">Acessar Plataforma</CardTitle>
+            <CardTitle className="text-lg text-center">
+              {mode === "login" ? "Acessar Plataforma" : "Criar Conta"}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Usuario</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Digite seu usuario"
-                  data-testid="input-username"
-                  autoComplete="username"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Senha</Label>
-                <div className="relative">
+            {mode === "login" ? (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="username">Usuario</Label>
                   <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Digite sua senha"
-                    data-testid="input-password"
-                    autoComplete="current-password"
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Digite seu usuario"
+                    data-testid="input-username"
+                    autoComplete="username"
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    data-testid="button-toggle-password"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
                 </div>
-              </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting || !username || !password}
-                data-testid="button-login"
+                <div className="space-y-2">
+                  <Label htmlFor="password">Senha</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Digite sua senha"
+                      data-testid="input-password"
+                      autoComplete="current-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      data-testid="button-toggle-password"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting || !username || !password}
+                  data-testid="button-login"
+                >
+                  {isSubmitting ? (
+                    "Entrando..."
+                  ) : (
+                    <>
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Entrar
+                    </>
+                  )}
+                </Button>
+              </form>
+            ) : (
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Nome completo</Label>
+                  <Input
+                    id="fullName"
+                    type="text"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Seu nome completo"
+                    data-testid="input-fullname"
+                    autoComplete="name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reg-username">E-mail ou usuario</Label>
+                  <Input
+                    id="reg-username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="seu@email.com"
+                    data-testid="input-reg-username"
+                    autoComplete="username"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reg-password">Senha</Label>
+                  <div className="relative">
+                    <Input
+                      id="reg-password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Minimo 6 caracteres"
+                      data-testid="input-reg-password"
+                      autoComplete="new-password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      data-testid="button-toggle-reg-password"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isSubmitting || !username || !password || !fullName}
+                  data-testid="button-register"
+                >
+                  {isSubmitting ? (
+                    "Criando conta..."
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Criar Conta
+                    </>
+                  )}
+                </Button>
+              </form>
+            )}
+
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => { setMode(mode === "login" ? "register" : "login"); resetForm(); }}
+                className="text-xs text-primary hover:underline"
+                data-testid="button-toggle-mode"
               >
-                {isSubmitting ? (
-                  "Entrando..."
-                ) : (
-                  <>
-                    <LogIn className="w-4 h-4 mr-2" />
-                    Entrar
-                  </>
-                )}
-              </Button>
-            </form>
+                {mode === "login"
+                  ? "Nao tem conta? Cadastre-se"
+                  : "Ja tem conta? Faca login"}
+              </button>
+            </div>
           </CardContent>
         </Card>
 

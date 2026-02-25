@@ -67,6 +67,45 @@ export function setupAuth(app: Express) {
     });
   });
 
+  app.post("/api/auth/register", async (req: Request, res: Response) => {
+    const { username, password, fullName } = req.body;
+
+    if (!username || !password || !fullName) {
+      return res.status(400).json({ message: "Todos os campos sao obrigatorios" });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Senha deve ter no minimo 6 caracteres" });
+    }
+
+    const existing = await storage.getUserByUsername(username);
+    if (existing) {
+      return res.status(409).json({ message: "Usuario ja existe" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await storage.createUser({
+      username,
+      password: hashedPassword,
+      fullName,
+      role: "client",
+    });
+
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.role = user.role;
+    req.session.clientId = user.clientId;
+    req.session.fullName = user.fullName;
+
+    return res.status(201).json({
+      id: user.id,
+      username: user.username,
+      fullName: user.fullName,
+      role: user.role,
+      clientId: user.clientId,
+    });
+  });
+
   app.post("/api/auth/logout", (req: Request, res: Response) => {
     req.session.destroy((err) => {
       if (err) {
