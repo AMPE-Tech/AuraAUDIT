@@ -40,6 +40,7 @@ server/
 
 ## Database Tables
 - users, expenses, audit_cases, anomalies, audit_trail, clients, data_sources, conversations, messages
+- wallets, wallet_ledger, ai_services, ai_jobs, ai_job_quotes, ai_job_outputs, audit_envelopes
 
 ## API Endpoints
 - GET/POST /api/expenses, PATCH /api/expenses/:id
@@ -49,6 +50,9 @@ server/
 - GET/POST /api/data-sources, GET /api/data-sources/:id, GET /api/data-sources/client/:clientId, PATCH /api/data-sources/:id
 - GET /api/audit-trail
 - GET/POST /api/ai/conversations, GET/DELETE /api/ai/conversations/:id, POST /api/ai/conversations/:id/messages (SSE streaming)
+- GET /api/wallet, POST /api/wallet/topup, GET /api/wallet/ledger, POST /api/wallet/credit
+- GET /api/ai-desk/services, POST /api/ai-desk/jobs, GET /api/ai-desk/jobs, GET /api/ai-desk/jobs/:id
+- POST /api/ai-desk/jobs/:id/quote, POST /api/ai-desk/jobs/:id/approve, POST /api/ai-desk/jobs/:id/run
 
 ## Data Source Integration Types
 - **bradesco_ebta**: Banco Bradesco EBTA corporate credit card data
@@ -81,6 +85,8 @@ server/
 - `/clients` - Client registration
 - `/integrations` - Data source integrations hub
 - `/services` - Service catalog (P0-P3 priority levels)
+- `/ai-desk` - AI Desk catalog (4 services, job creation/quote/approval/execution)
+- `/wallet` - Wallet de Créditos (balance, top-up, ledger)
 - `/admin` - Admin panel (stats, expense/client/integration management, activity log)
 
 ## Routes (Client Portal)
@@ -90,6 +96,8 @@ server/
 - `/integrations` - Integrations offered vs used in project
 - `/products` - Products & services catalog with contracted highlights
 - `/contract` - Contract summary, scope, deliverables, SLA, terms
+- `/ai-desk` - AI Desk catalog (same as admin)
+- `/wallet` - Wallet de Créditos (same as admin)
 
 ## Authentication
 - Admin: `nml.costa@gmail.com` / `aura2025!` — full platform access
@@ -119,6 +127,7 @@ GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo, Concur, Cytric, Navan, Tra
 - **Files**: `server/stripeClient.ts`, `server/webhookHandlers.ts`, `server/stripe-routes.ts`, `client/src/pages/subscription.tsx`, `client/src/pages/subscription-success.tsx`, `client/src/pages/subscription-cancel.tsx`
 
 ## Recent Changes
+- 2026-02-25: Implemented Wallet de Créditos + AI Desk (4 services, job lifecycle: create→quote→approve→run), audit envelope with SHA-256, sidebar integration, landing page "Módulos & Add-ons" section
 - 2026-02-25: Updated AuraAudit Pass pricing to progressive rate tiers (0.30%-0.20% by VAM), updated terms v1.1.0, added discrete CTAs throughout landing page, updated subscription page with tier table and examples
 - 2026-02-25: Simplified LATAM ecosystem from 15 to 10 primary categories (GDS, OBT, TMC, Midoffice/Backoffice, Pagamentos, Cias Aereas, Hotelaria, Car Rental, Seguros, MICE)
 - 2026-02-25: Implemented AuraAudit Pass subscription system with Stripe checkout, terms acceptance, VAM simulator, billing dashboard (CAP US$ 3,000)

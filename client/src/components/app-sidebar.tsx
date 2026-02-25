@@ -11,6 +11,8 @@ import {
   Plug,
   Briefcase,
   Settings,
+  Zap,
+  Wallet,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -36,6 +38,8 @@ const mainItems = [
 
 const servicosItems = [
   { title: "Servicos", url: "/services", icon: Briefcase },
+  { title: "AI Desk", url: "/ai-desk", icon: Zap },
+  { title: "Carteira", url: "/wallet", icon: Wallet },
 ];
 
 const cadastroItems = [

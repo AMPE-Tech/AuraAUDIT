@@ -284,3 +284,102 @@ export type InsertMonthlyConsumption = z.infer<typeof insertMonthlyConsumptionSc
 export type MonthlyConsumption = typeof monthlyConsumption.$inferSelect;
 export type InsertBillingRun = z.infer<typeof insertBillingRunSchema>;
 export type BillingRun = typeof billingRuns.$inferSelect;
+
+export const wallets = pgTable("wallets", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  userId: varchar("user_id"),
+  currency: text("currency").notNull().default("USD"),
+  balanceCredits: decimal("balance_credits", { precision: 12, scale: 2 }).notNull().default("0"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const walletLedger = pgTable("wallet_ledger", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  walletId: varchar("wallet_id").notNull(),
+  type: text("type").notNull(),
+  credits: decimal("credits", { precision: 12, scale: 2 }).notNull(),
+  usdAmount: decimal("usd_amount", { precision: 12, scale: 2 }),
+  referenceType: text("reference_type"),
+  referenceId: varchar("reference_id"),
+  description: text("description"),
+  metadataJson: jsonb("metadata_json"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const aiServices = pgTable("ai_services", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  category: text("category"),
+  icon: text("icon"),
+  baseCredits: decimal("base_credits", { precision: 8, scale: 2 }).notNull(),
+  pricingConfigJson: jsonb("pricing_config_json"),
+  humanReviewRequired: boolean("human_review_required").notNull().default(false),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const aiJobs = pgTable("ai_jobs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  userId: varchar("user_id").notNull(),
+  serviceId: varchar("service_id").notNull(),
+  serviceName: text("service_name").notNull(),
+  status: text("status").notNull().default("draft"),
+  inputDescription: text("input_description"),
+  inputConfigJson: jsonb("input_config_json"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const aiJobQuotes = pgTable("ai_job_quotes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  jobId: varchar("job_id").notNull(),
+  estimatedCredits: decimal("estimated_credits", { precision: 10, scale: 2 }).notNull(),
+  capCredits: decimal("cap_credits", { precision: 10, scale: 2 }),
+  requiresApproval: boolean("requires_approval").notNull().default(false),
+  pricingBreakdownJson: jsonb("pricing_breakdown_json"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const aiJobOutputs = pgTable("ai_job_outputs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  jobId: varchar("job_id").notNull(),
+  title: text("title").notNull(),
+  outputType: text("output_type").notNull(),
+  content: text("content").notNull(),
+  sha256: text("sha256"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const auditEnvelopes = pgTable("audit_envelopes", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  jobId: varchar("job_id").notNull(),
+  envelopeJson: jsonb("envelope_json").notNull(),
+  envelopeSha256: text("envelope_sha256").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertWalletSchema = createInsertSchema(wallets).omit({ id: true, createdAt: true });
+export const insertWalletLedgerSchema = createInsertSchema(walletLedger).omit({ id: true, createdAt: true });
+export const insertAiServiceSchema = createInsertSchema(aiServices).omit({ id: true, createdAt: true });
+export const insertAiJobSchema = createInsertSchema(aiJobs).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAiJobQuoteSchema = createInsertSchema(aiJobQuotes).omit({ id: true, createdAt: true });
+export const insertAiJobOutputSchema = createInsertSchema(aiJobOutputs).omit({ id: true, createdAt: true });
+export const insertAuditEnvelopeSchema = createInsertSchema(auditEnvelopes).omit({ id: true, createdAt: true });
+
+export type InsertWallet = z.infer<typeof insertWalletSchema>;
+export type Wallet = typeof wallets.$inferSelect;
+export type InsertWalletLedger = z.infer<typeof insertWalletLedgerSchema>;
+export type WalletLedger = typeof walletLedger.$inferSelect;
+export type InsertAiService = z.infer<typeof insertAiServiceSchema>;
+export type AiService = typeof aiServices.$inferSelect;
+export type InsertAiJob = z.infer<typeof insertAiJobSchema>;
+export type AiJob = typeof aiJobs.$inferSelect;
+export type InsertAiJobQuote = z.infer<typeof insertAiJobQuoteSchema>;
+export type AiJobQuote = typeof aiJobQuotes.$inferSelect;
+export type InsertAiJobOutput = z.infer<typeof insertAiJobOutputSchema>;
+export type AiJobOutput = typeof aiJobOutputs.$inferSelect;
+export type InsertAuditEnvelope = z.infer<typeof insertAuditEnvelopeSchema>;
+export type AuditEnvelope = typeof auditEnvelopes.$inferSelect;

@@ -35,6 +35,8 @@ import Login from "@/pages/login";
 import Subscription from "@/pages/subscription";
 import SubscriptionSuccess from "@/pages/subscription-success";
 import SubscriptionCancel from "@/pages/subscription-cancel";
+import WalletPage from "@/pages/wallet";
+import AiDeskPage from "@/pages/ai-desk";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -54,6 +56,8 @@ function AdminRouter() {
       <Route path="/clients" component={Clients} />
       <Route path="/integrations" component={Integrations} />
       <Route path="/services" component={Services} />
+      <Route path="/ai-desk" component={AiDeskPage} />
+      <Route path="/wallet" component={WalletPage} />
       <Route path="/admin" component={AdminPanel} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={NotFound} />
@@ -73,6 +77,8 @@ function ClientRouter() {
       <Route path="/products" component={ClientProducts} />
       <Route path="/contract" component={ClientContract} />
       <Route path="/latam-scope" component={ClientLatamScope} />
+      <Route path="/ai-desk" component={AiDeskPage} />
+      <Route path="/wallet" component={WalletPage} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={ClientDashboard} />
     </Switch>

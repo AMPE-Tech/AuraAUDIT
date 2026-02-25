@@ -8,6 +8,8 @@ import {
   Shield,
   Globe,
   BarChart3,
+  Zap,
+  Wallet,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useAuth } from "@/lib/auth";
@@ -34,6 +36,11 @@ const projetoItems = [
 const auditoriaItems = [
   { title: "Tipos de Despesas", url: "/expense-types", icon: Receipt },
   { title: "Integracoes", url: "/integrations", icon: Plug },
+];
+
+const iaItems = [
+  { title: "AI Desk", url: "/ai-desk", icon: Zap },
+  { title: "Carteira", url: "/wallet", icon: Wallet },
 ];
 
 const comercialItems = [
@@ -91,6 +98,12 @@ export function ClientSidebar() {
           <SidebarGroupLabel>Auditoria</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>{renderMenuItems(auditoriaItems)}</SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Servicos IA</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>{renderMenuItems(iaItems)}</SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
         <SidebarGroup>

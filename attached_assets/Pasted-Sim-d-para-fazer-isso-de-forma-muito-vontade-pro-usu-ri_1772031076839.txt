@@ -1,0 +1,170 @@
+Sim — dá para fazer isso de forma **muito “à vontade” pro usuário**, sem virar um produto confuso, usando um modelo **Wallet de Créditos + Consumo por Ação** (metered) com **catálogo de serviços** e **camadas de permissão**. A lógica é: **assinatura dá acesso + governança**, e o **uso de IA/serviços consome créditos** (que você converte em USD e abate automaticamente).
+
+Abaixo vai um desenho pronto (produto + cobrança + UX + governança) para você implantar.
+
+---
+
+## 1) Experiência do usuário: “Workspace” com 3 áreas simples
+
+### A) **Dashboard Studio (self-service)**
+
+* Biblioteca de **widgets** (Gastos, Exceções, SLA, Savings, Riscos, Fornecedores)
+* **Drag & drop**, filtros por período, centro de custo, fornecedor, viajante, projeto
+* **Salvar vistas**: “CFO View”, “Compliance View”, “Agência View”
+* **Exportar**: PDF, XLSX, “Evidence Pack”
+
+**Controle de conforto:** “Modo simples / Modo avançado”
+
+* Simples: só filtros e KPIs prontos
+* Avançado: métricas custom, drill-down, regras
+
+### B) **Reports Library**
+
+* “Relatórios oficiais” (templates fixos com trilha auditável)
+* “Relatórios rápidos” (on-demand)
+* Cada relatório tem:
+
+  * versão, autor, data/hora, fontes usadas, hash do documento (opcional), evidências vinculadas
+
+### C) **AI Desk (Catálogo de Serviços)**
+
+O usuário escolhe um serviço e a IA executa com supervisão humana quando necessário:
+
+* **Revisar contrato de fornecedor**
+* **Responder edital / RFP / licitação**
+* **Criar SLA / KPI / Scorecard**
+* **Gerar aditivo / minuta**
+* **Análise de risco e recomendações**
+* **Gerar plano 30/60/90 dias**
+* **Detectar anomalias** / “investigar achado”
+
+Cada item vira um “job” com:
+
+* escopo, inputs, SLA de entrega, custo em créditos, trilha auditável
+
+---
+
+## 2) Modelo comercial: Wallet de Créditos + Pay-as-you-go
+
+### Como funciona
+
+* O cliente compra **créditos** (ex.: 1 crédito = US$ 1) ou pacotes (US$ 500, 1.500, 5.000).
+* Cada ação consome créditos (com preço transparente antes de rodar).
+* Você pode manter o **AuraAudit Pass** como “acesso + auditoria base”, e **IA Desk** como consumo.
+
+### Abatimento automático
+
+* O sistema calcula o custo do job → **deduz da carteira** → emite nota/recibo → salva evidência.
+* Se não tiver saldo: pede recarga ou limita.
+
+### Regras para não dar susto
+
+* **Orçamento por job** (quote obrigatório antes de executar)
+* **CAP por job** (ex.: “nunca gastar mais que 200 créditos sem aprovação”)
+* **CAP mensal por carteira** (opcional)
+* **Aprovação por papel** (CFO aprova > X)
+
+---
+
+## 3) Precificação por consumo (exemplos práticos)
+
+Você pode cobrar por 3 eixos, combináveis:
+
+### A) Por “complexidade do job”
+
+* Contrato simples (até 10 páginas): 50–120 créditos
+* Contrato complexo + anexos: 150–400 créditos
+* Edital/RFP: 200–800 créditos
+* SLA/KPI pack: 120–300 créditos
+
+### B) Por volume de documentos/tokens
+
+* Base: X créditos por arquivo + X por página
+* Ajuda a precificar com justiça e previsibilidade
+
+### C) Por “human-in-the-loop”
+
+* Se exigir revisão humana: + fator (ex.: 1,5x ou add-on fixo)
+
+> Importante: sempre mostrar o **“Estimado”** e depois o **“Real”** com memória de cálculo.
+
+---
+
+## 4) Governança (para Compliance confiar)
+
+Para esses serviços de IA, crie um “**Audit Envelope**” por job:
+
+* `job_id`, `company_id`, `user_id`
+* input files (hash + storage)
+* prompt policy/version (versão do seu “modelo de revisão”)
+* output (documento) + hash
+* logs e trilha de transformações
+* status: draft → reviewed → approved
+* aprovação e sign-off
+
+Isso vira evidência jurídica e resolve questionamentos internos.
+
+---
+
+## 5) Controles para “usuário à vontade” (sem risco)
+
+### Permissões por papel (RBAC)
+
+* Viewer: vê dashboards e relatórios
+* Analyst: cria views e roda relatórios
+* Compliance Lead: aprova achados e exports oficiais
+* Admin/CFO: aprova gastos, recargas e limites
+
+### Guardrails que o usuário sente como “liberdade com segurança”
+
+* “Você controla”: escopo, filtros, regras
+* “A plataforma nunca altera”: regras sem consentimento
+* “A IA sugere, você decide”: outputs com status e aprovação
+* “Sem surpresas”: orçamento antes, cap por job e cap mensal
+
+---
+
+## 6) Estrutura de landing/onboarding para vender isso
+
+Na landing, uma seção “**Módulos & Add-ons**”:
+
+**AuraAudit Pass (Base)**
+
+* Auditoria + evidências + dashboards + alertas
+
+**AI Desk (Por consumo)**
+
+* Contratos, editais, SLA/KPI, respostas técnicas, aditivos
+
+**Dashboard Studio**
+
+* Customização self-service (sem depender de consultor)
+
+CTA: **“Ativar AI Desk”** (abre modal de créditos + tabela de preços)
+
+---
+
+## 7) Implementação (Replit) — o “mínimo viável” em 2 sprints
+
+### Sprint 1 (MVP)
+
+* Wallet de créditos + recarga
+* Catálogo de serviços (3 itens iniciais)
+* Job engine (fila) + quote obrigatório
+* Export e biblioteca de outputs
+
+### Sprint 2
+
+* Dashboard Studio (drag/drop)
+* Templates “oficiais”
+* Audit Envelope completo (hash/logs)
+* Aprovação por papel
+
+---
+
+Se você quiser, eu já te devolvo **um prompt completo para o Replit** com:
+
+1. esquema de banco (`wallets`, `wallet_ledger`, `jobs`, `job_quotes`, `job_outputs`),
+2. fluxos de UI (Dashboard Studio / AI Desk / Billing),
+3. regras de consumo + caps + approvals,
+4. e uma tabela inicial de preços por serviço.

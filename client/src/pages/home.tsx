@@ -1063,6 +1063,89 @@ export default function Home() {
 
       <Separator />
 
+      <div className="space-y-4" data-testid="section-modules">
+        <div className="flex items-center gap-2">
+          <Layers className="w-4 h-4 text-primary" />
+          <h2 className="text-sm font-semibold">Modulos & Add-ons</h2>
+        </div>
+        <p className="text-xs text-muted-foreground max-w-3xl">
+          O AuraAudit funciona em camadas: a assinatura base (Pass) garante auditoria continua, e voce adiciona servicos de IA sob demanda, pagando apenas pelo que usar.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Card className="border-primary/30" data-testid="card-module-pass">
+            <CardContent className="p-4 space-y-2">
+              <Badge className="text-[10px]">Base</Badge>
+              <h3 className="text-sm font-semibold">AuraAudit Pass</h3>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Auditoria forense continua com evidencias, dashboards, alertas e cadeia de custodia digital.
+              </p>
+              <div className="space-y-1 pt-1">
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <CheckCircle2 className="w-3 h-3 text-primary" /> Dashboards e KPIs
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <CheckCircle2 className="w-3 h-3 text-primary" /> Trilhas auditaveis
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <CheckCircle2 className="w-3 h-3 text-primary" /> Evidence Packs
+                </div>
+              </div>
+              <Button variant="outline" size="sm" className="w-full mt-2 text-xs" onClick={() => window.location.href = "/subscription"} data-testid="button-module-pass">
+                Ver plano <ArrowRight className="w-3 h-3 ml-1" />
+              </Button>
+            </CardContent>
+          </Card>
+          <Card className="border-amber-500/30" data-testid="card-module-aidesk">
+            <CardContent className="p-4 space-y-2">
+              <Badge variant="secondary" className="text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Por consumo</Badge>
+              <h3 className="text-sm font-semibold">AI Desk</h3>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Servicos de IA sob demanda: revisao de contratos, respostas a editais, SLA/KPI e planos de acao — pagos por creditos.
+              </p>
+              <div className="space-y-1 pt-1">
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Zap className="w-3 h-3 text-amber-600" /> Revisao de contratos
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Zap className="w-3 h-3 text-amber-600" /> Resposta a editais/RFP
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Zap className="w-3 h-3 text-amber-600" /> SLA + KPI + Scorecard
+                </div>
+              </div>
+              <Button size="sm" className="w-full mt-2 text-xs" onClick={() => window.location.href = "/ai-desk"} data-testid="button-module-aidesk">
+                Ativar AI Desk <ArrowRight className="w-3 h-3 ml-1" />
+              </Button>
+            </CardContent>
+          </Card>
+          <Card className="opacity-60" data-testid="card-module-studio">
+            <CardContent className="p-4 space-y-2">
+              <Badge variant="outline" className="text-[10px]">Em breve</Badge>
+              <h3 className="text-sm font-semibold">Dashboard Studio</h3>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Customize seus dashboards com drag & drop — views para CFO, Compliance, Agencia, com filtros e exports.
+              </p>
+              <div className="space-y-1 pt-1">
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Settings className="w-3 h-3" /> Widgets arrastaveis
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Settings className="w-3 h-3" /> Salvar e publicar views
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Settings className="w-3 h-3" /> Export PDF/XLSX
+                </div>
+              </div>
+              <Button variant="outline" size="sm" className="w-full mt-2 text-xs" disabled data-testid="button-module-studio">
+                Em breve
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      <Separator />
+
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">

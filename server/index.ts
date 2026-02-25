@@ -6,6 +6,8 @@ import { seedDatabase } from "./seed";
 import { setupAuth } from "./auth";
 import { WebhookHandlers } from "./webhookHandlers";
 import { registerStripeRoutes } from "./stripe-routes";
+import { registerWalletRoutes } from "./wallet-routes";
+import { registerAiDeskRoutes } from "./ai-desk-routes";
 
 const app = express();
 const httpServer = createServer(app);
@@ -131,6 +133,8 @@ async function initStripe() {
   await initStripe();
 
   registerStripeRoutes(app);
+  registerWalletRoutes(app);
+  registerAiDeskRoutes(app);
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
