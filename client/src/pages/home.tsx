@@ -115,12 +115,12 @@ const CORPORATE_SERVICES = [
     title: "Auditoria Financeira & Conciliacao",
     icon: Receipt,
     badge: "Nucleo",
-    description: "Auditoria continua das despesas de viagens e eventos para identificar cobrancas indevidas, inconsistencias e oportunidades de economia.",
+    description: "Auditoria continua de despesas corporativas para identificar cobrancas indevidas, inconsistencias e oportunidades de economia.",
     auditItems: [
-      "Conciliacao 4 vias: Reserva/PNR/TKT/EMD + Fatura TMC + Cartao/VCN + Reembolso/Expense",
-      "Taxas e fees: emissao, remarcacao, cancelamento, service fee, markups e cobrancas acessorias",
-      "Hotelaria: diarias, impostos, taxas, no-show, folios e cobrancas extras",
-      "Locacao: categoria, seguros, extras, multas, combustivel e divergencias",
+      "Conciliacao multi-via: requisicao + fatura + pagamento + comprovante",
+      "Taxas e fees: cobrancas acessorias, markups, service fees e encargos nao previstos",
+      "Valores acima do esperado por categoria, fornecedor e perfil",
+      "Divergencias entre contratado, executado e faturado",
     ],
     deliverables: [
       "Relatorio de divergencias (classificado por tipo e severidade)",
@@ -133,7 +133,7 @@ const CORPORATE_SERVICES = [
     title: "Auditoria de Politica (Policy Compliance)",
     icon: ClipboardCheck,
     badge: "Compliance",
-    description: "Verificacao automatizada da aderencia a politica de viagens e eventos.",
+    description: "Verificacao automatizada da aderencia as politicas corporativas vigentes.",
     auditItems: [
       "Classe/teto/antecedencia/fornecedor preferencial",
       "Fluxo de aprovacao e alcadas",
@@ -188,8 +188,8 @@ const CORPORATE_SERVICES = [
     description: "Deteccao de padroes atipicos e potenciais abusos.",
     auditItems: [
       "Duplicidades e cobrancas repetidas",
-      "Tarifas acima do esperado / inconsistencias por rota e perfil",
-      "Gastos fora do padrao por viajante/unidade",
+      "Valores acima do esperado / inconsistencias por categoria e perfil",
+      "Gastos fora do padrao por unidade/centro de custo",
       "Falhas de segregacao (solicita/aprova/emite/paga)",
     ],
     deliverables: [
@@ -265,18 +265,6 @@ const TMC_SERVICES = [
   },
 ];
 
-const MICE_AUDIT_ITEMS = [
-  "RFP e concorrencia (minimo de propostas e criterios)",
-  "Orcamento vs realizado (variacoes, aditivos, extras)",
-  "Contratos de venue, A/V, cenografia, A&B, hospedagem de grupo",
-  "Conciliacao de faturas, notas, comprovantes e reembolsos",
-];
-
-const MICE_DELIVERABLES = [
-  "Matriz comparativa de propostas com justificativas",
-  "Trilha de aprovacoes e governanca",
-  "Pacote de evidencias do evento (Evidence Pack)",
-];
 
 const METHODOLOGY_STAGES = [
   { step: 1, title: "Onboarding & Mapeamento", icon: FileSignature, description: "Sistemas, fornecedores, contratos e politica" },
@@ -758,7 +746,7 @@ export default function Home() {
           <h2 className="text-lg font-semibold">Para Empresas</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Servicos de auditoria para empresas que contratam viagens e eventos corporativos.
+          Servicos de auditoria forense para empresas com despesas corporativas recorrentes.
         </p>
         <div className="space-y-3">
           {CORPORATE_SERVICES.map((service) => (
@@ -775,52 +763,13 @@ export default function Home() {
           <h2 className="text-lg font-semibold">Para Fornecedores</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Programa para maturidade e padronizacao de TMC, Cias Aereas, Redes Hoteleiras, Locadoras, Espacos de Evento, A&B, Brindes, Graficas, Agencias entre outros.
+          Programa para maturidade e padronizacao de fornecedores corporativos — diagnostico, governanca, billing e adequacao operacional.
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {TMC_SERVICES.map((service) => (
             <ExpandableTmcCard key={service.id} service={service} />
           ))}
         </div>
-      </div>
-
-      <Separator />
-
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <CalendarDays className="w-5 h-5 text-violet-600 dark:text-violet-400" />
-          <h2 className="text-lg font-semibold">Eventos Corporativos (MICE) — Auditoria Especializada</h2>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Auditoria completa do ciclo de eventos: sourcing → contratacao → execucao → fechamento.
-        </p>
-        <Card>
-          <CardContent className="p-5 space-y-4">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">O que auditamos</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {MICE_AUDIT_ITEMS.map((item) => (
-                  <div key={item} className="flex items-start gap-2">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-violet-600 mt-0.5 shrink-0" />
-                    <span className="text-xs text-muted-foreground">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <Separator />
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-2 font-medium">Entregas</p>
-              <div className="space-y-1.5">
-                {MICE_DELIVERABLES.map((item) => (
-                  <div key={item} className="flex items-start gap-2">
-                    <FileText className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
-                    <span className="text-xs text-muted-foreground">{item}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
       <Separator />
@@ -905,7 +854,7 @@ export default function Home() {
           <h2 className="text-lg font-semibold">Cobertura Nacional e LATAM</h2>
         </div>
         <p className="text-sm text-muted-foreground max-w-3xl leading-relaxed">
-          Cobertura completa do ecossistema corporativo de despesas, desde GDS e OBTs ate eventos corporativos (MICE), com atuacao em toda a America Latina.
+          Cobertura completa do ecossistema corporativo de despesas, com atuacao em toda a America Latina.
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
           {LATAM_ECOSYSTEM_CATEGORIES.map((cat) => (
