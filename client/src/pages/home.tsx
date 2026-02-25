@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import {
   Shield,
   ShieldCheck,
@@ -552,6 +557,9 @@ function ExpandableTmcCard({ service }: { service: typeof TMC_SERVICES[0] }) {
 
 export default function Home() {
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [showCustomDialog, setShowCustomDialog] = useState(false);
+  const [customForm, setCustomForm] = useState({ empresa: "", cnpj: "", nome: "", email: "", telefone: "", necessidade: "" });
+  const { toast } = useToast();
 
   return (
     <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
@@ -1037,7 +1045,7 @@ export default function Home() {
         <p className="text-xs text-muted-foreground max-w-3xl">
           O AuraAudit funciona em camadas: a assinatura base (Pass) garante auditoria continua, e voce adiciona servicos de IA sob demanda, pagando apenas pelo que usar.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="border-primary/30" data-testid="card-module-pass">
             <CardContent className="p-4 space-y-2">
               <Badge className="text-[10px]">Base</Badge>
@@ -1107,8 +1115,98 @@ export default function Home() {
               </Button>
             </CardContent>
           </Card>
+          <Card className="border-violet-500/30" data-testid="card-module-custom">
+            <CardContent className="p-4 space-y-2">
+              <Badge variant="secondary" className="text-[10px] bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400">Sob consulta</Badge>
+              <h3 className="text-sm font-semibold">Servicos Customizados</h3>
+              <p className="text-[11px] text-muted-foreground leading-relaxed">
+                Projetos sob medida: auditoria pontual, implantacao de controles, success fee, treinamentos e consultoria especializada.
+              </p>
+              <div className="space-y-1 pt-1">
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Handshake className="w-3 h-3 text-violet-600" /> Auditoria pontual / projeto fechado
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Handshake className="w-3 h-3 text-violet-600" /> Implantacao de politicas e controles
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Handshake className="w-3 h-3 text-violet-600" /> Success fee sobre recuperacoes
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Handshake className="w-3 h-3 text-violet-600" /> Treinamento e capacitacao
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+                  <Handshake className="w-3 h-3 text-violet-600" /> Consultoria em T&E e compliance
+                </div>
+              </div>
+              <Button size="sm" className="w-full mt-2 text-xs bg-violet-600 hover:bg-violet-700 text-white" onClick={() => setShowCustomDialog(true)} data-testid="button-module-custom">
+                <MessageSquare className="w-3 h-3 mr-1" />
+                Falar com consultor
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      <Dialog open={showCustomDialog} onOpenChange={setShowCustomDialog}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Handshake className="w-5 h-5 text-violet-600" />
+              Servicos Customizados
+            </DialogTitle>
+            <DialogDescription>
+              Descreva sua necessidade e um consultor entrara em contato em ate 24h uteis.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="custom-empresa" className="text-xs">Empresa</Label>
+                <Input id="custom-empresa" placeholder="Nome da empresa" value={customForm.empresa} onChange={(e) => setCustomForm(p => ({ ...p, empresa: e.target.value }))} data-testid="input-custom-empresa" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="custom-cnpj" className="text-xs">CNPJ</Label>
+                <Input id="custom-cnpj" placeholder="00.000.000/0000-00" value={customForm.cnpj} onChange={(e) => setCustomForm(p => ({ ...p, cnpj: e.target.value }))} data-testid="input-custom-cnpj" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="custom-nome" className="text-xs">Nome completo</Label>
+                <Input id="custom-nome" placeholder="Seu nome" value={customForm.nome} onChange={(e) => setCustomForm(p => ({ ...p, nome: e.target.value }))} data-testid="input-custom-nome" />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="custom-email" className="text-xs">E-mail corporativo</Label>
+                <Input id="custom-email" type="email" placeholder="voce@empresa.com" value={customForm.email} onChange={(e) => setCustomForm(p => ({ ...p, email: e.target.value }))} data-testid="input-custom-email" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="custom-telefone" className="text-xs">Telefone / WhatsApp</Label>
+              <Input id="custom-telefone" placeholder="+55 (11) 99999-9999" value={customForm.telefone} onChange={(e) => setCustomForm(p => ({ ...p, telefone: e.target.value }))} data-testid="input-custom-telefone" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="custom-necessidade" className="text-xs">Descreva sua necessidade</Label>
+              <Textarea id="custom-necessidade" placeholder="Ex: Precisamos de uma auditoria pontual nos contratos de hotelaria dos ultimos 2 anos, com foco em compliance e recuperacao de valores..." rows={4} value={customForm.necessidade} onChange={(e) => setCustomForm(p => ({ ...p, necessidade: e.target.value }))} data-testid="input-custom-necessidade" />
+            </div>
+            <Button
+              className="w-full bg-violet-600 hover:bg-violet-700 text-white"
+              disabled={!customForm.empresa || !customForm.nome || !customForm.email || !customForm.necessidade}
+              onClick={() => {
+                toast({ title: "Solicitacao enviada!", description: "Um consultor entrara em contato em ate 24h uteis." });
+                setShowCustomDialog(false);
+                setCustomForm({ empresa: "", cnpj: "", nome: "", email: "", telefone: "", necessidade: "" });
+              }}
+              data-testid="button-submit-custom"
+            >
+              Enviar solicitacao
+              <ArrowRight className="w-3 h-3 ml-1" />
+            </Button>
+            <p className="text-[10px] text-muted-foreground text-center">
+              Seus dados sao protegidos e usados apenas para contato comercial.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Separator />
 
