@@ -578,7 +578,7 @@ export default function Home() {
               Solicitar diagnostico
             </Button>
             <Button variant="outline" size="sm" className="text-xs" data-testid="button-monthly-subscription" onClick={() => window.location.href = '/subscription'}>
-              Assinatura mensal
+              Plano Basico $99 / Mes
             </Button>
           </div>
         </CardContent>
@@ -763,6 +763,14 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-3 py-2">
+        <p className="text-xs text-muted-foreground">Plano basico com <strong className="text-foreground">cadeia de custodia</strong> e <strong className="text-foreground">rastreabilidade juridica</strong></p>
+        <Button variant="outline" size="sm" className="text-xs" onClick={() => window.location.href = '/subscription'} data-testid="button-cta-custody-plan">
+          Ver plano
+          <ArrowRight className="w-3 h-3 ml-1" />
+        </Button>
       </div>
 
       <div className="relative overflow-hidden rounded-xl border border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="banner-chain-custody">
