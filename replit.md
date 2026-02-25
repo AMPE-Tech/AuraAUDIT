@@ -77,6 +77,8 @@ server/
 - `/reports` - Structured audit reports
 - `/clients` - Client registration
 - `/integrations` - Data source integrations hub
+- `/services` - Service catalog (P0-P3 priority levels)
+- `/admin` - Admin panel (stats, expense/client/integration management, activity log)
 
 ## Routes (Client Portal)
 - `/dashboard` - Client project dashboard (volumes, metrics, charts, anomalies)

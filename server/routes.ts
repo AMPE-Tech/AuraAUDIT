@@ -314,6 +314,69 @@ export async function registerRoutes(
     res.json(trail);
   });
 
+  app.get("/api/admin/stats", async (_req, res) => {
+    const [expenses, auditCases, anomalies, clients, dataSources, auditTrail] = await Promise.all([
+      storage.getExpenses(),
+      storage.getAuditCases(),
+      storage.getAnomalies(),
+      storage.getClients(),
+      storage.getDataSources(),
+      storage.getAuditTrail(),
+    ]);
+
+    const totalExpenseAmount = expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0);
+    const pendingExpenses = expenses.filter(e => e.status === "pending").length;
+    const approvedExpenses = expenses.filter(e => e.status === "approved").length;
+    const flaggedExpenses = expenses.filter(e => e.status === "flagged").length;
+    const highRiskExpenses = expenses.filter(e => e.riskLevel === "high" || e.riskLevel === "critical").length;
+
+    const openCases = auditCases.filter(c => c.status === "open" || c.status === "in_progress").length;
+    const closedCases = auditCases.filter(c => c.status === "closed" || c.status === "completed").length;
+    const totalSavings = auditCases.reduce((sum, c) => sum + parseFloat(c.savingsIdentified || "0"), 0);
+
+    const unresolvedAnomalies = anomalies.filter(a => !a.resolved).length;
+    const resolvedAnomalies = anomalies.filter(a => a.resolved).length;
+
+    const activeClients = clients.filter(c => c.status === "active").length;
+    const pendingClients = clients.filter(c => c.status === "pending").length;
+
+    const connectedSources = dataSources.filter(d => d.status === "connected").length;
+    const disconnectedSources = dataSources.filter(d => d.status === "disconnected").length;
+
+    res.json({
+      expenses: { total: expenses.length, totalAmount: totalExpenseAmount, pending: pendingExpenses, approved: approvedExpenses, flagged: flaggedExpenses, highRisk: highRiskExpenses },
+      auditCases: { total: auditCases.length, open: openCases, closed: closedCases, totalSavings },
+      anomalies: { total: anomalies.length, unresolved: unresolvedAnomalies, resolved: resolvedAnomalies },
+      clients: { total: clients.length, active: activeClients, pending: pendingClients },
+      dataSources: { total: dataSources.length, connected: connectedSources, disconnected: disconnectedSources },
+      auditTrail: { total: auditTrail.length, recent: auditTrail.slice(0, 20) },
+      recentExpenses: expenses.slice(0, 10),
+      recentClients: clients.slice(0, 10),
+      recentDataSources: dataSources.slice(0, 10),
+    });
+  });
+
+  app.delete("/api/expenses/:id", async (req, res) => {
+    const existing = await storage.getExpense(req.params.id);
+    if (!existing) return res.status(404).json({ message: "Despesa nao encontrada" });
+    await logAuditTrail("admin", "delete", "expense", req.params.id, existing, null, req.ip);
+    res.json({ message: "Despesa removida" });
+  });
+
+  app.delete("/api/clients/:id", async (req, res) => {
+    const existing = await storage.getClient(req.params.id);
+    if (!existing) return res.status(404).json({ message: "Cliente nao encontrado" });
+    await logAuditTrail("admin", "delete", "client", req.params.id, existing, null, req.ip);
+    res.json({ message: "Cliente removido" });
+  });
+
+  app.delete("/api/data-sources/:id", async (req, res) => {
+    const existing = await storage.getDataSource(req.params.id);
+    if (!existing) return res.status(404).json({ message: "Fonte de dados nao encontrada" });
+    await logAuditTrail("admin", "delete", "data_source", req.params.id, existing, null, req.ip);
+    res.json({ message: "Fonte de dados removida" });
+  });
+
   registerAiChatRoutes(app);
 
   return httpServer;

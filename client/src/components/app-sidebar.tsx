@@ -11,6 +11,7 @@ import {
   Plug,
   Home,
   Briefcase,
+  Settings,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -42,6 +43,10 @@ const servicosItems = [
 const cadastroItems = [
   { title: "Clientes", url: "/clients", icon: Users },
   { title: "Integracoes", url: "/integrations", icon: Plug },
+];
+
+const adminItems = [
+  { title: "Painel Admin", url: "/admin", icon: Settings },
 ];
 
 const systemItems = [
@@ -117,6 +122,26 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {cadastroItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.startsWith(item.url)}
+                  >
+                    <Link href={item.url}>
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Admin</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {adminItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
