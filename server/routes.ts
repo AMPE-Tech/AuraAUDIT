@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { createHash } from "crypto";
-import { insertExpenseSchema, insertAuditCaseSchema, insertAnomalySchema } from "@shared/schema";
+import { insertExpenseSchema, insertAuditCaseSchema, insertAnomalySchema, insertClientSchema, insertDataSourceSchema } from "@shared/schema";
 import { z } from "zod";
 
 function generateIntegrityHash(data: any, timestamp: string): string {
@@ -57,6 +57,34 @@ const updateAuditCaseSchema = z.object({
   recommendations: z.string().optional(),
   totalAmount: z.string().optional(),
   savingsIdentified: z.string().optional(),
+}).strict();
+
+const updateClientSchema = z.object({
+  name: z.string().optional(),
+  type: z.string().optional(),
+  cnpj: z.string().optional(),
+  contactName: z.string().optional(),
+  contactEmail: z.string().optional(),
+  contactPhone: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  status: z.string().optional(),
+  notes: z.string().optional(),
+}).strict();
+
+const updateDataSourceSchema = z.object({
+  name: z.string().optional(),
+  type: z.string().optional(),
+  status: z.string().optional(),
+  syncFrequency: z.string().optional(),
+  fileFormat: z.string().optional(),
+  description: z.string().optional(),
+  config: z.any().optional(),
+  totalRecords: z.number().optional(),
+  totalAmount: z.string().optional(),
+  lastSyncAt: z.string().optional(),
+  clientId: z.string().optional(),
 }).strict();
 
 export async function registerRoutes(
@@ -185,6 +213,98 @@ export async function registerRoutes(
         return res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
       }
       res.status(400).json({ message: error.message || "Erro ao atualizar anomalia" });
+    }
+  });
+
+  app.get("/api/clients", async (_req, res) => {
+    const allClients = await storage.getClients();
+    res.json(allClients);
+  });
+
+  app.get("/api/clients/type/:type", async (req, res) => {
+    const clientsByType = await storage.getClientsByType(req.params.type);
+    res.json(clientsByType);
+  });
+
+  app.get("/api/clients/:id", async (req, res) => {
+    const client = await storage.getClient(req.params.id);
+    if (!client) return res.status(404).json({ message: "Cliente nao encontrado" });
+    res.json(client);
+  });
+
+  app.post("/api/clients", async (req, res) => {
+    try {
+      const parsed = insertClientSchema.parse(req.body);
+      const client = await storage.createClient(parsed);
+      await logAuditTrail("system", "create", "client", client.id, null, client, req.ip);
+      res.status(201).json(client);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+      }
+      res.status(400).json({ message: error.message || "Erro ao criar cliente" });
+    }
+  });
+
+  app.patch("/api/clients/:id", async (req, res) => {
+    try {
+      const existing = await storage.getClient(req.params.id);
+      if (!existing) return res.status(404).json({ message: "Cliente nao encontrado" });
+      const parsed = updateClientSchema.parse(req.body);
+      const updated = await storage.updateClient(req.params.id, parsed);
+      await logAuditTrail("system", "update", "client", req.params.id, existing, updated, req.ip);
+      res.json(updated);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+      }
+      res.status(400).json({ message: error.message || "Erro ao atualizar cliente" });
+    }
+  });
+
+  app.get("/api/data-sources", async (_req, res) => {
+    const allSources = await storage.getDataSources();
+    res.json(allSources);
+  });
+
+  app.get("/api/data-sources/client/:clientId", async (req, res) => {
+    const sources = await storage.getDataSourcesByClient(req.params.clientId);
+    res.json(sources);
+  });
+
+  app.get("/api/data-sources/:id", async (req, res) => {
+    const source = await storage.getDataSource(req.params.id);
+    if (!source) return res.status(404).json({ message: "Fonte de dados nao encontrada" });
+    res.json(source);
+  });
+
+  app.post("/api/data-sources", async (req, res) => {
+    try {
+      const parsed = insertDataSourceSchema.parse(req.body);
+      const source = await storage.createDataSource(parsed);
+      await logAuditTrail("system", "create", "data_source", source.id, null, source, req.ip);
+      res.status(201).json(source);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+      }
+      res.status(400).json({ message: error.message || "Erro ao criar fonte de dados" });
+    }
+  });
+
+  app.patch("/api/data-sources/:id", async (req, res) => {
+    try {
+      const existing = await storage.getDataSource(req.params.id);
+      if (!existing) return res.status(404).json({ message: "Fonte de dados nao encontrada" });
+      const parsed = updateDataSourceSchema.parse(req.body);
+      const updated = await storage.updateDataSource(req.params.id, parsed);
+      await logAuditTrail("system", "update", "data_source", req.params.id, existing, updated, req.ip);
+      res.json(updated);
+    } catch (error: any) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors.map(e => e.message).join(", ") });
+      }
+      res.status(400).json({ message: error.message || "Erro ao atualizar fonte de dados" });
     }
   });
 

@@ -15,6 +15,8 @@ import Anomalies from "@/pages/anomalies";
 import AuditTrailPage from "@/pages/audit-trail";
 import Reports from "@/pages/reports";
 import Reconciliation from "@/pages/reconciliation";
+import Clients from "@/pages/clients";
+import Integrations from "@/pages/integrations";
 
 function Router() {
   return (
@@ -26,6 +28,8 @@ function Router() {
       <Route path="/anomalies" component={Anomalies} />
       <Route path="/audit-trail" component={AuditTrailPage} />
       <Route path="/reports" component={Reports} />
+      <Route path="/clients" component={Clients} />
+      <Route path="/integrations" component={Integrations} />
       <Route component={NotFound} />
     </Switch>
   );

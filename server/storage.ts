@@ -1,12 +1,14 @@
 import { eq, desc } from "drizzle-orm";
 import { db } from "./db";
 import {
-  users, expenses, auditCases, anomalies, auditTrail,
+  users, expenses, auditCases, anomalies, auditTrail, clients, dataSources,
   type InsertUser, type User,
   type InsertExpense, type Expense,
   type InsertAuditCase, type AuditCase,
   type InsertAnomaly, type Anomaly,
   type InsertAuditTrail, type AuditTrail,
+  type InsertClient, type Client,
+  type InsertDataSource, type DataSource,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -28,6 +30,18 @@ export interface IStorage {
   getAnomaly(id: string): Promise<Anomaly | undefined>;
   createAnomaly(anomaly: InsertAnomaly): Promise<Anomaly>;
   updateAnomaly(id: string, data: Partial<Anomaly>): Promise<Anomaly | undefined>;
+
+  getClients(): Promise<Client[]>;
+  getClient(id: string): Promise<Client | undefined>;
+  getClientsByType(type: string): Promise<Client[]>;
+  createClient(client: InsertClient): Promise<Client>;
+  updateClient(id: string, data: Partial<InsertClient>): Promise<Client | undefined>;
+
+  getDataSources(): Promise<DataSource[]>;
+  getDataSource(id: string): Promise<DataSource | undefined>;
+  getDataSourcesByClient(clientId: string): Promise<DataSource[]>;
+  createDataSource(dataSource: InsertDataSource): Promise<DataSource>;
+  updateDataSource(id: string, data: Partial<InsertDataSource>): Promise<DataSource | undefined>;
 
   getAuditTrail(): Promise<AuditTrail[]>;
   createAuditTrailEntry(entry: InsertAuditTrail): Promise<AuditTrail>;
@@ -103,6 +117,52 @@ export class DatabaseStorage implements IStorage {
 
   async updateAnomaly(id: string, data: Partial<Anomaly>): Promise<Anomaly | undefined> {
     const [updated] = await db.update(anomalies).set(data).where(eq(anomalies.id, id)).returning();
+    return updated;
+  }
+
+  async getClients(): Promise<Client[]> {
+    return db.select().from(clients).orderBy(desc(clients.createdAt));
+  }
+
+  async getClient(id: string): Promise<Client | undefined> {
+    const [client] = await db.select().from(clients).where(eq(clients.id, id));
+    return client;
+  }
+
+  async getClientsByType(type: string): Promise<Client[]> {
+    return db.select().from(clients).where(eq(clients.type, type)).orderBy(desc(clients.createdAt));
+  }
+
+  async createClient(client: InsertClient): Promise<Client> {
+    const [created] = await db.insert(clients).values(client).returning();
+    return created;
+  }
+
+  async updateClient(id: string, data: Partial<InsertClient>): Promise<Client | undefined> {
+    const [updated] = await db.update(clients).set({ ...data, updatedAt: new Date() }).where(eq(clients.id, id)).returning();
+    return updated;
+  }
+
+  async getDataSources(): Promise<DataSource[]> {
+    return db.select().from(dataSources).orderBy(desc(dataSources.createdAt));
+  }
+
+  async getDataSource(id: string): Promise<DataSource | undefined> {
+    const [ds] = await db.select().from(dataSources).where(eq(dataSources.id, id));
+    return ds;
+  }
+
+  async getDataSourcesByClient(clientId: string): Promise<DataSource[]> {
+    return db.select().from(dataSources).where(eq(dataSources.clientId, clientId)).orderBy(desc(dataSources.createdAt));
+  }
+
+  async createDataSource(dataSource: InsertDataSource): Promise<DataSource> {
+    const [created] = await db.insert(dataSources).values(dataSource).returning();
+    return created;
+  }
+
+  async updateDataSource(id: string, data: Partial<InsertDataSource>): Promise<DataSource | undefined> {
+    const [updated] = await db.update(dataSources).set({ ...data, updatedAt: new Date() }).where(eq(dataSources.id, id)).returning();
     return updated;
   }
 

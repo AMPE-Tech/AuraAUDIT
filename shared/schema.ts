@@ -60,6 +60,40 @@ export const anomalies = pgTable("anomalies", {
   resolution: text("resolution"),
 });
 
+export const clients = pgTable("clients", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  name: text("name").notNull(),
+  type: text("type").notNull(),
+  cnpj: text("cnpj").notNull(),
+  contactName: text("contact_name").notNull(),
+  contactEmail: text("contact_email").notNull(),
+  contactPhone: text("contact_phone"),
+  address: text("address"),
+  city: text("city"),
+  state: text("state"),
+  status: text("status").notNull().default("pending"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const dataSources = pgTable("data_sources", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id"),
+  name: text("name").notNull(),
+  type: text("type").notNull(),
+  status: text("status").notNull().default("disconnected"),
+  lastSyncAt: timestamp("last_sync_at"),
+  syncFrequency: text("sync_frequency").notNull().default("monthly"),
+  fileFormat: text("file_format").notNull().default("csv"),
+  description: text("description"),
+  config: jsonb("config"),
+  totalRecords: integer("total_records").default(0),
+  totalAmount: decimal("total_amount", { precision: 14, scale: 2 }).default("0"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const auditTrail = pgTable("audit_trail", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   userId: text("user_id").notNull(),
@@ -95,6 +129,18 @@ export const insertAnomalySchema = createInsertSchema(anomalies).omit({
   detectedAt: true,
 });
 
+export const insertClientSchema = createInsertSchema(clients).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDataSourceSchema = createInsertSchema(dataSources).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertAuditTrailSchema = createInsertSchema(auditTrail).omit({
   id: true,
   timestamp: true,
@@ -108,5 +154,9 @@ export type InsertAuditCase = z.infer<typeof insertAuditCaseSchema>;
 export type AuditCase = typeof auditCases.$inferSelect;
 export type InsertAnomaly = z.infer<typeof insertAnomalySchema>;
 export type Anomaly = typeof anomalies.$inferSelect;
+export type InsertClient = z.infer<typeof insertClientSchema>;
+export type Client = typeof clients.$inferSelect;
+export type InsertDataSource = z.infer<typeof insertDataSourceSchema>;
+export type DataSource = typeof dataSources.$inferSelect;
 export type InsertAuditTrail = z.infer<typeof insertAuditTrailSchema>;
 export type AuditTrail = typeof auditTrail.$inferSelect;

@@ -7,6 +7,8 @@ import {
   FileBarChart,
   Shield,
   ArrowRightLeft,
+  Users,
+  Plug,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -28,6 +30,11 @@ const mainItems = [
   { title: "Reconciliacao", url: "/reconciliation", icon: ArrowRightLeft },
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
   { title: "Anomalias", url: "/anomalies", icon: AlertTriangle },
+];
+
+const cadastroItems = [
+  { title: "Clientes", url: "/clients", icon: Users },
+  { title: "Integracoes", url: "/integrations", icon: Plug },
 ];
 
 const systemItems = [
@@ -67,6 +74,26 @@ export function AppSidebar() {
                         ? location === "/"
                         : location.startsWith(item.url)
                     }
+                  >
+                    <Link href={item.url}>
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Cadastro & Integracoes</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {cadastroItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.startsWith(item.url)}
                   >
                     <Link href={item.url}>
                       <item.icon className="w-4 h-4" />
