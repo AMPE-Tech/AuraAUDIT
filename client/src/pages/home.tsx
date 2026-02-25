@@ -46,6 +46,7 @@ import {
   MessageSquare,
   Layers,
   Handshake,
+  Calculator,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -869,6 +870,14 @@ export default function Home() {
         ))}
       </div>
 
+      <div className="flex items-center justify-center gap-3 py-2">
+        <p className="text-xs text-muted-foreground">A partir de <strong className="text-foreground">US$ 250/mes</strong> — sem pegadinhas, sem sustos.</p>
+        <Button variant="outline" size="sm" className="text-xs" onClick={() => window.location.href = '/subscription'} data-testid="button-cta-pricing-inline-1">
+          Ver plano
+          <ArrowRight className="w-3 h-3 ml-1" />
+        </Button>
+      </div>
+
       <Separator />
 
       <div className="space-y-4">
@@ -957,14 +966,14 @@ export default function Home() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="border-primary/20">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <CreditCard className="w-4 h-4 text-primary" />
             Modelos de contratacao
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {PRICING_MODELS.map((model) => (
               <div key={model.title} className="p-4 rounded-lg border bg-card text-center" data-testid={`pricing-${model.title.toLowerCase().replace(/\s/g, '-')}`}>
@@ -973,6 +982,22 @@ export default function Home() {
                 <p className="text-xs text-muted-foreground mt-1">{model.description}</p>
               </div>
             ))}
+          </div>
+          <div className="flex items-center justify-between bg-muted/50 rounded-lg p-4">
+            <div>
+              <p className="text-xs font-medium">AuraAudit Pass — assinatura mensal</p>
+              <p className="text-[11px] text-muted-foreground">US$ 250/mes + taxa progressiva por volume. CAP US$ 3.000/mes.</p>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Button variant="outline" size="sm" className="text-xs" onClick={() => window.location.href = '/subscription'} data-testid="button-cta-simulate-cost">
+                <Calculator className="w-3 h-3 mr-1" />
+                Simular custo
+              </Button>
+              <Button size="sm" className="text-xs" onClick={() => window.location.href = '/subscription'} data-testid="button-cta-subscribe-pricing">
+                Assinar
+                <ArrowRight className="w-3 h-3 ml-1" />
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -103,13 +103,15 @@ server/
 - **Auditoria**: Tipos de Despesas, Integracoes
 - **Comercial**: Produtos & Servicos, Contrato, Ecossistema LATAM
 
-## LATAM Ecosystem Categories (15)
-GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo Solutions, SAP Concur, Amadeus Cytric, GetThere/Serko, Neo/Amex GBT, Navan, TravelPerk, Lemontech, Onfly, VOLL), TMC (CVC Corp, Flytour, BRT, Copastur, Rextur, Alatur JTB, Avipam, Travelcare), ERP/Backoffice (SAP S/4FI, Oracle EBS AP, TOTVS Protheus, Microsoft Dynamics, Benner, Regente, Stur, Wintour), Pagamentos (IVT, EBTA, HCard, CTA, CTAH, Purchasing, VCN, TAR, Conferma Pay, B2, WEX, AirPlus), Cias Aereas (LATAM, GOL, Azul, AA, United, Copa, Avianca, Aeromexico, JetSmart, BSPlink), Hotelaria (Accor, Atlantica, Marriott, Hilton, IHG, Wyndham, Blue Tree, Nacional Inn, Windsor, Bourbon), Car Rental (Localiza Hertz, Movida, Unidas, Foco, Avis, Budget, Enterprise, National), Seguros (Porto Seguro, Allianz, Assist Card, Travel Ace, GTA, Affinity, Coris, April), MICE (MCI Group, GL Events, Embratur, InEvent, Sympla, Eventbrite, Cvent), BSM (Coupa, Concur, Cvent, Veeva, BSPlink, Conferma, B2B, Paytrack, Mobi), eSIGN (DocuSign, Effect, AdobeSign, D4Sign, ClickSign), BI (Power BI, QlikView, Tableau, Cognos), Logistics (Paytrack Air/Hotel/Train/Taxi), Others (AZB, LOS, MDGx, Espider, Webuy, Cora, ICE, Selas, Certis, CSM)
+## LATAM Ecosystem Categories (10 primary)
+GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo, Concur, Cytric, Navan, TravelPerk, Onfly, VOLL), TMC (CVC Corp, Flytour, BRT, Copastur, Rextur, Alatur JTB), Midoffice/Backoffice (Wintour, Stur, SAP S/4FI, Oracle EBS, TOTVS, Benner), Pagamentos (Bradesco EBTA, IVT, HCard, Conferma Pay, WEX, AirPlus), Cias Aereas (LATAM, GOL, Azul, AA, United, Copa), Hotelaria (Accor, Atlantica, Marriott, Hilton, IHG, Blue Tree), Car Rental (Localiza Hertz, Movida, Unidas, Avis, Budget, Enterprise), Seguros (Porto Seguro, Allianz, Assist Card, Travel Ace, GTA), MICE (MCI Group, GL Events, InEvent, Sympla, Cvent)
 
 ## Subscription System (AuraAudit Pass)
 - **Plan**: AuraAudit Pass — single plan, self-service subscription
-- **Pricing**: US$ 250/month fixed + 0.30% on VAM excess above US$ 25,000/month, CAP US$ 3,000/month
-- **Formula**: `min(3000, 250 + 0.003 * max(0, VAM - 25000))`
+- **Pricing**: US$ 250/month fixed + progressive rate on VAM excess above US$ 25,000/month, CAP US$ 3,000/month
+- **Rate tiers (continuous)**: VAM<=100k: 0.30%, <=300k: 0.28%, <=600k: 0.26%, <=800k: 0.24%, <=1M: 0.22%, >1M: 0.20%
+- **Formula**: `min(3000, 250 + rateForVam(VAM) * max(0, VAM - 25000))`
+- **Terms version**: 1.1.0
 - **Checkout**: Stripe integration with terms acceptance (SHA-256 hash, IP, user-agent)
 - **Tables**: `terms_acceptance`, `monthly_consumption`, `billing_runs` (+ stripe schema managed by stripe-replit-sync)
 - **Routes**: `/subscription` (pricing + checkout), `/subscription/success`, `/subscription/cancel`
@@ -117,6 +119,8 @@ GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo Solutions, SAP Concur, Amad
 - **Files**: `server/stripeClient.ts`, `server/webhookHandlers.ts`, `server/stripe-routes.ts`, `client/src/pages/subscription.tsx`, `client/src/pages/subscription-success.tsx`, `client/src/pages/subscription-cancel.tsx`
 
 ## Recent Changes
+- 2026-02-25: Updated AuraAudit Pass pricing to progressive rate tiers (0.30%-0.20% by VAM), updated terms v1.1.0, added discrete CTAs throughout landing page, updated subscription page with tier table and examples
+- 2026-02-25: Simplified LATAM ecosystem from 15 to 10 primary categories (GDS, OBT, TMC, Midoffice/Backoffice, Pagamentos, Cias Aereas, Hotelaria, Car Rental, Seguros, MICE)
 - 2026-02-25: Implemented AuraAudit Pass subscription system with Stripe checkout, terms acceptance, VAM simulator, billing dashboard (CAP US$ 3,000)
 - 2026-02-25: Added Servicos page with DPO-spec service catalog (P0-P3 priority levels, 10 services, recommended sales order)
 - 2026-02-25: Moved AuraAI assistant to floating widget (bottom-right button) — available on every page for both admin and client, removed from sidebars

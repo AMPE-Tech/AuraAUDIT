@@ -9,52 +9,74 @@ import { z } from "zod";
 const PRICING = {
   MONTHLY_FIXED_USD: 250,
   FRANCHISE_USD: 25000,
-  VARIABLE_RATE: 0.003,
   CAP_USD: 3000,
-  TERMS_VERSION: "1.0.0",
+  TERMS_VERSION: "1.1.0",
 };
 
-export function calculateMonthlyTotal(vam: number): { fixed: number; variable: number; total: number } {
+export function rateForVam(vam: number): number {
+  if (vam <= 100000) return 0.0030;
+  if (vam <= 300000) return 0.0028;
+  if (vam <= 600000) return 0.0026;
+  if (vam <= 800000) return 0.0024;
+  if (vam <= 1000000) return 0.0022;
+  return 0.0020;
+}
+
+export function calculateMonthlyTotal(vam: number): {
+  fixed: number; excess: number; rate: number; variable: number; subtotal: number; total: number;
+} {
   const fixed = PRICING.MONTHLY_FIXED_USD;
   const excess = Math.max(0, vam - PRICING.FRANCHISE_USD);
-  const variable = PRICING.VARIABLE_RATE * excess;
-  const total = Math.min(PRICING.CAP_USD, fixed + variable);
-  return { fixed, variable: total - fixed, total };
+  const rate = rateForVam(vam);
+  const subtotal = fixed + rate * excess;
+  const total = Math.min(PRICING.CAP_USD, subtotal);
+  const variable = Math.max(0, total - fixed);
+  return { fixed, excess, rate, variable, subtotal, total };
 }
 
 function hashTermsText(text: string): string {
   return createHash("sha256").update(text).digest("hex");
 }
 
-const TERMS_TEXT_SHORT = `TERMOS DE ADESAO — AURAAUDIT PASS
+const TERMS_TEXT_SHORT = `TERMOS DE ADESAO (VERSAO ULTRA CURTA) — AURAAUDIT PASS
 Versao: ${PRICING.TERMS_VERSION}
 
 1) Objeto: O AuraAudit Pass e um servico online de auditoria forense para despesas corporativas e terceiros, com foco em Compliance/Juridico, incluindo trilhas auditaveis, cadeia de custodia, rastreabilidade juridica, alertas e dashboards executivos.
 
 2) Client-Controlled: O CONTRATANTE define o que auditar, quando e como, por regras, escopo, tolerancias, severidade e calendario. A CONTRATADA nao altera parametros sem autorizacao registrada.
 
-3) VAM e Deduplicacao: VAM (Valor Auditado Mensal) = soma dos valores monetarios das transacoes/despesas efetivamente processadas pela Plataforma no mes. Deduplicacao aplicada quando possivel.
+3) Dados, VAM e Deduplicacao: VAM (Valor Auditado Mensal) = soma dos valores monetarios das transacoes/despesas efetivamente processadas pela Plataforma no mes. Deduplicacao aplicada quando possivel para evitar contagem em duplicidade. Relatorio Mensal de Consumo (VAM) com memoria de calculo.
 
-4) Preco e CAP:
+4) Preco, cobranca, faixas e CAP (teto):
 - Mensalidade fixa: US$ 250/mes
 - Franquia: ate US$ 25.000 de VAM/mes sem variavel
-- Variavel: 0,30% sobre o excedente acima de US$ 25.000
-- CAP mensal: total limitado a US$ 3.000/mes
-- Formula: min(3000, 250 + 0,003 x max(0, VAM - 25.000))
+- Variavel (progressiva): aliquota conforme VAM do mes sobre o excedente:
+  Excedente = max(0, VAM - 25.000)
+- CAP mensal: total (fixo + variavel) limitado a US$ 3.000/mes
 
-5) Evidencias e rastreabilidade: A Plataforma registra logs e metadados (trilhas auditaveis) e preserva evidencias (cadeia de custodia). O Servico nao constitui parecer juridico.
+Faixas de aliquota (rate(VAM)) — continuas:
+  VAM <= US$ 100.000 -> 0,30%
+  VAM <= US$ 300.000 -> 0,28%
+  VAM <= US$ 600.000 -> 0,26%
+  VAM <= US$ 800.000 -> 0,24%
+  VAM <= US$ 1.000.000 -> 0,22%
+  VAM > US$ 1.000.000 -> 0,20%
+
+Formula: min(3000, 250 + rate(VAM) x max(0, VAM - 25.000))
+
+5) Evidencias, trilhas e rastreabilidade: A Plataforma registra logs e metadados (trilhas auditaveis) e preserva evidencias (cadeia de custodia). O Servico nao constitui parecer juridico.
 
 6) Confidencialidade: Dados, relatorios, achados e Evidence Packs sao confidenciais.
 
-7) LGPD: CONTRATANTE = Controlador; CONTRATADA = Operadora. Medidas de seguranca compativeis.
+7) LGPD / Protecao de Dados: CONTRATANTE = Controlador; CONTRATADA = Operadora. Medidas de seguranca compativeis e logs de acesso.
 
-8) Limitacoes: Resultados dependem da qualidade dos dados. Sem garantia de economia ou recuperacao.
+8) Limitacoes: Resultados dependem da qualidade dos dados. Sem garantia de economia ou recuperacao. A CONTRATADA nao se responsabiliza por falhas de sistemas de terceiros.
 
-9) Vigencia: Mensal com renovacao automatica. Cancelamento a qualquer tempo, efeitos ao final do ciclo.
+9) Vigencia e cancelamento: Mensal com renovacao automatica. Cancelamento a qualquer tempo, efeitos ao final do ciclo. Valores do ciclo vigente nao sao reembolsaveis.
 
 10) Lei e foro: Lei aplicavel do Brasil. Foro de Sao Paulo/SP.
 
-11) Aceite eletronico: Registra data/hora, IP, usuario, versao e hash do texto aceito.`;
+11) Aceite eletronico: Registra data/hora, IP, usuario, versao e hash do texto aceito e vincula o CONTRATANTE.`;
 
 const checkoutSchema = z.object({
   companyName: z.string().min(1),
@@ -74,22 +96,26 @@ export function registerStripeRoutes(app: Express) {
   });
 
   app.get("/api/stripe/pricing", (_req: Request, res: Response) => {
+    const examples = [25000, 100000, 500000, 1500000].map(vam => ({
+      vam,
+      ...calculateMonthlyTotal(vam),
+    }));
     res.json({
       plan: "AuraAudit Pass",
       currency: "USD",
       monthlyFixed: PRICING.MONTHLY_FIXED_USD,
       franchiseVam: PRICING.FRANCHISE_USD,
-      variableRate: PRICING.VARIABLE_RATE,
-      variableRatePercent: "0.30%",
       capUsd: PRICING.CAP_USD,
-      formula: `min(${PRICING.CAP_USD}, 250 + 0.003 * max(0, VAM - 25000))`,
-      examples: [
-        { vam: 10000, total: 250 },
-        { vam: 25000, total: 250 },
-        { vam: 100000, total: 475 },
-        { vam: 500000, total: 1675 },
-        { vam: 1000000, total: 3000 },
+      tiers: [
+        { maxVam: 100000, rate: 0.0030, label: "0,30%" },
+        { maxVam: 300000, rate: 0.0028, label: "0,28%" },
+        { maxVam: 600000, rate: 0.0026, label: "0,26%" },
+        { maxVam: 800000, rate: 0.0024, label: "0,24%" },
+        { maxVam: 1000000, rate: 0.0022, label: "0,22%" },
+        { maxVam: null, rate: 0.0020, label: "0,20%" },
       ],
+      formula: "min(3000, 250 + rate(VAM) * max(0, VAM - 25000))",
+      examples,
     });
   });
 
@@ -179,7 +205,8 @@ export function registerStripeRoutes(app: Express) {
     res.json({
       vam,
       ...result,
-      formula: `min(${PRICING.CAP_USD}, 250 + 0.003 * max(0, ${vam} - 25000))`,
+      ratePercent: `${(result.rate * 100).toFixed(2)}%`,
+      formula: `min(3000, 250 + ${result.rate} * max(0, ${vam} - 25000))`,
     });
   });
 

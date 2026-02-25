@@ -1,0 +1,126 @@
+Perfeito — vou **eliminar os “buracos”** e deixar as faixas **contínuas** (sem intervalos sem regra), mantendo sua intenção: **quanto maior o VAM, menor a taxa**. Também atualizo os **textos da landing** e a **cláusula do contrato**, além do **bloco do Replit**.
+
+A regra passa a ser:
+
+* **Até 100.000** → 0,30%
+* **100.000,01 até 300.000** → 0,28%
+* **300.000,01 até 600.000** → 0,26%
+* **600.000,01 até 800.000** → 0,24%
+* **800.000,01 até 1.000.000** → 0,22%
+* **Acima de 1.000.000** → 0,20%
+
+> Para evitar problemas de centavos/moedas, em implementação a gente usa comparações **<=** por limites e o “else” final.
+
+---
+
+## 1) Landing page — Pricing (texto comercial atualizado)
+
+**Título:** Preço previsível. Escala justa.
+**Texto principal:**
+**US$ 250/mês** para auditar até **US$ 25.000/mês**.
+Acima disso, você paga **uma taxa progressiva** sobre o excedente — e conta com **CAP de US$ 3.000/mês**.
+
+**Linha de destaque:**
+**Sem sustos:** o total mensal nunca passa de **US$ 3.000**.
+
+**Faixas (contínuas, sem buracos):**
+*A alíquota incide sobre o excedente acima de US$ 25.000 (VAM − 25.000), conforme o VAM do mês.*
+
+* **Até US$ 100.000** → **0,30%**
+* **Até US$ 300.000** → **0,28%**
+* **Até US$ 600.000** → **0,26%**
+* **Até US$ 800.000** → **0,24%**
+* **Até US$ 1.000.000** → **0,22%**
+* **Acima de US$ 1.000.000** → **0,20%**
+
+**CTA primário:** **Assinar AuraAudit Pass**
+**CTA secundário:** **Simular meu custo mensal**
+
+---
+
+## 2) Contrato — Seção 7 (atualizada e contínua)
+
+### **7. Preço, Cobrança, Alíquotas por Faixa e CAP Mensal**
+
+7.1. **Mensalidade fixa:** US$ **250,00** (duzentos e cinquenta dólares) por mês.
+
+7.2. **Franquia incluída:** até **US$ 25.000,00** de **VAM (Valor Auditado Mensal)** por mês, não há cobrança variável adicional.
+
+7.3. **Cobrança variável por volume (VAM):** quando o VAM mensal ultrapassar US$ 25.000,00, incide cobrança variável calculada sobre o **Excedente**, definido como:
+**Excedente = max(0, VAM − 25.000)**
+
+7.4. **Alíquota aplicável por faixa de VAM (faixas contínuas):** a alíquota é definida conforme o **VAM total do mês** e aplicada **sobre o Excedente**, observadas as seguintes faixas:
+a) VAM **até US$ 100.000,00** → alíquota de **0,30%**
+b) VAM **até US$ 300.000,00** → alíquota de **0,28%**
+c) VAM **até US$ 600.000,00** → alíquota de **0,26%**
+d) VAM **até US$ 800.000,00** → alíquota de **0,24%**
+e) VAM **até US$ 1.000.000,00** → alíquota de **0,22%**
+f) VAM **acima de US$ 1.000.000,00** → alíquota de **0,20%**
+
+7.5. **CAP Mensal (teto):** o valor total mensal devido (**mensalidade fixa + variável**) fica limitado a **US$ 3.000,00** por mês (“CAP”), sem negociação.
+
+7.6. **Fórmula de cálculo (memória de cálculo):**
+**Preço do mês = min(3000, 250 + rate(VAM) × max(0, VAM − 25.000))**
+em que **rate(VAM)** é a alíquota definida na Cláusula 7.4.
+
+7.7. **Fechamento e cobrança:** a cobrança ocorre mensalmente, após o fechamento do período e emissão do **Relatório Mensal de Consumo (VAM)**, que conterá a memória de cálculo do valor devido.
+
+---
+
+## 3) Prompt do Replit — bloco de billing atualizado (sem buracos)
+
+### **Pricing & Billing (regra oficial)**
+
+Implementar plano único **AuraAudit Pass** com:
+
+* **Mensalidade fixa:** USD **250.00** / mês
+* **Franquia incluída:** até **USD 25,000.00** de VAM/mês sem variável
+* **Variável:** aplicar `rate(VAM)` sobre o excedente `excess = max(0, VAM - 25000)`
+* **CAP mensal:** `total <= 3000.00`
+* **Fórmula final:**
+  `monthly_total_usd = min(3000, 250 + rate(VAM) * max(0, VAM - 25000))`
+
+### **Tabela contínua de rate(VAM)**
+
+A alíquota é definida pelo **VAM total do mês** (single-rate by tier, sem buracos):
+
+* `VAM <= 100000` → `0.0030`
+* `VAM <= 300000` → `0.0028`
+* `VAM <= 600000` → `0.0026`
+* `VAM <= 800000` → `0.0024`
+* `VAM <= 1000000` → `0.0022`
+* `VAM > 1000000` → `0.0020`
+
+### **Implementação (função obrigatória)**
+
+```ts
+export function rateForVam(vam: number): number {
+  if (vam <= 100000) return 0.0030;
+  if (vam <= 300000) return 0.0028;
+  if (vam <= 600000) return 0.0026;
+  if (vam <= 800000) return 0.0024;
+  if (vam <= 1000000) return 0.0022;
+  return 0.0020; // acima de 1.000.000
+}
+
+export function monthlyTotalUsd(vam: number): {
+  excess: number; rate: number; subtotal: number; total: number; variable: number;
+} {
+  const excess = Math.max(0, vam - 25000);
+  const rate = rateForVam(vam);
+  const subtotal = 250 + rate * excess;
+  const total = Math.min(3000, subtotal);
+  const variable = Math.max(0, total - 250);
+  return { excess, rate, subtotal, total, variable };
+}
+```
+
+### **Critérios de aceite (billing)**
+
+Testar bordas: `25000`, `100000`, `300000`, `600000`, `800000`, `1000000`, `1000001`
+Garantir: `total <= 3000` sempre.
+Salvar em `monthly_consumption`: `vam_total`, `rate_applied`, `excess`, `variable_usd`, `total_usd`.
+
+---
+
+Se quiser, eu também atualizo o **texto do checkbox do checkout** e o **Termo Ultra Curto** com o CAP 3.000 e as faixas contínuas (para ficar 100% consistente em todas as telas).
