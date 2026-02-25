@@ -26,6 +26,10 @@ import {
   Plug,
   Users,
   PieChart,
+  Upload,
+  ListChecks,
+  Zap,
+  FileBarChart,
 } from "lucide-react";
 import { formatCurrency, formatDate, getCategoryLabel, getSeverityLabel, getAnomalyTypeLabel } from "@/lib/formatters";
 import type { Expense, AuditCase, Anomaly, Client, DataSource } from "@shared/schema";
@@ -138,13 +142,11 @@ const INCONSISTENCY_TYPES = [
   { name: "Fraude", percentage: 8 },
 ];
 
-const CHRONOGRAM = [
-  { phase: "Fase 01", days: "Dias 1-2", title: "Revisao de Escopo", description: "Revisao final do escopo do projeto, alinhamento de objetivos, validacao das premissas, definicao dos criterios de auditoria e confirmacao dos acessos necessarios.", status: "completed" },
-  { phase: "Fase 02", days: "Dias 3-5", title: "Coleta de Dados", description: "Coleta estruturada das bases de dados, extracoes dos sistemas (OBT, Backoffice, relatorios financeiros e operacionais) e organizacao das informacoes para analise.", status: "completed" },
-  { phase: "Fase 03", days: "Dias 6-10", title: "Reconciliacao", description: "Cruzamento e reconciliacao das informacoes coletadas, identificacao de inconsistencias, falhas operacionais, vulnerabilidades financeiras e oportunidades de recuperacao ou economia.", status: "in_progress" },
-  { phase: "Fase 04", days: "Dias 11-12", title: "Apresentacao dos Resultados", description: "Consolidacao dos achados, validacao preliminar dos resultados e preparacao do material executivo com os valores, riscos e oportunidades identificadas.", status: "pending" },
-  { phase: "Fase 05", days: "Dias 13-14", title: "Ajustes e Validacoes", description: "Ajustes finais dos achados com base em validacoes junto as areas envolvidas, refinamento das analises e consolidacao das recomendacoes.", status: "pending" },
-  { phase: "Fase 06", days: "Dia 15", title: "Entrega Final", description: "Entrega do relatorio executivo e tecnico final, apresentacao formal dos resultados e encaminhamento das recomendacoes e proximos passos.", status: "pending" },
+const AUDIT_STEPS = [
+  { step: 1, icon: Upload, title: "Upload dos Dados", time: "~10 min", description: "Cliente faz upload dos arquivos ou conecta via API" },
+  { step: 2, icon: ListChecks, title: "Selecao do Escopo", time: "~5 min", description: "Escolha das categorias e itens a reconciliar" },
+  { step: 3, icon: Zap, title: "Processamento", time: "~30 min", description: "Cruzamento automatizado e deteccao de anomalias" },
+  { step: 4, icon: FileBarChart, title: "Resultados", time: "Imediato", description: "Relatorio executivo com achados e recomendacoes" },
 ];
 
 const AUDIT_SCOPE_ITEMS = [
@@ -543,34 +545,30 @@ export default function Dashboard() {
         <Card className="lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <CalendarDays className="w-4 h-4 text-primary" />
-              Cronograma de Referencia - 15 Dias
+              <Zap className="w-4 h-4 text-primary" />
+              Auditoria Online — Do Upload ao Resultado
             </CardTitle>
+            <p className="text-xs text-muted-foreground">Processo completo em menos de 1 hora</p>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-              {CHRONOGRAM.map((item) => (
-                <div key={item.phase} className="p-3 rounded-md bg-background" data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}>
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-[10px] font-mono">{item.phase}</Badge>
-                      <span className="text-[11px] text-muted-foreground">{item.days}</span>
+            <div className="relative">
+              <div className="absolute top-6 left-[calc(12.5%+16px)] right-[calc(12.5%+16px)] h-0.5 bg-primary/20 hidden lg:block" />
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {AUDIT_STEPS.map((item, index) => (
+                  <div key={item.step} className="relative flex flex-col items-center text-center" data-testid={`audit-step-${item.step}`}>
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border-2 border-primary/30 mb-3 relative z-10 bg-card">
+                      <item.icon className="w-5 h-5 text-primary" />
                     </div>
-                    <Badge
-                      variant={item.status === "completed" ? "default" : item.status === "in_progress" ? "secondary" : "outline"}
-                      className="text-[10px]"
-                    >
-                      {item.status === "completed" ? "OK" : item.status === "in_progress" ? "Andamento" : "Pendente"}
-                    </Badge>
+                    <Badge variant="secondary" className="text-[10px] font-mono mb-1.5">{item.time}</Badge>
+                    <p className="text-sm font-semibold leading-tight">{item.title}</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">{item.description}</p>
                   </div>
-                  <p className="text-sm font-medium">{item.title}</p>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{item.description}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-            <div className="mt-3 p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900">
-              <p className="text-[11px] text-muted-foreground">
-                <span className="font-semibold">Observacao Importante:</span> Os prazos acima consideram a disponibilizacao tempestiva dos acessos, bases de dados e documentos necessarios para execucao das atividades.
+            <div className="mt-4 p-3 rounded-md bg-primary/5 border border-primary/10">
+              <p className="text-[11px] text-muted-foreground text-center">
+                <span className="font-semibold text-primary">Tempo total estimado: ~45 minutos</span> — o processamento e automatizado e os resultados ficam disponiveis imediatamente apos a analise.
               </p>
             </div>
           </CardContent>
