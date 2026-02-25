@@ -22,13 +22,15 @@ import {
   Award,
   ChevronRight,
   ClipboardCheck,
-  Database,
   Presentation,
   FileSignature,
   Upload,
   ListChecks,
   Settings,
   Eye,
+  Scale,
+  Database,
+  ShieldCheck,
 } from "lucide-react";
 
 const AUDIT_CATEGORIES = [
@@ -104,12 +106,11 @@ const MAIN_CLIENTS = [
   "L'Oreal", "Lilly", "AstraZeneca", "Petrobras",
 ];
 
-const INCONSISTENCY_TYPES = [
-  { name: "Fraude", percentage: 8, color: "bg-red-500" },
-  { name: "Retencoes", percentage: 25, color: "bg-blue-500" },
-  { name: "Reembolso", percentage: 20, color: "bg-emerald-500" },
-  { name: "Cobranca Fee", percentage: 30, color: "bg-amber-500" },
-  { name: "Acordos Corporativos", percentage: 17, color: "bg-violet-500" },
+const DIFFERENTIALS = [
+  { icon: Scale, title: "Independencia", description: "Atuacao imparcial, sem vinculo com fornecedores ou operadores auditados" },
+  { icon: Database, title: "Base de Evidencias", description: "Toda analise fundamentada em dados concretos e rastreabilidade completa" },
+  { icon: ShieldCheck, title: "Cadeia de Custodia", description: "Conformidade com Lei 13.964/2019 — integridade e admissibilidade juridica" },
+  { icon: Search, title: "Metodologia Forense", description: "Cruzamento multi-sistema, deteccao de padroes e analise de anomalias" },
 ];
 
 const METHODOLOGY_STAGES = [
@@ -121,6 +122,14 @@ const METHODOLOGY_STAGES = [
   { step: 6, title: "Monitoramento", icon: Eye, description: "Acompanhamento continuo da implementacao das recomendacoes e acoes corretivas" },
 ];
 
+const INCONSISTENCY_TYPES = [
+  { name: "Fraude", percentage: 8, color: "bg-red-500" },
+  { name: "Retencoes", percentage: 25, color: "bg-blue-500" },
+  { name: "Reembolso", percentage: 20, color: "bg-emerald-500" },
+  { name: "Cobranca Fee", percentage: 30, color: "bg-amber-500" },
+  { name: "Acordos Corporativos", percentage: 17, color: "bg-violet-500" },
+];
+
 const YEARLY_PERFORMANCE = [
   { year: "2015", value: 45 },
   { year: "2016", value: 68 },
@@ -130,14 +139,14 @@ const YEARLY_PERFORMANCE = [
 ];
 
 export default function Home() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>("travel_events");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [, setLocation] = useLocation();
 
   const activeCategory = AUDIT_CATEGORIES.find(c => c.id === selectedCategory);
 
   return (
     <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
-      <div className="space-y-2">
+      <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
             <Shield className="w-6 h-6 text-primary-foreground" />
@@ -147,10 +156,59 @@ export default function Home() {
             <p className="text-sm text-muted-foreground">Auditoria Forense em Despesas</p>
           </div>
         </div>
-        <p className="text-muted-foreground max-w-3xl mt-3">
-          Especialistas em auditoria forense com foco em identificacao de inconsistencias, recuperacao de valores
-          e otimizacao de processos corporativos. Atuacao independente, tecnica, estruturada e baseada em evidencias.
+        <p className="text-muted-foreground max-w-3xl mt-3 leading-relaxed">
+          Somos especialistas em auditoria forense corporativa, com atuacao independente em todas as areas de despesas
+          de uma organizacao. Nossa metodologia e tecnica, estruturada e baseada em evidencias, garantindo
+          rastreabilidade completa e conformidade com a Lei 13.964/2019 (Cadeia de Custodia Digital).
+          Identificamos inconsistencias, recuperamos valores e otimizamos processos em qualquer categoria de gastos.
         </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-blue-200 dark:border-blue-900">
+          <CardContent className="p-6 text-center">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-3">
+              <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
+            <p className="text-sm text-muted-foreground mt-1">Media de Resultado</p>
+            <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
+          </CardContent>
+        </Card>
+        <Card className="border-emerald-200 dark:border-emerald-900">
+          <CardContent className="p-6 text-center">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-3">
+              <BarChart3 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-reviewed">+2,8 BI</p>
+            <p className="text-sm text-muted-foreground mt-1">Revisados</p>
+            <p className="text-xs text-muted-foreground">em volume financeiro total</p>
+          </CardContent>
+        </Card>
+        <Card className="border-amber-200 dark:border-amber-900">
+          <CardContent className="p-6 text-center">
+            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-3">
+              <Award className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+            </div>
+            <p className="text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
+            <p className="text-sm text-muted-foreground mt-1">Recuperados</p>
+            <p className="text-xs text-muted-foreground">em economia e recuperacao</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {DIFFERENTIALS.map((item) => (
+          <div key={item.title} className="flex items-start gap-3 p-4 rounded-lg bg-muted/50" data-testid={`differential-${item.title.toLowerCase()}`}>
+            <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary/10 shrink-0">
+              <item.icon className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold">{item.title}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+            </div>
+          </div>
+        ))}
       </div>
 
       <Separator />
@@ -161,7 +219,7 @@ export default function Home() {
           <h2 className="text-lg font-semibold">Areas de Auditoria</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Selecione uma area para conhecer detalhes sobre a metodologia, resultados e cases.
+          Atuamos em todas as categorias de despesas corporativas. Selecione uma area para conhecer mais detalhes.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -236,39 +294,6 @@ export default function Home() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="border-blue-200 dark:border-blue-900">
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-3">
-                  <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
-                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
-                <p className="text-sm text-muted-foreground mt-1">Media de Resultado</p>
-                <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
-              </CardContent>
-            </Card>
-            <Card className="border-emerald-200 dark:border-emerald-900">
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-3">
-                  <BarChart3 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-                </div>
-                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-reviewed">+2,8 BI</p>
-                <p className="text-sm text-muted-foreground mt-1">Revisados</p>
-                <p className="text-xs text-muted-foreground">em volume financeiro total</p>
-              </CardContent>
-            </Card>
-            <Card className="border-amber-200 dark:border-amber-900">
-              <CardContent className="p-6 text-center">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-3">
-                  <Award className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-                </div>
-                <p className="text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
-                <p className="text-sm text-muted-foreground mt-1">Recuperados</p>
-                <p className="text-xs text-muted-foreground">em economia e recuperacao</p>
-              </CardContent>
-            </Card>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader className="pb-3">
@@ -322,61 +347,6 @@ export default function Home() {
               </CardContent>
             </Card>
           </div>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <ClipboardCheck className="w-4 h-4 text-primary" />
-                Principais Etapas do AuraAUDIT
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {METHODOLOGY_STAGES.map((stage, index) => (
-                  <div key={stage.step} className="relative" data-testid={`stage-${stage.step}`}>
-                    <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
-                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-3">
-                        <stage.icon className="w-6 h-6 text-primary" />
-                      </div>
-                      <Badge variant="outline" className="text-[10px] font-mono mb-1">{stage.step}</Badge>
-                      <h4 className="text-sm font-semibold">{stage.title}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">{stage.description}</p>
-                    </div>
-                    {index < METHODOLOGY_STAGES.length - 1 && index !== 2 && (
-                      <div className="hidden lg:flex absolute top-1/2 -right-2 transform -translate-y-1/2 z-10">
-                        <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Award className="w-4 h-4 text-primary" />
-                Principais Cases
-              </CardTitle>
-              <p className="text-xs text-muted-foreground">
-                Mais de R$ 448 milhoes em economia e recuperacao, de R$ 2,8 bilhoes revisados — media superior a 16%.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                {MAIN_CLIENTS.map((client) => (
-                  <div
-                    key={client}
-                    className="flex items-center justify-center px-3 py-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
-                    data-testid={`client-case-${client.toLowerCase().replace(/\s/g, '-')}`}
-                  >
-                    <span className="text-sm font-medium text-center">{client}</span>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
         </div>
       )}
 
@@ -398,6 +368,64 @@ export default function Home() {
           </Card>
         </div>
       )}
+
+      <Separator />
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <ClipboardCheck className="w-4 h-4 text-primary" />
+            Metodologia AuraAUDIT
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">Processo padronizado aplicado em todas as areas de auditoria</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {METHODOLOGY_STAGES.map((stage, index) => (
+              <div key={stage.step} className="relative" data-testid={`stage-${stage.step}`}>
+                <div className="flex flex-col items-center text-center p-4 rounded-lg bg-muted/50">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-3">
+                    <stage.icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <Badge variant="outline" className="text-[10px] font-mono mb-1">{stage.step}</Badge>
+                  <h4 className="text-sm font-semibold">{stage.title}</h4>
+                  <p className="text-xs text-muted-foreground mt-1">{stage.description}</p>
+                </div>
+                {index < METHODOLOGY_STAGES.length - 1 && index !== 2 && (
+                  <div className="hidden lg:flex absolute top-1/2 -right-2 transform -translate-y-1/2 z-10">
+                    <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Award className="w-4 h-4 text-primary" />
+            Principais Cases
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Mais de R$ 448 milhoes em economia e recuperacao, de R$ 2,8 bilhoes revisados — media superior a 16%.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            {MAIN_CLIENTS.map((client) => (
+              <div
+                key={client}
+                className="flex items-center justify-center px-3 py-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
+                data-testid={`client-case-${client.toLowerCase().replace(/\s/g, '-')}`}
+              >
+                <span className="text-sm font-medium text-center">{client}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Separator />
 
