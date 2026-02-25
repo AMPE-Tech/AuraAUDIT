@@ -15,7 +15,6 @@ import {
   TrendingUp,
   Shield,
   Search,
-  CheckCircle,
   ArrowRight,
   BarChart3,
   PieChart,
@@ -27,28 +26,20 @@ import {
   Presentation,
   FileSignature,
 } from "lucide-react";
-import casesImage from "@assets/image_1771980227293.png";
-import performanceImage from "@assets/image_1771980282211.png";
-import stagesImage from "@assets/image_1771980293837.png";
 
 const AUDIT_CATEGORIES = [
   {
     id: "travel_events",
-    title: "Viagens e Eventos Corporativos",
-    description: "Auditoria forense de despesas com passagens aereas, hospedagem, alimentacao, transporte e eventos corporativos.",
+    title: "Viagens e Eventos",
+    description: "Passagens aereas, hospedagem, alimentacao, transporte e eventos corporativos.",
     icon: Plane,
     color: "bg-blue-500",
     active: true,
-    stats: {
-      reviewed: "R$ 2,8 BI",
-      recovered: "R$ 448 MI",
-      avgResult: "16%",
-    },
   },
   {
     id: "corporate_expenses",
     title: "Despesas Corporativas",
-    description: "Analise e reconciliacao de despesas operacionais, cartoes corporativos, reembolsos e adiantamentos.",
+    description: "Despesas operacionais, cartoes corporativos, reembolsos e adiantamentos.",
     icon: Briefcase,
     color: "bg-emerald-500",
     active: false,
@@ -56,7 +47,7 @@ const AUDIT_CATEGORIES = [
   {
     id: "third_party_contracts",
     title: "Contratos com Terceiros",
-    description: "Revisao de contratos de prestacao de servicos, fornecedores, SLAs e conformidade contratual.",
+    description: "Contratos de servicos, fornecedores, SLAs e conformidade contratual.",
     icon: FileText,
     color: "bg-violet-500",
     active: false,
@@ -64,15 +55,15 @@ const AUDIT_CATEGORIES = [
   {
     id: "travel_agencies",
     title: "Agencias de Viagens",
-    description: "Auditoria de fees, rebates, acordos comerciais e gestao de agencias de viagens corporativas.",
+    description: "Fees, rebates, acordos comerciais e gestao de agencias corporativas.",
     icon: Building2,
     color: "bg-amber-500",
     active: false,
   },
   {
     id: "telecom",
-    title: "Telecomunicacoes e TI",
-    description: "Revisao de contratos de telefonia, dados, cloud computing, licencas de software e infraestrutura.",
+    title: "Telecomunicacoes",
+    description: "Telefonia, dados, cloud, licencas de software e infraestrutura de TI.",
     icon: Phone,
     color: "bg-cyan-500",
     active: false,
@@ -80,15 +71,15 @@ const AUDIT_CATEGORIES = [
   {
     id: "fleet_logistics",
     title: "Frota e Logistica",
-    description: "Auditoria de custos com frota propria, locacao de veiculos, combustivel e logistica de distribuicao.",
+    description: "Frota propria, locacao de veiculos, combustivel e logistica.",
     icon: Car,
     color: "bg-orange-500",
     active: false,
   },
   {
     id: "benefits_hr",
-    title: "Beneficios e Folha de Pagamento",
-    description: "Analise de beneficios (saude, odonto, vida), folha de pagamento, encargos e conformidade trabalhista.",
+    title: "Beneficios",
+    description: "Saude, odonto, vida, folha de pagamento e conformidade trabalhista.",
     icon: Heart,
     color: "bg-rose-500",
     active: false,
@@ -96,7 +87,7 @@ const AUDIT_CATEGORIES = [
   {
     id: "procurement",
     title: "Suprimentos e Compras",
-    description: "Revisao de processos de compras, cotacoes, licitacoes, estoque e gestao de fornecedores.",
+    description: "Compras, cotacoes, licitacoes, estoque e gestao de fornecedores.",
     icon: ShoppingCart,
     color: "bg-indigo-500",
     active: false,
@@ -191,13 +182,9 @@ export default function Home() {
                 </div>
                 <div className="flex items-center justify-between mt-3">
                   {category.active ? (
-                    <Badge variant="default" className="text-[10px]" data-testid={`badge-active-${category.id}`}>
-                      Ativo
-                    </Badge>
+                    <Badge variant="default" className="text-[10px]" data-testid={`badge-active-${category.id}`}>Ativo</Badge>
                   ) : (
-                    <Badge variant="outline" className="text-[10px]" data-testid={`badge-available-${category.id}`}>
-                      Disponivel
-                    </Badge>
+                    <Badge variant="outline" className="text-[10px]" data-testid={`badge-available-${category.id}`}>Disponivel</Badge>
                   )}
                   <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform ${
                     selectedCategory === category.id ? "rotate-90" : ""
@@ -230,19 +217,16 @@ export default function Home() {
 
           <Card>
             <CardContent className="p-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold text-base">Introducao</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  A auditoria de viagens e eventos corporativos e conduzida de forma independente, tecnica,
-                  estruturada e baseada em evidencias. O trabalho contempla a analise forense de despesas com
-                  passagens aereas, hospedagem, alimentacao, transporte terrestre, locacao de veiculos, seguros
-                  viagem e eventos corporativos. A metodologia inclui cruzamento de dados entre sistemas OBT
-                  (Online Booking Tool), backoffice das agencias, companhias aereas, redes hoteleiras, locadoras,
-                  GDS (Sabre/Amadeus), BSPlink e cartoes corporativos, identificando inconsistencias como fraudes,
-                  retencoes indevidas, reembolsos incorretos, cobrancas de fees nao autorizadas e descumprimento
-                  de acordos corporativos.
-                </p>
-              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                A auditoria de viagens e eventos corporativos e conduzida de forma independente, tecnica,
+                estruturada e baseada em evidencias. O trabalho contempla a analise forense de despesas com
+                passagens aereas, hospedagem, alimentacao, transporte terrestre, locacao de veiculos, seguros
+                viagem e eventos corporativos. A metodologia inclui cruzamento de dados entre sistemas OBT
+                (Online Booking Tool), backoffice das agencias, companhias aereas, redes hoteleiras, locadoras,
+                GDS (Sabre/Amadeus), BSPlink e cartoes corporativos, identificando inconsistencias como fraudes,
+                retencoes indevidas, reembolsos incorretos, cobrancas de fees nao autorizadas e descumprimento
+                de acordos corporativos.
+              </p>
             </CardContent>
           </Card>
 
@@ -309,9 +293,9 @@ export default function Home() {
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
                   <BarChart3 className="w-4 h-4 text-primary" />
-                  Resumo de Performance (2015-2019)
+                  Performance Historica (Pre-Pandemia)
                 </CardTitle>
-                <p className="text-xs text-muted-foreground">Valores revisados pre-pandemia (em milhoes R$)</p>
+                <p className="text-xs text-muted-foreground">Valores revisados em milhoes R$</p>
               </CardHeader>
               <CardContent>
                 <div className="flex items-end gap-3 h-40">
@@ -337,7 +321,7 @@ export default function Home() {
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
                 <ClipboardCheck className="w-4 h-4 text-primary" />
-                Principais Etapas da Auditoria
+                Principais Etapas
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -348,11 +332,7 @@ export default function Home() {
                       <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mb-3">
                         <stage.icon className="w-6 h-6 text-primary" />
                       </div>
-                      <div className="flex items-center gap-1 mb-1">
-                        <Badge variant="outline" className="text-[10px] font-mono">
-                          {stage.step}
-                        </Badge>
-                      </div>
+                      <Badge variant="outline" className="text-[10px] font-mono mb-1">{stage.step}</Badge>
                       <h4 className="text-sm font-semibold">{stage.title}</h4>
                       <p className="text-xs text-muted-foreground mt-1">{stage.description}</p>
                     </div>
@@ -374,8 +354,7 @@ export default function Home() {
                 Principais Cases
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Projetos que resultaram em mais de R$ 448 milhoes em economia e recuperacao de valores,
-                de um total de R$ 2,8 bilhoes revisados, uma media superior a 16%.
+                Mais de R$ 448 milhoes em economia e recuperacao, de R$ 2,8 bilhoes revisados — media superior a 16%.
               </p>
             </CardHeader>
             <CardContent>
@@ -389,61 +368,6 @@ export default function Home() {
                     <span className="text-sm font-medium text-center">{client}</span>
                   </div>
                 ))}
-              </div>
-              <div className="mt-4 pt-4 border-t">
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  <img
-                    src={casesImage}
-                    alt="Principais cases e clientes"
-                    className="w-full sm:w-1/2 rounded-lg border"
-                    data-testid="img-cases"
-                  />
-                  <img
-                    src={performanceImage}
-                    alt="Resumo de performance 2015-2025"
-                    className="w-full sm:w-1/2 rounded-lg border"
-                    data-testid="img-performance"
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
-                <Shield className="w-4 h-4 text-primary" />
-                Projeto Atual - Grupo Stabia
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900">
-                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-2024-volume">R$ 51,3 MI</p>
-                  <p className="text-sm text-muted-foreground">Volume 2024</p>
-                </div>
-                <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900">
-                  <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-2025-volume">R$ 39,6 MI</p>
-                  <p className="text-sm text-muted-foreground">Volume 2025</p>
-                </div>
-                <div className="p-4 rounded-lg bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-900">
-                  <p className="text-2xl font-bold text-violet-600 dark:text-violet-400" data-testid="stat-total-volume">R$ 90,9 MI</p>
-                  <p className="text-sm text-muted-foreground">Volume Total</p>
-                </div>
-                <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900">
-                  <p className="text-2xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-systems">4 Sistemas</p>
-                  <p className="text-sm text-muted-foreground">Reserve, Argo, Wintour, Stur</p>
-                </div>
-              </div>
-              <div className="mt-4 flex justify-end">
-                <button
-                  onClick={() => setLocation("/dashboard")}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-foreground bg-primary rounded-md hover:bg-primary/90 transition-colors"
-                  data-testid="button-access-project"
-                >
-                  Acessar Projeto
-                  <ArrowRight className="w-4 h-4" />
-                </button>
               </div>
             </CardContent>
           </Card>

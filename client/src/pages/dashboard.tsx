@@ -7,6 +7,7 @@ import {
   Receipt,
   AlertTriangle,
   TrendingDown,
+  TrendingUp,
   FolderSearch,
   ArrowUpRight,
   ArrowDownRight,
@@ -22,9 +23,16 @@ import {
   ShieldCheck,
   Workflow,
   CalendarDays,
+  Shield,
+  BarChart3,
+  Award,
+  Plug,
+  Users,
+  Plane,
+  PieChart,
 } from "lucide-react";
 import { formatCurrency, formatDate, getCategoryLabel, getSeverityLabel, getAnomalyTypeLabel } from "@/lib/formatters";
-import type { Expense, AuditCase, Anomaly } from "@shared/schema";
+import type { Expense, AuditCase, Anomaly, Client, DataSource } from "@shared/schema";
 import {
   BarChart,
   Bar,
@@ -33,11 +41,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
+  PieChart as RechartsPie,
   Pie,
   Cell,
-  LineChart,
-  Line,
 } from "recharts";
 
 function StatCard({
@@ -47,6 +53,7 @@ function StatCard({
   icon: Icon,
   trend,
   trendValue,
+  accentColor,
 }: {
   title: string;
   value: string;
@@ -54,6 +61,7 @@ function StatCard({
   icon: any;
   trend?: "up" | "down";
   trendValue?: string;
+  accentColor?: string;
 }) {
   return (
     <Card>
@@ -63,7 +71,7 @@ function StatCard({
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
               {title}
             </p>
-            <p className="text-2xl font-bold tracking-tight">{value}</p>
+            <p className={`text-2xl font-bold tracking-tight ${accentColor || ""}`}>{value}</p>
             <div className="flex items-center gap-1.5">
               {trend && (
                 <span
@@ -118,25 +126,41 @@ const CHART_COLORS = [
   "hsl(240, 60%, 38%)",
 ];
 
+const INCONSISTENCY_COLORS: Record<string, string> = {
+  "Fraude": "bg-red-500",
+  "Retencoes": "bg-blue-500",
+  "Reembolso": "bg-emerald-500",
+  "Cobranca Fee": "bg-amber-500",
+  "Acordos Corporativos": "bg-violet-500",
+};
+
+const INCONSISTENCY_TYPES = [
+  { name: "Cobranca Fee", percentage: 30 },
+  { name: "Retencoes", percentage: 25 },
+  { name: "Reembolso", percentage: 20 },
+  { name: "Acordos Corporativos", percentage: 17 },
+  { name: "Fraude", percentage: 8 },
+];
+
 const CHRONOGRAM = [
-  { phase: "Fase 01", days: "Dias 1-2", title: "Revisao de Escopo", description: "Alinhamento de objetivos, validacao de premissas, definicao dos criterios de auditoria", status: "completed" },
-  { phase: "Fase 02", days: "Dias 3-5", title: "Coleta de Dados", description: "Coleta das bases de dados, extracoes dos sistemas OBT, Backoffice e relatorios", status: "completed" },
-  { phase: "Fase 03", days: "Dias 6-10", title: "Reconciliacao", description: "Cruzamento e reconciliacao das informacoes, identificacao de inconsistencias e vulnerabilidades", status: "in_progress" },
-  { phase: "Fase 04", days: "Dias 11-12", title: "Apresentacao dos Resultados", description: "Consolidacao dos achados e preparacao do material executivo", status: "pending" },
-  { phase: "Fase 05", days: "Dias 13-14", title: "Ajustes e Validacoes", description: "Refinamento das analises e consolidacao das recomendacoes", status: "pending" },
-  { phase: "Fase 06", days: "Dia 15", title: "Entrega Final", description: "Entrega do relatorio executivo e tecnico final", status: "pending" },
+  { phase: "Fase 01", days: "Dias 1-2", title: "Revisao de Escopo", description: "Alinhamento de objetivos, validacao de premissas, definicao dos criterios", status: "completed" },
+  { phase: "Fase 02", days: "Dias 3-5", title: "Coleta de Dados", description: "Extracoes dos sistemas OBT, Backoffice e relatorios gerenciais", status: "completed" },
+  { phase: "Fase 03", days: "Dias 6-10", title: "Reconciliacao", description: "Cruzamento e reconciliacao, identificacao de inconsistencias", status: "in_progress" },
+  { phase: "Fase 04", days: "Dias 11-12", title: "Apresentacao", description: "Consolidacao dos achados e material executivo", status: "pending" },
+  { phase: "Fase 05", days: "Dias 13-14", title: "Ajustes", description: "Refinamento e consolidacao das recomendacoes", status: "pending" },
+  { phase: "Fase 06", days: "Dia 15", title: "Entrega Final", description: "Relatorio executivo e tecnico final", status: "pending" },
 ];
 
 const AUDIT_SCOPE_ITEMS = [
-  { icon: FileCheck, label: "Conformidade com politicas internas e melhores praticas" },
-  { icon: Workflow, label: "Governanca dos processos de viagens corporativas" },
-  { icon: Database, label: "Integridade e consistencia dos dados entre OBT, Backoffice e faturamento" },
-  { icon: Scale, label: "Aderencia contratual com fornecedores e parceiros" },
-  { icon: ShieldCheck, label: "Analise de controles, excecoes, aprovacoes e alcadas" },
-  { icon: Search, label: "Identificacao de falhas operacionais recorrentes" },
-  { icon: ShieldAlert, label: "Mapeamento de vulnerabilidades financeiras e sistemicas" },
-  { icon: AlertTriangle, label: "Avaliacao de riscos de perdas, desperdicios ou exposicoes" },
-  { icon: TrendingDown, label: "Oportunidades de otimizacao de processos e reducao de custos" },
+  { icon: FileCheck, label: "Conformidade com politicas internas" },
+  { icon: Workflow, label: "Governanca dos processos" },
+  { icon: Database, label: "Integridade dos dados OBT/Backoffice" },
+  { icon: Scale, label: "Aderencia contratual" },
+  { icon: ShieldCheck, label: "Controles e aprovacoes" },
+  { icon: Search, label: "Falhas operacionais" },
+  { icon: ShieldAlert, label: "Vulnerabilidades financeiras" },
+  { icon: AlertTriangle, label: "Riscos e exposicoes" },
+  { icon: TrendingDown, label: "Oportunidades de otimizacao" },
 ];
 
 export default function Dashboard() {
@@ -152,24 +176,23 @@ export default function Dashboard() {
     queryKey: ["/api/anomalies"],
   });
 
+  const { data: clientsData } = useQuery<Client[]>({
+    queryKey: ["/api/clients"],
+  });
+
+  const { data: dataSourcesData } = useQuery<DataSource[]>({
+    queryKey: ["/api/data-sources"],
+  });
+
   const isLoading = loadingExpenses || loadingCases || loadingAnomalies;
 
-  const totalExpenses = expenses?.reduce(
-    (sum, e) => sum + parseFloat(e.amount),
-    0
-  ) || 0;
-
-  const flaggedExpenses = expenses?.filter(
-    (e) => e.status === "flagged" || e.riskLevel === "high" || e.riskLevel === "critical"
-  ) || [];
-
-  const totalSavings = cases?.reduce(
-    (sum, c) => sum + parseFloat(c.savingsIdentified || "0"),
-    0
-  ) || 0;
-
+  const totalExpenses = expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0;
+  const flaggedExpenses = expenses?.filter((e) => e.status === "flagged" || e.riskLevel === "high" || e.riskLevel === "critical") || [];
+  const totalSavings = cases?.reduce((sum, c) => sum + parseFloat(c.savingsIdentified || "0"), 0) || 0;
   const openCases = cases?.filter((c) => c.status !== "closed") || [];
   const unresolvedAnomalies = anomalies?.filter((a) => !a.resolved) || [];
+  const connectedSources = dataSourcesData?.filter((s) => s.status === "connected") || [];
+  const activeClients = clientsData?.filter((c) => c.status === "active") || [];
 
   const categoryData = expenses
     ? Object.entries(
@@ -179,18 +202,6 @@ export default function Dashboard() {
           return acc;
         }, {} as Record<string, number>)
       ).map(([name, value]) => ({ name, value: Math.round(value) }))
-    : [];
-
-  const monthlyData = expenses
-    ? Object.entries(
-        expenses.reduce((acc, e) => {
-          const month = new Date(e.date).toLocaleDateString("pt-BR", {
-            month: "short",
-          });
-          acc[month] = (acc[month] || 0) + parseFloat(e.amount);
-          return acc;
-        }, {} as Record<string, number>)
-      ).map(([month, total]) => ({ month, total: Math.round(total) }))
     : [];
 
   const riskDistribution = expenses
@@ -207,56 +218,65 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight" data-testid="text-dashboard-title">
-          Dashboard de Auditoria
-        </h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          AuraAUDIT - Auditoria Forense em Despesas | Grupo Stabia
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight" data-testid="text-dashboard-title">
+            Dashboard de Auditoria
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            AuraAUDIT - Auditoria Forense em Despesas | Grupo Stabia
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="text-xs gap-1">
+            <Shield className="w-3 h-3" />
+            Lei 13.964/2019
+          </Badge>
+        </div>
       </div>
 
-      <Card>
-        <CardContent className="p-5">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary/10">
-              <Monitor className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-sm font-semibold" data-testid="text-project-overview">Visao Geral do Projeto</h2>
+      <Card className="bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/20">
+        <CardContent className="p-6">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
+            <div className="col-span-2 lg:col-span-1">
+              <div className="flex items-center gap-2 mb-3">
+                <Plane className="w-5 h-5 text-primary" />
+                <h2 className="text-sm font-semibold" data-testid="text-project-overview">Projeto Stabia</h2>
+              </div>
+              <p className="text-xs text-muted-foreground">Viagens e Eventos Corporativos</p>
               <p className="text-xs text-muted-foreground">Exercicios 2024 e 2025</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-3 rounded-md bg-background">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Volume 2024</p>
-              <p className="text-lg font-bold" data-testid="text-volume-2024">R$ 51.327.894,23</p>
-            </div>
-            <div className="p-3 rounded-md bg-background">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Volume 2025</p>
-              <p className="text-lg font-bold" data-testid="text-volume-2025">R$ 39.639.788,66</p>
-            </div>
-            <div className="p-3 rounded-md bg-background">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">OBT</p>
-              <div className="flex flex-wrap gap-1 mt-1">
+              <div className="flex flex-wrap gap-1 mt-3">
                 <Badge variant="outline" className="text-[10px]">Reserve</Badge>
                 <Badge variant="outline" className="text-[10px]">Argo</Badge>
+                <Badge variant="outline" className="text-[10px]">Wintour</Badge>
+                <Badge variant="outline" className="text-[10px]">Stur</Badge>
               </div>
             </div>
-            <div className="p-3 rounded-md bg-background">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Backoffice</p>
-              <div className="flex flex-wrap gap-1 mt-1">
-                <Badge variant="outline" className="text-[10px]">Wintour (2024)</Badge>
-                <Badge variant="outline" className="text-[10px]">Stur (2025)</Badge>
-              </div>
+            <div className="text-center p-3 rounded-lg bg-background/60">
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400" data-testid="text-volume-2024">R$ 51,3 MI</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Volume 2024</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-background/60">
+              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-volume-2025">R$ 39,6 MI</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Volume 2025</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-background/60">
+              <p className="text-2xl font-bold text-violet-600 dark:text-violet-400" data-testid="text-volume-total">R$ 90,9 MI</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Volume Total</p>
+            </div>
+            <div className="text-center p-3 rounded-lg bg-background/60">
+              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400" data-testid="text-avg-result">16%</p>
+              <p className="text-[11px] text-muted-foreground mt-1">Meta de Resultado</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {isLoading ? (
           <>
+            <StatCardSkeleton />
+            <StatCardSkeleton />
             <StatCardSkeleton />
             <StatCardSkeleton />
             <StatCardSkeleton />
@@ -265,84 +285,62 @@ export default function Dashboard() {
         ) : (
           <>
             <StatCard
-              title="Total Analisado"
+              title="Analisado"
               value={formatCurrency(totalExpenses)}
               subtitle="amostra auditada"
               icon={Receipt}
-              trend="up"
-              trendValue="R$ 90.9M total"
             />
             <StatCard
-              title="Anomalias Detectadas"
-              value={String(unresolvedAnomalies.length)}
-              subtitle="nao resolvidas"
-              icon={AlertTriangle}
-              trend="up"
-              trendValue={`${anomalies?.length || 0} total`}
-            />
-            <StatCard
-              title="Economia Identificada"
+              title="Economia"
               value={formatCurrency(totalSavings)}
-              subtitle="oportunidades de savings"
+              subtitle="identificada"
               icon={TrendingDown}
               trend="down"
-              trendValue="potencial"
+              trendValue="savings"
             />
             <StatCard
-              title="Casos Abertos"
+              title="Anomalias"
+              value={String(unresolvedAnomalies.length)}
+              subtitle={`de ${anomalies?.length || 0} total`}
+              icon={AlertTriangle}
+              trend="up"
+              trendValue="ativas"
+            />
+            <StatCard
+              title="Casos"
               value={String(openCases.length)}
               subtitle={`de ${cases?.length || 0} total`}
               icon={FolderSearch}
+            />
+            <StatCard
+              title="Fontes"
+              value={String(connectedSources.length)}
+              subtitle={`de ${dataSourcesData?.length || 0} conectadas`}
+              icon={Plug}
+            />
+            <StatCard
+              title="Clientes"
+              value={String(activeClients.length)}
+              subtitle={`de ${clientsData?.length || 0} ativos`}
+              icon={Users}
             />
           </>
         )}
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <CalendarDays className="w-4 h-4 text-primary" />
-            Cronograma de Referencia - 15 Dias
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {CHRONOGRAM.map((item) => (
-              <div
-                key={item.phase}
-                className="p-3 rounded-md bg-background"
-                data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}
-              >
-                <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] font-mono">{item.phase}</Badge>
-                    <span className="text-[11px] text-muted-foreground">{item.days}</span>
-                  </div>
-                  <Badge
-                    variant={item.status === "completed" ? "default" : item.status === "in_progress" ? "secondary" : "outline"}
-                    className="text-[10px]"
-                  >
-                    {item.status === "completed" ? "Concluido" : item.status === "in_progress" ? "Em Andamento" : "Pendente"}
-                  </Badge>
-                </div>
-                <p className="text-sm font-medium">{item.title}</p>
-                <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-            <CardTitle className="text-sm font-medium">Despesas por Categoria</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-primary" />
+              Despesas por Categoria
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
-              <Skeleton className="h-[250px] w-full" />
+              <Skeleton className="h-[220px] w-full" />
             ) : categoryData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={250}>
+              <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={categoryData}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                   <XAxis
@@ -368,7 +366,7 @@ export default function Dashboard() {
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-[250px] flex items-center justify-center text-sm text-muted-foreground">
+              <div className="h-[220px] flex items-center justify-center text-sm text-muted-foreground">
                 Nenhum dado disponivel
               </div>
             )}
@@ -377,106 +375,51 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Distribuicao de Risco</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <PieChart className="w-4 h-4 text-primary" />
+              Principais Inconsistencias
+            </CardTitle>
+            <p className="text-xs text-muted-foreground">Tipos identificados historicamente</p>
           </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <Skeleton className="h-[250px] w-full" />
-            ) : riskDistribution.length > 0 ? (
-              <ResponsiveContainer width="100%" height={250}>
-                <PieChart>
-                  <Pie
-                    data={riskDistribution}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
-                    paddingAngle={4}
-                    dataKey="value"
-                  >
-                    {riskDistribution.map((_, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={CHART_COLORS[index % CHART_COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "6px",
-                      fontSize: "12px",
-                    }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-[250px] flex items-center justify-center text-sm text-muted-foreground">
-                Nenhum dado disponivel
-              </div>
-            )}
-            <div className="flex flex-wrap gap-3 justify-center mt-2">
-              {riskDistribution.map((item, i) => (
-                <div key={item.name} className="flex items-center gap-1.5">
-                  <div
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }}
-                  />
-                  <span className="text-xs text-muted-foreground">
-                    {item.name} ({item.value})
-                  </span>
+          <CardContent className="space-y-2.5">
+            {INCONSISTENCY_TYPES.map((item) => (
+              <div key={item.name} className="space-y-1">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">{item.name}</span>
+                  <span className="font-semibold">{item.percentage}%</span>
                 </div>
-              ))}
-            </div>
+                <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full ${INCONSISTENCY_COLORS[item.name]} transition-all duration-500`}
+                    style={{ width: `${item.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Search className="w-4 h-4 text-primary" />
-            Abrangencia Tecnica da Auditoria
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-            {AUDIT_SCOPE_ITEMS.map((item, i) => (
-              <div
-                key={i}
-                className="flex items-start gap-2.5 p-3 rounded-md bg-background"
-                data-testid={`scope-item-${i}`}
-              >
-                <item.icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <span className="text-xs text-muted-foreground leading-relaxed">{item.label}</span>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-            <CardTitle className="text-sm font-medium">Despesas Sinalizadas</CardTitle>
-            <Badge variant="secondary" className="text-xs">
-              {flaggedExpenses.length}
-            </Badge>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-destructive" />
+              Despesas Sinalizadas
+            </CardTitle>
+            <Badge variant="destructive" className="text-xs">{flaggedExpenses.length}</Badge>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-14 w-full" />
-                ))}
+                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}
               </div>
             ) : flaggedExpenses.length > 0 ? (
               <div className="space-y-2">
                 {flaggedExpenses.slice(0, 5).map((expense) => (
                   <div
                     key={expense.id}
-                    className="flex items-center justify-between gap-3 p-3 rounded-md bg-background hover-elevate"
+                    className="flex items-center justify-between gap-3 p-3 rounded-md bg-background"
                     data-testid={`card-flagged-expense-${expense.id}`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -485,15 +428,11 @@ export default function Dashboard() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium truncate">{expense.description}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {expense.employee} - {formatDate(expense.date)}
-                        </p>
+                        <p className="text-xs text-muted-foreground">{expense.employee} - {formatDate(expense.date)}</p>
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-semibold">
-                        {formatCurrency(expense.amount)}
-                      </p>
+                      <p className="text-sm font-semibold">{formatCurrency(expense.amount)}</p>
                       <Badge variant="destructive" className="text-[10px]">
                         {expense.riskLevel === "critical" ? "Critico" : "Alto"}
                       </Badge>
@@ -512,24 +451,23 @@ export default function Dashboard() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-            <CardTitle className="text-sm font-medium">Anomalias Recentes</CardTitle>
-            <Badge variant="secondary" className="text-xs">
-              {unresolvedAnomalies.length}
-            </Badge>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
+              Anomalias Ativas
+            </CardTitle>
+            <Badge variant="secondary" className="text-xs">{unresolvedAnomalies.length}</Badge>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-14 w-full" />
-                ))}
+                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}
               </div>
             ) : unresolvedAnomalies.length > 0 ? (
               <div className="space-y-2">
                 {unresolvedAnomalies.slice(0, 5).map((anomaly) => (
                   <div
                     key={anomaly.id}
-                    className="flex items-center justify-between gap-3 p-3 rounded-md bg-background hover-elevate"
+                    className="flex items-center justify-between gap-3 p-3 rounded-md bg-background"
                     data-testid={`card-anomaly-${anomaly.id}`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
@@ -538,9 +476,7 @@ export default function Dashboard() {
                       </div>
                       <div className="min-w-0">
                         <p className="text-sm font-medium truncate">{anomaly.description}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {getAnomalyTypeLabel(anomaly.type)}
-                        </p>
+                        <p className="text-xs text-muted-foreground">{getAnomalyTypeLabel(anomaly.type)}</p>
                       </div>
                     </div>
                     <Badge
@@ -562,46 +498,53 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Tendencia Mensal de Despesas</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Award className="w-4 h-4 text-primary" />
+              Distribuicao de Risco
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <Skeleton className="h-[200px] w-full" />
-            ) : monthlyData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={200}>
-                <LineChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                    axisLine={{ stroke: "hsl(var(--border))" }}
-                  />
-                  <YAxis
-                    tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }}
-                    axisLine={{ stroke: "hsl(var(--border))" }}
-                    tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`}
-                  />
-                  <Tooltip
-                    formatter={(value: number) => [formatCurrency(value), "Total"]}
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--card))",
-                      border: "1px solid hsl(var(--border))",
-                      borderRadius: "6px",
-                      fontSize: "12px",
-                    }}
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="total"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth={2}
-                    dot={{ fill: "hsl(var(--primary))", r: 3 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+            ) : riskDistribution.length > 0 ? (
+              <>
+                <ResponsiveContainer width="100%" height={180}>
+                  <RechartsPie>
+                    <Pie
+                      data={riskDistribution}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={45}
+                      outerRadius={72}
+                      paddingAngle={4}
+                      dataKey="value"
+                    >
+                      {riskDistribution.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "6px",
+                        fontSize: "12px",
+                      }}
+                    />
+                  </RechartsPie>
+                </ResponsiveContainer>
+                <div className="flex flex-wrap gap-3 justify-center mt-1">
+                  {riskDistribution.map((item, i) => (
+                    <div key={item.name} className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                      <span className="text-xs text-muted-foreground">{item.name} ({item.value})</span>
+                    </div>
+                  ))}
+                </div>
+              </>
             ) : (
               <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">
                 Nenhum dado disponivel
@@ -610,51 +553,63 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="lg:col-span-2">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Casos de Auditoria</CardTitle>
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <CalendarDays className="w-4 h-4 text-primary" />
+              Cronograma - 15 Dias
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
-                ))}
-              </div>
-            ) : cases && cases.length > 0 ? (
-              <div className="space-y-2">
-                {cases.slice(0, 4).map((c) => (
-                  <div
-                    key={c.id}
-                    className="flex items-center justify-between gap-3 p-3 rounded-md bg-background hover-elevate"
-                    data-testid={`card-case-${c.id}`}
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{c.title}</p>
-                      <div className="flex items-center gap-1.5 mt-0.5">
-                        <Clock className="w-3 h-3 text-muted-foreground" />
-                        <span className="text-[11px] text-muted-foreground">
-                          {formatDate(c.createdAt)}
-                        </span>
-                      </div>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+              {CHRONOGRAM.map((item) => (
+                <div key={item.phase} className="p-3 rounded-md bg-background" data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}>
+                  <div className="flex items-center justify-between gap-2 mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-[10px] font-mono">{item.phase}</Badge>
+                      <span className="text-[11px] text-muted-foreground">{item.days}</span>
                     </div>
                     <Badge
-                      variant={c.status === "open" ? "default" : c.status === "in_progress" ? "secondary" : "outline"}
-                      className="text-[10px] shrink-0"
+                      variant={item.status === "completed" ? "default" : item.status === "in_progress" ? "secondary" : "outline"}
+                      className="text-[10px]"
                     >
-                      {c.status === "open" ? "Aberto" : c.status === "in_progress" ? "Em Andamento" : "Encerrado"}
+                      {item.status === "completed" ? "OK" : item.status === "in_progress" ? "Andamento" : "Pendente"}
                     </Badge>
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="h-32 flex flex-col items-center justify-center text-muted-foreground">
-                <FolderSearch className="w-8 h-8 mb-2" />
-                <p className="text-sm">Nenhum caso encontrado</p>
-              </div>
-            )}
+                  <p className="text-sm font-medium">{item.title}</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2">{item.description}</p>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
+      </div>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Search className="w-4 h-4 text-primary" />
+            Abrangencia Tecnica da Auditoria
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            {AUDIT_SCOPE_ITEMS.map((item, i) => (
+              <div key={i} className="flex items-start gap-2.5 p-3 rounded-md bg-background" data-testid={`scope-item-${i}`}>
+                <item.icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <span className="text-xs text-muted-foreground leading-relaxed">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="flex items-center justify-between text-xs text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <Shield className="w-3 h-3" />
+          <span>Cadeia de Custodia Digital - AuraDue</span>
+        </div>
+        <span>AuraAUDIT - Auditoria Forense em Despesas</span>
       </div>
     </div>
   );
