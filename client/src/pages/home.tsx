@@ -488,6 +488,45 @@ export default function Home() {
         </CardContent>
       </Card>
 
+      <div className="space-y-3">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold" data-testid="text-performance-title">Performance</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="border-blue-200 dark:border-blue-900">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-3">
+                <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <p className="text-3xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
+              <p className="text-sm text-muted-foreground mt-1">Media de Resultado</p>
+              <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
+            </CardContent>
+          </Card>
+          <Card className="border-emerald-200 dark:border-emerald-900">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-3">
+                <BarChart3 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-reviewed">+2,8 BI</p>
+              <p className="text-sm text-muted-foreground mt-1">Revisados</p>
+              <p className="text-xs text-muted-foreground">em volume financeiro total</p>
+            </CardContent>
+          </Card>
+          <Card className="border-amber-200 dark:border-amber-900">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-3">
+                <Award className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+              </div>
+              <p className="text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
+              <p className="text-sm text-muted-foreground mt-1">Recuperados</p>
+              <p className="text-xs text-muted-foreground">em economia e recuperacao</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" data-testid="banner-dashboard-preview">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(59,130,246,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_left,_rgba(16,185,129,0.06),transparent_50%)]" />
         <div className="relative p-5 space-y-4">
@@ -650,39 +689,6 @@ export default function Home() {
           </div>
         </CardContent>
       </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-blue-200 dark:border-blue-900">
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-3">
-              <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-            </div>
-            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
-            <p className="text-sm text-muted-foreground mt-1">Media de Resultado</p>
-            <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
-          </CardContent>
-        </Card>
-        <Card className="border-emerald-200 dark:border-emerald-900">
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-3">
-              <BarChart3 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-reviewed">+2,8 BI</p>
-            <p className="text-sm text-muted-foreground mt-1">Revisados</p>
-            <p className="text-xs text-muted-foreground">em volume financeiro total</p>
-          </CardContent>
-        </Card>
-        <Card className="border-amber-200 dark:border-amber-900">
-          <CardContent className="p-6 text-center">
-            <div className="flex items-center justify-center w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-3">
-              <Award className="w-6 h-6 text-amber-600 dark:text-amber-400" />
-            </div>
-            <p className="text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
-            <p className="text-sm text-muted-foreground mt-1">Recuperados</p>
-            <p className="text-xs text-muted-foreground">em economia e recuperacao</p>
-          </CardContent>
-        </Card>
-      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {DIFFERENTIALS.map((item) => (
