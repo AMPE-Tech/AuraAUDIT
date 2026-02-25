@@ -566,22 +566,8 @@ export default function Home() {
   return (
     <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
 
-      <div className="space-y-4" data-testid="section-hero">
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight max-w-3xl" data-testid="text-h1-title">
-          Auditoria online com rastreabilidade juridica para despesas corporativas
-        </h1>
-        <div className="flex flex-wrap gap-3">
-          <Button variant="default" size="lg" data-testid="button-how-it-works" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>
-            Ver como funciona
-          </Button>
-          <Button variant="outline" size="lg" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
-            Solicitar diagnostico
-          </Button>
-        </div>
-      </div>
-
       <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
-        <CardContent className="p-6 space-y-3">
+        <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-primary" />
             <h2 className="text-base font-semibold">O que fazemos</h2>
@@ -594,6 +580,14 @@ export default function Home() {
             <span className="font-medium text-foreground">rastreabilidade juridica</span>, com{" "}
             <span className="font-medium text-foreground">dashboards executivos</span> e monitoramento continuo — no padrao que Compliance exige.
           </p>
+          <div className="flex flex-wrap gap-3 pt-1">
+            <Button variant="default" data-testid="button-how-it-works" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>
+              Ver como funciona
+            </Button>
+            <Button variant="outline" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
+              Solicitar diagnostico
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
