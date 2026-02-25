@@ -767,7 +767,7 @@ export default function Home() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Building2 className="w-5 h-5 text-primary" />
-          <h2 className="text-lg font-semibold">Para Empresas (Cliente Corporativo)</h2>
+          <h2 className="text-lg font-semibold">Para Empresas</h2>
         </div>
         <p className="text-sm text-muted-foreground">
           Servicos de auditoria para empresas que contratam viagens e eventos corporativos.
@@ -784,10 +784,10 @@ export default function Home() {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Handshake className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-          <h2 className="text-lg font-semibold">Para Fornecedores TMC, Redes Hoteleiras, Locadoras, Espacos de Evento, A&B, Brindes, Graficas entre outros</h2>
+          <h2 className="text-lg font-semibold">Para Fornecedores</h2>
         </div>
         <p className="text-sm text-muted-foreground">
-          Programas de maturidade e padronizacao para agencias de viagens corporativas.
+          Programa para maturidade e padronizacao de TMC, Cias Aereas, Redes Hoteleiras, Locadoras, Espacos de Evento, A&B, Brindes, Graficas, Agencias entre outros.
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {TMC_SERVICES.map((service) => (
