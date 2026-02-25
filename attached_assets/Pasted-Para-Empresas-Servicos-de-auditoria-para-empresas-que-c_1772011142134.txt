@@ -1,0 +1,193 @@
+Para Empresas
+Servicos de auditoria para empresas que contratam viagens e eventos corporativos.
+
+Auditoria Financeira & Conciliacao
+Nucleo
+Auditoria continua das despesas de viagens e eventos para identificar cobrancas indevidas, inconsistencias e oportunidades de economia.
+
+
+Auditoria de Politica (Policy Compliance)
+Compliance
+Verificacao automatizada da aderencia a politica de viagens e eventos.
+
+
+Auditoria de Contratos & Acordos Corporativos
+Contratos
+Validacao do que foi contratado versus o que esta sendo praticado.
+
+
+SLA, Qualidade Operacional & Dados
+Operacional
+Medicao de performance de atendimento e integridade de dados.
+
+
+Antifraude & Anomalias (Controles)
+Controles
+Deteccao de padroes atipicos e potenciais abusos.
+
+
+O que auditamos
+
+Duplicidades e cobrancas repetidas
+Tarifas acima do esperado / inconsistencias por rota e perfil
+Gastos fora do padrao por viajante/unidade
+Falhas de segregacao (solicita/aprova/emite/paga)
+Entregas
+
+Alertas classificados (baixo/medio/alto)
+Evidencia do caso e trilha de decisao
+Recomendacoes de controles internos
+Para Fornecedores
+Programa para maturidade e padronizacao de TMC, Cias Aereas, Redes Hoteleiras, Locadoras, Espacos de Evento, A&B, Brindes, Graficas, Agencias entre outros.
+
+Programa de Maturidade 'Audit-Ready'
+Diagnostico completo e roadmap para elevar padrao operacional e governanca.
+
+
+Billing Analitico & Conciliacao Padrao
+Implantacao do padrao de faturamento e conciliacao que grandes clientes exigem.
+
+
+SLA & Atendimento (Operacao de Alta Performance)
+Estruturacao de SLAs e melhoria de produtividade.
+
+
+LGPD & Governanca de Dados
+Adequacao para atender corporacoes exigentes em privacidade e seguranca.
+
+
+Eventos Corporativos (MICE) — Auditoria Especializada
+Auditoria completa do ciclo de eventos: sourcing → contratacao → execucao → fechamento.
+
+O que auditamos
+
+RFP e concorrencia (minimo de propostas e criterios)
+Orcamento vs realizado (variacoes, aditivos, extras)
+Contratos de venue, A/V, cenografia, A&B, hospedagem de grupo
+Conciliacao de faturas, notas, comprovantes e reembolsos
+Entregas
+
+Matriz comparativa de propostas com justificativas
+Trilha de aprovacoes e governanca
+Pacote de evidencias do evento (Evidence Pack)
+Como funciona (online)
+1
+Onboarding & Mapeamento
+Sistemas, fornecedores, contratos e politica
+
+2
+Coleta / Integracao
+Importacao por API, SFTP/CSV ou upload controlado
+
+3
+Cadeia de Custodia
+Registro de origem, logs, evidencias raw e trilha de transformacao
+
+4
+Auditoria + Revisao Tecnica
+Regras automatizadas + validacao humana onde necessario
+
+5
+Relatorios & Acoes
+Divergencias, recomendacoes e plano de correcao
+
+6
+Monitoramento Continuo
+Indicadores, alertas e melhoria continua
+
+Entregaveis padrao (o que voce recebe)
+Dashboard executivo
+
+Custos, compliance, SLA, riscos
+
+Relatorio de divergencias
+
+Classificado por tipo e severidade
+
+Savings Report
+
+Oportunidades e recuperacoes com evidencia
+
+Plano de acao 30/60/90 dias
+
+Acoes priorizadas e responsaveis
+
+Evidence Packs
+
+Pacotes rastreáveis para Compliance e Juridico
+
+Modelos de contratacao
+Recorrente
+Assinatura mensal
+
+Monitoramento continuo
+
+Pontual
+Projeto fechado
+
+Diagnostico e implantacao
+
+Performance
+Success fee
+
+Sobre valores recuperados, com regra clara e transparencia
+
+Escala
+Por volume
+
+Por transacoes/PNRs/faturas/eventos
+
+Cobertura Nacional e LATAM
+Cobertura completa do ecossistema corporativo de despesas, desde GDS e OBTs ate eventos corporativos (MICE), com atuacao em toda a America Latina.
+
+GDS
+OBT
+TMC
+ERP/Backoffice
+Pagamentos
+Cias Aereas
+Hotelaria
+Car Rental
+Seguros
+MICE
+BSM
+eSIGN
+BI
+LOGISTICS
+Outros
+Atuacao LATAM:
+BR Brasil
+MX Mexico
+CO Colombia
+CL Chile
+AR Argentina
+PE Peru
+Principais Cases
+Mais de R$ 448 milhoes em economia e recuperacao, de R$ 2,8 bilhoes revisados — media superior a 16%.
+
+Novo Nordisk
+Natura
+Abbott
+BRF
+Samsung
+iFood
+Bayer
+Odebrecht
+Pirelli
+Boehringer Ingelheim
+Gerdau
+L'Oreal
+Lilly
+AstraZeneca
+Petrobras
+FAQ (Perguntas frequentes)
+
+Voces precisam acessar meus sistemas?
+
+Isso atende demandas de Compliance e Juridico?
+
+Voces conseguem auditar multiplas moedas e paises?
+Quer ver o AuraAudit operando no seu cenario?
+Faca voce mesmo um diagnostico inicial com amostra de dados (faturas cartoes/relatorio gerencia/contrato de prestacao de servicos — principais clausulas) e receba um relatorio com divergencias, oportunidades e evidencias rastreaveis.
+
+Solicitar Diagnostico
