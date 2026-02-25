@@ -514,8 +514,8 @@ export default function Home() {
                 <Award className="w-6 h-6 text-amber-600 dark:text-amber-400" />
               </div>
               <p className="text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
-              <p className="text-sm text-muted-foreground mt-1">Recuperados</p>
-              <p className="text-xs text-muted-foreground">em economia e recuperacao</p>
+              <p className="text-sm text-muted-foreground mt-1">Economizados</p>
+              <p className="text-xs text-muted-foreground">media do total revisado</p>
             </CardContent>
           </Card>
         </div>
