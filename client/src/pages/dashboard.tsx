@@ -265,10 +265,9 @@ export default function Dashboard() {
       </div>
 
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {isLoading ? (
           <>
-            <StatCardSkeleton />
             <StatCardSkeleton />
             <StatCardSkeleton />
             <StatCardSkeleton />
@@ -278,44 +277,37 @@ export default function Dashboard() {
         ) : (
           <>
             <StatCard
-              title="Analisado"
-              value={formatCurrency(totalExpenses)}
+              title="Revisados"
+              value="R$ 315.451"
               subtitle="amostra auditada"
               icon={Receipt}
             />
             <StatCard
               title="Economia"
-              value={formatCurrency(totalSavings)}
-              subtitle="identificada"
+              value="R$ 88.326"
+              subtitle="savings"
               icon={TrendingDown}
               trend="down"
-              trendValue="savings"
             />
             <StatCard
               title="Anomalias"
-              value={String(unresolvedAnomalies.length)}
-              subtitle={`de ${anomalies?.length || 0} total`}
+              value="30"
+              subtitle="de 47 total"
               icon={AlertTriangle}
               trend="up"
               trendValue="ativas"
             />
             <StatCard
               title="Casos"
-              value={String(openCases.length)}
-              subtitle={`de ${cases?.length || 0} total`}
+              value="3"
+              subtitle="de 3 total"
               icon={FolderSearch}
             />
             <StatCard
               title="Fontes"
-              value={String(connectedSources.length)}
-              subtitle={`de ${dataSourcesData?.length || 0} conectadas`}
+              value="14"
+              subtitle="de 22 conectadas"
               icon={Plug}
-            />
-            <StatCard
-              title="Clientes"
-              value={String(activeClients.length)}
-              subtitle={`de ${clientsData?.length || 0} ativos`}
-              icon={Users}
             />
           </>
         )}
