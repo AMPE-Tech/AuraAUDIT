@@ -78,7 +78,7 @@ const CATEGORIES: LatamCategory[] = [
       "Cancelamentos, no-shows e gestao de credito",
     ],
     evidenceTypes: ["Booking Logs", "Policy Snapshots", "Approval Trails", "Fare Logs"],
-    providers: ["Reserve (Argo Solutions)", "Argo", "SAP Concur", "Cytric (Amadeus)", "GetThere (Sabre)", "Navan (TripActions)", "TravelPerk", "Onfly", "VOLL", "Paytrack", "Lemontech Travel"],
+    providers: ["Reserve (Reserve Systems)", "Argo (Argo Solutions)", "SAP Concur (Concur Travel)", "Amadeus Cytric", "GetThere (Sabre/Serko)", "Serko (Zeno)", "Neo (Amex GBT, legado KDS)", "Navan (ex-TripActions)", "TravelPerk", "Lemontech", "Onfly", "VOLL"],
   },
   {
     id: "tmc",
@@ -114,7 +114,7 @@ const CATEGORIES: LatamCategory[] = [
       "Deteccao de padroes de fraude/abuso",
     ],
     evidenceTypes: ["Raw Import Files (hash)", "Reconciliation Rules", "Exception Logs", "AP/GL Trail"],
-    providers: ["Wintour", "Stur", "Shift", "SAP Travel", "Oracle Travel", "Totvs"],
+    providers: ["Wintour", "STUR / STUR Web (STUR CORP)", "SAP Travel", "Oracle Travel", "Totvs"],
   },
   {
     id: "payments",
