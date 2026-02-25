@@ -1,7 +1,7 @@
 import { eq, desc } from "drizzle-orm";
 import { db } from "./db";
 import {
-  users, expenses, auditCases, anomalies, auditTrail, clients, dataSources,
+  users, expenses, auditCases, anomalies, auditTrail, clients, dataSources, proposals,
   type InsertUser, type User,
   type InsertExpense, type Expense,
   type InsertAuditCase, type AuditCase,
@@ -9,6 +9,7 @@ import {
   type InsertAuditTrail, type AuditTrail,
   type InsertClient, type Client,
   type InsertDataSource, type DataSource,
+  type InsertProposal, type Proposal,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -45,6 +46,12 @@ export interface IStorage {
 
   getAuditTrail(): Promise<AuditTrail[]>;
   createAuditTrailEntry(entry: InsertAuditTrail): Promise<AuditTrail>;
+
+  getProposals(): Promise<Proposal[]>;
+  getProposal(id: string): Promise<Proposal | undefined>;
+  getProposalsByClient(clientId: string): Promise<Proposal[]>;
+  createProposal(proposal: InsertProposal): Promise<Proposal>;
+  updateProposal(id: string, data: Partial<InsertProposal>): Promise<Proposal | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -173,6 +180,29 @@ export class DatabaseStorage implements IStorage {
   async createAuditTrailEntry(entry: InsertAuditTrail): Promise<AuditTrail> {
     const [created] = await db.insert(auditTrail).values(entry).returning();
     return created;
+  }
+
+  async getProposals(): Promise<Proposal[]> {
+    return db.select().from(proposals).orderBy(desc(proposals.createdAt));
+  }
+
+  async getProposal(id: string): Promise<Proposal | undefined> {
+    const [proposal] = await db.select().from(proposals).where(eq(proposals.id, id));
+    return proposal;
+  }
+
+  async getProposalsByClient(clientId: string): Promise<Proposal[]> {
+    return db.select().from(proposals).where(eq(proposals.clientId, clientId)).orderBy(desc(proposals.createdAt));
+  }
+
+  async createProposal(proposal: InsertProposal): Promise<Proposal> {
+    const [created] = await db.insert(proposals).values(proposal).returning();
+    return created;
+  }
+
+  async updateProposal(id: string, data: Partial<InsertProposal>): Promise<Proposal | undefined> {
+    const [updated] = await db.update(proposals).set({ ...data, updatedAt: new Date() }).where(eq(proposals.id, id)).returning();
+    return updated;
   }
 }
 

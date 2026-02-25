@@ -162,6 +162,37 @@ export const messages = pgTable("messages", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const proposals = pgTable("proposals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id"),
+  clientName: text("client_name").notNull(),
+  clientCnpj: text("client_cnpj"),
+  clientEmail: text("client_email"),
+  type: text("type").notNull().default("custom"),
+  status: text("status").notNull().default("draft"),
+  services: jsonb("services").notNull().default([]),
+  totalValue: decimal("total_value", { precision: 12, scale: 2 }),
+  paymentTerms: text("payment_terms"),
+  validUntil: timestamp("valid_until"),
+  scope: text("scope"),
+  notes: text("notes"),
+  contractUrl: text("contract_url"),
+  signedAt: timestamp("signed_at"),
+  signedBy: text("signed_by"),
+  createdBy: text("created_by"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertProposalSchema = createInsertSchema(proposals).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertProposal = z.infer<typeof insertProposalSchema>;
+export type Proposal = typeof proposals.$inferSelect;
+
 export const insertConversationSchema = createInsertSchema(conversations).omit({
   id: true,
   createdAt: true,
