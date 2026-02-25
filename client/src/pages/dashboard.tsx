@@ -235,38 +235,72 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <Card className="bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/20">
-        <CardContent className="p-6">
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
-            <div className="col-span-2 lg:col-span-1">
-              <div className="flex items-center gap-2 mb-3">
-                <Plane className="w-5 h-5 text-primary" />
-                <h2 className="text-sm font-semibold" data-testid="text-project-overview">Projeto Stabia</h2>
-              </div>
-              <p className="text-xs text-muted-foreground">Viagens e Eventos Corporativos</p>
-              <p className="text-xs text-muted-foreground">Exercicios 2024 e 2025</p>
-              <div className="flex flex-wrap gap-1 mt-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="border-blue-200 dark:border-blue-900 bg-gradient-to-br from-blue-50 to-transparent dark:from-blue-950/30 dark:to-transparent">
+          <CardContent className="p-5 text-center">
+            <div className="flex items-center justify-center w-11 h-11 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-2">
+              <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <p className="text-3xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
+            <p className="text-sm font-medium mt-1">Media de Resultado</p>
+            <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
+          </CardContent>
+        </Card>
+        <Card className="border-emerald-200 dark:border-emerald-900 bg-gradient-to-br from-emerald-50 to-transparent dark:from-emerald-950/30 dark:to-transparent">
+          <CardContent className="p-5 text-center">
+            <div className="flex items-center justify-center w-11 h-11 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-2">
+              <BarChart3 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-reviewed">+2,8 BI</p>
+            <p className="text-sm font-medium mt-1">Revisados</p>
+            <p className="text-xs text-muted-foreground">em volume financeiro total</p>
+          </CardContent>
+        </Card>
+        <Card className="border-amber-200 dark:border-amber-900 bg-gradient-to-br from-amber-50 to-transparent dark:from-amber-950/30 dark:to-transparent">
+          <CardContent className="p-5 text-center">
+            <div className="flex items-center justify-center w-11 h-11 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-2">
+              <Award className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <p className="text-3xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
+            <p className="text-sm font-medium mt-1">Recuperados</p>
+            <p className="text-xs text-muted-foreground">em economia e recuperacao</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="border-primary/20">
+        <CardContent className="p-5">
+          <div className="flex items-center gap-2 mb-4">
+            <Plane className="w-5 h-5 text-primary" />
+            <h2 className="text-sm font-semibold" data-testid="text-project-overview">Projeto Atual - Grupo Stabia</h2>
+            <Badge variant="secondary" className="text-[10px]">Viagens e Eventos</Badge>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="p-3 rounded-md bg-muted/50">
+              <p className="text-lg font-bold text-blue-600 dark:text-blue-400" data-testid="text-volume-2024">R$ 51,3 MI</p>
+              <p className="text-[11px] text-muted-foreground">Volume 2024</p>
+            </div>
+            <div className="p-3 rounded-md bg-muted/50">
+              <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-volume-2025">R$ 39,6 MI</p>
+              <p className="text-[11px] text-muted-foreground">Volume 2025</p>
+            </div>
+            <div className="p-3 rounded-md bg-muted/50">
+              <p className="text-lg font-bold text-violet-600 dark:text-violet-400" data-testid="text-volume-total">R$ 90,9 MI</p>
+              <p className="text-[11px] text-muted-foreground">Volume Total</p>
+            </div>
+            <div className="p-3 rounded-md bg-muted/50">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">OBT</p>
+              <div className="flex flex-wrap gap-1">
                 <Badge variant="outline" className="text-[10px]">Reserve</Badge>
                 <Badge variant="outline" className="text-[10px]">Argo</Badge>
-                <Badge variant="outline" className="text-[10px]">Wintour</Badge>
-                <Badge variant="outline" className="text-[10px]">Stur</Badge>
               </div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-background/60">
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400" data-testid="text-volume-2024">R$ 51,3 MI</p>
-              <p className="text-[11px] text-muted-foreground mt-1">Volume 2024</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-background/60">
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-volume-2025">R$ 39,6 MI</p>
-              <p className="text-[11px] text-muted-foreground mt-1">Volume 2025</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-background/60">
-              <p className="text-2xl font-bold text-violet-600 dark:text-violet-400" data-testid="text-volume-total">R$ 90,9 MI</p>
-              <p className="text-[11px] text-muted-foreground mt-1">Volume Total</p>
-            </div>
-            <div className="text-center p-3 rounded-lg bg-background/60">
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400" data-testid="text-avg-result">16%</p>
-              <p className="text-[11px] text-muted-foreground mt-1">Meta de Resultado</p>
+            <div className="p-3 rounded-md bg-muted/50">
+              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Backoffice</p>
+              <div className="flex flex-wrap gap-1">
+                <Badge variant="outline" className="text-[10px]">Wintour (2024)</Badge>
+                <Badge variant="outline" className="text-[10px]">Stur (2025)</Badge>
+              </div>
             </div>
           </div>
         </CardContent>
