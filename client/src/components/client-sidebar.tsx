@@ -6,6 +6,7 @@ import {
   Package,
   FileText,
   Shield,
+  Globe,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useAuth } from "@/lib/auth";
@@ -36,6 +37,7 @@ const auditoriaItems = [
 const comercialItems = [
   { title: "Produtos & Servicos", url: "/products", icon: Package },
   { title: "Contrato", url: "/contract", icon: FileText },
+  { title: "Ecossistema LATAM", url: "/latam-scope", icon: Globe },
 ];
 
 export function ClientSidebar() {

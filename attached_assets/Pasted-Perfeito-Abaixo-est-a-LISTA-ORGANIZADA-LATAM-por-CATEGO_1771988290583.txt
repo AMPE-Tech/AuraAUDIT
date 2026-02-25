@@ -1,0 +1,324 @@
+Perfeito. Abaixo está a **LISTA ORGANIZADA (LATAM)** por **CATEGORIAS PRIMÁRIAS** para você **inserir direto na página do AuraAudit** (PT agora; deixe a tradução EN/ES para depois). Em cada categoria eu já coloco: **Canais de Integração**, **Itens Auditáveis**, **Evidências**.
+
+> **Nota de escopo (LATAM):** as categorias abaixo cobrem o “core” do ecossistema corporativo. Na fase 2, você vai **popular fornecedores por país** (BR/MX/CO/CL/AR/PE etc.) e por **cobertura** (somente corporativo vs misto). Para Brasil, listas públicas como **ABRACORP (associados)** e **ALAGEV (associados/mantenedores)** ajudam a montar o “radar” inicial de players corporativos. ([Abracorp][1])
+
+---
+
+# CATEGORIAS PRIMÁRIAS — AuraAudit (LATAM)
+
+## 1) GDS (Global Distribution Systems)
+
+**O que é:** infraestrutura de distribuição (aéreo/hotel/car) usada por TMCs/OBTs.
+
+**Canais de Integração**
+
+* APIs (SOAP/REST conforme provedor)
+* PNR/EDIFACT (mensageria)
+* Filas (queues) / e-mailing / arquivos (CSV/flat)
+* Webhooks/eventos (quando disponível via parceiros)
+
+**Itens Auditáveis**
+
+* Fonte do conteúdo (GDS vs NDC vs direto)
+* Regras de emissão/reemissão/reembolso
+* Taxas (YQ/YR, taxas de serviço, markup)
+* Qualidade do PNR (campos obrigatórios, SSR/OSI, formas de pagamento)
+* SLA de ticketing e pós-venda
+
+**Evidências**
+
+* PNR completo + histórico de alterações
+* Logs de ticketing (ETKT/EMD) e exchanges
+* Extratos de transação por PCC/OfficeID
+* Tabelas de fees/markups parametrizadas
+
+*(Core global: Amadeus / Sabre / Travelport — mesma base para LATAM.) ([ALAGEV][2])
+
+---
+
+## 2) OBT (Online Booking Tool) / Self-Booking Corporativo
+
+**O que é:** ferramenta usada pelo colaborador/gestor para **reservar** dentro da política (com aprovação).
+
+**Canais de Integração**
+
+* API (reservas, perfil, política, centros de custo)
+* SSO (SAML/OAuth) + diretório (Azure AD/Google Workspace)
+* Conectores com TMC/GDS/NDC
+* Exportação/ingestão (CSV, SFTP) para BI/Financeiro
+
+**Itens Auditáveis**
+
+* Política aplicada (classe, antecedência, teto, preferenciais)
+* Fluxo de aprovação (alçadas, exceções e justificativas)
+* Comparação de tarifas (menor lógica vs menor disponível)
+* Aderência a fornecedores preferenciais (air/hotel/car)
+* Cancelamentos/no-show e gestão de crédito
+
+**Evidências**
+
+* Trilhas de auditoria do workflow (request → approve → book → ticket)
+* Snapshot da política vigente (versão)
+* Registro de exceções + justificativas
+* Logs de disponibilidade/seleção de tarifa
+
+*(Exemplos LATAM/BR com atuação corporativa: Paytrack e VOLL se posicionam como gestão de viagens corporativas com integrações; use como âncora no cadastro inicial.) ([Paytrack][3])
+
+---
+
+## 3) TMC (Travel Management Company) / Agência Corporativa
+
+**O que é:** operação ponta-a-ponta (atendimento, emissão, pós-venda, faturamento) com governança corporativa.
+
+**Canais de Integração**
+
+* Integração com OBT (API/conector)
+* Integração com ERP/AP (fatura, centros de custo, projetos)
+* Integração com VCN/cartões (pagamentos e conciliação)
+* Data feeds (BI), arquivos e webservices
+
+**Itens Auditáveis**
+
+* Modelos de remuneração (fee, markup, override, incentivos)
+* SLA (tempo de emissão, urgências, 24/7, reacomodação)
+* Conformidade (política, LGPD, segregação de funções)
+* Qualidade de atendimento (FCR, TMA, backlog)
+* Reconciliação fatura vs PNR vs cartão vs reembolso
+
+**Evidências**
+
+* Contrato + tabela de fees/SLAs (vigência e versões)
+* Relatórios de atendimento (tickets, tempos, motivos)
+* Faturas detalhadas (linha a linha) + anexos
+* Auditoria de PNRs emitidos pela TMC
+
+*(Para BR, ABRACORP publica lista de associadas corporativas — útil para mapear TMCs por cobertura.) ([Abracorp][1])
+
+---
+
+## 4) Midoffice / Backoffice Corporativo (Conciliação, Faturamento, BI)
+
+**O que é:** camada “financeira e de controle” (conciliação, billing, impostos, dashboards, compliance).
+
+**Canais de Integração**
+
+* SFTP/ETL (CSV, flat files)
+* APIs para lançamentos/centros de custo
+* Webhooks para eventos de viagem (ticket emitido/cancelado)
+* Conectores com ERP (SAP, Oracle, Totvs, etc.)
+
+**Itens Auditáveis**
+
+* Conciliação 3/4 vias (PNR/TKT/EMD vs fatura vs cartão/VCN vs reembolso)
+* Duplicidades, cobranças indevidas, itens fora da política
+* Integridade dos lançamentos (CC, projeto, conta contábil)
+* Parametrização de impostos/retentions (quando aplicável)
+* Detecção de anomalias (padrões de fraude/abuso)
+
+**Evidências**
+
+* Arquivos “raw” de importação (hash + data)
+* Regras de conciliação (versões)
+* Logs de exceções + tratativas
+* Trilha contábil (AP/GL)
+
+---
+
+## 5) Pagamentos Corporativos (Cartões / VCN / Billing)
+
+**O que é:** camada de pagamento (cartão corporativo, cartão virtual, faturamento central).
+
+**Canais de Integração**
+
+* APIs do emissor/fintech (transações, tokens, VCN)
+* Arquivos de extrato (OFX/CSV)
+* Integração com OBT/TMC (forma de pagamento, limites)
+* Integração com ERP (contas a pagar / reembolsos)
+
+**Itens Auditáveis**
+
+* Política de pagamento (quando usar VCN vs fatura vs reembolso)
+* Match transação ↔ reserva ↔ viajante ↔ centro de custo
+* Split de despesas (hotel, taxa, multa, ancillaries)
+* Chargebacks e disputas
+* Compliance (MCC bloqueados, limites, aprovação)
+
+**Evidências**
+
+* Extratos e comprovantes (raw)
+* Logs de geração/uso do VCN
+* Auditoria de limites e aprovações
+* Relatórios de chargeback/disputa
+
+---
+
+## 6) Companhias Aéreas (Conteúdo direto + NDC + programas corporativos)
+
+**O que é:** fornecedor final de transporte aéreo (contratos corporativos, negociação, NDC).
+
+**Canais de Integração**
+
+* NDC (direto ou via agregador)
+* GDS (conteúdo tradicional)
+* APIs/portais corporativos (acordos, relatórios)
+* Data feeds (ADM/ACM quando aplicável)
+
+**Itens Auditáveis**
+
+* Acordo corporativo (discount, rebate, targets)
+* ADM/ACM (cobranças pós-viagem)
+* Ancillaries (bagagem, assento, prioridade)
+* Regras de remarcação/cancelamento
+* Emissão correta (tarifa vs acordo)
+
+**Evidências**
+
+* Contrato/acordo + anexos de performance
+* Tickets/EMDs + histórico de exchange
+* Relatórios de flown revenue e meta (quando houver)
+* ADMs/ACMs e justificativas
+
+---
+
+## 7) Hotelaria Corporativa (Redes, hotéis, conectividade e tarifas negociadas)
+
+**O que é:** hospedagem corporativa (rate agreements, inclusões, SLA, last-room-availability).
+
+**Canais de Integração**
+
+* GDS/Channel/CRS (dependendo do hotel/rede)
+* APIs/Conectores (bedbanks B2B quando permitido)
+* RFP corporativo (plataformas de sourcing)
+* Export/feeds (folios, no-show, cancellations)
+
+**Itens Auditáveis**
+
+* Tarifa negociada vs tarifa pública (paridade)
+* Inclusões (café, wi-fi, estacionamento)
+* Política de cancelamento/no-show
+* Conformidade com preferenciais e teto
+* Taxas extras e cobranças indevidas (folios)
+
+**Evidências**
+
+* Rate sheets/contratos + versão
+* Folios detalhados (itens e taxas)
+* Comprovantes de no-show/cancel
+* Logs de disponibilidade (quando capturável)
+
+---
+
+## 8) Locadoras (Car Rental) e Mobilidade Corporativa
+
+**O que é:** aluguel de veículos e, em alguns programas, mobilidade urbana corporativa.
+
+**Canais de Integração**
+
+* GDS/OBT conector
+* APIs diretas (reservas, vouchers, faturamento)
+* Arquivos de faturamento e extratos
+* Integração com política (categoria, seguros)
+
+**Itens Auditáveis**
+
+* Categoria reservada vs entregue (upsell)
+* Seguros/waivers e franquias
+* Combustível, pedágios, multas e extras
+* No-show e cancelamentos
+* Cobrança por diárias e taxas acessórias
+
+**Evidências**
+
+* Contrato corporativo + rate table
+* Voucher/contrato de locação
+* Fatura detalhada + extras
+* Logs de reserva/alteração
+
+---
+
+## 9) Seguradoras / Assistência Viagem (corporativo)
+
+**O que é:** cobertura médica/assistência, apólices anuais, vouchers por viagem.
+
+**Canais de Integração**
+
+* APIs (emissão de vouchers, elegibilidade)
+* Arquivos (listagens, sinistros)
+* Portais corporativos
+* Integração com OBT/TMC (emissão automática)
+
+**Itens Auditáveis**
+
+* Elegibilidade por perfil/país/risco
+* Cobertura contratada vs emitida
+* SLA de atendimento e rede credenciada
+* Sinistralidade e reembolsos
+* Cobranças duplicadas
+
+**Evidências**
+
+* Apólice + endossos
+* Vouchers emitidos + logs
+* Relatórios de sinistro
+* Trilhas de cobrança/fatura
+
+---
+
+## 10) Eventos Corporativos (MICE) — Agências, Venues e Event Tech
+
+**O que é:** cadeia de eventos (sourcing de venue, inscrições, fornecedores, A&B, A/V, hospedagem de grupo).
+
+**Canais de Integração**
+
+* RFP/Sourcing (plataformas/portais)
+* APIs de credenciamento/inscrição
+* Integrações com pagamentos/faturamento
+* Export de listas (participantes, fornecedores, NF)
+
+**Itens Auditáveis**
+
+* Comparação de cotações (mín. 3 fornecedores, critérios)
+* Compliance de contratação (PO, SLA, cláusulas)
+* Orçamento vs realizado (variações e aditivos)
+* Reembolsos/cancelamentos e multas
+* Split de custos por centro de custo/projeto
+
+**Evidências**
+
+* RFPs + propostas + matriz comparativa
+* Contratos + aditivos + aprovações
+* Notas/faturas + comprovantes
+* Lista final de participantes + check-in
+
+---
+
+# Bloco “Padrão de Cadastro” (para todas as categorias)
+
+Campos que você deve exigir no AuraAudit (estrutura única):
+
+* **Categoria Primária**
+* **Fornecedor**
+* **Países LATAM atendidos**
+* **Canais de Integração (marcar: API / SFTP / CSV / Webhook / Portal / Email / Outros)**
+* **Itens Auditáveis (checklist)**
+* **Evidências (tipos aceitos + padrões de armazenamento/hash)**
+* **Owner interno / Responsável**
+* **Versão do contrato/política** + **vigência**
+
+---
+
+## Âncoras LATAM (para você usar na etapa 2 – povoamento de fornecedores)
+
+* **ABRACORP (associados)**: base de agências corporativas no Brasil (útil para TMCs). ([Abracorp][1])
+* **ALAGEV (associados/mantenedores)**: base multissetorial (TMCs + tech + fornecedores). ([ALAGEV][4])
+* **Paytrack (integrações/API)** e **VOLL (integração/ERP e positioning corporativo)**: exemplos claros de canais de integração e governança. ([Paytrack][5])
+
+---
+
+Se você disser **“OK — seguir para etapa 2 (fornecedores)”**, eu retorno a **lista LATAM de fornecedores por categoria** começando por **Brasil + México + Colômbia + Chile + Argentina**, já com: **site oficial**, **cobertura**, **tipo (corporativo/tecnologia/operador)** e **prioridade de integração (P0/P1/P2)**.
+
+[1]: https://www.abracorp.org.br/associados?utm_source=chatgpt.com "Associados"
+[2]: https://alagev.org/?utm_source=chatgpt.com "ALAGEV"
+[3]: https://paytrack.com.br/?utm_source=chatgpt.com "Paytrack: Gestão de Despesas e Viagens Corporativas"
+[4]: https://alagev.org/en/associados/?utm_source=chatgpt.com "Associados"
+[5]: https://paytrack.com.br/integracoes/?utm_source=chatgpt.com "Integrações com ERP's, CRM e sistemas variados"

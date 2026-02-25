@@ -1,0 +1,79 @@
+revisei um a um com checagem em fontes públicas (sites oficiais e referências do setor). Resultado:
+
+1) OBTs / Plataformas de booking e gestão (existência + correções)
+✅ Existem (confirmados)
+
+Reserve (Reserve Systems) — existe como fornecedor de OBT/gestão de viagens corporativas.
+
+Argo (Argo Solutions / Argo Travel & Expense) — existe e atua forte em корпоратив travel & expense na América Latina.
+
+SAP Concur (Concur Travel) — existe e tem operação local (site BR).
+
+Cytric (Amadeus Cytric) — existe como plataforma corporativa de travel & expense (Cytric) e há histórico de lançamento/atuação no Brasil.
+
+GetThere (Sabre GetThere) — existe como OBT corporativo (produto Sabre).
+
+Serko (ex.: Zeno) — existe como plataforma corporativa; nota importante: Serko adquiriu o GetThere (mudança relevante de ownership/ecossistema).
+
+Navan (ex-TripActions) — existe (rebrand TripActions → Navan).
+
+TravelPerk — existe como plataforma corporativa (presença/uso na região varia por segmento).
+
+Lemontech — existe e se posiciona como plataforma nacional de gestão de viagens e despesas.
+
+Onfly — existe e atua como plataforma de viagens e despesas corporativas (expansão LATAM citada pelo próprio site).
+
+VOLL — existe e se posiciona como agência/travel tech corporativa (viagens, mobilidade e despesas).
+
+⚠️ Existe, mas seu item está misturado/incorreto (correção de nomenclatura/ownership)
+
+“KDS / AmTrav (American Express GBT)” → INCORRETO como você escreveu.
+
+KDS existe e virou Neo™ dentro do ecossistema da Amex GBT (KDS/Neo é o booking/expense tool da Amex GBT).
+
+AmTrav existe, mas é empresa/produto separado (não é “KDS/AmTrav da Amex GBT”).
+
+❓ Não confirmado como “OBT corporativo” do jeito que está escrito
+
+“Voopter Business — comparador com funcionalidades corporativas”
+
+Voopter existe, mas as evidências públicas apontam para metabuscador/consumer (comparador) — não encontrei confirmação robusta de um produto formal “Voopter Business” como OBT corporativo.
+
+2) Backoffice / Mid-office (existência + observações)
+✅ Existem (confirmados)
+
+Wintour — existe como backoffice para agências de viagens.
+
+STUR / STUR Web — existe como backoffice para agências e também tem módulo/portal voltado a cliente corporativo (“STUR CORP”).
+
+⚠️ “Shift — ERP para agências de viagens” (provável confusão)
+
+O que aparece com evidência forte é Shift Mobilidade Corporativa (mobilidade/transfer/logística para eventos), não um ERP/backoffice padrão de agência.
+
+Pode existir algum “Shift” em outro nicho (há marcas com esse nome), mas não consegui confirmar o item “Shift = ERP para agências” com fonte confiável do turismo/backoffice.
+
+3) Ajuste recomendado no seu texto (para ficar “audit-grade”)
+
+Substitua o trecho por algo assim (já corrigido):
+
+Reserve (Reserve Systems) — OBT nacional
+
+Argo (Argo Solutions) — OBT/Travel & Expense LATAM
+
+SAP Concur (Concur Travel) — OBT/Travel & Expense global (operação BR)
+
+Amadeus Cytric — OBT/Travel & Expense (conectividade Amadeus)
+
+GetThere (Sabre) — OBT corporativo (nota: hoje com forte conexão/ecossistema Serko após aquisição)
+
+Serko (Zeno) — Travel & Expense / OBT
+
+Neo™ (Amex GBT, legado KDS) — OBT/Expense (corrige “KDS”)
+
+Navan (ex-TripActions) — Travel & Expense
+
+TravelPerk — Travel platform (segmento mid-market/PME, depende do Brasil)
+
+Lemontech / Onfly / VOLL — players brasileiros (viagens + despesas / travel tech)
+
+E manter “Voopter” fora da lista de OBT até você ter prova comercial/documental do produto corporativo (contrato, one-pager B2B, case corporativo, integração com TMC etc.).

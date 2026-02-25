@@ -94,9 +94,14 @@ server/
 ## Client Portal Sidebar Sections
 - **Projeto**: Dashboard, Sistemas
 - **Auditoria**: Tipos de Despesas, Integracoes
-- **Comercial**: Produtos & Servicos, Contrato
+- **Comercial**: Produtos & Servicos, Contrato, Ecossistema LATAM
+
+## LATAM Ecosystem Categories (10)
+GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo, Concur, Cytric, Navan, TravelPerk, Onfly, VOLL, Paytrack), TMC (CVC Corp, Flytour, BRT, Copastur, Rextur, Alatur JTB, Avipam, Travelcare), Mid/Backoffice (Wintour, Stur, Shift, SAP Travel, Oracle, Totvs), Pagamentos (Bradesco EBTA, Itau, Santander, B2, WEX, AirPlus, Conferma Pay, Stripe), Cias Aereas (LATAM, GOL, Azul, AA, United, Copa, Avianca, Aeromexico, JetSmart, BSPlink), Hotelaria (Accor, Atlantica, Marriott, Hilton, IHG, Wyndham, Blue Tree, Nacional Inn, Windsor, Bourbon), Car Rental (Localiza Hertz, Movida, Unidas, Foco, Avis, Budget, Enterprise, National), Seguros (Porto Seguro, Allianz, Assist Card, Travel Ace, GTA, Affinity, Coris, April), MICE (MCI Group, GL Events, Embratur, InEvent, Sympla, Eventbrite, Cvent)
 
 ## Recent Changes
+- 2026-02-25: Added LATAM Scope page with 10 ecosystem categories, 80+ providers, expandable cards with audit items and evidence types
+- 2026-02-25: Added Cobertura Nacional e LATAM section to Home page (6 countries, 10 categories grid)
 - 2026-02-25: Built full client portal with sidebar, 6 pages (dashboard, systems, expense types, integrations, products, contract)
 - 2026-02-25: Added authentication (login/logout/session) with role-based routing (admin vs client)
 - 2026-02-25: Redesigned dashboard cronograma as online audit timeline (~45 min process)
