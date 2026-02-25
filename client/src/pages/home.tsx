@@ -566,6 +566,20 @@ export default function Home() {
   return (
     <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
 
+      <div className="space-y-4" data-testid="section-hero">
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight leading-tight max-w-3xl" data-testid="text-h1-title">
+          Auditoria online com rastreabilidade juridica para despesas corporativas
+        </h1>
+        <div className="flex flex-wrap gap-3">
+          <Button variant="default" size="lg" data-testid="button-how-it-works" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>
+            Ver como funciona
+          </Button>
+          <Button variant="outline" size="lg" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
+            Solicitar diagnostico
+          </Button>
+        </div>
+      </div>
+
       <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
         <CardContent className="p-6 space-y-3">
           <div className="flex items-center gap-2">
@@ -902,7 +916,7 @@ export default function Home() {
 
       <Separator />
 
-      <Card>
+      <Card id="como-funciona">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Settings className="w-4 h-4 text-primary" />
@@ -1072,7 +1086,7 @@ export default function Home() {
           <div className="flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 mx-auto">
             <MessageSquare className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="text-lg font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit operando no seu cenario?</h3>
+          <h3 id="cta-diagnostico" className="text-lg font-semibold" data-testid="text-cta-title">Quer ver o AuraAudit operando no seu cenario?</h3>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
             Faca voce mesmo um diagnostico inicial com amostra de dados (faturas cartoes/relatorio gerencia/contrato de prestacao de servicos — principais clausulas)
             e receba um relatorio com divergencias, oportunidades e evidencias rastreaveis.
