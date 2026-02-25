@@ -105,7 +105,7 @@ const CATEGORIES: LatamCategory[] = [
     icon: Server,
     description:
       "Camada financeira e de controle: conciliacao multi-via, billing, impostos, dashboards e deteccao de anomalias.",
-    channels: ["SFTP/ETL", "API ERP", "Webhooks", "Conectores SAP/Oracle/Totvs"],
+    channels: ["SFTP/ETL", "API ERP", "Webhooks", "Conectores SAP/Oracle/Totvs/Benner"],
     auditItems: [
       "Conciliacao 3/4 vias (PNR/TKT vs fatura vs cartao vs reembolso)",
       "Duplicidades e cobrancas indevidas",
@@ -114,7 +114,7 @@ const CATEGORIES: LatamCategory[] = [
       "Deteccao de padroes de fraude/abuso",
     ],
     evidenceTypes: ["Raw Import Files (hash)", "Reconciliation Rules", "Exception Logs", "AP/GL Trail"],
-    providers: ["Wintour", "STUR / STUR Web (STUR CORP)", "SAP Travel", "Oracle Travel", "Totvs"],
+    providers: ["Wintour", "STUR / STUR Web (STUR CORP)", "SAP S/4HANA (SAP Travel & Expense)", "Oracle Cloud (Oracle Travel)", "Totvs Protheus", "Benner Hospitality & Turismo"],
   },
   {
     id: "payments",
