@@ -19,6 +19,7 @@ import ClientIntegrations from "@/pages/client-integrations";
 import ClientProducts from "@/pages/client-products";
 import ClientContract from "@/pages/client-contract";
 import ClientLatamScope from "@/pages/client-latam-scope";
+import ClientProjectPanel from "@/pages/client-project-panel";
 import Expenses from "@/pages/expenses";
 import AuditCases from "@/pages/audit-cases";
 import Anomalies from "@/pages/anomalies";
@@ -55,6 +56,7 @@ function ClientRouter() {
     <Switch>
       <Route path="/" component={ClientDashboard} />
       <Route path="/dashboard" component={ClientDashboard} />
+      <Route path="/project-panel" component={ClientProjectPanel} />
       <Route path="/systems" component={ClientSystems} />
       <Route path="/expense-types" component={ClientExpenseTypes} />
       <Route path="/integrations" component={ClientIntegrations} />

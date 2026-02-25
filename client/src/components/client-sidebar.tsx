@@ -7,6 +7,7 @@ import {
   FileText,
   Shield,
   Globe,
+  BarChart3,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useAuth } from "@/lib/auth";
@@ -26,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 
 const projetoItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3 },
   { title: "Sistemas", url: "/systems", icon: Monitor },
 ];
 

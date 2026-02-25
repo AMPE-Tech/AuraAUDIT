@@ -92,7 +92,7 @@ server/
 - Server auth: server/auth.ts (setupAuth, requireAuth, requireAdmin)
 
 ## Client Portal Sidebar Sections
-- **Projeto**: Dashboard, Sistemas
+- **Projeto**: Dashboard, Painel do Projeto, Sistemas
 - **Auditoria**: Tipos de Despesas, Integracoes
 - **Comercial**: Produtos & Servicos, Contrato, Ecossistema LATAM
 
@@ -100,6 +100,7 @@ server/
 GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo Solutions, SAP Concur, Amadeus Cytric, GetThere/Serko, Neo/Amex GBT, Navan, TravelPerk, Lemontech, Onfly, VOLL), TMC (CVC Corp, Flytour, BRT, Copastur, Rextur, Alatur JTB, Avipam, Travelcare), Mid/Backoffice (Wintour, STUR/STUR CORP, SAP S/4HANA, Oracle Cloud, Totvs Protheus, Benner), Pagamentos (Bradesco EBTA, Itau, Santander, B2, WEX, AirPlus, Conferma Pay, Stripe), Cias Aereas (LATAM, GOL, Azul, AA, United, Copa, Avianca, Aeromexico, JetSmart, BSPlink), Hotelaria (Accor, Atlantica, Marriott, Hilton, IHG, Wyndham, Blue Tree, Nacional Inn, Windsor, Bourbon), Car Rental (Localiza Hertz, Movida, Unidas, Foco, Avis, Budget, Enterprise, National), Seguros (Porto Seguro, Allianz, Assist Card, Travel Ace, GTA, Affinity, Coris, April), MICE (MCI Group, GL Events, Embratur, InEvent, Sympla, Eventbrite, Cvent)
 
 ## Recent Changes
+- 2026-02-25: Added Painel do Projeto page with rich dashboard panels (area chart, radar, bar, pie, progress bars, vendor grid)
 - 2026-02-25: Added LATAM Scope page with 10 ecosystem categories, 80+ providers, expandable cards with audit items and evidence types
 - 2026-02-25: Added Cobertura Nacional e LATAM section to Home page (6 countries, 10 categories grid)
 - 2026-02-25: Built full client portal with sidebar, 6 pages (dashboard, systems, expense types, integrations, products, contract)
