@@ -482,8 +482,9 @@ export default function Home() {
             O AuraAudit e uma solucao de <span className="font-medium text-foreground">auditoria online</span> para{" "}
             <span className="font-medium text-foreground">viagens corporativas (T&E)</span> e{" "}
             <span className="font-medium text-foreground">eventos corporativos (MICE)</span>. Atuamos com foco em{" "}
-            reducao de custo, compliance, controle financeiro e rastreabilidade — com entregaveis claros,
-            evidencias organizadas e indicadores executivos.
+            compliance, controle financeiro, com <span className="font-medium text-foreground">cadeia de custodia</span> e{" "}
+            <span className="font-medium text-foreground">rastreabilidade juridica</span> — entregaveis claros,
+            evidencias organizadas e indicadores executivos via <span className="font-medium text-foreground">Dashboards Personalizados</span>.
           </p>
         </CardContent>
       </Card>
