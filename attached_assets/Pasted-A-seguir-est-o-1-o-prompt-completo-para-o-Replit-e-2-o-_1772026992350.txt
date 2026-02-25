@@ -1,0 +1,374 @@
+A seguir estão **(1) o prompt completo para o Replit** e **(2) o modelo completo do Contrato de Adesão Online**, ambos **atualizados** com o pricing correto:
+
+* **US$ 250/mês até US$ 25.000 auditados/mês (VAM)**
+* **Acima de US$ 25.000: +0,30% sobre o excedente**
+* **CAP mensal: US$ 5.000**
+* Inclui **client-controlled**, **trilhas auditáveis**, **alertas em tempo real**, **cadeia de custódia**, **rastreabilidade jurídica** e **dashboard + relatório de consumo VAM**.
+
+---
+
+# 1) PROMPT COMPLETO PARA O REPLIT (colar integralmente)
+
+**Objetivo**
+Implementar o plano **AuraAudit Pass** com checkout, contrato de adesão online, cálculo de cobrança por **valor auditado mensal (VAM)**, CAP mensal, relatório de consumo, trilhas auditáveis e fluxo de auditoria guiado por IA com supervisão humana.
+
+---
+
+## A) Pricing & Regras de cobrança (fixo e oficial)
+
+Criar um plano único chamado **AuraAudit Pass** com:
+
+* **Mensalidade fixa:** USD **250.00** / mês
+* **Franquia incluída:** até **USD 25,000.00** de **VAM** por mês sem cobrança variável
+* **Variável por consumo:** **0.30%** sobre o **excedente** acima de **USD 25,000.00** de VAM por mês
+* **CAP mensal:** total (mensalidade + variável) **máximo USD 5,000.00**
+* Fórmula oficial (deve ser usada em toda a aplicação):
+
+  * `monthly_total_usd = min(5000, 250 + 0.003 * max(0, VAM - 25000))`
+
+### Definição de VAM (Valor Auditado Mensal)
+
+* `VAM = soma dos valores monetários das transações/despesas efetivamente processadas pela Plataforma no mês`.
+* Aplicar **deduplicação** quando a mesma transação aparecer em múltiplas fontes (cartão vs fatura vs expense), usando:
+
+  * `source_transaction_id` (se existir) + `source_system`
+  * fallback dedupe key: `date + amount + currency + merchant + traveler_id/employee_id + last4(optional)` (hash)
+* VAM é apurado **por company_id** e **por período (YYYY-MM)**.
+
+### Transparência
+
+* Gerar **Relatório Mensal de Consumo (VAM)** com: período, fontes, VAM total, contagem de transações, método de dedupe, preview do valor devido (com fórmula), e referência às trilhas/audit_run.
+
+---
+
+## B) Fluxo do usuário (checkout → acesso)
+
+Implementar:
+
+1. Página de pricing com CTA: **“Assinar AuraAudit Pass”**
+2. Checkout via **Stripe** para assinatura mensal (USD 250)
+3. Após pagamento confirmado: criar/ativar workspace do cliente e liberar acesso
+
+---
+
+## C) Contrato de adesão online (obrigatório no checkout)
+
+Antes de concluir a assinatura:
+
+* Exibir link “Ver Termos” (modal ou página)
+* Exigir checkbox de aceite
+* Bloquear o pagamento sem aceite marcado
+
+Registrar e armazenar:
+
+* `accepted_at_utc`, `ip_address`, `user_id`, `company_id`, `terms_version`
+* **hash SHA-256 do texto completo aceito** (`terms_text_sha256`)
+* guardar também `terms_text_snapshot` (string) OU storage ref imutável
+
+---
+
+## D) Cobrança variável (excedente) — implementação prática
+
+Como Stripe assinatura padrão não calcula o excedente:
+
+* Implementar **fechamento mensal** (job agendado) que:
+
+  1. calcula o VAM do mês anterior (YYYY-MM)
+  2. calcula `monthly_total_usd` pela fórmula oficial
+  3. calcula a parcela variável: `variable_usd = monthly_total_usd - 250` (nunca negativa)
+  4. emite **uma invoice** no Stripe para a parcela variável **ou** lança “invoice item”
+  5. registra `monthly_consumption` e armazena o relatório (JSON + opcional PDF)
+  6. idempotência total por `(company_id, period_ref)`
+
+**Requisitos**
+
+* idempotência: `billing_run_id` + unique constraint (company_id, period_ref)
+* se invoice já existir, não duplicar cobrança
+* logs: `billing_run_log` com status, erros e stripe_invoice_id
+
+---
+
+## E) Dashboard do cliente (mínimo do Pass)
+
+Criar página **Billing & Compliance** com:
+
+* Plano atual: AuraAudit Pass
+* VAM do mês corrente (parcial) + estimativa de cobrança (preview)
+* VAM do mês fechado + valor cobrado
+* Histórico de meses (tabela): período | VAM | variável | total | status | link relatório | link invoice
+* Aba “Termos aceitos”: versão, data/hora, hash
+
+---
+
+## F) IA + supervisão humana (MVP)
+
+Criar pipeline “Audit Run”:
+
+* Upload de dados (CSV/Excel/OFX/PDF) → normalização → dedupe → cálculo VAM → achados
+* IA gera:
+
+  * Top achados (ex.: 10–50) com severidade + recomendação
+  * Resumo executivo
+* Supervisão humana:
+
+  * status do achado: `draft_by_ai → reviewed → approved`
+  * painel admin para revisar rapidamente (filtro por severidade)
+
+---
+
+## G) Trilhas auditáveis e cadeia de custódia (mínimo)
+
+Para cada upload/processamento:
+
+* salvar `raw_file_ref` + `sha256` + `uploaded_by` + `uploaded_at_utc` + `source_type`
+* salvar `audit_run_id` com logs e versões: parser_version, ruleset_version
+* cada achado aponta para `evidence_refs` (IDs + hashes)
+* registrar `transformation_log` (quando houver) com hashes intermediários
+
+---
+
+## H) Critérios de aceite (testes obrigatórios)
+
+1. Consigo assinar pagando USD 250/mês via Stripe
+2. Checkout exige aceite do contrato e salva IP + hash do texto
+3. Upload de CSV gera transações normalizadas + dedupe + VAM parcial
+4. No fechamento mensal, o sistema calcula exatamente:
+
+   * `min(5000, 250 + 0.003 * max(0, VAM - 25000))`
+5. Gera invoice variável (quando aplicável) e registra histórico
+6. Dashboard mostra consumo e permite baixar relatório mensal
+
+---
+
+## I) Requisitos técnicos
+
+* Backend: Node/TypeScript
+* Banco: Postgres
+* Jobs: scheduler/cron com idempotência
+* Segurança: RBAC (admin x client), logs, LGPD-ready
+* Storage: GCS/S3/Supabase storage (o que já existir no projeto)
+
+---
+
+## J) Modelo de dados (tabelas mínimas)
+
+* `companies`
+* `users`
+* `subscriptions` (stripe_customer_id, stripe_subscription_id, status, current_period_start/end)
+* `terms_acceptance` (company_id, user_id, terms_version, terms_text_sha256, terms_text_snapshot_ref, accepted_at_utc, ip_address, user_agent)
+* `uploads` (company_id, file_name, sha256, source_type, uploaded_at_utc, storage_ref, parser_version)
+* `audit_runs` (company_id, period_ref, status, started_at_utc, finished_at_utc, ruleset_version)
+* `transactions_normalized` (company_id, date, amount, currency, merchant, source_system, source_tx_id, dedupe_key_hash, created_at_utc)
+* `monthly_consumption` (company_id, period_ref, vam_total, tx_count, dedupe_method, variable_usd, total_usd, stripe_invoice_id, report_ref, created_at_utc)
+* `findings` (audit_run_id, severity, title, description, status, evidence_refs_json)
+* `billing_runs` (company_id, period_ref, status, stripe_invoice_id, log_json, created_at_utc)
+
+---
+
+## K) Env Vars necessárias
+
+* `STRIPE_SECRET_KEY`
+* `STRIPE_WEBHOOK_SECRET`
+* `STRIPE_PRICE_ID_SUBSCRIPTION_250`
+* `APP_BASE_URL`
+* `DB_URL`
+* `STORAGE_BUCKET` (se aplicável)
+
+---
+
+**Entrega esperada**
+PR com mudanças + migrações + instruções para configurar Stripe e rodar o job mensal.
+
+---
+
+# 2) MODELO COMPLETO — CONTRATO DE ADESÃO ONLINE (ATUALIZADO)
+
+**CONTRATO DE ADESÃO ONLINE — AURAAUDIT PASS (COMPLIANCE/JURÍDICO)**
+**Última atualização:** {{DATA_ATUALIZACAO}}
+**Versão:** {{VERSAO_CONTRATO}}
+
+Este Contrato de Adesão (“**Contrato**”) regula o uso do serviço **AuraAudit Pass** (“**Serviço**”), disponibilizado por **{{AURAAUDIT_RAZAO_SOCIAL}}**, CNPJ/Tax ID **{{AURAAUDIT_CNPJ_TAXID}}**, com sede em **{{AURAAUDIT_ENDERECO}}** (“**CONTRATADA**”), e aceito por **{{CLIENTE_RAZAO_SOCIAL}}**, CNPJ/Tax ID **{{CLIENTE_CNPJ_TAXID}}** (“**CONTRATANTE**”), no ato do aceite eletrônico.
+
+Ao clicar em **“Aceito”**, o CONTRATANTE declara que leu, compreendeu e concorda integralmente com este Contrato.
+
+---
+
+## 1. Definições
+
+1.1. **Plataforma**: ambiente online AuraAudit, incluindo painéis, conectores, rotinas de processamento e relatórios.
+1.2. **VAM (Valor Auditado Mensal)**: soma dos valores monetários das transações/despesas **efetivamente processadas** pela Plataforma no período mensal de cobrança, conforme Seção 6.
+1.3. **Trilhas Auditáveis**: registros do processo (origem, ingestão, deduplicação, transformações, regras aplicadas, versões e saídas), com logs e metadados.
+1.4. **Cadeia de Custódia**: procedimentos que preservam e rastreiam evidências (raw e normalizadas), com registro de origem, integridade e histórico de processamento.
+1.5. **Evidence Pack**: pacote de evidências associado a um achado/caso, contendo documentos, logs e metadados relevantes.
+1.6. **Client-Controlled**: o CONTRATANTE define **o que auditar, quando auditar e como auditar**, por parametrizações, calendário, severidade e regras, sem interferência da Plataforma, ressalvadas limitações técnicas.
+
+---
+
+## 2. Objeto
+
+2.1. O presente Contrato tem por objeto a prestação do **AuraAudit Pass**, serviço de **auditoria forense online** para despesas corporativas e terceiros, com foco em **Compliance e Jurídico**, incluindo **trilhas auditáveis**, **alertas em tempo real** (conforme disponibilidade de dados), **cadeia de custódia**, **rastreabilidade jurídica** e **dashboards executivos**.
+
+---
+
+## 3. Autonomia do CONTRATANTE (Client-Controlled) e Não Interferência
+
+3.1. O CONTRATANTE define: escopo, categorias, regras, tolerâncias, severidade, calendário e prioridades de auditoria.
+3.2. A CONTRATADA **não altera** regras ou parâmetros do CONTRATANTE sem autorização formal registrada.
+3.3. Alterações realizadas pelo CONTRATANTE ficam registradas em trilha auditável (data/hora, usuário, versão e justificativa quando aplicável).
+
+---
+
+## 4. Funcionamento do Serviço (online)
+
+4.1. O Serviço opera por ingestão de dados via **upload controlado**, **API**, **SFTP/CSV** ou meios habilitados no painel do CONTRATANTE.
+4.2. A Plataforma processa os dados e disponibiliza: dashboards, achados por severidade e Evidence Packs, conforme configuração e disponibilidade de evidências.
+4.3. “**Alertas em tempo real**” dependem do canal e frequência de ingestão (ex.: API/webhook vs upload periódico) e das fontes conectadas.
+
+---
+
+## 5. Entregáveis
+
+5.1. O AuraAudit Pass disponibiliza, conforme dados e escopo configurados:
+
+* Dashboards executivos (custos, compliance, riscos, tendências)
+* Relatório de divergências/achados (por tipo e severidade)
+* Trilhas auditáveis (logs e versões de regras)
+* Evidence Packs (quando aplicável e disponível)
+* Alertas (configuráveis pelo CONTRATANTE)
+
+5.2. O CONTRATANTE reconhece que a completude dos entregáveis depende da qualidade, integridade e granularidade dos dados fornecidos.
+
+---
+
+## 6. VAM, Deduplicação e Relatório Mensal de Consumo
+
+6.1. **VAM** é a soma dos valores monetários de transações/despesas **efetivamente processadas** no período mensal.
+6.2. Quando a mesma despesa aparecer em fontes distintas, a Plataforma aplica **deduplicação** quando houver chaves suficientes (IDs, data, valor, merchant e outros), buscando contar a transação **uma única vez**.
+6.3. A Plataforma disponibiliza ao CONTRATANTE um **Relatório Mensal de Consumo (VAM)** contendo: período, fontes processadas, VAM total, quantidade de registros processados, método de deduplicação utilizado e memória de cálculo do valor devido.
+
+---
+
+## 7. Preço, Cobrança e CAP Mensal (ATUALIZADO)
+
+7.1. **Mensalidade fixa:** US$ **250,00** (duzentos e cinquenta dólares) por mês.
+7.2. **Franquia incluída:** até **US$ 25.000,00** de **VAM/mês** não há cobrança variável adicional.
+7.3. **Cobrança variável por volume (VAM):** acima de **US$ 25.000,00** de VAM/mês, incide **0,30% (zero vírgula trinta por cento)** sobre o **excedente** (VAM − 25.000).
+7.4. **CAP Mensal (teto):** o valor total mensal devido (**mensalidade + variável**) fica limitado a **US$ 5.000,00** por mês (“CAP”), **sem negociação**.
+7.5. **Fórmula:**
+**Preço do mês = min(5000, 250 + 0,003 × max(0, VAM − 25.000))**
+7.6. Cobrança ocorre mensalmente após o fechamento do período e emissão do Relatório Mensal de Consumo.
+
+**Exemplos ilustrativos:**
+
+* VAM = US$ 10.000 → total = **US$ 250**
+* VAM = US$ 25.000 → total = **US$ 250**
+* VAM = US$ 100.000 → variável = 0,30% × 75.000 = US$ 225 → total = **US$ 475**
+
+---
+
+## 8. Tributos, Câmbio e Forma de Pagamento
+
+8.1. Os valores são expressos em **USD**. Conversão, IOF e encargos do meio de pagamento podem ser aplicados pelo emissor do cartão/banco do CONTRATANTE.
+8.2. Tributos incidentes serão aplicados conforme legislação e forma de faturamento definida no checkout.
+
+---
+
+## 9. Obrigações do CONTRATANTE
+
+9.1. Fornecer dados e acessos necessários, com base legal e autorização para tratamento.
+9.2. Garantir que as informações enviadas são legítimas e obtidas em conformidade com políticas internas e legislação aplicável.
+9.3. Manter credenciais sob sigilo e definir usuários autorizados.
+9.4. Responsabilizar-se pelas configurações client-controlled (regras, tolerâncias e calendário).
+
+---
+
+## 10. Cadeia de Custódia, Integridade e Rastreabilidade Jurídica
+
+10.1. A CONTRATADA manterá trilhas auditáveis e registros de processamento (logs), com evidências raw quando fornecidas.
+10.2. A Plataforma organiza evidências e resultados para suportar auditorias internas/externas e uso por Compliance/Jurídico, **sem constituir parecer jurídico**.
+10.3. O CONTRATANTE reconhece que a rastreabilidade jurídica depende da evidência disponibilizada (documentos, IDs, fontes e completude).
+
+---
+
+## 11. Confidencialidade
+
+11.1. As partes manterão confidenciais dados, relatórios, achados e Evidence Packs.
+11.2. A obrigação de confidencialidade permanece por **{{PRAZO_CONFIDENCIALIDADE}}** após o término.
+
+---
+
+## 12. Proteção de Dados (LGPD)
+
+12.1. As partes comprometem-se a cumprir a LGPD e demais normas aplicáveis.
+12.2. Regra geral: CONTRATANTE = **Controladora**; CONTRATADA = **Operadora**, salvo ajuste no Anexo II (DPA).
+12.3. A CONTRATADA adotará medidas de segurança técnicas e organizacionais compatíveis com o Serviço.
+12.4. Incidentes de segurança serão comunicados conforme Anexo II.
+
+---
+
+## 13. Suporte e Disponibilidade
+
+13.1. O suporte é prestado por {{CANAL_SUPORTE}} em {{HORARIO_SUPORTE}}.
+13.2. Podem ocorrer indisponibilidades por manutenção e dependências de terceiros (APIs, bancos, OBTs, ERPs etc.).
+
+---
+
+## 14. Limitações e Isenções
+
+14.1. A Plataforma identifica desconformidades e riscos a partir de dados processados; **não garante** economia ou recuperação financeira específica.
+14.2. A CONTRATADA não responde por falhas de sistemas de terceiros, indisponibilidade de dados ou inconsistências de origem.
+14.3. A CONTRATADA não presta consultoria jurídica; entrega evidências e rastreabilidade para uso pelo CONTRATANTE.
+
+---
+
+## 15. Vigência, Renovação e Cancelamento
+
+15.1. O Contrato é por prazo indeterminado (mensal), renovando-se automaticamente a cada ciclo, salvo cancelamento.
+15.2. O CONTRATANTE pode cancelar a renovação a qualquer tempo, produzindo efeitos ao final do ciclo vigente.
+15.3. Valores já faturados no ciclo vigente não são reembolsáveis, salvo disposição legal aplicável.
+
+---
+
+## 16. Propriedade Intelectual
+
+16.1. A Plataforma, metodologias, modelos e softwares são de titularidade da CONTRATADA.
+16.2. Dados do CONTRATANTE permanecem de sua titularidade, respeitada a licença necessária para execução do Serviço.
+
+---
+
+## 17. Foro e Lei Aplicável
+
+17.1. Aplica-se a lei de {{PAIS_LEI_APLICAVEL}}.
+17.2. Fica eleito o foro da comarca de {{FORO}}.
+
+---
+
+## 18. Aceite Eletrônico e Provas
+
+18.1. O aceite eletrônico registra data/hora/IP/identificador do usuário e vincula o CONTRATANTE a este Contrato.
+18.2. O Relatório Mensal de Consumo e as trilhas auditáveis servem como memória de cálculo e histórico técnico.
+
+---
+
+## Texto do checkbox (checkout) — ATUALIZADO
+
+**[ ] Li e aceito os Termos de Adesão Online do AuraAudit Pass, incluindo cobrança de US$ 250/mês com franquia até US$ 25.000 auditados/mês e adicional de 0,30% sobre o excedente, com CAP de US$ 5.000/mês.**
+
+---
+
+## Anexo I — Definição resumida de “Valor Auditado Mensal (VAM)”
+
+* Soma dos valores das transações/despesas processadas no mês pela Plataforma.
+* Deduplicação aplicada quando possível para evitar contagem em duplicidade entre fontes.
+
+## Anexo II — Tratamento de Dados (DPA Resumido)
+
+* Categorias de dados: {{CATEGORIAS_DADOS}}
+* Finalidade: auditoria e compliance interno
+* Retenção: {{RETENCAO}}
+* Segurança: criptografia, controle de acesso, logs, backups
+* Incidentes: notificação em {{PRAZO_NOTIFICACAO}}
+
+---
+
+Se você quiser, eu também preparo uma versão **ultra curta (1 página)** do contrato para checkout mobile, mantendo a parte jurídica essencial (pricing, VAM, cap, LGPD, confidencialidade, cancelamento e aceite).

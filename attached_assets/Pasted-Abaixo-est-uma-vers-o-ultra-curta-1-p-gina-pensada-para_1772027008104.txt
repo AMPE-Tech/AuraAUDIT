@@ -1,0 +1,72 @@
+Abaixo está uma versão **ultra curta (1 página)**, pensada para **checkout mobile**. Mantém o essencial: objeto, VAM, preço (US$ 250 + 0,30% excedente), **CAP US$ 5.000**, cadeia de custódia/trilhas, client-controlled, confidencialidade, LGPD, limitações e cancelamento.
+
+---
+
+# TERMOS DE ADESÃO (VERSÃO ULTRA CURTA) — AURAAUDIT PASS
+
+**Última atualização:** {{DATA_ATUALIZACAO}} | **Versão:** {{VERSAO_CONTRATO_CURTO}}
+**CONTRATADA:** {{AURAAUDIT_RAZAO_SOCIAL}}, CNPJ/Tax ID {{AURAAUDIT_CNPJ_TAXID}}, {{AURAAUDIT_ENDERECO}}
+**CONTRATANTE:** {{CLIENTE_RAZAO_SOCIAL}}, CNPJ/Tax ID {{CLIENTE_CNPJ_TAXID}}
+
+Ao clicar em **“Aceito”**, o CONTRATANTE concorda com estes Termos e autoriza a prestação do serviço.
+
+## 1) Objeto
+
+O **AuraAudit Pass** é um serviço online de **auditoria forense** para despesas corporativas e terceiros, com foco em **Compliance/Jurídico**, incluindo **trilhas auditáveis**, **cadeia de custódia**, **rastreabilidade jurídica**, **alertas** (conforme disponibilidade de dados) e **dashboards executivos**.
+
+## 2) Client-Controlled (sem interferência)
+
+O CONTRATANTE define **o que auditar, quando e como**, por regras, escopo, tolerâncias, severidade e calendário. A CONTRATADA não altera parâmetros sem autorização registrada.
+
+## 3) Dados, VAM e Deduplicação
+
+**VAM (Valor Auditado Mensal)** = soma dos valores monetários das transações/despesas **efetivamente processadas** pela Plataforma no mês.
+Quando a mesma despesa aparecer em mais de uma fonte, aplica-se **deduplicação** quando possível para evitar contagem em duplicidade. A Plataforma disponibiliza **Relatório Mensal de Consumo (VAM)** com memória de cálculo.
+
+## 4) Preço, cobrança e CAP (teto)
+
+* **Mensalidade fixa:** **US$ 250/mês**
+* **Franquia:** até **US$ 25.000** de VAM/mês sem variável
+* **Variável:** **0,30%** sobre o **excedente** acima de US$ 25.000 (VAM − 25.000)
+* **CAP mensal:** total do mês (fixo + variável) **limitado a US$ 5.000/mês**
+
+**Fórmula:**
+**Preço do mês = min(5000, 250 + 0,003 × max(0, VAM − 25.000))**
+
+Cobrança é mensal, após fechamento do período e emissão do Relatório Mensal de Consumo.
+
+## 5) Evidências, trilhas e rastreabilidade
+
+A Plataforma registra logs e metadados do processamento (trilhas auditáveis) e preserva evidências (cadeia de custódia) conforme dados fornecidos. O Serviço **não constitui parecer jurídico**; entrega evidências e rastreabilidade para uso do CONTRATANTE.
+
+## 6) Confidencialidade
+
+Dados, relatórios, achados e Evidence Packs são confidenciais e não podem ser divulgados a terceiros sem autorização, salvo obrigação legal.
+
+## 7) LGPD / Proteção de Dados
+
+Em regra, o CONTRATANTE é **Controlador** e a CONTRATADA é **Operadora**. O CONTRATANTE declara possuir base legal e autorizações para tratar e compartilhar os dados necessários. A CONTRATADA adota medidas de segurança compatíveis e mantém logs de acesso.
+
+## 8) Limitações
+
+Resultados dependem da qualidade e completude dos dados fornecidos. A Plataforma identifica desconformidades/riscos a partir dos dados processados, **sem garantia de economia ou recuperação**. A CONTRATADA não se responsabiliza por falhas de sistemas de terceiros ou indisponibilidade de dados.
+
+## 9) Vigência e cancelamento
+
+Vigência mensal com renovação automática. O CONTRATANTE pode cancelar a renovação a qualquer tempo, com efeitos ao final do ciclo vigente. Valores do ciclo vigente não são reembolsáveis, salvo exigência legal.
+
+## 10) Lei e foro
+
+Lei aplicável: {{PAIS_LEI_APLICAVEL}}. Foro: {{FORO}}.
+
+## 11) Aceite eletrônico
+
+O aceite registra **data/hora, IP, usuário, versão e hash** do texto aceito e vincula o CONTRATANTE.
+
+---
+
+### Texto do checkbox (checkout)
+
+**[ ] Li e aceito os Termos de Adesão do AuraAudit Pass: US$ 250/mês, franquia até US$ 25.000 auditados/mês, +0,30% sobre o excedente, com CAP de US$ 5.000/mês.**
+
+Se você quiser, eu também preparo uma versão “**ultra curta + FAQ**” (3 perguntas) para colocar logo abaixo do checkbox e reduzir abandono no checkout.
