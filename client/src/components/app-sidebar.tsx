@@ -9,7 +9,6 @@ import {
   ArrowRightLeft,
   Users,
   Plug,
-  Home,
   Briefcase,
   Settings,
 } from "lucide-react";
@@ -28,7 +27,6 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Inicio", url: "/", icon: Home },
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Despesas", url: "/expenses", icon: Receipt },
   { title: "Reconciliacao", url: "/reconciliation", icon: ArrowRightLeft },
@@ -60,7 +58,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="p-4">
-        <Link href="/">
+        <Link href="/dashboard">
           <div className="flex items-center gap-3 cursor-pointer">
             <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary">
               <Shield className="w-5 h-5 text-primary-foreground" />
@@ -81,11 +79,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
-                    isActive={
-                      item.url === "/"
-                        ? location === "/"
-                        : location.startsWith(item.url)
-                    }
+                    isActive={location.startsWith(item.url)}
                   >
                     <Link href={item.url}>
                       <item.icon className="w-4 h-4" />

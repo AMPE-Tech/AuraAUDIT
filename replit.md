@@ -66,8 +66,11 @@ server/
 - Analysis areas: Policy compliance, governance, data integrity, contract adherence, controls/approvals, operational failures, financial vulnerabilities, risk assessment, optimization opportunities
 - Reconciliation: OBT vs Backoffice, credit cards vs reservations, BSP vs airlines, hotel vs invoices, fee/rebate divergences
 
+## Routes (Public)
+- `/` - Home publica (site institucional, servicos, diferenciais, LATAM, metodologia, pricing, CTA)
+- `/login` - Tela de login (admin ou client)
+
 ## Routes (Admin)
-- `/` - Home (audit categories, performance metrics, cases, methodology)
 - `/dashboard` - Dashboard (project KPIs, online audit timeline, scope areas)
 - `/expenses` - Expense management
 - `/reconciliation` - Cross-system data reconciliation

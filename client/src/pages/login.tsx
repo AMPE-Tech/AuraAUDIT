@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Shield, LogIn, Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -14,6 +15,7 @@ export default function Login() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { login } = useAuth();
   const { toast } = useToast();
+  const [, navigate] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,6 +24,7 @@ export default function Login() {
     setIsSubmitting(true);
     try {
       await login(username, password);
+      navigate("/dashboard");
     } catch (err: any) {
       toast({
         variant: "destructive",
@@ -103,7 +106,14 @@ export default function Login() {
           </CardContent>
         </Card>
 
-        <div className="text-center">
+        <div className="text-center space-y-2">
+          <button
+            onClick={() => navigate("/")}
+            className="text-xs text-primary hover:underline"
+            data-testid="link-back-home"
+          >
+            Voltar para o site
+          </button>
           <p className="text-xs text-muted-foreground">
             Cadeia de Custodia Digital - Lei 13.964/2019
           </p>

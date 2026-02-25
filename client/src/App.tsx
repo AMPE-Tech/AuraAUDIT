@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -35,12 +35,12 @@ import Login from "@/pages/login";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { LogOut, User } from "lucide-react";
+import { LogOut, LogIn, User, Shield } from "lucide-react";
 
 function AdminRouter() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/expenses" component={Expenses} />
       <Route path="/reconciliation" component={Reconciliation} />
@@ -151,8 +151,49 @@ function AuthenticatedApp() {
   );
 }
 
+function PublicHome() {
+  const { user } = useAuth();
+  const [, navigate] = useLocation();
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary">
+              <Shield className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-sm font-semibold tracking-tight">AuraAUDIT</h1>
+              <p className="text-[10px] text-muted-foreground">Auditoria Forense Independente</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {user ? (
+              <Button size="sm" onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
+                <User className="w-4 h-4 mr-2" />
+                Acessar Plataforma
+              </Button>
+            ) : (
+              <Button size="sm" onClick={() => navigate("/login")} data-testid="button-go-login">
+                <LogIn className="w-4 h-4 mr-2" />
+                Entrar
+              </Button>
+            )}
+          </div>
+        </div>
+      </header>
+      <main>
+        <Home />
+      </main>
+    </div>
+  );
+}
+
 function AppContent() {
   const { user, isLoading } = useAuth();
+  const [location] = useLocation();
 
   if (isLoading) {
     return (
@@ -163,6 +204,17 @@ function AppContent() {
         </div>
       </div>
     );
+  }
+
+  if (location === "/" || location === "") {
+    return <PublicHome />;
+  }
+
+  if (location === "/login") {
+    if (user) {
+      return <AuthenticatedApp />;
+    }
+    return <Login />;
   }
 
   if (!user) {
