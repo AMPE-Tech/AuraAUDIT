@@ -10,6 +10,7 @@ import {
   Users,
   Plug,
   Home,
+  Briefcase,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -32,6 +33,10 @@ const mainItems = [
   { title: "Reconciliacao", url: "/reconciliation", icon: ArrowRightLeft },
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
   { title: "Anomalias", url: "/anomalies", icon: AlertTriangle },
+];
+
+const servicosItems = [
+  { title: "Servicos", url: "/services", icon: Briefcase },
 ];
 
 const cadastroItems = [
@@ -76,6 +81,26 @@ export function AppSidebar() {
                         ? location === "/"
                         : location.startsWith(item.url)
                     }
+                  >
+                    <Link href={item.url}>
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>Servicos</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {servicosItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={location.startsWith(item.url)}
                   >
                     <Link href={item.url}>
                       <item.icon className="w-4 h-4" />

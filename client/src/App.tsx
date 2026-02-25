@@ -29,6 +29,7 @@ import Reconciliation from "@/pages/reconciliation";
 import Clients from "@/pages/clients";
 import Integrations from "@/pages/integrations";
 import AiAssistant from "@/pages/ai-assistant";
+import Services from "@/pages/services";
 import Login from "@/pages/login";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,6 +49,7 @@ function AdminRouter() {
       <Route path="/reports" component={Reports} />
       <Route path="/clients" component={Clients} />
       <Route path="/integrations" component={Integrations} />
+      <Route path="/services" component={Services} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={NotFound} />
     </Switch>

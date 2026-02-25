@@ -1,0 +1,123 @@
+lista, reorganizada por nível de relevância para o AuraAudit (serviços 100% online), considerando: valor econômico direto, frequência, dor do cliente, facilidade de implantação remota e aderência a Compliance/Legal (cadeia de custódia).
+
+Nível P0 — Mais relevante (core do AuraAudit, maior ROI e demanda)
+1) Revisão Técnica / Auditoria Financeira (100% online)
+
+Conciliação 4 vias (PNR/TKT/EMD + fatura + cartão/VCN + expense)
+
+Auditoria de taxas/fees/markups (cobrado vs contratado)
+
+Auditoria de reembolsos/créditos, no-show, cancelamentos
+
+Hotel Folio Audit (reserva vs folio vs política vs acordo)
+
+Auditoria de eventos (budget vs realizado + pagamentos + documentos)
+
+Por que é P0: entrega economia mensurável e reduz “vazamento” imediatamente.
+
+2) Monitoramento Contínuo (Assinatura) — Compliance + Savings + Alertas
+
+Auditoria recorrente (mensal/quinzenal/semanal/real time)
+
+Score de compliance + ranking de exceções
+
+Alertas de divergência e cobrança indevida
+
+Relatórios executivos + evidence packs
+
+Por que é P0: vira receita recorrente e cria dependência operacional (stickiness).
+
+3) Cadeia de Custódia & Rastreabilidade Jurídica (embedded em tudo)
+
+Evidence packs por caso/evento (raw + logs + versões de regras)
+
+Trilha de auditoria de alterações (client-controlled)
+
+Dossiê auditável para Compliance, Jurídico e auditoria externa
+
+Por que é P0: é seu diferencial; destrava contratos “enterprise” e setores regulados.
+
+Nível P1 — Alta relevância (acelera maturidade e reduz risco, mas vem após P0)
+4) Consultoria de Contratos Técnicos (Agência/TMC + Fornecedores)
+
+Confecção/revisão de contrato técnico de agenciamento
+
+Matriz “contratado vs executado” + SLAs + faturamento analítico
+
+Cláusulas de evidência, LGPD, governança e dispute process
+
+Por que é P1: melhora governança e evita recorrência de perdas; normalmente vem depois do diagnóstico.
+
+5) Política de Viagens & Workflow de Exceções (Policy + Approvals)
+
+Ajuste/criação da policy (classes, tetos, preferenciais, antecedência)
+
+Regras de exceção (alçadas, justificativas, evidência obrigatória)
+
+Medição contínua e revisão trimestral
+
+Por que é P1: maximiza ganhos e reduz ruído operacional; depende de buy-in interno.
+
+6) SLA & KPIs Operacionais (TMC/OBT/atendimento)
+
+Definição e mensuração de SLAs (emissão, pós-venda, 24/7)
+
+KPIs (FCR, TMA, backlog, reacomodação, créditos)
+
+Scorecards mensais com plano de ação
+
+Por que é P1: melhora operação e experiência; exige dados de tickets e processos.
+
+Nível P2 — Relevância média (boa receita, mas depende de contexto/segmento)
+7) Execução de Concorrências (RFP/RFQ) — 100% online
+
+RFP de TMC/OBT/hotel/locadora/eventos
+
+Matriz comparativa + recomendação
+
+Apoio à negociação (rodadas remotas)
+
+Por que é P2: muito valioso quando há troca/renegociação; não é contínuo.
+
+8) Antifraude & Anomalias (modo avançado)
+
+Regras avançadas e detecção de padrões
+
+Segregação de funções e alertas por risco
+
+Investigações internas com evidence packs
+
+Por que é P2: excelente para grandes contas/regulados, mas depende de maturidade e dados.
+
+9) Treinamentos (EAD) — “enablement”
+
+Treinamento de policy, uso do OBT, compliance de eventos, boas práticas
+
+Trilhas por papel (viajante, aprovador, financeiro, eventos)
+
+Por que é P2: reduz exceções e retrabalho; é complemento, não motor de savings imediato.
+
+Nível P3 — Relevância específica (nicho/vertical; ótimo para pharma, mas não universal)
+10) Suporte Administrativo Health Care (Fluxo end-to-end)
+
+Agendamento → cadastro → jurídico/compliance → pré-evento → pós-evento → pagamento → fechamento → auditoria
+
+Gestão documental e contratos com conformidade (FMV/legislação)
+
+Dossiê para auditoria externa
+
+Por que é P3: altíssimo valor em farmacêutica/healthcare; fora desse setor, vira “evento corporativo geral”.
+
+Como vender (ordem recomendada de oferta no site)
+
+Revisão Técnica (Projeto) — “diagnóstico + economia + evidência”
+
+Monitoramento Contínuo (Assinatura) — “auditoria recorrente + compliance”
+
+Cadeia de Custódia (diferencial) — “jurídico/compliance ready”
+
+Contratos + Policy + SLA — “governança e maturidade”
+
+RFP + Treinamentos + Antifraude — “programas complementares”
+
+Health Care — “vertical premium”
