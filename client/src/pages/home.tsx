@@ -327,13 +327,18 @@ const LATAM_ECOSYSTEM_CATEGORIES = [
   { name: "GDS", icon: Network, description: "Global Distribution Systems" },
   { name: "OBT", icon: Monitor, description: "Online Booking Tool" },
   { name: "TMC", icon: Building2, description: "Travel Management Company" },
-  { name: "Mid/Backoffice", icon: Database, description: "Midoffice e Backoffice" },
+  { name: "ERP/Backoffice", icon: Database, description: "ERP e Midoffice" },
   { name: "Pagamentos", icon: CreditCard, description: "Pagamentos Corporativos" },
   { name: "Cias Aereas", icon: Plane, description: "Companhias Aereas" },
   { name: "Hotelaria", icon: Hotel, description: "Hotelaria Corporativa" },
   { name: "Car Rental", icon: Car, description: "Locadoras de Veiculos" },
   { name: "Seguros", icon: Shield, description: "Seguradoras e Assistencia" },
   { name: "MICE", icon: CalendarDays, description: "Eventos Corporativos" },
+  { name: "BSM", icon: ShoppingCart, description: "Business Spend Management" },
+  { name: "eSIGN", icon: FileSignature, description: "Assinatura Digital" },
+  { name: "BI", icon: BarChart3, description: "Business Intelligence" },
+  { name: "LOGISTICS", icon: Plane, description: "Reservas e Distribuicao" },
+  { name: "Outros", icon: Settings, description: "Sistemas Legados" },
 ];
 
 const LATAM_COUNTRIES = [

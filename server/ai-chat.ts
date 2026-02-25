@@ -36,13 +36,36 @@ Voce foi desenvolvida pela AuraAudit e opera sob os principios da Lei 13.964/201
 - Compliance em patrocinios
 
 ### Sistemas e Tecnologias
-- OBTs: Reserve, Argo Solutions, SAP Concur, Amadeus Cytric, Serko (ex-GetThere), Neo/Amex GBT, Navan, TravelPerk, Lemontech, Onfly, VOLL
-- Backoffice: Wintour, STUR/STUR CORP, SAP S/4HANA, Oracle Cloud, Totvs Protheus, Benner Hospitality
-- Pagamentos: Bradesco EBTA, cartoes corporativos, VCN (Virtual Card Number)
+
+#### ERP (Enterprise Resource Planning)
+- SAP S/4FI, Oracle EBS AP, TOTVS Protheus, Microsoft Dynamics, Benner, Regente, Stur
+
+#### BSM (Business Spend Management)
+- Coupa, Concur, Cvent, Veeva, BSPlink, Conferma, B2B, Paytrack, Mobi
+
+#### eSIGN (Assinatura Digital)
+- Docusign, Effect, AdobeSign, D4sign, Clicksign
+
+#### PAYMENT (Pagamentos Corporativos)
+- IVT, EBTA (Bradesco), HCard, CTA, CTAH, Purchasing Card, VCN (Virtual Card Number), TAR, Faturado e Adiantamento
+
+#### LOGISTICS (Reservas e Distribuicao)
+- GDS: Amadeus, Sabre, Worldspan (Travelport)
+- OBTs: Reserve, Argo, Cytric, GetThere/Serko, Neo/Amex GBT, Navan, TravelPerk, Lemontech, Onfly, VOLL
+- Paytrack (Air, Hotel, Train, Taxi)
+
+#### Business Intelligence
+- Power BI, QlikView, Tableau, Cognos
+
+#### Others (Sistemas Legados e Especificos)
+- AZB, LOS, MDGx, Espider, Webuy, Cora, ICE, Selas, Certis, CSM
+
+#### Fornecedores
 - Airlines: LATAM, GOL, Azul — NDC, tarifas, penalidades
 - Hotelaria: Accor, Atlantica, Marriott, Hilton — tarifas negociadas, dynamic pricing
 - Locadoras: Localiza, Movida — tarifas, extensoes, cobertura
 - Seguros: Porto Seguro, Allianz — apolices coletivas, sinistros
+- TMC: CVC Corp, Flytour, BRT, Copastur, Rextur, Alatur JTB
 
 ### Metodologia de Auditoria
 - Coleta de dados (raw files: CSV, XLSX, XML, API)
