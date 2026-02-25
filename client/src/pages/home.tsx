@@ -465,18 +465,6 @@ export default function Home() {
   return (
     <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
 
-      <div className="space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary">
-            <Shield className="w-6 h-6 text-primary-foreground" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight" data-testid="text-page-title">AuraAudit</h1>
-            <p className="text-sm text-muted-foreground">Servicos de Auditoria em Viagens e Eventos Corporativos</p>
-          </div>
-        </div>
-      </div>
-
       <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
         <CardContent className="p-6 space-y-3">
           <div className="flex items-center gap-2">
@@ -484,12 +472,12 @@ export default function Home() {
             <h2 className="text-base font-semibold">O que fazemos</h2>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-4xl">
-            O AuraAudit e uma solucao de <span className="font-medium text-foreground">auditoria online</span> para{" "}
-            <span className="font-medium text-foreground">viagens corporativas (T&E)</span> e{" "}
-            <span className="font-medium text-foreground">eventos corporativos (MICE)</span>. Atuamos com foco em{" "}
-            compliance, controle financeiro, com <span className="font-medium text-foreground">cadeia de custodia</span> e{" "}
-            <span className="font-medium text-foreground">rastreabilidade juridica</span> — entregaveis claros,
-            evidencias organizadas e indicadores executivos via <span className="font-medium text-foreground">Dashboards Personalizados</span>.
+            Uma <span className="font-medium text-foreground">plataforma forense de auditoria online</span> que detecta desconformidades e desperdicios em{" "}
+            <span className="font-medium text-foreground">despesas corporativas</span>, automatiza a coleta e a conciliacao de evidencias e entrega{" "}
+            <span className="font-medium text-foreground">trilhas auditaveis</span>, alertas em tempo real,{" "}
+            <span className="font-medium text-foreground">cadeia de custodia</span> e{" "}
+            <span className="font-medium text-foreground">rastreabilidade juridica</span>, com{" "}
+            <span className="font-medium text-foreground">dashboards executivos</span> e monitoramento continuo — no padrao que Compliance exige.
           </p>
         </CardContent>
       </Card>
