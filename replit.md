@@ -128,7 +128,19 @@ GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo, Concur, Cytric, Navan, Tra
 - **API**: `GET /api/stripe/pricing`, `GET /api/stripe/terms`, `POST /api/stripe/checkout`, `POST /api/stripe/simulate-vam`, `GET /api/stripe/billing`, `GET /api/stripe/terms-accepted`
 - **Files**: `server/stripeClient.ts`, `server/webhookHandlers.ts`, `server/stripe-routes.ts`, `client/src/pages/subscription.tsx`, `client/src/pages/subscription-success.tsx`, `client/src/pages/subscription-cancel.tsx`
 
+## Shared Utilities
+- `shared/validators.ts` — CNPJ/CPF mathematical validation (checksum algorithm), document type detection, formatting
+
+## CNPJ/CPF Validation
+- **Mathematical validation**: Checksum algorithm validates digits before any API call
+- **Receita Federal lookup**: `GET /api/cnpj/:cnpj` queries BrasilAPI for company data (name, address, phone, email, partners)
+- **Document validation**: `GET /api/validate-document/:doc` validates CNPJ (14 digits) or CPF (11 digits) mathematically
+- **Enforcement points**: Client creation (POST /api/clients), contract signing (POST /api/contract/sign), CNPJ lookup, profile updates
+- **Frontend integration**: "Buscar" button on CNPJ fields in clients.tsx, company-profile.tsx, client-profile.tsx auto-fills all form fields from Receita Federal
+
 ## Recent Changes
+- 2026-02-26: Added CNPJ/CPF validation (mathematical + Receita Federal lookup), auto-fill on client/company registration, backend enforcement on all write endpoints
+- 2026-02-26: Added company profiles (admin: /company-profile, client: /my-profile), dynamic contract text from DB, sidebar navigation updates
 - 2026-02-25: Implemented Wallet de Créditos + AI Desk (4 services, job lifecycle: create→quote→approve→run), audit envelope with SHA-256, sidebar integration, landing page "Módulos & Add-ons" section
 - 2026-02-25: Updated AuraAudit Pass pricing to progressive rate tiers (0.30%-0.20% by VAM), updated terms v1.1.0, added discrete CTAs throughout landing page, updated subscription page with tier table and examples
 - 2026-02-25: Simplified LATAM ecosystem from 15 to 10 primary categories (GDS, OBT, TMC, Midoffice/Backoffice, Pagamentos, Cias Aereas, Hotelaria, Car Rental, Seguros, MICE)

@@ -5,6 +5,7 @@ import { contractSignatures, clients } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 import { createHash } from "crypto";
 import { z } from "zod";
+import { validateCNPJ, validateCPF, detectDocumentType } from "@shared/validators";
 
 const profileUpdateSchema = z.object({
   name: z.string().min(2).optional(),
@@ -180,6 +181,17 @@ export function registerContractRoutes(app: Express) {
       return res.status(400).json({ error: "Cargo/funcao do signatario e obrigatorio." });
     }
 
+    if (companyCnpj) {
+      const cnpjDigits = companyCnpj.replace(/\D/g, "");
+      const docType = detectDocumentType(cnpjDigits);
+      if (docType === "cnpj" && !validateCNPJ(cnpjDigits)) {
+        return res.status(400).json({ error: "CNPJ invalido — digitos verificadores nao conferem. Nao e possivel assinar com documento invalido." });
+      }
+      if (docType === "cpf" && !validateCPF(cnpjDigits)) {
+        return res.status(400).json({ error: "CPF invalido — digitos verificadores nao conferem. Nao e possivel assinar com documento invalido." });
+      }
+    }
+
     const auditor = await getAuditorProfile();
     const client = await getClientProfile(userId);
     const contractText = generateContractText(auditor, client);
@@ -297,5 +309,78 @@ export function registerContractRoutes(app: Express) {
     const message = `Prezado(a) ${client?.contactName || "Cliente"},\n\nSegue o link para visualizacao e assinatura digital do contrato de auditoria forense:\n\n${contractUrl}\n\nContrato: AUR-2025-0042\nEmpresa: ${client?.name || ""}\n\nA assinatura e feita digitalmente com validade juridica (Lei 14.063/2020).\n\nAtenciosamente,\nAuraAUDIT`;
     const whatsappUrl = `https://wa.me/${phone ? phone : ""}?text=${encodeURIComponent(message)}`;
     return res.json({ whatsappUrl, phone, message });
+  });
+
+  app.get("/api/validate-document/:doc", requireAuth, async (req: Request, res: Response) => {
+    const doc = req.params.doc.replace(/\D/g, "");
+    const docType = detectDocumentType(doc);
+    if (docType === "invalid") {
+      return res.json({ valid: false, type: "invalid", error: "Documento deve ter 11 (CPF) ou 14 (CNPJ) digitos." });
+    }
+    const isValid = docType === "cnpj" ? validateCNPJ(doc) : validateCPF(doc);
+    if (!isValid) {
+      return res.json({
+        valid: false,
+        type: docType,
+        error: `${docType.toUpperCase()} invalido — digitos verificadores nao conferem.`,
+      });
+    }
+    return res.json({ valid: true, type: docType });
+  });
+
+  app.get("/api/cnpj/:cnpj", requireAuth, async (req: Request, res: Response) => {
+    const cnpjDigits = req.params.cnpj.replace(/\D/g, "");
+    if (cnpjDigits.length !== 14) {
+      return res.status(400).json({ error: "CNPJ deve conter 14 digitos." });
+    }
+    if (!validateCNPJ(cnpjDigits)) {
+      return res.status(400).json({ error: "CNPJ invalido — digitos verificadores nao conferem. Verifique o numero digitado." });
+    }
+    try {
+      const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjDigits}`, {
+        headers: { "User-Agent": "AuraAUDIT/1.0", "Accept": "application/json" },
+      });
+      if (!response.ok) {
+        if (response.status === 404) {
+          return res.status(404).json({ error: "CNPJ nao encontrado na Receita Federal." });
+        }
+        return res.status(502).json({ error: "Erro ao consultar a Receita Federal. Tente novamente." });
+      }
+      const data = await response.json() as Record<string, any>;
+      const formatPhone = (ddd: string, tel: string) => {
+        if (!ddd || !tel) return null;
+        return `(${ddd}) ${tel}`;
+      };
+      const buildAddress = (logradouro: string, numero: string, complemento: string, bairro: string) => {
+        const parts = [logradouro, numero, complemento, bairro].filter(Boolean);
+        return parts.join(", ") || null;
+      };
+      const result = {
+        razaoSocial: data.razao_social || "",
+        nomeFantasia: data.nome_fantasia || "",
+        cnpj: cnpjDigits,
+        cnpjFormatado: `${cnpjDigits.slice(0, 2)}.${cnpjDigits.slice(2, 5)}.${cnpjDigits.slice(5, 8)}/${cnpjDigits.slice(8, 12)}-${cnpjDigits.slice(12, 14)}`,
+        email: data.email || "",
+        telefone: formatPhone(data.ddd_telefone_1?.substring(0, 2), data.ddd_telefone_1?.substring(2)) || "",
+        endereco: buildAddress(data.logradouro, data.numero, data.complemento, data.bairro),
+        cidade: data.municipio || "",
+        uf: data.uf || "",
+        cep: data.cep || "",
+        situacao: data.descricao_situacao_cadastral || "",
+        atividadePrincipal: data.cnae_fiscal_descricao || "",
+        capitalSocial: data.capital_social || 0,
+        porte: data.porte || "",
+        naturezaJuridica: data.natureza_juridica || "",
+        dataAbertura: data.data_inicio_atividade || "",
+        socios: (data.qsa || []).map((s: any) => ({
+          nome: s.nome_socio,
+          qualificacao: s.qualificacao_socio,
+        })),
+      };
+      return res.json(result);
+    } catch (err) {
+      console.error("CNPJ lookup error:", err);
+      return res.status(502).json({ error: "Falha na comunicacao com a Receita Federal." });
+    }
   });
 }

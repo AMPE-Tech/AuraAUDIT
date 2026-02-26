@@ -21,6 +21,8 @@ import {
   MessageCircle,
   Send,
   AlertTriangle,
+  Sparkles,
+  CheckCircle,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
@@ -42,6 +44,8 @@ type CompanyProfile = {
 export default function ClientProfile() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [lookupDone, setLookupDone] = useState(false);
   const [form, setForm] = useState({
     name: "",
     cnpj: "",
@@ -73,6 +77,46 @@ export default function ClientProfile() {
       });
     }
   }, [data]);
+
+  async function handleCnpjLookup() {
+    const digits = form.cnpj.replace(/\D/g, "");
+    if (digits.length !== 14) {
+      toast({ title: "CNPJ deve ter 14 digitos", variant: "destructive" });
+      return;
+    }
+    const { validateCNPJ } = await import("@shared/validators");
+    if (!validateCNPJ(digits)) {
+      toast({ title: "CNPJ invalido", description: "Digitos verificadores nao conferem.", variant: "destructive" });
+      return;
+    }
+    setIsLookingUp(true);
+    try {
+      const res = await fetch(`/api/cnpj/${digits}`, { credentials: "include" });
+      if (!res.ok) {
+        const err = await res.json();
+        toast({ title: err.error || "CNPJ nao encontrado", variant: "destructive" });
+        return;
+      }
+      const data = await res.json();
+      setForm((f) => ({
+        ...f,
+        name: data.nomeFantasia || data.razaoSocial || f.name,
+        cnpj: data.cnpjFormatado || f.cnpj,
+        contactEmail: data.email?.toLowerCase() || f.contactEmail,
+        contactPhone: data.telefone || f.contactPhone,
+        address: data.endereco || f.address,
+        city: data.cidade || f.city,
+        state: data.uf || f.state,
+        contactName: data.socios?.[0]?.nome || f.contactName,
+      }));
+      setLookupDone(true);
+      toast({ title: `Dados carregados da Receita Federal` });
+    } catch {
+      toast({ title: "Erro ao consultar a Receita Federal", variant: "destructive" });
+    } finally {
+      setIsLookingUp(false);
+    }
+  }
 
   const saveMutation = useMutation({
     mutationFn: async () => {
@@ -175,14 +219,40 @@ export default function ClientProfile() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="cnpj" className="text-xs">CNPJ *</Label>
-              <Input
-                id="cnpj"
-                value={form.cnpj}
-                onChange={(e) => setForm({ ...form, cnpj: e.target.value })}
-                placeholder="00.000.000/0000-00"
-                disabled={!hasProfile}
-                data-testid="input-client-cnpj"
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="cnpj"
+                  value={form.cnpj}
+                  onChange={(e) => setForm({ ...form, cnpj: e.target.value })}
+                  placeholder="00.000.000/0000-00"
+                  disabled={!hasProfile}
+                  data-testid="input-client-cnpj"
+                />
+                {hasProfile && (
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    className="shrink-0 gap-1.5 px-3"
+                    onClick={handleCnpjLookup}
+                    disabled={isLookingUp}
+                    data-testid="button-client-cnpj-lookup"
+                  >
+                    {isLookingUp ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="w-4 h-4" />
+                    )}
+                    {isLookingUp ? "Buscando..." : "Buscar"}
+                  </Button>
+                )}
+              </div>
+              {lookupDone && (
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-xs">
+                  <CheckCircle className="w-3 h-3" />
+                  Dados carregados da Receita Federal
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

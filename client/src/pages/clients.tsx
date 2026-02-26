@@ -40,12 +40,15 @@ import {
   CheckCircle,
   Clock,
   XCircle,
+  Loader2,
+  Sparkles,
 } from "lucide-react";
 import { formatDate } from "@/lib/formatters";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Client } from "@shared/schema";
 import { insertClientSchema } from "@shared/schema";
+import { validateCNPJ, validateCPF, detectDocumentType } from "@shared/validators";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -111,9 +114,95 @@ function StatusIcon({ status }: { status: string }) {
   }
 }
 
-function ClientFormFields({ form }: { form: ReturnType<typeof useForm<ClientFormData>> }) {
+function ClientFormFields({ form, toast }: { form: ReturnType<typeof useForm<ClientFormData>>; toast: ReturnType<typeof useToast>["toast"] }) {
+  const [isLookingUp, setIsLookingUp] = useState(false);
+  const [lookupDone, setLookupDone] = useState(false);
+
+  async function handleCnpjLookup() {
+    const cnpj = form.getValues("cnpj");
+    const digits = cnpj?.replace(/\D/g, "") || "";
+    if (digits.length !== 14) {
+      toast({ title: "Digite um CNPJ com 14 digitos", variant: "destructive" });
+      return;
+    }
+    if (!validateCNPJ(digits)) {
+      toast({ title: "CNPJ invalido", description: "Os digitos verificadores nao conferem. Verifique o numero digitado.", variant: "destructive" });
+      return;
+    }
+    setIsLookingUp(true);
+    try {
+      const res = await fetch(`/api/cnpj/${digits}`, { credentials: "include" });
+      if (!res.ok) {
+        const err = await res.json();
+        toast({ title: err.error || "CNPJ nao encontrado", variant: "destructive" });
+        return;
+      }
+      const data = await res.json();
+      form.setValue("name", data.nomeFantasia || data.razaoSocial, { shouldValidate: true });
+      form.setValue("cnpj", data.cnpjFormatado, { shouldValidate: true });
+      if (data.email) form.setValue("contactEmail", data.email.toLowerCase(), { shouldValidate: true });
+      if (data.telefone) form.setValue("contactPhone", data.telefone);
+      if (data.endereco) form.setValue("address", data.endereco);
+      if (data.cidade) form.setValue("city", data.cidade);
+      if (data.uf) form.setValue("state", data.uf);
+      if (data.socios?.length > 0) {
+        form.setValue("contactName", data.socios[0].nome, { shouldValidate: true });
+      }
+      setLookupDone(true);
+      toast({ title: `Dados de "${data.nomeFantasia || data.razaoSocial}" carregados da Receita Federal` });
+    } catch {
+      toast({ title: "Erro ao consultar a Receita Federal", variant: "destructive" });
+    } finally {
+      setIsLookingUp(false);
+    }
+  }
+
   return (
     <>
+      <div className="space-y-2">
+        <FormField
+          control={form.control}
+          name="cnpj"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>CNPJ</FormLabel>
+              <div className="flex gap-2">
+                <FormControl>
+                  <Input {...field} placeholder="00.000.000/0000-00" data-testid="input-client-cnpj" />
+                </FormControl>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="shrink-0 gap-1.5 px-3"
+                  onClick={handleCnpjLookup}
+                  disabled={isLookingUp}
+                  data-testid="button-cnpj-lookup"
+                >
+                  {isLookingUp ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="w-4 h-4" />
+                  )}
+                  {isLookingUp ? "Buscando..." : "Buscar"}
+                </Button>
+              </div>
+              <FormMessage />
+              {!lookupDone && (
+                <p className="text-[11px] text-muted-foreground">
+                  Digite o CNPJ e clique em "Buscar" para preencher automaticamente com dados da Receita Federal
+                </p>
+              )}
+            </FormItem>
+          )}
+        />
+        {lookupDone && (
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 text-xs">
+            <CheckCircle className="w-3 h-3" />
+            Dados carregados da Receita Federal — confira e ajuste se necessario
+          </div>
+        )}
+      </div>
       <FormField
         control={form.control}
         name="name"
@@ -151,13 +240,22 @@ function ClientFormFields({ form }: { form: ReturnType<typeof useForm<ClientForm
         />
         <FormField
           control={form.control}
-          name="cnpj"
+          name="status"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>CNPJ</FormLabel>
-              <FormControl>
-                <Input {...field} placeholder="00.000.000/0000-00" data-testid="input-client-cnpj" />
-              </FormControl>
+              <FormLabel>Status</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value || "pending"}>
+                <FormControl>
+                  <SelectTrigger data-testid="select-client-status">
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="active">Ativo</SelectItem>
+                  <SelectItem value="inactive">Inativo</SelectItem>
+                  <SelectItem value="pending">Pendente</SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -245,28 +343,6 @@ function ClientFormFields({ form }: { form: ReturnType<typeof useForm<ClientForm
           )}
         />
       </div>
-      <FormField
-        control={form.control}
-        name="status"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Status</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value || "pending"}>
-              <FormControl>
-                <SelectTrigger data-testid="select-client-status">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="active">Ativo</SelectItem>
-                <SelectItem value="inactive">Inativo</SelectItem>
-                <SelectItem value="pending">Pendente</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
       <FormField
         control={form.control}
         name="notes"
@@ -419,7 +495,7 @@ export default function Clients() {
                 onSubmit={createForm.handleSubmit((data) => createMutation.mutate(data))}
                 className="space-y-4"
               >
-                <ClientFormFields form={createForm} />
+                <ClientFormFields form={createForm} toast={toast} />
                 <Button type="submit" className="w-full" disabled={createMutation.isPending} data-testid="button-submit-client">
                   {createMutation.isPending ? "Cadastrando..." : "Cadastrar Cliente"}
                 </Button>
@@ -622,7 +698,7 @@ export default function Clients() {
                 )}
                 className="space-y-4"
               >
-                <ClientFormFields form={editForm} />
+                <ClientFormFields form={editForm} toast={toast} />
                 <div className="flex items-center gap-2 p-3 rounded-md bg-muted/50">
                   <ShieldCheck className="w-4 h-4 text-primary shrink-0" />
                   <p className="text-xs text-muted-foreground">

@@ -5,6 +5,7 @@ import { createHash } from "crypto";
 import { insertExpenseSchema, insertAuditCaseSchema, insertAnomalySchema, insertClientSchema, insertDataSourceSchema } from "@shared/schema";
 import { z } from "zod";
 import { registerAiChatRoutes } from "./ai-chat";
+import { validateCNPJ } from "@shared/validators";
 
 function generateIntegrityHash(data: any, timestamp: string): string {
   const payload = JSON.stringify({ ...data, _ts: timestamp });
@@ -236,6 +237,12 @@ export async function registerRoutes(
   app.post("/api/clients", async (req, res) => {
     try {
       const parsed = insertClientSchema.parse(req.body);
+      if (parsed.cnpj) {
+        const cnpjDigits = parsed.cnpj.replace(/\D/g, "");
+        if (cnpjDigits.length === 14 && !validateCNPJ(cnpjDigits)) {
+          return res.status(400).json({ message: "CNPJ invalido — digitos verificadores nao conferem." });
+        }
+      }
       const client = await storage.createClient(parsed);
       await logAuditTrail("system", "create", "client", client.id, null, client, req.ip);
       res.status(201).json(client);
