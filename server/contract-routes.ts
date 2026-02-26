@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "2.0.0";
+const CONTRACT_VERSION = "2.1.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "AuraAUDIT - AuraDue Tecnologia Ltda";
@@ -222,6 +222,15 @@ O contrato pode ser rescindido por qualquer das partes com aviso previo de 30 di
 21.3. Registrados: IP, user-agent, timestamp, identificacao do signatario e CPF (quando informado)
 21.4. Cadeia de custodia da assinatura: contrato texto -> SHA-256 -> assinatura -> registro imutavel
 
+22. CANAIS DE ASSINATURA E DISTRIBUICAO DO CONTRATO
+22.1. Disponibilidade: o contrato esta disponivel para assinatura tanto offline (documento impresso) quanto online via plataforma nativa AuraAUDIT
+22.2. Assinatura via plataforma: o contratante pode assinar digitalmente diretamente na plataforma AuraAUDIT, com registro automatico de SHA-256, IP, user-agent, timestamp e CPF (quando informado)
+22.3. Envio por email: o contrato pode ser enviado por email ao contratante com link direto para visualizacao e assinatura digital na plataforma
+22.4. Envio por WhatsApp: o contrato pode ser enviado via WhatsApp ao contratante com link para assinatura digital, facilitando acesso remoto e comunicacao direta
+22.5. Painel administrativo: o administrador pode gerenciar o envio, verificar status de assinatura, reenviar por email ou WhatsApp, e copiar link do contrato a partir do painel de contratos da plataforma
+22.6. Equivalencia juridica: a assinatura eletronica realizada em qualquer dos canais descritos possui a mesma validade juridica nos termos da Lei 14.063/2020 e MP 2.200-2/2001
+22.7. Rastreabilidade de envio: cada envio por email ou WhatsApp e registrado na trilha de auditoria com timestamp, canal utilizado e destinatario
+
 --- ANEXO I — EVIDENCIAS TECNICAS ---
 
 E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal
@@ -232,6 +241,26 @@ E5. AI Desk: envelope de auditoria por job (inputs hasheados, modelo/versao, out
 E6. Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos, valor USD)
 E7. Antiregressao: dataBefore/dataAfter em cada mutacao, versionamento de contratos e termos
 E8. Antialucinacao: cotacao previa, aprovacao humana, revisao opcional, envelope SHA-256 por output
+E9. Assinatura online: plataforma nativa com formulario de assinatura digital, validacao de CPF/CNPJ, registro de prova (SHA-256, IP, user-agent, timestamp)
+E10. Assinatura offline: documento disponivel para impressao e assinatura manual com posterior digitalizacao e upload a plataforma
+E11. Distribuicao por email: envio de contrato com link para assinatura via plataforma, registrado na trilha de auditoria
+E12. Distribuicao por WhatsApp: envio de contrato via WhatsApp com link direto para assinatura digital, com numero do destinatario e mensagem registrados
+
+--- ANEXO II — ADITIVO DE 26/02/2026 ---
+
+ADITIVO CONTRATUAL — Versao 2.1.0
+
+Objeto do aditivo: Inclusao da clausula 22 (Canais de Assinatura e Distribuicao do Contrato) e das evidencias E9 a E12 ao Contrato Tecnico Master.
+
+Justificativa: Formalizar que o contrato esta disponivel para assinatura tanto offline quanto online via plataforma nativa AuraAUDIT, com opcao de envio por email e WhatsApp, garantindo flexibilidade, acessibilidade e rastreabilidade juridica em todos os canais.
+
+Alteracoes realizadas:
+A1. Adicionada clausula 22 — Canais de Assinatura e Distribuicao do Contrato (7 subcláusulas: 22.1 a 22.7)
+A2. Adicionadas evidencias E9 (assinatura online), E10 (assinatura offline), E11 (distribuicao por email), E12 (distribuicao por WhatsApp)
+A3. Versao do contrato atualizada de 2.0.0 para 2.1.0
+A4. Hash SHA-256 recalculado para refletir o texto integral atualizado
+
+Vigencia do aditivo: Este aditivo entra em vigor na data de sua publicacao e integra-se ao Contrato Tecnico Master AUR-2025-0042.
 
 ${auditorName}
 Contrato Tecnico Master — Versao ${CONTRACT_VERSION}`;

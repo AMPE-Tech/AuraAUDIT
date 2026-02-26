@@ -140,6 +140,7 @@ GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo, Concur, Cytric, Navan, Tra
 - **Frontend integration**: "Buscar" button on CNPJ fields in clients.tsx, company-profile.tsx, client-profile.tsx auto-fills all form fields from Receita Federal
 
 ## Recent Changes
+- 2026-02-26: Upgraded to Contrato Tecnico Master v2.1.0: added clause 22 (Canais de Assinatura e Distribuicao — offline/online/email/WhatsApp), evidences E9-E12, Anexo II (Aditivo de 26/02/2026), 22 clauses total
 - 2026-02-26: Upgraded to Contrato Tecnico Master v2.0.0: full service catalog (P0-P3), digital modules (Pass/AI Desk/Wallet), anti-regression system, anti-hallucination system, evidence annex (E1-E8), 21 clauses
 - 2026-02-26: Contract signing CPF of legal representative is optional; validated mathematically when provided, shown masked in signature proof
 - 2026-02-26: Added CNPJ/CPF validation (mathematical + Receita Federal lookup), auto-fill on client/company registration, backend enforcement on all write endpoints
