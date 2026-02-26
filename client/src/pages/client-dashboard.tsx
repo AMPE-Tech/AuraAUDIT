@@ -99,7 +99,7 @@ export default function ClientDashboard() {
             Painel do Projeto
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            AuraAUDIT — Auditoria Forense em Viagens e Eventos | {user?.fullName}
+            Auditoria Forense Financeira | {user?.fullName}
           </p>
         </div>
         <Badge variant="outline" className="text-xs gap-1">
@@ -152,19 +152,15 @@ export default function ClientDashboard() {
               <p className="text-[11px] text-muted-foreground">Volume Total</p>
               <Badge variant="outline" className="text-[9px] mt-1">Estimado</Badge>
             </div>
-            <div className="p-3 rounded-md bg-background/60">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">OBT</p>
-              <div className="flex flex-wrap gap-1">
-                <Badge variant="outline" className="text-[10px]">Reserve</Badge>
-                <Badge variant="outline" className="text-[10px]">Argo</Badge>
-              </div>
+            <div className="p-3 rounded-md bg-background/60 text-center">
+              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">2024–2025</p>
+              <p className="text-[11px] text-muted-foreground">Periodo</p>
+              <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
             </div>
-            <div className="p-3 rounded-md bg-background/60">
-              <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Backoffice</p>
-              <div className="flex flex-wrap gap-1">
-                <Badge variant="outline" className="text-[10px]">Wintour (2024)</Badge>
-                <Badge variant="outline" className="text-[10px]">Stur (2025)</Badge>
-              </div>
+            <div className="p-3 rounded-md bg-background/60 text-center">
+              <p className="text-xl font-bold text-slate-600 dark:text-slate-400">4</p>
+              <p className="text-[11px] text-muted-foreground">Sistemas</p>
+              <Badge variant="outline" className="text-[9px] mt-1 cursor-pointer" onClick={() => window.location.href = '/systems'}>Ver sistemas</Badge>
             </div>
           </div>
         </CardContent>
@@ -344,7 +340,7 @@ export default function ClientDashboard() {
           <Shield className="w-3 h-3" />
           <span>Cadeia de Custodia Digital — AuraDue</span>
         </div>
-        <span>AuraAUDIT — Auditoria Forense em Viagens e Eventos</span>
+        <span>AuraAUDIT — Auditoria Forense Independente</span>
       </div>
     </div>
   );
