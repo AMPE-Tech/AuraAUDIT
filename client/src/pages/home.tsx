@@ -349,9 +349,10 @@ const PRODUCT_CATALOG = [
 
 function ProductCatalogCard({ product }: { product: typeof PRODUCT_CATALOG[0] }) {
   const [expanded, setExpanded] = useState(false);
+  const isTravel = product.id === "travel_events";
   return (
     <Card
-      className="cursor-pointer hover:shadow-md transition-shadow"
+      className={`cursor-pointer hover:shadow-md transition-shadow ${isTravel ? "border-blue-300 dark:border-blue-800 ring-1 ring-blue-200 dark:ring-blue-900/50" : ""}`}
       onClick={() => setExpanded(!expanded)}
       data-testid={`product-card-${product.id}`}
     >
@@ -360,7 +361,10 @@ function ProductCatalogCard({ product }: { product: typeof PRODUCT_CATALOG[0] })
           <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${product.bgColor}`}>
             <product.icon className={`w-4 h-4 ${product.color}`} />
           </div>
-          <h3 className="text-xs font-semibold leading-tight">{product.title}</h3>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xs font-semibold leading-tight">{product.title}</h3>
+            {isTravel && <Badge className="text-[9px] mt-0.5 bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-0">Disponivel</Badge>}
+          </div>
         </div>
         <p className="text-[11px] text-muted-foreground leading-relaxed">{product.description}</p>
         {expanded && (
@@ -373,13 +377,26 @@ function ProductCatalogCard({ product }: { product: typeof PRODUCT_CATALOG[0] })
             ))}
           </div>
         )}
-        <button
-          className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
-          data-testid={`product-expand-${product.id}`}
-        >
-          {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-          {expanded ? "Recolher" : "Saiba mais"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+            data-testid={`product-expand-${product.id}`}
+          >
+            {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            {expanded ? "Recolher" : "Saiba mais"}
+          </button>
+          {isTravel && expanded && (
+            <Button
+              size="sm"
+              className="text-[10px] h-6 px-2 ml-auto"
+              onClick={(e) => { e.stopPropagation(); window.location.href = "/login"; }}
+              data-testid="button-access-travel-panel"
+            >
+              Acessar painel
+              <ArrowRight className="w-3 h-3 ml-1" />
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );
