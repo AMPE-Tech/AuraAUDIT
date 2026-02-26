@@ -175,10 +175,19 @@ export function registerContractRoutes(app: Express) {
       return res.status(400).json({ error: "Contrato ja assinado por este usuario." });
     }
 
-    const { signerRole, companyName, companyCnpj } = req.body;
+    const { signerRole, companyName, companyCnpj, signerCpf } = req.body;
 
     if (!signerRole) {
       return res.status(400).json({ error: "Cargo/funcao do signatario e obrigatorio." });
+    }
+
+    if (!signerCpf) {
+      return res.status(400).json({ error: "CPF do representante legal e obrigatorio para assinar o contrato." });
+    }
+
+    const cpfDigits = signerCpf.replace(/\D/g, "");
+    if (!validateCPF(cpfDigits)) {
+      return res.status(400).json({ error: "CPF do representante legal invalido — digitos verificadores nao conferem." });
     }
 
     if (companyCnpj) {
@@ -186,9 +195,6 @@ export function registerContractRoutes(app: Express) {
       const docType = detectDocumentType(cnpjDigits);
       if (docType === "cnpj" && !validateCNPJ(cnpjDigits)) {
         return res.status(400).json({ error: "CNPJ invalido — digitos verificadores nao conferem. Nao e possivel assinar com documento invalido." });
-      }
-      if (docType === "cpf" && !validateCPF(cnpjDigits)) {
-        return res.status(400).json({ error: "CPF invalido — digitos verificadores nao conferem. Nao e possivel assinar com documento invalido." });
       }
     }
 
@@ -206,6 +212,7 @@ export function registerContractRoutes(app: Express) {
         userId,
         signerName: fullName,
         signerRole,
+        signerCpf: cpfDigits,
         companyName: companyName || client?.name || null,
         companyCnpj: companyCnpj || client?.cnpj || null,
         contractTextSha256: contractSha256,

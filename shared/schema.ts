@@ -367,6 +367,7 @@ export const contractSignatures = pgTable("contract_signatures", {
   userId: varchar("user_id").notNull(),
   signerName: text("signer_name").notNull(),
   signerRole: text("signer_role").notNull(),
+  signerCpf: text("signer_cpf"),
   companyName: text("company_name"),
   companyCnpj: text("company_cnpj"),
   contractTextSha256: text("contract_text_sha256").notNull(),

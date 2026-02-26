@@ -28,8 +28,11 @@ import {
   Monitor,
   MessageCircle,
   Send,
+  UserCheck,
+  ShieldCheck,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
+import { validateCPF, formatCPF } from "@shared/validators";
 
 const CONTRACT_DATA = {
   number: "AUR-2025-0042",
@@ -98,6 +101,8 @@ export default function ClientContract() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [signerRole, setSignerRole] = useState("");
+  const [signerCpf, setSignerCpf] = useState("");
+  const [cpfValid, setCpfValid] = useState<boolean | null>(null);
   const [companyName, setCompanyName] = useState("");
   const [companyCnpj, setCompanyCnpj] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
@@ -140,6 +145,7 @@ export default function ClientContract() {
       contractNumber: string;
       signerName: string;
       signerRole: string;
+      signerCpf: string | null;
       companyName: string | null;
       companyCnpj: string | null;
       contractTextSha256: string;
@@ -156,6 +162,7 @@ export default function ClientContract() {
     mutationFn: async () => {
       const res = await apiRequest("POST", "/api/contract/sign", {
         signerRole,
+        signerCpf,
         companyName,
         companyCnpj,
       });
@@ -389,9 +396,20 @@ export default function ClientContract() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="p-3 rounded-md bg-background/60">
-                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Signatario</p>
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Representante Legal</p>
                     <p className="text-sm font-medium" data-testid="text-signer-name">{sig.signerName}</p>
                     <p className="text-xs text-muted-foreground">{sig.signerRole}</p>
+                    {sig.signerCpf && (
+                      <div className="flex items-center gap-1 mt-1">
+                        <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                        <p className="text-xs font-mono text-muted-foreground" data-testid="text-signer-cpf">
+                          CPF: {sig.signerCpf.length === 11
+                            ? `***.${sig.signerCpf.slice(3, 6)}.${sig.signerCpf.slice(6, 9)}-**`
+                            : sig.signerCpf
+                          }
+                        </p>
+                      </div>
+                    )}
                   </div>
                   <div className="p-3 rounded-md bg-background/60">
                     <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Empresa</p>
@@ -487,7 +505,17 @@ export default function ClientContract() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-3 rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 mb-1">
+                <div className="flex items-start gap-2">
+                  <UserCheck className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <span className="font-semibold">Representante Legal:</span> Informe o CPF de quem assina o contrato.
+                    O CPF e validado matematicamente para garantir a autenticidade do signatario.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="signerName" className="text-xs">Nome do Signatario</Label>
                   <Input
@@ -508,6 +536,41 @@ export default function ClientContract() {
                     className="text-sm"
                     data-testid="input-signer-role"
                   />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signerCpf" className="text-xs">CPF do Representante Legal *</Label>
+                  <Input
+                    id="signerCpf"
+                    value={signerCpf}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setSignerCpf(val);
+                      const digits = val.replace(/\D/g, "");
+                      if (digits.length === 11) {
+                        setCpfValid(validateCPF(digits));
+                      } else {
+                        setCpfValid(null);
+                      }
+                    }}
+                    placeholder="000.000.000-00"
+                    className={`text-sm font-mono ${cpfValid === false ? "border-red-400 focus-visible:ring-red-400" : cpfValid === true ? "border-emerald-400 focus-visible:ring-emerald-400" : ""}`}
+                    data-testid="input-signer-cpf"
+                  />
+                  {cpfValid === false && (
+                    <p className="text-[11px] text-red-600 dark:text-red-400 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      CPF invalido — digitos verificadores nao conferem
+                    </p>
+                  )}
+                  {cpfValid === true && (
+                    <p className="text-[11px] text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3" />
+                      CPF validado com sucesso
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="companyName" className="text-xs">Empresa</Label>
@@ -549,7 +612,7 @@ export default function ClientContract() {
               <Button
                 size="lg"
                 className="w-full gap-2"
-                disabled={!acceptedTerms || !readContract || !signerRole || signMutation.isPending}
+                disabled={!acceptedTerms || !readContract || !signerRole || !signerCpf || cpfValid !== true || signMutation.isPending}
                 onClick={() => signMutation.mutate()}
                 data-testid="button-sign-contract"
               >
