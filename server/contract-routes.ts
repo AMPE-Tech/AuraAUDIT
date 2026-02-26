@@ -223,7 +223,7 @@ O contrato pode ser rescindido por qualquer das partes com aviso previo de 30 di
 21.4. Cadeia de custodia da assinatura: contrato texto -> SHA-256 -> assinatura -> registro imutavel
 
 22. CANAIS DE ASSINATURA E DISTRIBUICAO DO CONTRATO
-22.1. Disponibilidade: o contrato esta disponivel para assinatura tanto offline (documento impresso) quanto online via plataforma nativa AuraAUDIT
+22.1. Disponibilidade: o contrato esta disponivel para assinatura online (versao padrao via plataforma nativa AuraAUDIT) e offline (versao customizada para o cliente, gerada pela plataforma para impressao e assinatura manual)
 22.2. Assinatura via plataforma: o contratante pode assinar digitalmente diretamente na plataforma AuraAUDIT, com registro automatico de SHA-256, IP, user-agent, timestamp e CPF (quando informado)
 22.3. Envio por email: o contrato pode ser enviado por email ao contratante com link direto para visualizacao e assinatura digital na plataforma
 22.4. Envio por WhatsApp: o contrato pode ser enviado via WhatsApp ao contratante com link para assinatura digital, facilitando acesso remoto e comunicacao direta
@@ -242,7 +242,7 @@ E6. Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos, v
 E7. Antiregressao: dataBefore/dataAfter em cada mutacao, versionamento de contratos e termos
 E8. Antialucinacao: cotacao previa, aprovacao humana, revisao opcional, envelope SHA-256 por output
 E9. Assinatura online: plataforma nativa com formulario de assinatura digital, validacao de CPF/CNPJ, registro de prova (SHA-256, IP, user-agent, timestamp)
-E10. Assinatura offline: documento disponivel para impressao e assinatura manual com posterior digitalizacao e upload a plataforma
+E10. Assinatura offline: contrato customizado para o cliente, gerado pela plataforma com dados cadastrais especificos do contratante, disponivel para impressao e assinatura manual (diferente da versao online padrao)
 E11. Distribuicao por email: envio de contrato com link para assinatura via plataforma, registrado na trilha de auditoria
 E12. Distribuicao por WhatsApp: envio de contrato via WhatsApp com link direto para assinatura digital, com numero do destinatario e mensagem registrados
 
