@@ -1,6 +1,6 @@
 import { Express, Request, Response } from "express";
 import { db } from "./db";
-import { wallets, walletLedger } from "@shared/schema";
+import { wallets, walletLedger, users } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 import { requireAuth } from "./auth";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
@@ -12,15 +12,34 @@ const TOPUP_PACKAGES = [
   { credits: 5000, usd: 5000, label: "5.000 creditos" },
 ];
 
+const VIP_USERS = ["stabia"];
+const VIP_INITIAL_CREDITS = 10000;
+
 async function getOrCreateWallet(userId: string) {
   const existing = await db.select().from(wallets).where(eq(wallets.userId, userId)).limit(1);
   if (existing.length > 0) return existing[0];
 
+  const userRows = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+  const isVip = userRows.length > 0 && VIP_USERS.includes(userRows[0].username);
+  const initialCredits = isVip ? VIP_INITIAL_CREDITS : 0;
+
   const [created] = await db.insert(wallets).values({
     userId,
     currency: "USD",
-    balanceCredits: "0",
+    balanceCredits: String(initialCredits),
   }).returning();
+
+  if (isVip) {
+    await db.insert(walletLedger).values({
+      walletId: created.id,
+      type: "topup",
+      credits: String(VIP_INITIAL_CREDITS),
+      usdAmount: "0",
+      referenceType: "vip_courtesy",
+      description: "Cortesia VIP — Grupo Stabia (Viagens e Eventos)",
+    });
+  }
+
   return created;
 }
 
