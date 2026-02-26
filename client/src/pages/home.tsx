@@ -389,7 +389,7 @@ function ProductCatalogCard({ product }: { product: typeof PRODUCT_CATALOG[0] })
             <Button
               size="sm"
               className="text-[10px] h-6 px-2 ml-auto"
-              onClick={(e) => { e.stopPropagation(); window.location.href = "/login"; }}
+              onClick={(e) => { e.stopPropagation(); window.location.href = "/dashboard"; }}
               data-testid="button-access-travel-panel"
             >
               Acessar painel
