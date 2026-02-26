@@ -10,6 +10,7 @@ import {
   BarChart3,
   Zap,
   Wallet,
+  FolderOpen,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useAuth } from "@/lib/auth";
@@ -31,6 +32,7 @@ const projetoItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3 },
   { title: "Sistemas", url: "/systems", icon: Monitor },
+  { title: "Meus Documentos", url: "/documents", icon: FolderOpen },
 ];
 
 const auditoriaItems = [

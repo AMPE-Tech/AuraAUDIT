@@ -53,48 +53,7 @@ const BACKOFFICE_SYSTEMS = [
   },
 ];
 
-const DATA_SOURCES = [
-  {
-    id: "base-aerea",
-    name: "Base Geral Agencia - Aereo",
-    description: "Base de dados completa de transacoes aereas da agencia, cobrindo o periodo de 01/01/2018 a 26/08/2020.",
-    type: "Excel",
-    records: "~150.000 registros",
-    icon: FileSpreadsheet,
-  },
-  {
-    id: "base-2021",
-    name: "Base Geral Agencia 2021",
-    description: "Base de dados consolidada das operacoes da agencia para o ano de 2021.",
-    type: "Excel",
-    records: "~45.000 registros",
-    icon: FileSpreadsheet,
-  },
-  {
-    id: "ebta-131882",
-    name: "Relatorio EBTA 131882",
-    description: "Relatorio de transacoes bancarias Bradesco EBTA - conta 131882. Extratos e movimentacoes financeiras.",
-    type: "Excel",
-    records: "Transacoes bancarias",
-    icon: CreditCard,
-  },
-  {
-    id: "ebta-131883",
-    name: "Relatorio EBTA 131883",
-    description: "Relatorio de transacoes bancarias Bradesco EBTA - conta 131883. Extratos e movimentacoes financeiras.",
-    type: "Excel",
-    records: "Transacoes bancarias",
-    icon: CreditCard,
-  },
-  {
-    id: "ebta-131884",
-    name: "Relatorio EBTA 131884",
-    description: "Relatorio de transacoes bancarias Bradesco EBTA - conta 131884. Extratos e movimentacoes financeiras.",
-    type: "Excel",
-    records: "Transacoes bancarias",
-    icon: CreditCard,
-  },
-];
+const DATA_SOURCES: Array<{ id: string; name: string; description: string; type: string; records: string; icon: typeof FileSpreadsheet }> = [];
 
 function getStatusBadge(status: string) {
   switch (status) {
@@ -235,29 +194,39 @@ export default function ClientSystems() {
         <div className="flex items-center gap-2 mb-4">
           <Database className="w-5 h-5 text-primary" />
           <h2 className="text-lg font-semibold" data-testid="text-data-sources-title">Fontes de Dados Conectadas</h2>
-          <Badge variant="secondary" className="text-xs">{DATA_SOURCES.length} fontes</Badge>
+          <Badge variant="outline" className="text-xs">0 fontes</Badge>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {DATA_SOURCES.map((source) => (
-            <Card key={source.id} data-testid={`card-source-${source.id}`}>
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex items-center justify-center w-9 h-9 rounded-md bg-muted shrink-0">
-                    <source.icon className="w-4 h-4 text-muted-foreground" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium truncate" data-testid={`text-source-name-${source.id}`}>{source.name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{source.description}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <Badge variant="outline" className="text-[10px]">{source.type}</Badge>
-                      <span className="text-[10px] text-muted-foreground">{source.records}</span>
+        {DATA_SOURCES.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {DATA_SOURCES.map((source) => (
+              <Card key={source.id} data-testid={`card-source-${source.id}`}>
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-md bg-muted shrink-0">
+                      <source.icon className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate" data-testid={`text-source-name-${source.id}`}>{source.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{source.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <Badge variant="outline" className="text-[10px]">{source.type}</Badge>
+                        <span className="text-[10px] text-muted-foreground">{source.records}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card className="border-dashed">
+            <CardContent className="p-8 flex flex-col items-center justify-center text-center">
+              <Database className="w-8 h-8 text-muted-foreground/30 mb-3" />
+              <p className="text-sm font-medium text-muted-foreground">Nenhuma fonte de dados conectada</p>
+              <p className="text-xs text-muted-foreground mt-1">As fontes de dados serao conectadas apos o recebimento das bases do cliente.</p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">

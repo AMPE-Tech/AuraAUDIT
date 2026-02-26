@@ -107,7 +107,7 @@ server/
 - Server auth: server/auth.ts (setupAuth, requireAuth, requireAdmin)
 
 ## Client Portal Sidebar Sections
-- **Projeto**: Dashboard, Painel do Projeto, Sistemas
+- **Projeto**: Dashboard, Painel do Projeto, Sistemas, Meus Documentos
 - **Auditoria**: Tipos de Despesas, Integracoes
 - **Comercial**: Produtos & Servicos, Contrato, Ecossistema LATAM
 

@@ -17,6 +17,7 @@ import {
   ArrowRight,
   Info,
   Lock,
+  ListChecks,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
@@ -314,6 +315,45 @@ export default function ClientDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <ListChecks className="w-4 h-4 text-primary" />
+              Acompanhamento de Entregaveis
+            </CardTitle>
+            <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => window.location.href = "/documents"} data-testid="button-go-documents">
+              Ver documentos
+              <ArrowRight className="w-3 h-3 ml-1" />
+            </Button>
+          </div>
+          <p className="text-[11px] text-muted-foreground">Visao resumida do que foi combinado, entregue e auditado</p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-1.5">
+            {[
+              "Relatorio Executivo de Auditoria",
+              "Relatorio Tecnico Detalhado",
+              "Matriz de Riscos e Anomalias",
+              "Parecer de Conformidade Legal",
+              "Plano de Recomendacoes e Acoes Corretivas",
+              "Dashboard Interativo de Resultados",
+              "Cadeia de Custodia Digital Completa",
+            ].map((item) => (
+              <div key={item} className="flex items-center justify-between gap-3 p-2 rounded-md bg-muted/50">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Circle className="w-3 h-3 text-muted-foreground shrink-0" />
+                  <p className="text-xs truncate">{item}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Badge variant="outline" className="text-[9px]">Aguardando dados</Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="border-blue-200 dark:border-blue-900">
         <CardContent className="p-4">
