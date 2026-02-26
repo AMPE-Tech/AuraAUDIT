@@ -39,15 +39,63 @@ const CONTRACT_DATA = {
   client: "Grupo Stabia",
   startDate: "2025-01-15",
   endDate: "2025-12-31",
-  type: "Auditoria Forense em Viagens e Eventos",
-  scope: [
-    "Auditoria forense completa em despesas de viagens corporativas e eventos",
-    "Analise de conformidade com politicas internas de viagens",
-    "Reconciliacao entre sistemas OBT (Reserve, Argo) e Backoffice (Wintour, Stur)",
-    "Identificacao de anomalias, duplicidades e fraudes potenciais",
-    "Cruzamento de dados com fontes externas (companhias aereas, agencias, EBTA)",
-    "Avaliacao de eficiencia operacional e oportunidades de economia",
-    "Verificacao de aderencia a Lei 13.964/2019 e normas anticorrupcao",
+  type: "Contrato Tecnico Master — Auditoria Forense & Servicos Digitais",
+  serviceCatalog: [
+    {
+      level: "P0 — Core AuraAudit",
+      color: "text-red-600 dark:text-red-400",
+      bgColor: "bg-red-500/10 border-red-500/20",
+      services: [
+        "Revisao Tecnica / Auditoria Financeira (conciliacao 4 vias, fees, hotel folio, eventos)",
+        "Monitoramento Continuo em assinatura (compliance, alertas, evidence packs)",
+        "Cadeia de Custodia & Rastreabilidade Juridica (Lei 13.964/2019)",
+      ],
+    },
+    {
+      level: "P1 — Alta Relevancia",
+      color: "text-amber-600 dark:text-amber-400",
+      bgColor: "bg-amber-500/10 border-amber-500/20",
+      services: [
+        "Consultoria de Contratos Tecnicos (TMC, fornecedores, SLAs)",
+        "Politica de Viagens & Workflow de Excecoes",
+        "SLA & KPIs Operacionais (FCR, TMA, scorecards)",
+      ],
+    },
+    {
+      level: "P2 — Relevancia Media",
+      color: "text-blue-600 dark:text-blue-400",
+      bgColor: "bg-blue-500/10 border-blue-500/20",
+      services: [
+        "Execucao de Concorrencias (RFP/RFQ)",
+        "Antifraude & Anomalias Avancado",
+        "Treinamentos EAD (viajante, aprovador, financeiro)",
+      ],
+    },
+    {
+      level: "P3 — Vertical Premium",
+      color: "text-purple-600 dark:text-purple-400",
+      bgColor: "bg-purple-500/10 border-purple-500/20",
+      services: [
+        "Suporte Administrativo Health Care (pharma, FMV, dossie)",
+      ],
+    },
+  ],
+  digitalModules: [
+    {
+      name: "AuraAudit Pass",
+      description: "Assinatura digital: US$ 99/mes + taxa progressiva sobre VAM excedente (CAP US$ 3.000/mes)",
+      items: ["Dashboard interativo", "Trilha de auditoria", "Cadeia de custodia digital", "Relatorios automatizados"],
+    },
+    {
+      name: "AI Desk",
+      description: "Servicos de IA sob demanda pagos em creditos (1 credito = US$ 1)",
+      items: ["Revisao de Contrato (60+ cred)", "Resposta a Edital/RFP (120+ cred)", "SLA + KPI Pack (150+ cred)", "Plano 30/60/90 (80+ cred)"],
+    },
+    {
+      name: "Wallet de Creditos",
+      description: "Carteira digital com recarga via Stripe (500, 1.500 ou 5.000 creditos)",
+      items: ["Ledger auditavel append-only", "Saldo verificado antes de cada job", "Orcamento obrigatorio pre-execucao"],
+    },
   ],
   deliverables: [
     { name: "Relatorio Executivo de Auditoria", deadline: "A cada fase concluida", status: "pendente" },
@@ -57,6 +105,7 @@ const CONTRACT_DATA = {
     { name: "Plano de Recomendacoes e Acoes Corretivas", deadline: "Fase 05 — Ajustes", status: "pendente" },
     { name: "Dashboard Interativo de Resultados", deadline: "Disponivel em tempo real", status: "pendente" },
     { name: "Cadeia de Custodia Digital Completa", deadline: "Continuo durante o projeto", status: "pendente" },
+    { name: "Envelopes de Auditoria (AI Desk)", deadline: "Por job executado", status: "pendente" },
   ],
   sla: [
     { metric: "Tempo de Resposta a Incidentes Criticos", value: "Ate 4 horas uteis" },
@@ -65,14 +114,45 @@ const CONTRACT_DATA = {
     { metric: "Entrega do Relatorio Final", value: "Ate 5 dias uteis apos conclusao" },
     { metric: "Reunioes de Alinhamento", value: "Semanalmente ou sob demanda" },
     { metric: "Disponibilidade da Equipe", value: "Dias uteis, 08h as 18h" },
+    { metric: "AI Desk — Cotacao", value: "Ate 2 minutos" },
+    { metric: "AI Desk — Execucao", value: "Ate 10 minutos por job" },
   ],
   terms: [
-    { title: "Confidencialidade", description: "Todas as informacoes compartilhadas durante a auditoria sao tratadas como confidenciais e protegidas por NDA assinado entre as partes." },
-    { title: "Cadeia de Custodia", description: "Todos os dados e evidencias sao mantidos em cadeia de custodia digital certificada, garantindo integridade e rastreabilidade conforme a Lei 13.964/2019." },
-    { title: "Propriedade Intelectual", description: "Os relatorios e analises produzidos sao de propriedade do contratante. A metodologia e ferramentas de auditoria permanecem propriedade da AuraAUDIT." },
-    { title: "Protecao de Dados", description: "O tratamento de dados pessoais segue rigorosamente a LGPD (Lei 13.709/2018), com medidas tecnicas e administrativas de seguranca." },
-    { title: "Independencia", description: "A equipe de auditoria mantem total independencia e imparcialidade durante todo o processo, sem vinculo com as areas auditadas." },
-    { title: "Rescisao", description: "O contrato pode ser rescindido por qualquer das partes com aviso previo de 30 dias, resguardados os direitos sobre trabalhos ja realizados." },
+    { title: "Confidencialidade", description: "Todas as informacoes compartilhadas sao tratadas como confidenciais e protegidas por NDA assinado entre as partes." },
+    { title: "Cadeia de Custodia Digital", description: "Hashes SHA-256 deterministicos para cada registro, documento e artefato. Trilha imutavel. Envelopes de auditoria para IA. Conformidade Lei 13.964/2019." },
+    { title: "Propriedade Intelectual", description: "Relatorios e analises sao de propriedade do contratante. Metodologia, ferramentas e modelos de IA permanecem propriedade da AuraAUDIT." },
+    { title: "Protecao de Dados", description: "Tratamento rigoroso conforme LGPD (Lei 13.709/2018). CPF armazenado com mascaramento parcial." },
+    { title: "Independencia", description: "Equipe de auditoria com total independencia e imparcialidade, sem vinculo com as areas auditadas." },
+    { title: "Rescisao", description: "Rescisao com aviso previo de 30 dias, resguardados direitos sobre trabalhos realizados e creditos nao utilizados." },
+  ],
+  antiRegression: [
+    "Toda alteracao em dados auditados registrada com dataBefore/dataAfter",
+    "Hash SHA-256 por entrada da trilha de auditoria",
+    "Registros imutaveis (append-only) — sem edicao ou exclusao",
+    "Versionamento de contratos: cada versao gera novo SHA-256",
+    "Ledger de creditos append-only com referencia cruzada",
+    "Validacao matematica CNPJ/CPF impede dados cadastrais invalidos",
+    "Termos versionados com SHA-256 — aceite vinculado a versao",
+  ],
+  antiHallucination: [
+    "Outputs de IA com envelope de auditoria SHA-256",
+    "Inputs registrados e hasheados — resultado corresponde a solicitacao",
+    "Cotacao obrigatoria antes da execucao",
+    "Revisao humana disponivel para todos os servicos",
+    "Outputs com hash individual — alteracao posterior detectavel",
+    "Modelo, versao e parametros registrados no envelope",
+    "IA sugere, usuario decide — controle humano em todas as etapas",
+    "Jobs cancelados ou com falha registrados com status e motivo",
+  ],
+  evidence: [
+    { id: "E1", description: "Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal" },
+    { id: "E2", description: "Contrato dinamico: texto gerado a partir de dados cadastrais verificados" },
+    { id: "E3", description: "Assinatura digital: SHA-256 do texto integral, IP, user-agent, timestamp, CPF (quando informado)" },
+    { id: "E4", description: "Trilha de auditoria: registros imutaveis com hash de integridade por entrada" },
+    { id: "E5", description: "AI Desk: envelope por job (inputs hasheados, modelo/versao, outputs hasheados)" },
+    { id: "E6", description: "Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos)" },
+    { id: "E7", description: "Antiregressao: dataBefore/dataAfter, versionamento de contratos e termos" },
+    { id: "E8", description: "Antialucinacao: cotacao previa, aprovacao humana, revisao opcional, SHA-256" },
   ],
 };
 
@@ -289,26 +369,66 @@ export default function ClientContract() {
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Target className="w-4 h-4 text-primary" />
-              Escopo do Contrato
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {CONTRACT_DATA.scope.map((item, index) => (
-                <div key={index} className="flex items-start gap-2.5 p-2.5 rounded-md bg-muted/50" data-testid={`text-scope-item-${index}`}>
-                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
-                  <p className="text-sm">{item}</p>
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Target className="w-4 h-4 text-primary" />
+            Parte I — Catalogo de Servicos
+          </CardTitle>
+          <p className="text-xs text-muted-foreground mt-1">Todos os servicos oferecidos, organizados por nivel de prioridade</p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {CONTRACT_DATA.serviceCatalog.map((group, gi) => (
+              <div key={gi} data-testid={`section-service-level-${gi}`}>
+                <div className={`flex items-center gap-2 mb-2`}>
+                  <Badge variant="outline" className={`text-[10px] ${group.bgColor}`}>
+                    <span className={group.color}>{group.level}</span>
+                  </Badge>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                <div className="space-y-1.5 ml-1">
+                  {group.services.map((svc, si) => (
+                    <div key={si} className="flex items-start gap-2 p-2 rounded-md bg-muted/50">
+                      <CheckCircle className="w-3.5 h-3.5 text-green-600 dark:text-green-400 mt-0.5 shrink-0" />
+                      <p className="text-xs">{svc}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Shield className="w-4 h-4 text-primary" />
+            Parte II — Modulos Digitais & Add-ons
+          </CardTitle>
+          <p className="text-xs text-muted-foreground mt-1">Plataforma digital, servicos de IA e carteira de creditos</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {CONTRACT_DATA.digitalModules.map((mod, index) => (
+              <div key={index} className="p-3 rounded-md bg-muted/50 space-y-2" data-testid={`card-module-${index}`}>
+                <p className="text-sm font-semibold">{mod.name}</p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+                <div className="space-y-1 pt-1">
+                  {mod.items.map((item, ii) => (
+                    <div key={ii} className="flex items-center gap-1.5">
+                      <CheckCircle className="w-3 h-3 text-primary shrink-0" />
+                      <p className="text-[11px]">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -330,26 +450,68 @@ export default function ClientContract() {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Clock className="w-4 h-4 text-primary" />
+              SLA — Acordo de Nivel de Servico
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {CONTRACT_DATA.sla.map((item, index) => (
+                <div key={index} className="p-2.5 rounded-md bg-muted/50" data-testid={`card-sla-${index}`}>
+                  <p className="text-xs text-muted-foreground mb-0.5">{item.metric}</p>
+                  <p className="text-sm font-semibold">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" />
-            SLA - Acordo de Nivel de Servico
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {CONTRACT_DATA.sla.map((item, index) => (
-              <div key={index} className="p-3 rounded-md bg-muted/50" data-testid={`card-sla-${index}`}>
-                <p className="text-xs text-muted-foreground mb-1">{item.metric}</p>
-                <p className="text-sm font-semibold">{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="border-emerald-200 dark:border-emerald-900">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              <span className="text-emerald-700 dark:text-emerald-300">Sistema Antiregressao</span>
+            </CardTitle>
+            <p className="text-[11px] text-muted-foreground mt-1">Mecanismos que impedem a perda ou alteracao retroativa de dados auditados</p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1.5">
+              {CONTRACT_DATA.antiRegression.map((item, index) => (
+                <div key={index} className="flex items-start gap-2 p-2 rounded-md bg-emerald-50/50 dark:bg-emerald-950/10" data-testid={`text-antiregression-${index}`}>
+                  <Lock className="w-3 h-3 text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
+                  <p className="text-xs">{item}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-blue-200 dark:border-blue-900">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <span className="text-blue-700 dark:text-blue-300">Sistema Antialucinacao (AI Desk)</span>
+            </CardTitle>
+            <p className="text-[11px] text-muted-foreground mt-1">Controles que garantem a veracidade e rastreabilidade dos outputs de IA</p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1.5">
+              {CONTRACT_DATA.antiHallucination.map((item, index) => (
+                <div key={index} className="flex items-start gap-2 p-2 rounded-md bg-blue-50/50 dark:bg-blue-950/10" data-testid={`text-antihallucination-${index}`}>
+                  <Shield className="w-3 h-3 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                  <p className="text-xs">{item}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardHeader className="pb-2">
@@ -367,6 +529,26 @@ export default function ClientContract() {
                   <p className="text-sm font-semibold">{term.title}</p>
                 </div>
                 <p className="text-xs text-muted-foreground leading-relaxed">{term.description}</p>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card className="border-amber-200 dark:border-amber-900">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <FileCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+            <span className="text-amber-700 dark:text-amber-300">Anexo I — Evidencias Tecnicas</span>
+          </CardTitle>
+          <p className="text-[11px] text-muted-foreground mt-1">Registro das evidencias de implementacao conforme solicitado pelo DPO</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {CONTRACT_DATA.evidence.map((ev, index) => (
+              <div key={index} className="flex items-start gap-2.5 p-2.5 rounded-md bg-amber-50/50 dark:bg-amber-950/10" data-testid={`text-evidence-${ev.id}`}>
+                <Badge variant="outline" className="text-[10px] shrink-0 border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-400">{ev.id}</Badge>
+                <p className="text-xs">{ev.description}</p>
               </div>
             ))}
           </div>
