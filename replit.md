@@ -41,6 +41,7 @@ server/
 ## Database Tables
 - users, expenses, audit_cases, anomalies, audit_trail, clients, data_sources, conversations, messages
 - wallets, wallet_ledger, ai_services, ai_jobs, ai_job_quotes, ai_job_outputs, audit_envelopes
+- client_uploads (document uploads with SHA-256, checklist, validation status)
 
 ## API Endpoints
 - GET/POST /api/expenses, PATCH /api/expenses/:id
@@ -49,6 +50,7 @@ server/
 - GET/POST /api/clients, GET /api/clients/:id, GET /api/clients/type/:type, PATCH /api/clients/:id
 - GET/POST /api/data-sources, GET /api/data-sources/:id, GET /api/data-sources/client/:clientId, PATCH /api/data-sources/:id
 - GET /api/audit-trail
+- GET/POST /api/uploads, PATCH /api/uploads/:id/check, DELETE /api/uploads/:id
 - GET/POST /api/ai/conversations, GET/DELETE /api/ai/conversations/:id, POST /api/ai/conversations/:id/messages (SSE streaming)
 - GET /api/wallet, POST /api/wallet/topup, GET /api/wallet/ledger, POST /api/wallet/credit
 - GET /api/ai-desk/services, POST /api/ai-desk/jobs, GET /api/ai-desk/jobs, GET /api/ai-desk/jobs/:id

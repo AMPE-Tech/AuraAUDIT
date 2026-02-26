@@ -361,6 +361,27 @@ export const auditEnvelopes = pgTable("audit_envelopes", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const clientUploads = pgTable("client_uploads", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  documentKey: text("document_key").notNull(),
+  clientId: varchar("client_id"),
+  userId: varchar("user_id").notNull(),
+  fileName: text("file_name").notNull(),
+  originalName: text("original_name").notNull(),
+  fileSize: integer("file_size").notNull(),
+  mimeType: text("mime_type"),
+  status: text("status").notNull().default("uploaded"),
+  clientChecked: boolean("client_checked").notNull().default(false),
+  sha256: text("sha256"),
+  uploadedAt: timestamp("uploaded_at").notNull().defaultNow(),
+  validatedAt: timestamp("validated_at"),
+  validatedBy: text("validated_by"),
+});
+
+export const insertClientUploadSchema = createInsertSchema(clientUploads).omit({ id: true, uploadedAt: true, validatedAt: true });
+export type InsertClientUpload = z.infer<typeof insertClientUploadSchema>;
+export type ClientUpload = typeof clientUploads.$inferSelect;
+
 export const insertWalletSchema = createInsertSchema(wallets).omit({ id: true, createdAt: true });
 export const insertWalletLedgerSchema = createInsertSchema(walletLedger).omit({ id: true, createdAt: true });
 export const insertAiServiceSchema = createInsertSchema(aiServices).omit({ id: true, createdAt: true });

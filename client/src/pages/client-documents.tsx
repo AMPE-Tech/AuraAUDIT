@@ -1,6 +1,13 @@
+import { useRef, useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   FolderOpen,
   Shield,
@@ -14,6 +21,9 @@ import {
   ListChecks,
   AlertCircle,
   Info,
+  File,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
@@ -38,30 +48,22 @@ const DELIVERABLES = [
 ];
 
 const EXPECTED_DOCUMENTS = [
-  { name: "Extratos OBT Reserve (reservas e PNRs)", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Extratos OBT Argo (reservas e PNRs)", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Base Backoffice Wintour (emissoes 2024)", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Base Backoffice Stur (emissoes 2025)", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Extratos Bradesco EBTA (cartoes corporativos)", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Dados GDS Sabre / Amadeus", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Faturamento BSPlink", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Management files agencias (CVC, Flytour, BRT)", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Politica de viagens vigente", responsible: "Grupo Stabia", status: "pendente" },
-  { name: "Tabela de aprovadores e limites", responsible: "Grupo Stabia", status: "pendente" },
+  { key: "obt-reserve", name: "Extratos OBT Reserve (reservas e PNRs)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
+  { key: "obt-argo", name: "Extratos OBT Argo (reservas e PNRs)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
+  { key: "backoffice-wintour", name: "Base Backoffice Wintour (emissoes 2024)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
+  { key: "backoffice-stur", name: "Base Backoffice Stur (emissoes 2025)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
+  { key: "bradesco-ebta", name: "Extratos Bradesco EBTA (cartoes corporativos)", responsible: "Grupo Stabia", formats: ".csv, .xlsx, .pdf" },
+  { key: "gds-sabre-amadeus", name: "Dados GDS Sabre / Amadeus", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
+  { key: "bsplink", name: "Faturamento BSPlink", responsible: "Grupo Stabia", formats: ".csv, .xlsx, .pdf" },
+  { key: "management-files", name: "Management files agencias (CVC, Flytour, BRT)", responsible: "Grupo Stabia", formats: ".csv, .xlsx, .pdf" },
+  { key: "politica-viagens", name: "Politica de viagens vigente", responsible: "Grupo Stabia", formats: ".pdf, .doc, .docx" },
+  { key: "tabela-aprovadores", name: "Tabela de aprovadores e limites", responsible: "Grupo Stabia", formats: ".xlsx, .pdf" },
 ];
 
-function getStatusIcon(status: string) {
-  switch (status) {
-    case "entregue":
-      return <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />;
-    case "em_andamento":
-      return <Clock className="w-3.5 h-3.5 text-amber-600" />;
-    case "pendente":
-    case "aguardando_dados":
-      return <Circle className="w-3.5 h-3.5 text-muted-foreground" />;
-    default:
-      return <Circle className="w-3.5 h-3.5 text-muted-foreground" />;
-  }
+function formatFileSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
 function getStatusBadge(status: string) {
@@ -81,8 +83,217 @@ function getStatusBadge(status: string) {
   }
 }
 
+function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadingKey }: {
+  doc: typeof EXPECTED_DOCUMENTS[0];
+  uploads: any[];
+  onUpload: (key: string, file: globalThis.File) => void;
+  onCheck: (uploadId: string, checked: boolean) => void;
+  onDelete: (uploadId: string) => void;
+  uploadingKey: string | null;
+}) {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const docUploads = uploads.filter((u: any) => u.documentKey === doc.key);
+  const hasUpload = docUploads.length > 0;
+  const latestUpload = docUploads[0];
+  const isUploading = uploadingKey === doc.key;
+
+  const getDocStatus = () => {
+    if (!hasUpload) return "pendente";
+    if (latestUpload.status === "aguardando_validacao") return "aguardando_validacao";
+    if (latestUpload.status === "validado") return "validado";
+    return "uploaded";
+  };
+
+  const status = getDocStatus();
+
+  return (
+    <div className="p-3 rounded-lg bg-muted/30 border border-transparent hover:border-border/50 transition-colors" data-testid={`doc-row-${doc.key}`}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-2.5 min-w-0 flex-1">
+          {status === "validado" ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+          ) : status === "aguardando_validacao" ? (
+            <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          ) : hasUpload ? (
+            <File className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+          ) : (
+            <Circle className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium">{doc.name}</p>
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              Responsavel: {doc.responsible} · Formatos: {doc.formats}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          {status === "aguardando_validacao" && (
+            <Badge variant="outline" className="text-[9px] gap-1 text-amber-600 border-amber-300 dark:border-amber-700 dark:text-amber-400">
+              <Clock className="w-2.5 h-2.5" />
+              Aguardando validacao
+            </Badge>
+          )}
+          {status === "validado" && (
+            <Badge className="text-[9px] bg-emerald-600">Validado</Badge>
+          )}
+          {status === "pendente" && (
+            <Badge variant="outline" className="text-[9px]">Pendente</Badge>
+          )}
+          {status === "uploaded" && (
+            <Badge variant="outline" className="text-[9px] text-blue-600 border-blue-300 dark:border-blue-700 dark:text-blue-400">
+              Arquivo carregado
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      {hasUpload && (
+        <div className="mt-2.5 ml-6 space-y-2">
+          {docUploads.map((u: any) => (
+            <div key={u.id} className="flex items-center justify-between gap-3 p-2 rounded-md bg-background border" data-testid={`upload-item-${u.id}`}>
+              <div className="flex items-center gap-2 min-w-0">
+                <File className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[11px] font-medium truncate">{u.originalName}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {formatFileSize(u.fileSize)} · {new Date(u.uploadedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <Checkbox
+                    id={`check-${u.id}`}
+                    checked={u.clientChecked}
+                    onCheckedChange={(checked) => onCheck(u.id, checked === true)}
+                    data-testid={`checkbox-validate-${u.id}`}
+                  />
+                  <label htmlFor={`check-${u.id}`} className="text-[10px] text-muted-foreground cursor-pointer select-none">
+                    Dados conferidos
+                  </label>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                  onClick={() => onDelete(u.id)}
+                  data-testid={`button-delete-${u.id}`}
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-2 ml-6">
+        <input
+          ref={fileRef}
+          type="file"
+          className="hidden"
+          accept=".csv,.xlsx,.xls,.pdf,.doc,.docx,.txt,.zip,.rar,.7z,.json,.xml"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) onUpload(doc.key, file);
+            e.target.value = "";
+          }}
+          data-testid={`input-file-${doc.key}`}
+        />
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-[11px] h-7 gap-1.5"
+          onClick={() => fileRef.current?.click()}
+          disabled={isUploading}
+          data-testid={`button-upload-${doc.key}`}
+        >
+          {isUploading ? (
+            <Loader2 className="w-3 h-3 animate-spin" />
+          ) : (
+            <Upload className="w-3 h-3" />
+          )}
+          {hasUpload ? "Enviar outro arquivo" : "Enviar arquivo"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export default function ClientDocuments() {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+
+  const { data: uploadsData, isLoading } = useQuery<{ uploads: any[] }>({
+    queryKey: ["/api/uploads"],
+  });
+
+  const uploads = uploadsData?.uploads || [];
+
+  const uploadMutation = useMutation({
+    mutationFn: async ({ key, file }: { key: string; file: globalThis.File }) => {
+      setUploadingKey(key);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("documentKey", key);
+      const res = await fetch("/api/uploads", {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Falha no upload");
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/uploads"] });
+      setUploadingKey(null);
+      toast({ title: "Arquivo enviado", description: "Marque como conferido quando estiver pronto" });
+    },
+    onError: (error: any) => {
+      setUploadingKey(null);
+      toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
+    },
+  });
+
+  const checkMutation = useMutation({
+    mutationFn: async ({ id, checked }: { id: string; checked: boolean }) => {
+      const res = await apiRequest("PATCH", `/api/uploads/${id}/check`, { checked });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/uploads"] });
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Falha ao atualizar status", variant: "destructive" });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await apiRequest("DELETE", `/api/uploads/${id}`);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/uploads"] });
+      toast({ title: "Arquivo removido" });
+    },
+    onError: () => {
+      toast({ title: "Erro", description: "Falha ao remover arquivo", variant: "destructive" });
+    },
+  });
+
+  const totalDocs = EXPECTED_DOCUMENTS.length;
+  const uploadedDocs = EXPECTED_DOCUMENTS.filter((d) =>
+    uploads.some((u: any) => u.documentKey === d.key)
+  ).length;
+  const validatedDocs = EXPECTED_DOCUMENTS.filter((d) =>
+    uploads.some((u: any) => u.documentKey === d.key && u.status === "aguardando_validacao")
+  ).length;
 
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
@@ -108,9 +319,16 @@ export default function ClientDocuments() {
             <div>
               <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Aguardando documentos do cliente</p>
               <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed mt-0.5">
-                Os documentos e bases de dados listados abaixo sao necessarios para iniciar as analises. 
-                Apos o recebimento, os entregaveis da auditoria serao produzidos e disponibilizados aqui.
+                Envie os arquivos abaixo e marque como "conferidos" para confirmar. Nossa equipe validara tudo de uma vez antes de iniciar as analises.
               </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4 mt-3 ml-8">
+            <div className="text-[11px] text-amber-700 dark:text-amber-400">
+              <span className="font-semibold">{uploadedDocs}/{totalDocs}</span> enviados
+            </div>
+            <div className="text-[11px] text-amber-700 dark:text-amber-400">
+              <span className="font-semibold">{validatedDocs}</span> aguardando validacao
             </div>
           </div>
         </CardContent>
@@ -145,23 +363,30 @@ export default function ClientDocuments() {
             <Upload className="w-4 h-4 text-primary" />
             Documentos Esperados do Cliente
           </CardTitle>
-          <p className="text-[11px] text-muted-foreground">Bases de dados e documentos necessarios para iniciar as analises</p>
+          <p className="text-[11px] text-muted-foreground">
+            Envie os arquivos e marque o checklist "Dados conferidos" quando estiver pronto
+          </p>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            {EXPECTED_DOCUMENTS.map((doc) => (
-              <div key={doc.name} className="flex items-center justify-between gap-3 p-2.5 rounded-md bg-muted/50" data-testid={`doc-expected-${doc.name.slice(0, 20).replace(/\s/g, '-').toLowerCase()}`}>
-                <div className="flex items-center gap-2.5 min-w-0">
-                  {getStatusIcon(doc.status)}
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium">{doc.name}</p>
-                    <p className="text-[10px] text-muted-foreground">Responsavel: {doc.responsible}</p>
-                  </div>
-                </div>
-                {getStatusBadge(doc.status)}
-              </div>
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20" />)}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {EXPECTED_DOCUMENTS.map((doc) => (
+                <DocumentUploadRow
+                  key={doc.key}
+                  doc={doc}
+                  uploads={uploads}
+                  onUpload={(key, file) => uploadMutation.mutate({ key, file })}
+                  onCheck={(id, checked) => checkMutation.mutate({ id, checked })}
+                  onDelete={(id) => deleteMutation.mutate(id)}
+                  uploadingKey={uploadingKey}
+                />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
