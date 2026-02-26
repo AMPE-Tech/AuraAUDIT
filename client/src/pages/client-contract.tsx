@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,8 @@ import {
   Hash,
   Globe,
   Monitor,
+  MessageCircle,
+  Send,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
@@ -96,8 +98,8 @@ export default function ClientContract() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [signerRole, setSignerRole] = useState("");
-  const [companyName, setCompanyName] = useState("Grupo Stabia");
-  const [companyCnpj, setCompanyCnpj] = useState("12.345.678/0001-90");
+  const [companyName, setCompanyName] = useState("");
+  const [companyCnpj, setCompanyCnpj] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [readContract, setReadContract] = useState(false);
   const [showContractText, setShowContractText] = useState(false);
@@ -107,9 +109,29 @@ export default function ClientContract() {
     version: string;
     text: string;
     sha256: string;
+    auditor: { name: string; cnpj: string; email: string } | null;
+    client: { name: string; cnpj: string; email: string } | null;
   }>({
     queryKey: ["/api/contract/text"],
   });
+
+  const { data: whatsappData } = useQuery<{
+    whatsappUrl: string;
+    phone: string;
+    message: string;
+  }>({
+    queryKey: ["/api/contract/whatsapp-link"],
+  });
+
+  const clientData = contractText?.client;
+  const auditorData = contractText?.auditor;
+
+  useEffect(() => {
+    if (clientData) {
+      setCompanyName(clientData.name);
+      setCompanyCnpj(clientData.cnpj);
+    }
+  }, [clientData]);
 
   const { data: signatureData, isLoading: isLoadingSignature } = useQuery<{
     signed: boolean;
@@ -166,10 +188,23 @@ export default function ClientContract() {
             Contrato
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Detalhes do contrato de auditoria entre AuraAUDIT e {user?.fullName || CONTRACT_DATA.client}
+            Detalhes do contrato de auditoria entre {auditorData?.name || "AuraAUDIT"} e {clientData?.name || user?.fullName || CONTRACT_DATA.client}
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {whatsappData?.whatsappUrl && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-xs gap-1.5 text-green-700 border-green-300 hover:bg-green-50 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-950/30"
+              onClick={() => window.open(whatsappData.whatsappUrl, "_blank")}
+              data-testid="button-share-whatsapp"
+              title={whatsappData.phone ? `Enviar para ${whatsappData.phone}` : "Compartilhar via WhatsApp (numero nao cadastrado — sera solicitado)"}
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              Enviar via WhatsApp
+            </Button>
+          )}
           {isSigned ? (
             <Badge variant="default" className="text-xs gap-1 bg-emerald-600">
               <CheckCircle className="w-3 h-3" />

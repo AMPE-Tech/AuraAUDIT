@@ -13,6 +13,7 @@ import {
   Settings,
   Zap,
   Wallet,
+  Building2,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -43,6 +44,7 @@ const servicosItems = [
 ];
 
 const cadastroItems = [
+  { title: "Minha Empresa", url: "/company-profile", icon: Building2 },
   { title: "Clientes", url: "/clients", icon: Users },
   { title: "Integracoes", url: "/integrations", icon: Plug },
 ];

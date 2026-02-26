@@ -1,21 +1,44 @@
 import { Express, Request, Response } from "express";
 import { requireAuth } from "./auth";
 import { db } from "./db";
-import { contractSignatures } from "@shared/schema";
+import { contractSignatures, clients } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 import { createHash } from "crypto";
+import { z } from "zod";
+
+const profileUpdateSchema = z.object({
+  name: z.string().min(2).optional(),
+  cnpj: z.string().min(11).optional(),
+  contactName: z.string().min(2).optional(),
+  contactEmail: z.string().email().optional(),
+  contactPhone: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
+  city: z.string().optional().nullable(),
+  state: z.string().optional().nullable(),
+  notes: z.string().optional().nullable(),
+});
 
 const CONTRACT_VERSION = "1.0.0";
 
-const CONTRACT_TEXT = `CONTRATO DE PRESTACAO DE SERVICOS DE AUDITORIA FORENSE
+function generateContractText(auditorData: any, clientData: any): string {
+  const auditorName = auditorData?.name || "AuraAUDIT - AuraDue Tecnologia Ltda";
+  const auditorCnpj = auditorData?.cnpj || "00.000.000/0001-00";
+  const auditorEmail = auditorData?.contactEmail || "contato@auraaudit.com";
+  const clientName = clientData?.name || "Cliente";
+  const clientCnpj = clientData?.cnpj || "00.000.000/0000-00";
+  const clientEmail = clientData?.contactEmail || "";
+
+  return `CONTRATO DE PRESTACAO DE SERVICOS DE AUDITORIA FORENSE
 
 Contrato n. AUR-2025-0042
 
-CONTRATANTE: Grupo Stabia
-CNPJ: 12.345.678/0001-90
+CONTRATANTE: ${clientName}
+CNPJ: ${clientCnpj}
+Email: ${clientEmail}
 
-CONTRATADA: AuraAUDIT - AuraDue Tecnologia Ltda
-CNPJ: 98.765.432/0001-10
+CONTRATADA: ${auditorName}
+CNPJ: ${auditorCnpj}
+Email: ${auditorEmail}
 
 OBJETO: Prestacao de servicos de auditoria forense independente em despesas de viagens corporativas e eventos, abrangendo os exercicios de 2024 (volume estimado de R$ 51,3 milhoes) e 2025 (volume estimado de R$ 39,6 milhoes).
 
@@ -57,7 +80,7 @@ Todas as informacoes compartilhadas durante a auditoria sao tratadas como confid
 Todos os dados e evidencias sao mantidos em cadeia de custodia digital certificada, garantindo integridade e rastreabilidade conforme a Lei 13.964/2019 (Pacote Anticrime).
 
 7. PROPRIEDADE INTELECTUAL
-Os relatorios e analises produzidos sao de propriedade do contratante. A metodologia e ferramentas de auditoria permanecem propriedade da AuraAUDIT.
+Os relatorios e analises produzidos sao de propriedade do contratante. A metodologia e ferramentas de auditoria permanecem propriedade da ${auditorName}.
 
 8. PROTECAO DE DADOS
 O tratamento de dados pessoais segue rigorosamente a LGPD (Lei 13.709/2018), com medidas tecnicas e administrativas de seguranca.
@@ -71,20 +94,45 @@ O contrato pode ser rescindido por qualquer das partes com aviso previo de 30 di
 11. VALIDADE JURIDICA DA ASSINATURA ELETRONICA
 Este contrato e assinado eletronicamente nos termos da Lei 14.063/2020 (assinatura eletronica simples) e da Medida Provisoria 2.200-2/2001. A integridade do documento e garantida por hash criptografico SHA-256, registrando IP, user-agent, timestamp e identificacao do signatario.
 
-AuraAUDIT - AuraDue Tecnologia Ltda
+${auditorName}
 Versao do contrato: ${CONTRACT_VERSION}`;
+}
 
 function hashContractText(text: string): string {
   return createHash("sha256").update(text, "utf8").digest("hex");
 }
 
+async function getAuditorProfile() {
+  const [auditor] = await db
+    .select()
+    .from(clients)
+    .where(eq(clients.type, "auditor"))
+    .limit(1);
+  return auditor || null;
+}
+
+async function getClientProfile(userId: string) {
+  const { users } = await import("@shared/schema");
+  const [user] = await db.select().from(users).where(eq(users.id, userId));
+  if (!user?.clientId) return null;
+  const [client] = await db.select().from(clients).where(eq(clients.id, user.clientId));
+  return client || null;
+}
+
 export function registerContractRoutes(app: Express) {
-  app.get("/api/contract/text", requireAuth, (_req: Request, res: Response) => {
+  app.get("/api/contract/text", requireAuth, async (req: Request, res: Response) => {
+    const userId = req.session.userId!;
+    const auditor = await getAuditorProfile();
+    const client = await getClientProfile(userId);
+    const contractText = generateContractText(auditor, client);
+
     res.json({
       contractNumber: "AUR-2025-0042",
       version: CONTRACT_VERSION,
-      text: CONTRACT_TEXT,
-      sha256: hashContractText(CONTRACT_TEXT),
+      text: contractText,
+      sha256: hashContractText(contractText),
+      auditor: auditor ? { name: auditor.name, cnpj: auditor.cnpj, email: auditor.contactEmail } : null,
+      client: client ? { name: client.name, cnpj: client.cnpj, email: client.contactEmail } : null,
     });
   });
 
@@ -132,7 +180,10 @@ export function registerContractRoutes(app: Express) {
       return res.status(400).json({ error: "Cargo/funcao do signatario e obrigatorio." });
     }
 
-    const contractSha256 = hashContractText(CONTRACT_TEXT);
+    const auditor = await getAuditorProfile();
+    const client = await getClientProfile(userId);
+    const contractText = generateContractText(auditor, client);
+    const contractSha256 = hashContractText(contractText);
     const ipAddress = req.headers["x-forwarded-for"]?.toString().split(",")[0] || req.socket.remoteAddress || "unknown";
     const userAgent = req.headers["user-agent"] || "unknown";
 
@@ -143,8 +194,8 @@ export function registerContractRoutes(app: Express) {
         userId,
         signerName: fullName,
         signerRole,
-        companyName: companyName || null,
-        companyCnpj: companyCnpj || null,
+        companyName: companyName || client?.name || null,
+        companyCnpj: companyCnpj || client?.cnpj || null,
         contractTextSha256: contractSha256,
         contractVersion: CONTRACT_VERSION,
         ipAddress,
@@ -163,5 +214,88 @@ export function registerContractRoutes(app: Express) {
         legalBasis: "Lei 14.063/2020 (assinatura eletronica simples), MP 2.200-2/2001",
       },
     });
+  });
+
+  app.get("/api/company/auditor", requireAuth, async (_req: Request, res: Response) => {
+    const auditor = await getAuditorProfile();
+    return res.json({ profile: auditor });
+  });
+
+  app.patch("/api/company/auditor", requireAuth, async (req: Request, res: Response) => {
+    if (req.session.role !== "admin") {
+      return res.status(403).json({ error: "Acesso restrito ao administrador." });
+    }
+    const auditor = await getAuditorProfile();
+    if (!auditor) {
+      return res.status(404).json({ error: "Perfil da empresa auditora nao encontrado." });
+    }
+    const parsed = profileUpdateSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Dados invalidos.", details: parsed.error.flatten() });
+    }
+    const { name, cnpj, contactName, contactEmail, contactPhone, address, city, state, notes } = parsed.data;
+    const [updated] = await db
+      .update(clients)
+      .set({
+        name: name || auditor.name,
+        cnpj: cnpj || auditor.cnpj,
+        contactName: contactName || auditor.contactName,
+        contactEmail: contactEmail || auditor.contactEmail,
+        contactPhone: contactPhone !== undefined ? contactPhone : auditor.contactPhone,
+        address: address !== undefined ? address : auditor.address,
+        city: city !== undefined ? city : auditor.city,
+        state: state !== undefined ? state : auditor.state,
+        notes: notes !== undefined ? notes : auditor.notes,
+        updatedAt: new Date(),
+      })
+      .where(eq(clients.id, auditor.id))
+      .returning();
+    return res.json({ profile: updated });
+  });
+
+  app.get("/api/company/my-profile", requireAuth, async (req: Request, res: Response) => {
+    const userId = req.session.userId!;
+    const client = await getClientProfile(userId);
+    return res.json({ profile: client });
+  });
+
+  app.patch("/api/company/my-profile", requireAuth, async (req: Request, res: Response) => {
+    const userId = req.session.userId!;
+    const client = await getClientProfile(userId);
+    if (!client) {
+      return res.status(404).json({ error: "Perfil do cliente nao encontrado." });
+    }
+    const parsed = profileUpdateSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return res.status(400).json({ error: "Dados invalidos.", details: parsed.error.flatten() });
+    }
+    const { name, cnpj, contactName, contactEmail, contactPhone, address, city, state, notes } = parsed.data;
+    const [updated] = await db
+      .update(clients)
+      .set({
+        name: name || client.name,
+        cnpj: cnpj || client.cnpj,
+        contactName: contactName || client.contactName,
+        contactEmail: contactEmail || client.contactEmail,
+        contactPhone: contactPhone !== undefined ? contactPhone : client.contactPhone,
+        address: address !== undefined ? address : client.address,
+        city: city !== undefined ? city : client.city,
+        state: state !== undefined ? state : client.state,
+        notes: notes !== undefined ? notes : client.notes,
+        updatedAt: new Date(),
+      })
+      .where(eq(clients.id, client.id))
+      .returning();
+    return res.json({ profile: updated });
+  });
+
+  app.get("/api/contract/whatsapp-link", requireAuth, async (req: Request, res: Response) => {
+    const userId = req.session.userId!;
+    const client = await getClientProfile(userId);
+    const phone = client?.contactPhone?.replace(/\D/g, "") || "";
+    const contractUrl = `${req.protocol}://${req.get("host")}/contract`;
+    const message = `Prezado(a) ${client?.contactName || "Cliente"},\n\nSegue o link para visualizacao e assinatura digital do contrato de auditoria forense:\n\n${contractUrl}\n\nContrato: AUR-2025-0042\nEmpresa: ${client?.name || ""}\n\nA assinatura e feita digitalmente com validade juridica (Lei 14.063/2020).\n\nAtenciosamente,\nAuraAUDIT`;
+    const whatsappUrl = `https://wa.me/${phone ? phone : ""}?text=${encodeURIComponent(message)}`;
+    return res.json({ whatsappUrl, phone, message });
   });
 }
