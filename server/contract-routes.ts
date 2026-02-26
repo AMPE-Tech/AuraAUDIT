@@ -275,6 +275,71 @@ export function registerContractRoutes(app: Express) {
     });
   });
 
+  app.get("/api/admin/contracts", requireAuth, async (req: Request, res: Response) => {
+    if (req.session.role !== "admin") {
+      return res.status(403).json({ error: "Acesso restrito ao administrador." });
+    }
+    const { users } = await import("@shared/schema");
+    const { ne } = await import("drizzle-orm");
+    const allClients = await db.select().from(clients).where(ne(clients.type, "auditor")).orderBy(desc(clients.createdAt));
+    const auditor = await getAuditorProfile();
+    const allSignatures = await db.select().from(contractSignatures).orderBy(desc(contractSignatures.signedAt));
+
+    const contracts = allClients.map((client) => {
+      const sig = allSignatures.find((s) => s.companyCnpj === client.cnpj || s.companyName === client.name);
+      const contractText = generateContractText(auditor, client);
+      const sha256 = hashContractText(contractText);
+      return {
+        clientId: client.id,
+        clientName: client.name,
+        clientCnpj: client.cnpj,
+        clientEmail: client.contactEmail,
+        clientPhone: client.contactPhone,
+        clientStatus: client.status,
+        contractNumber: "AUR-2025-0042",
+        contractVersion: CONTRACT_VERSION,
+        contractSha256: sha256,
+        signed: !!sig,
+        signature: sig || null,
+      };
+    });
+
+    return res.json({ contracts, auditor: auditor ? { name: auditor.name, cnpj: auditor.cnpj } : null });
+  });
+
+  app.get("/api/admin/contracts/:clientId/text", requireAuth, async (req: Request, res: Response) => {
+    if (req.session.role !== "admin") {
+      return res.status(403).json({ error: "Acesso restrito ao administrador." });
+    }
+    const { clientId } = req.params;
+    const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
+    if (!client) return res.status(404).json({ error: "Cliente nao encontrado." });
+    const auditor = await getAuditorProfile();
+    const contractText = generateContractText(auditor, client);
+    return res.json({
+      contractNumber: "AUR-2025-0042",
+      version: CONTRACT_VERSION,
+      text: contractText,
+      sha256: hashContractText(contractText),
+      client: { name: client.name, cnpj: client.cnpj, email: client.contactEmail, phone: client.contactPhone },
+      auditor: auditor ? { name: auditor.name, cnpj: auditor.cnpj } : null,
+    });
+  });
+
+  app.get("/api/admin/contracts/:clientId/whatsapp", requireAuth, async (req: Request, res: Response) => {
+    if (req.session.role !== "admin") {
+      return res.status(403).json({ error: "Acesso restrito ao administrador." });
+    }
+    const { clientId } = req.params;
+    const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
+    if (!client) return res.status(404).json({ error: "Cliente nao encontrado." });
+    const phone = client.contactPhone?.replace(/\D/g, "") || "";
+    const contractUrl = `${req.protocol}://${req.get("host")}/contract`;
+    const message = `Prezado(a) ${client.contactName || "Cliente"},\n\nSegue o link para visualizacao e assinatura digital do Contrato Tecnico Master de Auditoria Forense:\n\n${contractUrl}\n\nContrato: AUR-2025-0042 (v${CONTRACT_VERSION})\nEmpresa: ${client.name || ""}\nCNPJ: ${client.cnpj || ""}\n\nA assinatura e feita digitalmente com validade juridica (Lei 14.063/2020).\n\nAtenciosamente,\nAuraAUDIT`;
+    const whatsappUrl = `https://wa.me/${phone ? phone : ""}?text=${encodeURIComponent(message)}`;
+    return res.json({ whatsappUrl, phone, message, clientName: client.name });
+  });
+
   app.get("/api/contract/signature", requireAuth, async (req: Request, res: Response) => {
     const userId = req.session.userId!;
     const signatures = await db

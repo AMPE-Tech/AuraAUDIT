@@ -14,6 +14,7 @@ import {
   Zap,
   Wallet,
   Building2,
+  FileSignature,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -46,6 +47,7 @@ const servicosItems = [
 const cadastroItems = [
   { title: "Minha Empresa", url: "/company-profile", icon: Building2 },
   { title: "Clientes", url: "/clients", icon: Users },
+  { title: "Contratos", url: "/contracts", icon: FileSignature },
   { title: "Integracoes", url: "/integrations", icon: Plug },
 ];
 

@@ -85,6 +85,7 @@ server/
 - `/audit-trail` - Immutable audit trail
 - `/reports` - Structured audit reports
 - `/clients` - Client registration
+- `/contracts` - Contract management (view all, check signatures, send via WhatsApp)
 - `/integrations` - Data source integrations hub
 - `/services` - Service catalog (P0-P3 priority levels)
 - `/ai-desk` - AI Desk catalog (4 services, job creation/quote/approval/execution)

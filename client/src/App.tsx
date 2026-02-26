@@ -40,6 +40,7 @@ import WalletPage from "@/pages/wallet";
 import AiDeskPage from "@/pages/ai-desk";
 import CompanyProfile from "@/pages/company-profile";
 import ClientProfile from "@/pages/client-profile";
+import AdminContracts from "@/pages/admin-contracts";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,7 @@ function AdminRouter() {
       <Route path="/wallet" component={WalletPage} />
       <Route path="/admin" component={AdminPanel} />
       <Route path="/company-profile" component={CompanyProfile} />
+      <Route path="/contracts" component={AdminContracts} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={NotFound} />
     </Switch>
