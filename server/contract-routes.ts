@@ -181,13 +181,12 @@ export function registerContractRoutes(app: Express) {
       return res.status(400).json({ error: "Cargo/funcao do signatario e obrigatorio." });
     }
 
-    if (!signerCpf) {
-      return res.status(400).json({ error: "CPF do representante legal e obrigatorio para assinar o contrato." });
-    }
-
-    const cpfDigits = signerCpf.replace(/\D/g, "");
-    if (!validateCPF(cpfDigits)) {
-      return res.status(400).json({ error: "CPF do representante legal invalido — digitos verificadores nao conferem." });
+    let cpfDigits: string | null = null;
+    if (signerCpf) {
+      cpfDigits = signerCpf.replace(/\D/g, "");
+      if (!validateCPF(cpfDigits)) {
+        return res.status(400).json({ error: "CPF do representante legal invalido — digitos verificadores nao conferem." });
+      }
     }
 
     if (companyCnpj) {
@@ -212,7 +211,7 @@ export function registerContractRoutes(app: Express) {
         userId,
         signerName: fullName,
         signerRole,
-        signerCpf: cpfDigits,
+        signerCpf: cpfDigits || null,
         companyName: companyName || client?.name || null,
         companyCnpj: companyCnpj || client?.cnpj || null,
         contractTextSha256: contractSha256,

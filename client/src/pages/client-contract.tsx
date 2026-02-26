@@ -541,7 +541,7 @@ export default function ClientContract() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signerCpf" className="text-xs">CPF do Representante Legal *</Label>
+                  <Label htmlFor="signerCpf" className="text-xs">CPF do Representante Legal <span className="text-muted-foreground">(opcional)</span></Label>
                   <Input
                     id="signerCpf"
                     value={signerCpf}
@@ -612,7 +612,7 @@ export default function ClientContract() {
               <Button
                 size="lg"
                 className="w-full gap-2"
-                disabled={!acceptedTerms || !readContract || !signerRole || !signerCpf || cpfValid !== true || signMutation.isPending}
+                disabled={!acceptedTerms || !readContract || !signerRole || (signerCpf.length > 0 && cpfValid !== true) || signMutation.isPending}
                 onClick={() => signMutation.mutate()}
                 data-testid="button-sign-contract"
               >
