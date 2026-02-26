@@ -1,100 +1,95 @@
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import {
   Shield,
   Plane,
   CalendarDays,
-  TrendingUp,
-  BarChart3,
-  Award,
-  AlertTriangle,
-  CheckCircle,
-  ShieldAlert,
-  Receipt,
-  TrendingDown,
-  FolderSearch,
+  Clock,
+  FileText,
+  Upload,
+  CheckCircle2,
+  Circle,
+  AlertCircle,
+  Database,
   Monitor,
+  ArrowRight,
+  Info,
+  Lock,
 } from "lucide-react";
-import { formatCurrency, formatDate, getSeverityLabel, getAnomalyTypeLabel } from "@/lib/formatters";
 import { useAuth } from "@/lib/auth";
-import type { Expense, AuditCase, Anomaly } from "@shared/schema";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
 
-const CHART_COLORS = [
-  "hsl(210, 85%, 42%)",
-  "hsl(195, 75%, 38%)",
-  "hsl(225, 70%, 35%)",
-  "hsl(180, 65%, 32%)",
-  "hsl(240, 60%, 38%)",
+const PROJECT_PHASES = [
+  {
+    phase: "Fase 01",
+    title: "Proposta Comercial",
+    description: "Apresentacao da proposta, definicao de escopo, volumes, sistemas e entregaveis.",
+    status: "completed" as const,
+    detail: "Proposta aceita e contrato assinado",
+  },
+  {
+    phase: "Fase 02",
+    title: "Onboarding & Acessos",
+    description: "Cadastro do cliente na plataforma, definicao de acessos, alinhamento de expectativas e prazos.",
+    status: "in_progress" as const,
+    detail: "Acesso ao portal concedido — aguardando envio de dados",
+  },
+  {
+    phase: "Fase 03",
+    title: "Coleta de Dados",
+    description: "Recebimento das bases de dados dos sistemas (OBT, Backoffice, cartoes, GDS, BSP) para inicio das analises.",
+    status: "pending" as const,
+    detail: "Aguardando envio pelo cliente",
+  },
+  {
+    phase: "Fase 04",
+    title: "Reconciliacao & Analise",
+    description: "Cruzamento e reconciliacao das informacoes, identificacao de inconsistencias, falhas e vulnerabilidades.",
+    status: "pending" as const,
+    detail: "Inicia apos recebimento dos dados",
+  },
+  {
+    phase: "Fase 05",
+    title: "Apresentacao dos Resultados",
+    description: "Consolidacao dos achados, dashboards executivos, relatorio tecnico e plano de acao.",
+    status: "pending" as const,
+    detail: "Inicia apos conclusao das analises",
+  },
+  {
+    phase: "Fase 06",
+    title: "Entrega Final",
+    description: "Entrega do relatorio executivo e tecnico final, evidence packs e recomendacoes.",
+    status: "pending" as const,
+    detail: "Etapa final do projeto",
+  },
 ];
 
-const CHRONOGRAM = [
-  { phase: "Fase 01", days: "Dias 1-2", title: "Revisao de Escopo", description: "Revisao final do escopo, alinhamento de objetivos, validacao das premissas, definicao dos criterios de auditoria e confirmacao dos acessos.", status: "completed" },
-  { phase: "Fase 02", days: "Dias 3-5", title: "Coleta de Dados", description: "Coleta estruturada das bases de dados, extracoes dos sistemas (OBT, Backoffice, relatorios financeiros e operacionais).", status: "completed" },
-  { phase: "Fase 03", days: "Dias 6-10", title: "Reconciliacao", description: "Cruzamento e reconciliacao das informacoes, identificacao de inconsistencias, falhas operacionais e vulnerabilidades financeiras.", status: "in_progress" },
-  { phase: "Fase 04", days: "Dias 11-12", title: "Apresentacao dos Resultados", description: "Consolidacao dos achados, validacao preliminar e preparacao do material executivo.", status: "pending" },
-  { phase: "Fase 05", days: "Dias 13-14", title: "Ajustes e Validacoes", description: "Ajustes finais com base em validacoes junto as areas envolvidas, refinamento das analises.", status: "pending" },
-  { phase: "Fase 06", days: "Dia 15", title: "Entrega Final", description: "Entrega do relatorio executivo e tecnico final, apresentacao formal e recomendacoes.", status: "pending" },
+const SCOPE_ITEMS = [
+  "Conformidade com politicas de viagens",
+  "Governanca e controles",
+  "Integridade de dados",
+  "Conformidade contratual",
+  "Controles e aprovacoes",
+  "Falhas operacionais",
+  "Vulnerabilidades financeiras",
+  "Avaliacao de riscos",
+  "Oportunidades de otimizacao",
+];
+
+const EXPECTED_DATA = [
+  { source: "OBT Reserve", type: "Reservas e PNRs", status: "pending" },
+  { source: "OBT Argo", type: "Reservas e PNRs", status: "pending" },
+  { source: "Backoffice Wintour", type: "Emissoes e faturamento 2024", status: "pending" },
+  { source: "Backoffice Stur", type: "Emissoes e faturamento 2025", status: "pending" },
+  { source: "Cartoes Corporativos", type: "Extratos Bradesco EBTA", status: "pending" },
+  { source: "GDS Sabre / Amadeus", type: "Dados de PNR", status: "pending" },
+  { source: "BSPlink", type: "Faturamento e settlement", status: "pending" },
+  { source: "Agencias (CVC, Flytour, BRT)", type: "Management files", status: "pending" },
 ];
 
 export default function ClientDashboard() {
   const { user } = useAuth();
-
-  const { data: expenses, isLoading: loadingExpenses } = useQuery<Expense[]>({
-    queryKey: ["/api/expenses"],
-  });
-
-  const { data: cases, isLoading: loadingCases } = useQuery<AuditCase[]>({
-    queryKey: ["/api/audit-cases"],
-  });
-
-  const { data: anomalies, isLoading: loadingAnomalies } = useQuery<Anomaly[]>({
-    queryKey: ["/api/anomalies"],
-  });
-
-  const isLoading = loadingExpenses || loadingCases || loadingAnomalies;
-
-  const totalExpenses = expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0;
-  const flaggedExpenses = expenses?.filter((e) => e.status === "flagged" || e.riskLevel === "high" || e.riskLevel === "critical") || [];
-  const totalSavings = cases?.reduce((sum, c) => sum + parseFloat(c.savingsIdentified || "0"), 0) || 0;
-  const openCases = cases?.filter((c) => c.status !== "closed") || [];
-  const unresolvedAnomalies = anomalies?.filter((a) => !a.resolved) || [];
-
-  const categoryData = expenses
-    ? Object.entries(
-        expenses.reduce((acc, e) => {
-          const cat = e.category === "airfare" ? "Aereo" : e.category === "hotel" ? "Hotel" : e.category === "meals" ? "Alimentacao" : e.category === "transport" ? "Transporte" : e.category === "event" ? "Eventos" : e.category;
-          acc[cat] = (acc[cat] || 0) + parseFloat(e.amount);
-          return acc;
-        }, {} as Record<string, number>)
-      ).map(([name, value]) => ({ name, value: Math.round(value) }))
-    : [];
-
-  const riskDistribution = expenses
-    ? Object.entries(
-        expenses.reduce((acc, e) => {
-          acc[e.riskLevel] = (acc[e.riskLevel] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>)
-      ).map(([name, value]) => ({
-        name: name === "low" ? "Baixo" : name === "medium" ? "Medio" : name === "high" ? "Alto" : "Critico",
-        value,
-      }))
-    : [];
 
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
@@ -104,7 +99,7 @@ export default function ClientDashboard() {
             Painel do Projeto
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            AuraAUDIT - Auditoria Forense em Despesas | {user?.fullName}
+            AuraAUDIT — Auditoria Forense em Viagens e Eventos | {user?.fullName}
           </p>
         </div>
         <Badge variant="outline" className="text-xs gap-1">
@@ -113,25 +108,49 @@ export default function ClientDashboard() {
         </Badge>
       </div>
 
+      <Card className="border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/40 shrink-0 mt-0.5">
+              <Info className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300" data-testid="text-status-banner">
+                Status: Proposta Comercial Aceita — Aguardando Dados
+              </p>
+              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
+                A proposta comercial foi aceita e o acesso ao portal foi concedido. Os dados abaixo sao os <strong>dados macro informados na proposta</strong>. 
+                As analises reais serao iniciadas apos o recebimento dos dados dos sistemas (OBT, Backoffice, GDS, cartoes corporativos). 
+                Nenhum dado operacional foi recebido ate o momento.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <Card className="bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/20">
         <CardContent className="p-6">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2 mb-1">
             <Plane className="w-5 h-5 text-primary" />
-            <h2 className="text-sm font-semibold" data-testid="text-project-name">Projeto - {user?.fullName}</h2>
+            <h2 className="text-sm font-semibold" data-testid="text-project-name">Projeto — {user?.fullName}</h2>
             <Badge variant="secondary" className="text-[10px]">Viagens e Eventos</Badge>
           </div>
+          <p className="text-[11px] text-muted-foreground mb-4">Dados macro conforme proposta comercial aceita</p>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="p-3 rounded-md bg-background/60 text-center">
               <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="text-volume-2024">R$ 51,3 MI</p>
               <p className="text-[11px] text-muted-foreground">Volume 2024</p>
+              <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
             </div>
             <div className="p-3 rounded-md bg-background/60 text-center">
               <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-volume-2025">R$ 39,6 MI</p>
               <p className="text-[11px] text-muted-foreground">Volume 2025</p>
+              <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
             </div>
             <div className="p-3 rounded-md bg-background/60 text-center">
               <p className="text-xl font-bold text-violet-600 dark:text-violet-400" data-testid="text-volume-total">R$ 90,9 MI</p>
               <p className="text-[11px] text-muted-foreground">Volume Total</p>
+              <Badge variant="outline" className="text-[9px] mt-1">Estimado</Badge>
             </div>
             <div className="p-3 rounded-md bg-background/60">
               <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">OBT</p>
@@ -152,240 +171,180 @@ export default function ClientDashboard() {
       </Card>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {isLoading ? (
-          [1, 2, 3, 4].map((i) => (
-            <Card key={i}><CardContent className="p-5"><Skeleton className="h-16 w-full" /></CardContent></Card>
-          ))
-        ) : (
-          <>
-            <Card>
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Receipt className="w-4 h-4 text-primary" />
-                  <p className="text-xs text-muted-foreground uppercase">Analisado</p>
-                </div>
-                <p className="text-xl font-bold">{formatCurrency(totalExpenses)}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <TrendingDown className="w-4 h-4 text-green-600" />
-                  <p className="text-xs text-muted-foreground uppercase">Economia</p>
-                </div>
-                <p className="text-xl font-bold text-green-600 dark:text-green-400">{formatCurrency(totalSavings)}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                  <p className="text-xs text-muted-foreground uppercase">Anomalias</p>
-                </div>
-                <p className="text-xl font-bold">{unresolvedAnomalies.length} <span className="text-sm font-normal text-muted-foreground">de {anomalies?.length || 0}</span></p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <FolderSearch className="w-4 h-4 text-primary" />
-                  <p className="text-xs text-muted-foreground uppercase">Casos</p>
-                </div>
-                <p className="text-xl font-bold">{openCases.length} <span className="text-sm font-normal text-muted-foreground">de {cases?.length || 0}</span></p>
-              </CardContent>
-            </Card>
-          </>
-        )}
+        <Card className="opacity-60">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-4 h-4 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground uppercase">Analisado</p>
+            </div>
+            <p className="text-xl font-bold text-muted-foreground">—</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Aguardando dados</p>
+          </CardContent>
+        </Card>
+        <Card className="opacity-60">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-4 h-4 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground uppercase">Economia</p>
+            </div>
+            <p className="text-xl font-bold text-muted-foreground">—</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Aguardando analises</p>
+          </CardContent>
+        </Card>
+        <Card className="opacity-60">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-4 h-4 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground uppercase">Anomalias</p>
+            </div>
+            <p className="text-xl font-bold text-muted-foreground">—</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Aguardando analises</p>
+          </CardContent>
+        </Card>
+        <Card className="opacity-60">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <Lock className="w-4 h-4 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground uppercase">Casos</p>
+            </div>
+            <p className="text-xl font-bold text-muted-foreground">—</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Aguardando analises</p>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <CalendarDays className="w-4 h-4 text-primary" />
-            Cronograma de Referencia - 15 Dias
+            Andamento do Projeto
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-            {CHRONOGRAM.map((item) => (
-              <div key={item.phase} className="p-3 rounded-md bg-muted/50" data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+            {PROJECT_PHASES.map((item) => (
+              <div key={item.phase} className={`p-3 rounded-md ${item.status === "completed" ? "bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900" : item.status === "in_progress" ? "bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900" : "bg-muted/50"}`} data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}>
                 <div className="flex items-center justify-between gap-2 mb-1.5">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-[10px] font-mono">{item.phase}</Badge>
-                    <span className="text-[11px] text-muted-foreground">{item.days}</span>
                   </div>
-                  <Badge
-                    variant={item.status === "completed" ? "default" : item.status === "in_progress" ? "secondary" : "outline"}
-                    className="text-[10px]"
-                  >
-                    {item.status === "completed" ? "Concluido" : item.status === "in_progress" ? "Em Andamento" : "Pendente"}
-                  </Badge>
+                  <div className="flex items-center gap-1">
+                    {item.status === "completed" && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
+                    {item.status === "in_progress" && <Clock className="w-3 h-3 text-amber-600" />}
+                    {item.status === "pending" && <Circle className="w-3 h-3 text-muted-foreground" />}
+                    <Badge
+                      variant={item.status === "completed" ? "default" : item.status === "in_progress" ? "secondary" : "outline"}
+                      className={`text-[10px] ${item.status === "completed" ? "bg-emerald-600" : item.status === "in_progress" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400" : ""}`}
+                    >
+                      {item.status === "completed" ? "Concluido" : item.status === "in_progress" ? "Em Andamento" : "Pendente"}
+                    </Badge>
+                  </div>
                 </div>
                 <p className="text-sm font-medium">{item.title}</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">{item.description}</p>
+                <p className="text-[10px] font-medium mt-1.5 italic {item.status === 'completed' ? 'text-emerald-700 dark:text-emerald-400' : item.status === 'in_progress' ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground'}">{item.detail}</p>
               </div>
             ))}
-          </div>
-          <div className="mt-3 p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900">
-            <p className="text-[11px] text-muted-foreground">
-              <span className="font-semibold">Observacao Importante:</span> Os prazos acima consideram a disponibilizacao tempestiva dos acessos, bases de dados e documentos necessarios para execucao das atividades.
-            </p>
           </div>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
+          <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-primary" />
-              Despesas por Categoria
+              <Database className="w-4 h-4 text-primary" />
+              Dados Esperados
             </CardTitle>
+            <p className="text-[11px] text-muted-foreground">Fontes de dados a serem enviadas para inicio das analises</p>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <Skeleton className="h-[200px] w-full" />
-            ) : categoryData.length > 0 ? (
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={categoryData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
-                  <Tooltip formatter={(value: number) => [formatCurrency(value), "Valor"]} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "6px", fontSize: "12px" }} />
-                  <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">Nenhum dado disponivel</div>
-            )}
+            <div className="space-y-2">
+              {EXPECTED_DATA.map((item) => (
+                <div key={item.source} className="flex items-center justify-between gap-3 p-2.5 rounded-md bg-muted/50" data-testid={`data-source-${item.source.toLowerCase().replace(/\s/g, '-')}`}>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="flex items-center justify-center w-7 h-7 rounded-md bg-muted shrink-0">
+                      <Monitor className="w-3.5 h-3.5 text-muted-foreground" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium truncate">{item.source}</p>
+                      <p className="text-[10px] text-muted-foreground">{item.type}</p>
+                    </div>
+                  </div>
+                  <Badge variant="outline" className="text-[10px] shrink-0 gap-1">
+                    <AlertCircle className="w-2.5 h-2.5" />
+                    Pendente
+                  </Badge>
+                </div>
+              ))}
+            </div>
+            <div className="mt-3 p-3 rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900">
+              <p className="text-[11px] text-blue-700 dark:text-blue-400 leading-relaxed">
+                <strong>Como enviar:</strong> Os dados podem ser enviados via integracao (API/SFTP), upload controlado na plataforma ou exportacao em CSV/XLSX. 
+                Entre em contato com seu consultor para alinhar o formato e o canal de envio.
+              </p>
+            </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Award className="w-4 h-4 text-primary" />
-              Distribuicao de Risco
+              <FileText className="w-4 h-4 text-primary" />
+              Escopo da Auditoria
             </CardTitle>
+            <p className="text-[11px] text-muted-foreground">Areas de analise definidas na proposta comercial</p>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <Skeleton className="h-[200px] w-full" />
-            ) : riskDistribution.length > 0 ? (
-              <>
-                <ResponsiveContainer width="100%" height={160}>
-                  <PieChart>
-                    <Pie data={riskDistribution} cx="50%" cy="50%" innerRadius={40} outerRadius={65} paddingAngle={4} dataKey="value">
-                      {riskDistribution.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "6px", fontSize: "12px" }} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex flex-wrap gap-3 justify-center mt-1">
-                  {riskDistribution.map((item, i) => (
-                    <div key={item.name} className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
-                      <span className="text-xs text-muted-foreground">{item.name} ({item.value})</span>
-                    </div>
-                  ))}
+            <div className="space-y-1.5">
+              {SCOPE_ITEMS.map((item) => (
+                <div key={item} className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
+                  <CheckCircle2 className="w-3 h-3 text-primary shrink-0" />
+                  <p className="text-xs">{item}</p>
                 </div>
-              </>
-            ) : (
-              <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">Nenhum dado disponivel</div>
-            )}
+              ))}
+            </div>
+            <Separator className="my-3" />
+            <div className="space-y-2">
+              <p className="text-[11px] font-medium">Reconciliacoes previstas:</p>
+              <div className="flex flex-wrap gap-1.5">
+                <Badge variant="outline" className="text-[10px]">OBT vs Backoffice</Badge>
+                <Badge variant="outline" className="text-[10px]">Cartoes vs Reservas</Badge>
+                <Badge variant="outline" className="text-[10px]">BSP vs Cias Aereas</Badge>
+                <Badge variant="outline" className="text-[10px]">Hotel vs Faturas</Badge>
+                <Badge variant="outline" className="text-[10px]">Fees e Rebates</Badge>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-destructive" />
-              Despesas Sinalizadas
-            </CardTitle>
-            <Badge variant="destructive" className="text-xs">{flaggedExpenses.length}</Badge>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-3">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}</div>
-            ) : flaggedExpenses.length > 0 ? (
-              <div className="space-y-2">
-                {flaggedExpenses.slice(0, 5).map((expense) => (
-                  <div key={expense.id} className="flex items-center justify-between gap-3 p-3 rounded-md bg-muted/50" data-testid={`card-flagged-${expense.id}`}>
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-destructive/10 shrink-0">
-                        <ShieldAlert className="w-4 h-4 text-destructive" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{expense.description}</p>
-                        <p className="text-xs text-muted-foreground">{expense.employee} - {formatDate(expense.date)}</p>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-semibold">{formatCurrency(expense.amount)}</p>
-                      <Badge variant="destructive" className="text-[10px]">{expense.riskLevel === "critical" ? "Critico" : "Alto"}</Badge>
-                    </div>
-                  </div>
-                ))}
+      <Card className="border-blue-200 dark:border-blue-900">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/40 shrink-0">
+                <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
-            ) : (
-              <div className="h-24 flex flex-col items-center justify-center text-muted-foreground">
-                <CheckCircle className="w-6 h-6 mb-1 text-green-500" />
-                <p className="text-sm">Nenhuma despesa sinalizada</p>
+              <div>
+                <p className="text-sm font-semibold" data-testid="text-next-step">Proximo passo: Envio dos dados</p>
+                <p className="text-xs text-muted-foreground">Envie os dados dos sistemas listados acima para iniciarmos as analises reais do projeto.</p>
               </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-yellow-600" />
-              Anomalias Ativas
-            </CardTitle>
-            <Badge variant="secondary" className="text-xs">{unresolvedAnomalies.length}</Badge>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <div className="space-y-3">{[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 w-full" />)}</div>
-            ) : unresolvedAnomalies.length > 0 ? (
-              <div className="space-y-2">
-                {unresolvedAnomalies.slice(0, 5).map((anomaly) => (
-                  <div key={anomaly.id} className="flex items-center justify-between gap-3 p-3 rounded-md bg-muted/50" data-testid={`card-anomaly-${anomaly.id}`}>
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-yellow-500/10 shrink-0">
-                        <AlertTriangle className="w-4 h-4 text-yellow-600 dark:text-yellow-400" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{anomaly.description}</p>
-                        <p className="text-xs text-muted-foreground">{getAnomalyTypeLabel(anomaly.type)}</p>
-                      </div>
-                    </div>
-                    <Badge variant={anomaly.severity === "critical" || anomaly.severity === "high" ? "destructive" : "secondary"} className="text-[10px] shrink-0">
-                      {getSeverityLabel(anomaly.severity)}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="h-24 flex flex-col items-center justify-center text-muted-foreground">
-                <CheckCircle className="w-6 h-6 mb-1 text-green-500" />
-                <p className="text-sm">Nenhuma anomalia pendente</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+            <Button size="sm" className="text-xs shrink-0" onClick={() => window.location.href = "/integrations"} data-testid="button-go-integrations">
+              Ver integracoes
+              <ArrowRight className="w-3 h-3 ml-1" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <div className="flex items-center gap-2">
           <Shield className="w-3 h-3" />
-          <span>Cadeia de Custodia Digital - AuraDue</span>
+          <span>Cadeia de Custodia Digital — AuraDue</span>
         </div>
-        <span>AuraAUDIT - Auditoria Forense em Despesas</span>
+        <span>AuraAUDIT — Auditoria Forense em Viagens e Eventos</span>
       </div>
     </div>
   );
