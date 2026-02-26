@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
 import {
   Shield,
   Plane,
@@ -18,53 +19,11 @@ import {
   Info,
   Lock,
   ListChecks,
+  PenTool,
+  AlertTriangle,
+  Loader2,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
-
-const PROJECT_PHASES = [
-  {
-    phase: "Fase 01",
-    title: "Proposta Comercial",
-    description: "Apresentacao da proposta, definicao de escopo, volumes, sistemas e entregaveis.",
-    status: "completed" as const,
-    detail: "Proposta aceita e contrato assinado",
-  },
-  {
-    phase: "Fase 02",
-    title: "Onboarding & Acessos",
-    description: "Cadastro do cliente na plataforma, definicao de acessos, alinhamento de expectativas e prazos.",
-    status: "in_progress" as const,
-    detail: "Acesso ao portal concedido — aguardando envio de dados",
-  },
-  {
-    phase: "Fase 03",
-    title: "Coleta de Dados",
-    description: "Recebimento das bases de dados dos sistemas (OBT, Backoffice, cartoes, GDS, BSP) para inicio das analises.",
-    status: "pending" as const,
-    detail: "Aguardando envio pelo cliente",
-  },
-  {
-    phase: "Fase 04",
-    title: "Reconciliacao & Analise",
-    description: "Cruzamento e reconciliacao das informacoes, identificacao de inconsistencias, falhas e vulnerabilidades.",
-    status: "pending" as const,
-    detail: "Inicia apos recebimento dos dados",
-  },
-  {
-    phase: "Fase 05",
-    title: "Apresentacao dos Resultados",
-    description: "Consolidacao dos achados, dashboards executivos, relatorio tecnico e plano de acao.",
-    status: "pending" as const,
-    detail: "Inicia apos conclusao das analises",
-  },
-  {
-    phase: "Fase 06",
-    title: "Entrega Final",
-    description: "Entrega do relatorio executivo e tecnico final, evidence packs e recomendacoes.",
-    status: "pending" as const,
-    detail: "Etapa final do projeto",
-  },
-];
 
 const SCOPE_ITEMS = [
   "Conformidade com politicas de viagens",
@@ -92,6 +51,127 @@ const EXPECTED_DATA = [
 export default function ClientDashboard() {
   const { user } = useAuth();
 
+  const { data: signatureData, isLoading: isLoadingSignature } = useQuery<{
+    signed: boolean;
+    signature: {
+      signerName: string;
+      signedAt: string;
+    } | null;
+  }>({
+    queryKey: ["/api/contract/signature"],
+  });
+
+  const contractSigned = signatureData?.signed === true;
+
+  const PROJECT_PHASES = [
+    {
+      phase: "Fase 00",
+      title: "Contrato Assinado",
+      description: "Assinatura digital do contrato com registro de IP, SHA-256 e timestamp conforme Lei 14.063/2020.",
+      status: contractSigned ? ("completed" as const) : ("blocking" as const),
+      detail: contractSigned
+        ? `Assinado por ${signatureData?.signature?.signerName} em ${new Date(signatureData?.signature?.signedAt || "").toLocaleDateString("pt-BR")}`
+        : "Pendente — assine o contrato para iniciar o projeto",
+    },
+    {
+      phase: "Fase 01",
+      title: "Proposta Comercial",
+      description: "Apresentacao da proposta, definicao de escopo, volumes, sistemas e entregaveis.",
+      status: "completed" as const,
+      detail: "Proposta aceita pelo cliente",
+    },
+    {
+      phase: "Fase 02",
+      title: "Onboarding & Acessos",
+      description: "Cadastro do cliente na plataforma, definicao de acessos, alinhamento de expectativas e prazos.",
+      status: contractSigned ? ("in_progress" as const) : ("locked" as const),
+      detail: contractSigned
+        ? "Acesso ao portal concedido — aguardando envio de dados"
+        : "Bloqueado — requer assinatura do contrato",
+    },
+    {
+      phase: "Fase 03",
+      title: "Coleta de Dados",
+      description: "Recebimento das bases de dados dos sistemas (OBT, Backoffice, cartoes, GDS, BSP) para inicio das analises.",
+      status: contractSigned ? ("pending" as const) : ("locked" as const),
+      detail: contractSigned
+        ? "Aguardando envio pelo cliente"
+        : "Bloqueado — requer assinatura do contrato",
+    },
+    {
+      phase: "Fase 04",
+      title: "Reconciliacao & Analise",
+      description: "Cruzamento e reconciliacao das informacoes, identificacao de inconsistencias, falhas e vulnerabilidades.",
+      status: contractSigned ? ("pending" as const) : ("locked" as const),
+      detail: contractSigned
+        ? "Inicia apos recebimento dos dados"
+        : "Bloqueado — requer assinatura do contrato",
+    },
+    {
+      phase: "Fase 05",
+      title: "Apresentacao dos Resultados",
+      description: "Consolidacao dos achados, dashboards executivos, relatorio tecnico e plano de acao.",
+      status: contractSigned ? ("pending" as const) : ("locked" as const),
+      detail: contractSigned
+        ? "Inicia apos conclusao das analises"
+        : "Bloqueado — requer assinatura do contrato",
+    },
+    {
+      phase: "Fase 06",
+      title: "Entrega Final",
+      description: "Entrega do relatorio executivo e tecnico final, evidence packs e recomendacoes.",
+      status: contractSigned ? ("pending" as const) : ("locked" as const),
+      detail: contractSigned
+        ? "Etapa final do projeto"
+        : "Bloqueado — requer assinatura do contrato",
+    },
+  ];
+
+  function getPhaseStyle(status: string) {
+    switch (status) {
+      case "completed":
+        return "bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900";
+      case "in_progress":
+        return "bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900";
+      case "blocking":
+        return "bg-red-50 dark:bg-red-950/20 border border-red-300 dark:border-red-900";
+      case "locked":
+        return "bg-muted/30 opacity-50";
+      default:
+        return "bg-muted/50";
+    }
+  }
+
+  function getPhaseIcon(status: string) {
+    switch (status) {
+      case "completed":
+        return <CheckCircle2 className="w-3 h-3 text-emerald-600" />;
+      case "in_progress":
+        return <Clock className="w-3 h-3 text-amber-600" />;
+      case "blocking":
+        return <AlertTriangle className="w-3 h-3 text-red-600" />;
+      case "locked":
+        return <Lock className="w-3 h-3 text-muted-foreground" />;
+      default:
+        return <Circle className="w-3 h-3 text-muted-foreground" />;
+    }
+  }
+
+  function getPhaseBadge(status: string) {
+    switch (status) {
+      case "completed":
+        return <Badge variant="default" className="text-[10px] bg-emerald-600">Concluido</Badge>;
+      case "in_progress":
+        return <Badge variant="secondary" className="text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400">Em Andamento</Badge>;
+      case "blocking":
+        return <Badge variant="destructive" className="text-[10px]">Bloqueando</Badge>;
+      case "locked":
+        return <Badge variant="outline" className="text-[10px] opacity-60">Bloqueado</Badge>;
+      default:
+        return <Badge variant="outline" className="text-[10px]">Pendente</Badge>;
+    }
+  }
+
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
       <div className="flex items-center justify-between">
@@ -109,25 +189,63 @@ export default function ClientDashboard() {
         </Badge>
       </div>
 
-      <Card className="border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/40 shrink-0 mt-0.5">
-              <Info className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+      {isLoadingSignature ? (
+        <Card>
+          <CardContent className="p-6 flex items-center justify-center">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+          </CardContent>
+        </Card>
+      ) : !contractSigned ? (
+        <Card className="border-red-300 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-red-100 dark:bg-red-900/40 shrink-0 mt-0.5">
+                <PenTool className="w-5 h-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="space-y-2 flex-1">
+                <p className="text-sm font-semibold text-red-800 dark:text-red-300" data-testid="text-contract-blocking-alert">
+                  Contrato pendente de assinatura — Pipeline bloqueado
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-400 leading-relaxed">
+                  O contrato de prestacao de servicos precisa ser assinado digitalmente para que o projeto inicie formalmente.
+                  Todas as fases subsequentes estao bloqueadas ate a assinatura ser concluida.
+                </p>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="text-xs gap-1.5 mt-1"
+                  onClick={() => window.location.href = "/contract"}
+                  data-testid="button-go-sign-contract"
+                >
+                  <PenTool className="w-3.5 h-3.5" />
+                  Assinar Contrato Agora
+                  <ArrowRight className="w-3 h-3" />
+                </Button>
+              </div>
             </div>
-            <div className="space-y-1">
-              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300" data-testid="text-status-banner">
-                Status: Proposta Comercial Aceita — Aguardando Dados
-              </p>
-              <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
-                A proposta comercial foi aceita e o acesso ao portal foi concedido. Os dados abaixo sao os <strong>dados macro informados na proposta</strong>. 
-                As analises reais serao iniciadas apos o recebimento dos dados dos sistemas (OBT, Backoffice, GDS, cartoes corporativos). 
-                Nenhum dado operacional foi recebido ate o momento.
-              </p>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="border-amber-300 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/40 shrink-0 mt-0.5">
+                <Info className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-amber-800 dark:text-amber-300" data-testid="text-status-banner">
+                  Status: Contrato Assinado — Aguardando Dados
+                </p>
+                <p className="text-xs text-amber-700 dark:text-amber-400 leading-relaxed">
+                  O contrato foi assinado e o acesso ao portal foi concedido. Os dados abaixo sao os <strong>dados macro informados na proposta</strong>.
+                  As analises reais serao iniciadas apos o recebimento dos dados dos sistemas (OBT, Backoffice, GDS, cartoes corporativos).
+                  Nenhum dado operacional foi recebido ate o momento.
+                </p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/20">
         <CardContent className="p-6">
@@ -218,28 +336,40 @@ export default function ClientDashboard() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
             {PROJECT_PHASES.map((item) => (
-              <div key={item.phase} className={`p-3 rounded-md ${item.status === "completed" ? "bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900" : item.status === "in_progress" ? "bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900" : "bg-muted/50"}`} data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}>
+              <div
+                key={item.phase}
+                className={`p-3 rounded-md ${getPhaseStyle(item.status)} ${item.status === "blocking" ? "ring-1 ring-red-400 dark:ring-red-700" : ""}`}
+                data-testid={`card-phase-${item.phase.replace(" ", "-").toLowerCase()}`}
+              >
                 <div className="flex items-center justify-between gap-2 mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-[10px] font-mono">{item.phase}</Badge>
-                  </div>
+                  <Badge variant="outline" className="text-[10px] font-mono">{item.phase}</Badge>
                   <div className="flex items-center gap-1">
-                    {item.status === "completed" && <CheckCircle2 className="w-3 h-3 text-emerald-600" />}
-                    {item.status === "in_progress" && <Clock className="w-3 h-3 text-amber-600" />}
-                    {item.status === "pending" && <Circle className="w-3 h-3 text-muted-foreground" />}
-                    <Badge
-                      variant={item.status === "completed" ? "default" : item.status === "in_progress" ? "secondary" : "outline"}
-                      className={`text-[10px] ${item.status === "completed" ? "bg-emerald-600" : item.status === "in_progress" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400" : ""}`}
-                    >
-                      {item.status === "completed" ? "Concluido" : item.status === "in_progress" ? "Em Andamento" : "Pendente"}
-                    </Badge>
+                    {getPhaseIcon(item.status)}
+                    {getPhaseBadge(item.status)}
                   </div>
                 </div>
                 <p className="text-sm font-medium">{item.title}</p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">{item.description}</p>
-                <p className="text-[10px] font-medium mt-1.5 italic {item.status === 'completed' ? 'text-emerald-700 dark:text-emerald-400' : item.status === 'in_progress' ? 'text-amber-700 dark:text-amber-400' : 'text-muted-foreground'}">{item.detail}</p>
+                <p className={`text-[10px] font-medium mt-1.5 italic ${
+                  item.status === "completed" ? "text-emerald-700 dark:text-emerald-400" :
+                  item.status === "in_progress" ? "text-amber-700 dark:text-amber-400" :
+                  item.status === "blocking" ? "text-red-700 dark:text-red-400" :
+                  "text-muted-foreground"
+                }`}>{item.detail}</p>
+                {item.status === "blocking" && (
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    className="text-[10px] h-6 mt-2 w-full gap-1"
+                    onClick={() => window.location.href = "/contract"}
+                    data-testid="button-phase-sign-contract"
+                  >
+                    <PenTool className="w-3 h-3" />
+                    Assinar Contrato
+                  </Button>
+                )}
               </div>
             ))}
           </div>
@@ -277,7 +407,7 @@ export default function ClientDashboard() {
             </div>
             <div className="mt-3 p-3 rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900">
               <p className="text-[11px] text-blue-700 dark:text-blue-400 leading-relaxed">
-                <strong>Como enviar:</strong> Os dados podem ser enviados via integracao (API/SFTP), upload controlado na plataforma ou exportacao em CSV/XLSX. 
+                <strong>Como enviar:</strong> Os dados podem ser enviados via integracao (API/SFTP), upload controlado na plataforma ou exportacao em CSV/XLSX.
                 Entre em contato com seu consultor para alinhar o formato e o canal de envio.
               </p>
             </div>
@@ -360,15 +490,30 @@ export default function ClientDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/40 shrink-0">
-                <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                {contractSigned ? (
+                  <Upload className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                ) : (
+                  <PenTool className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                )}
               </div>
               <div>
-                <p className="text-sm font-semibold" data-testid="text-next-step">Proximo passo: Envio dos dados</p>
-                <p className="text-xs text-muted-foreground">Envie os dados dos sistemas listados acima para iniciarmos as analises reais do projeto.</p>
+                <p className="text-sm font-semibold" data-testid="text-next-step">
+                  {contractSigned ? "Proximo passo: Envio dos dados" : "Proximo passo: Assinar o contrato"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {contractSigned
+                    ? "Envie os dados dos sistemas listados acima para iniciarmos as analises reais do projeto."
+                    : "Assine o contrato digitalmente para desbloquear o pipeline e iniciar o projeto."}
+                </p>
               </div>
             </div>
-            <Button size="sm" className="text-xs shrink-0" onClick={() => window.location.href = "/integrations"} data-testid="button-go-integrations">
-              Ver integracoes
+            <Button
+              size="sm"
+              className="text-xs shrink-0"
+              onClick={() => window.location.href = contractSigned ? "/integrations" : "/contract"}
+              data-testid={contractSigned ? "button-go-integrations" : "button-go-contract"}
+            >
+              {contractSigned ? "Ver integracoes" : "Assinar contrato"}
               <ArrowRight className="w-3 h-3 ml-1" />
             </Button>
           </div>

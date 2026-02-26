@@ -361,6 +361,25 @@ export const auditEnvelopes = pgTable("audit_envelopes", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const contractSignatures = pgTable("contract_signatures", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  contractNumber: text("contract_number").notNull(),
+  userId: varchar("user_id").notNull(),
+  signerName: text("signer_name").notNull(),
+  signerRole: text("signer_role").notNull(),
+  companyName: text("company_name"),
+  companyCnpj: text("company_cnpj"),
+  contractTextSha256: text("contract_text_sha256").notNull(),
+  contractVersion: text("contract_version").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  signedAt: timestamp("signed_at").notNull().defaultNow(),
+});
+
+export const insertContractSignatureSchema = createInsertSchema(contractSignatures).omit({ id: true, signedAt: true });
+export type InsertContractSignature = z.infer<typeof insertContractSignatureSchema>;
+export type ContractSignature = typeof contractSignatures.$inferSelect;
+
 export const clientUploads = pgTable("client_uploads", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   documentKey: text("document_key").notNull(),

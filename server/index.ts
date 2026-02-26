@@ -9,6 +9,7 @@ import { registerStripeRoutes } from "./stripe-routes";
 import { registerWalletRoutes } from "./wallet-routes";
 import { registerAiDeskRoutes } from "./ai-desk-routes";
 import { registerUploadRoutes } from "./upload-routes";
+import { registerContractRoutes } from "./contract-routes";
 
 const app = express();
 const httpServer = createServer(app);
@@ -137,6 +138,7 @@ async function initStripe() {
   registerWalletRoutes(app);
   registerAiDeskRoutes(app);
   registerUploadRoutes(app);
+  registerContractRoutes(app);
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {

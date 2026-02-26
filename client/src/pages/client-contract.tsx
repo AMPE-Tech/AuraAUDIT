@@ -1,6 +1,14 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   FileText,
   Shield,
@@ -14,16 +22,18 @@ import {
   AlertTriangle,
   ListChecks,
   FileCheck,
+  Loader2,
+  Hash,
+  Globe,
+  Monitor,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
 const CONTRACT_DATA = {
   number: "AUR-2025-0042",
-  status: "Ativo",
   client: "Grupo Stabia",
   startDate: "2025-01-15",
   endDate: "2025-12-31",
-  signedDate: "2025-01-10",
   type: "Auditoria Forense em Viagens e Eventos",
   scope: [
     "Auditoria forense completa em despesas de viagens corporativas e eventos",
@@ -72,8 +82,81 @@ function getDeliverableStatusBadge(status: string) {
   }
 }
 
+function formatDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function ClientContract() {
   const { user } = useAuth();
+  const { toast } = useToast();
+  const [signerRole, setSignerRole] = useState("");
+  const [companyName, setCompanyName] = useState("Grupo Stabia");
+  const [companyCnpj, setCompanyCnpj] = useState("12.345.678/0001-90");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [readContract, setReadContract] = useState(false);
+  const [showContractText, setShowContractText] = useState(false);
+
+  const { data: contractText } = useQuery<{
+    contractNumber: string;
+    version: string;
+    text: string;
+    sha256: string;
+  }>({
+    queryKey: ["/api/contract/text"],
+  });
+
+  const { data: signatureData, isLoading: isLoadingSignature } = useQuery<{
+    signed: boolean;
+    signature: {
+      id: string;
+      contractNumber: string;
+      signerName: string;
+      signerRole: string;
+      companyName: string | null;
+      companyCnpj: string | null;
+      contractTextSha256: string;
+      contractVersion: string;
+      ipAddress: string | null;
+      userAgent: string | null;
+      signedAt: string;
+    } | null;
+  }>({
+    queryKey: ["/api/contract/signature"],
+  });
+
+  const signMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/contract/sign", {
+        signerRole,
+        companyName,
+        companyCnpj,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Contrato assinado com sucesso",
+        description: "Sua assinatura digital foi registrada com validade juridica.",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/contract/signature"] });
+    },
+    onError: (err: any) => {
+      toast({
+        title: "Erro ao assinar",
+        description: err.message || "Erro inesperado",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const isSigned = signatureData?.signed === true;
+  const sig = signatureData?.signature;
 
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
@@ -86,18 +169,56 @@ export default function ClientContract() {
             Detalhes do contrato de auditoria entre AuraAUDIT e {user?.fullName || CONTRACT_DATA.client}
           </p>
         </div>
-        <Badge variant="outline" className="text-xs gap-1">
-          <Shield className="w-3 h-3" />
-          Lei 13.964/2019
-        </Badge>
+        <div className="flex items-center gap-2">
+          {isSigned ? (
+            <Badge variant="default" className="text-xs gap-1 bg-emerald-600">
+              <CheckCircle className="w-3 h-3" />
+              Contrato Assinado
+            </Badge>
+          ) : (
+            <Badge variant="destructive" className="text-xs gap-1">
+              <AlertTriangle className="w-3 h-3" />
+              Pendente de Assinatura
+            </Badge>
+          )}
+          <Badge variant="outline" className="text-xs gap-1">
+            <Shield className="w-3 h-3" />
+            Lei 13.964/2019
+          </Badge>
+        </div>
       </div>
+
+      {!isSigned && !isLoadingSignature && (
+        <Card className="border-red-300 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20">
+          <CardContent className="p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-red-100 dark:bg-red-900/40 shrink-0 mt-0.5">
+                <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-red-800 dark:text-red-300" data-testid="text-contract-alert">
+                  Contrato pendente de assinatura digital
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-400 leading-relaxed">
+                  O projeto so pode iniciar apos a assinatura digital do contrato. Leia atentamente os termos abaixo
+                  e assine eletronicamente para desbloquear as proximas fases do pipeline.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="bg-gradient-to-r from-primary/5 via-primary/3 to-transparent border-primary/20">
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-4">
             <FileText className="w-5 h-5 text-primary" />
             <h2 className="text-sm font-semibold" data-testid="text-contract-number">Contrato {CONTRACT_DATA.number}</h2>
-            <Badge variant="default" className="text-[10px]" data-testid="badge-contract-status">{CONTRACT_DATA.status}</Badge>
+            {isSigned ? (
+              <Badge variant="default" className="text-[10px] bg-emerald-600" data-testid="badge-contract-status">Assinado</Badge>
+            ) : (
+              <Badge variant="destructive" className="text-[10px]" data-testid="badge-contract-status">Pendente</Badge>
+            )}
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-3 rounded-md bg-background/60">
@@ -218,34 +339,194 @@ export default function ClientContract() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="p-4 rounded-md bg-muted/50 space-y-4" data-testid="section-digital-signature">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3 rounded-md bg-background/60">
-                <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-2">Contratante</p>
-                <p className="text-sm font-medium" data-testid="text-signee-client">{CONTRACT_DATA.client}</p>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <FileCheck className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                  <p className="text-xs text-green-600 dark:text-green-400">Assinado em 10/01/2025</p>
+          {isLoadingSignature ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : isSigned && sig ? (
+            <div className="space-y-4" data-testid="section-signature-confirmed">
+              <div className="p-4 rounded-md bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900">
+                <div className="flex items-center gap-2 mb-3">
+                  <FileCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                  <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                    Contrato assinado digitalmente
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="p-3 rounded-md bg-background/60">
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Signatario</p>
+                    <p className="text-sm font-medium" data-testid="text-signer-name">{sig.signerName}</p>
+                    <p className="text-xs text-muted-foreground">{sig.signerRole}</p>
+                  </div>
+                  <div className="p-3 rounded-md bg-background/60">
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Empresa</p>
+                    <p className="text-sm font-medium" data-testid="text-signer-company">{sig.companyName || "—"}</p>
+                    <p className="text-xs text-muted-foreground">{sig.companyCnpj || "—"}</p>
+                  </div>
+                  <div className="p-3 rounded-md bg-background/60">
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Data da Assinatura</p>
+                    <div className="flex items-center gap-1.5">
+                      <CalendarDays className="w-3.5 h-3.5 text-muted-foreground" />
+                      <p className="text-sm font-medium" data-testid="text-signed-date">{formatDate(sig.signedAt)}</p>
+                    </div>
+                  </div>
+                  <div className="p-3 rounded-md bg-background/60">
+                    <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Versao do Contrato</p>
+                    <p className="text-sm font-medium" data-testid="text-contract-version">v{sig.contractVersion}</p>
+                  </div>
                 </div>
               </div>
-              <div className="p-3 rounded-md bg-background/60">
-                <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-2">Contratada</p>
-                <p className="text-sm font-medium" data-testid="text-signee-aura">AuraAUDIT - AuraDue Tecnologia</p>
-                <div className="flex items-center gap-1.5 mt-1.5">
-                  <FileCheck className="w-3.5 h-3.5 text-green-600 dark:text-green-400" />
-                  <p className="text-xs text-green-600 dark:text-green-400">Assinado em 10/01/2025</p>
+
+              <div className="p-4 rounded-md bg-muted/50">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">Prova Criptografica</p>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Hash className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[11px] text-muted-foreground">SHA-256 do contrato</p>
+                      <p className="text-xs font-mono break-all" data-testid="text-contract-sha256">{sig.contractTextSha256}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Globe className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[11px] text-muted-foreground">IP do signatario</p>
+                      <p className="text-xs font-mono" data-testid="text-signer-ip">{sig.ipAddress || "—"}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Monitor className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-[11px] text-muted-foreground">User-Agent</p>
+                      <p className="text-xs font-mono break-all" data-testid="text-signer-ua">{sig.userAgent || "—"}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 rounded-md bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900">
+                <div className="flex items-start gap-2">
+                  <Shield className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <span className="font-semibold">Base legal:</span> Assinatura eletronica simples nos termos da Lei 14.063/2020 e Medida Provisoria 2.200-2/2001.
+                    A integridade do documento e garantida por hash criptografico SHA-256 com registro de IP, user-agent e timestamp.
+                  </p>
                 </div>
               </div>
             </div>
-            <div className="p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900">
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
-                <p className="text-[11px] text-muted-foreground">
-                  <span className="font-semibold">Nota:</span> As assinaturas digitais sao certificadas e possuem validade juridica conforme a Medida Provisoria 2.200-2/2001 e a Lei 14.063/2020. A integridade dos documentos e garantida por hash criptografico SHA-256.
-                </p>
+          ) : (
+            <div className="space-y-5" data-testid="section-sign-contract">
+              <div className="p-3 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    <span className="font-semibold">Importante:</span> Ao assinar, voce concorda com todos os termos e condicoes descritos acima.
+                    A assinatura sera registrada com seu IP, user-agent e um hash SHA-256 do texto integral do contrato,
+                    conforme Lei 14.063/2020 (assinatura eletronica simples).
+                  </p>
+                </div>
               </div>
+
+              <div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs mb-3"
+                  onClick={() => setShowContractText(!showContractText)}
+                  data-testid="button-toggle-contract-text"
+                >
+                  <FileText className="w-3.5 h-3.5 mr-1.5" />
+                  {showContractText ? "Ocultar texto integral" : "Ver texto integral do contrato"}
+                </Button>
+                {showContractText && contractText && (
+                  <div className="p-4 rounded-md bg-muted/50 border max-h-[400px] overflow-y-auto">
+                    <pre className="text-xs whitespace-pre-wrap font-mono leading-relaxed" data-testid="text-full-contract">
+                      {contractText.text}
+                    </pre>
+                    <Separator className="my-3" />
+                    <div className="flex items-center gap-2">
+                      <Hash className="w-3.5 h-3.5 text-muted-foreground" />
+                      <p className="text-[10px] font-mono text-muted-foreground">SHA-256: {contractText.sha256}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signerName" className="text-xs">Nome do Signatario</Label>
+                  <Input
+                    id="signerName"
+                    value={user?.fullName || ""}
+                    disabled
+                    className="text-sm"
+                    data-testid="input-signer-name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signerRole" className="text-xs">Cargo / Funcao *</Label>
+                  <Input
+                    id="signerRole"
+                    value={signerRole}
+                    onChange={(e) => setSignerRole(e.target.value)}
+                    placeholder="Ex: Diretor Financeiro"
+                    className="text-sm"
+                    data-testid="input-signer-role"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companyName" className="text-xs">Empresa</Label>
+                  <Input
+                    id="companyName"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
+                    className="text-sm"
+                    data-testid="input-company-name"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="readContract"
+                    checked={readContract}
+                    onCheckedChange={(v) => setReadContract(v === true)}
+                    data-testid="checkbox-read-contract"
+                  />
+                  <label htmlFor="readContract" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                    Declaro que li e compreendi o texto integral do contrato, incluindo escopo, entregaveis, SLA e termos e condicoes.
+                  </label>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Checkbox
+                    id="acceptTerms"
+                    checked={acceptedTerms}
+                    onCheckedChange={(v) => setAcceptedTerms(v === true)}
+                    data-testid="checkbox-accept-terms"
+                  />
+                  <label htmlFor="acceptTerms" className="text-xs text-muted-foreground leading-relaxed cursor-pointer">
+                    Concordo com os termos e condicoes e autorizo o registro da minha assinatura eletronica conforme Lei 14.063/2020.
+                  </label>
+                </div>
+              </div>
+
+              <Button
+                size="lg"
+                className="w-full gap-2"
+                disabled={!acceptedTerms || !readContract || !signerRole || signMutation.isPending}
+                onClick={() => signMutation.mutate()}
+                data-testid="button-sign-contract"
+              >
+                {signMutation.isPending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <PenTool className="w-4 h-4" />
+                )}
+                {signMutation.isPending ? "Registrando assinatura..." : "Assinar Contrato Digitalmente"}
+              </Button>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 
