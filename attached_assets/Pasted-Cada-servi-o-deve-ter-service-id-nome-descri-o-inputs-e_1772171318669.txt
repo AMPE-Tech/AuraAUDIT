@@ -1,0 +1,274 @@
+Cada serviço deve ter:
+
+service_id, nome, descrição, inputs exigidos, outputs, precificação, se requer revisão humana.
+
+3.2 Fluxo padrão (obrigatório)
+
+Step 1 — Criar Job: usuário escolhe serviço e envia inputs (arquivos + campos).
+Step 2 — Quote: sistema calcula estimativa de créditos e mostra:
+
+“Estimativa: X créditos”
+
+“CAP por job: Y”
+
+“Aprovação necessária?” (sim/não)
+Step 3 — Aprovação:
+
+se abaixo do limite do usuário → “Aprovar e executar”
+
+se acima → enviar para Admin/CFO aprovar
+Step 4 — Execução:
+
+IA executa e gera artefatos
+
+Se human_review_required=true, marcar como draft_by_ai e enviar para fila interna
+Step 5 — Entrega:
+
+artefatos entram na Reports Library
+
+ledger debita créditos do wallet
+
+audit envelope é salvo
+
+3.3 Preço por consumo (modelo inicial)
+
+Implementar cálculo simples, transparente e ajustável por config:
+
+(A) Revisão de Contrato
+
+Base: 60 créditos
+
+6 créditos por página estimada (ou por 1.500 caracteres) (cap máximo por job configurável)
+
+Se revisão humana habilitada: multiplicador 1.5x
+
+(B) Edital/RFP
+
+Base: 120 créditos
+
+8 créditos por página estimada
+
+Se exigir matriz de conformidade + anexos: add-on 80 créditos (flag)
+
+(C) SLA/KPI Pack
+
+Base: 150 créditos
+
+add-ons: “SLA técnico” +50, “KPI dashboard pack” +50
+
+(D) Plano 30/60/90
+
+Base: 80 créditos
+
++20 se incluir “Owners/Responsáveis + Cronograma”
+
+Importante: antes de executar, sempre mostrar quote e pedir confirmação.
+
+4) Governança: Audit Envelope (cadeia de custódia para jobs)
+
+Para todo job do AI Desk, criar um “Audit Envelope” com:
+
+job_id, company_id, requested_by_user_id
+
+inputs:
+
+lista de arquivos: upload_id, storage_ref, sha256, filename, mime, size
+
+campos estruturados (JSON) fornecidos no formulário
+
+processing:
+
+service_id, service_version, pricing_version
+
+quote: estimated_credits, cap, approvals
+
+timestamps: created, approved, started, finished (UTC)
+
+logs: steps + status
+
+outputs:
+
+lista de artefatos gerados: artifact_id, sha256, type, storage_ref
+
+review:
+
+status: draft_by_ai / reviewed / approved
+
+reviewer_id + timestamp + comentários
+
+Integridade:
+
+envelope_sha256 calculado sobre o JSON canonizado (ordenar chaves)
+
+5) Permissões (RBAC) + Limites
+
+Papéis por empresa:
+
+viewer (ler dashboards/relatórios)
+
+analyst (criar views, criar jobs, ver quotes)
+
+compliance_lead (aprovar outputs e exports oficiais)
+
+admin (gerir wallet, caps, aprovar gastos altos)
+
+Regras:
+
+Usuário só executa job se tiver saldo suficiente ou política permitir saldo negativo (default: não).
+
+Aprovação obrigatória se:
+
+estimated_credits > user_job_limit
+
+ou estimated_credits > company_job_limit
+
+Caps configuráveis em tela admin:
+
+user_job_limit_default (ex.: 200)
+
+company_job_limit_default (ex.: 500)
+
+company_monthly_wallet_cap (opcional)
+
+6) Integração com AuraAudit Pass (assinatura + VAM)
+
+Manter o billing do Pass conforme já definido (assinatura Stripe) e adicionar:
+
+Wallet é separado (top-up) e só consome para AI Desk / serviços.
+
+Tela “Billing” deve mostrar:
+
+Assinatura Pass (status)
+
+VAM (consumo do Pass)
+
+Wallet (saldo e consumo por jobs)
+
+O usuário deve entender: “Pass = auditoria base”, “Wallet = serviços de IA/artefatos”.
+
+7) Banco de dados (tabelas mínimas)
+
+Criar/migrar tabelas:
+
+Wallet
+
+wallets (id, company_id, currency='USD', balance_credits, created_at_utc)
+
+wallet_ledger (id, wallet_id, type: topup|debit|refund|adjustment, credits, usd_amount, reference_type, reference_id, created_at_utc, metadata_json)
+
+Catálogo e Jobs
+
+ai_services (id, name, description, version, pricing_config_json, human_review_required_default, is_active)
+
+ai_jobs (id, company_id, requested_by_user_id, service_id, status: draft|quoted|pending_approval|approved|running|completed|failed|cancelled, created_at_utc, updated_at_utc)
+
+ai_job_inputs (id, job_id, input_json, created_at_utc)
+
+ai_job_files (id, job_id, upload_id, sha256, storage_ref, filename, created_at_utc)
+
+ai_job_quotes (id, job_id, estimated_credits, cap_credits, requires_approval, pricing_breakdown_json, created_at_utc)
+
+ai_job_approvals (id, job_id, approved_by_user_id, approved_at_utc, decision: approved|rejected, notes)
+
+ai_job_outputs (id, job_id, artifact_id, sha256, storage_ref, output_type, created_at_utc)
+
+Artifacts / Reports
+
+artifacts (id, company_id, created_by_user_id, type, title, status: draft|reviewed|approved, storage_ref, sha256, source_refs_json, created_at_utc)
+
+Audit Envelope
+
+audit_envelopes (id, job_id, envelope_json, envelope_sha256, created_at_utc)
+
+Dashboard Views
+
+dashboard_views (id, company_id, created_by_user_id, name, description, layout_json, version, is_published, created_at_utc, updated_at_utc)
+
+8) Backend endpoints (mínimo)
+Wallet
+
+GET /api/wallet (saldo + ledger resumido)
+
+POST /api/wallet/topup/create-checkout-session
+
+POST /api/wallet/webhook/stripe
+
+POST /api/wallet/admin/adjust (admin only)
+
+Dashboard Studio
+
+GET /api/dashboard/views
+
+POST /api/dashboard/views
+
+PUT /api/dashboard/views/:id
+
+POST /api/dashboard/views/:id/publish (admin only)
+
+AI Desk
+
+GET /api/ai/services
+
+POST /api/ai/jobs (cria job + inputs)
+
+POST /api/ai/jobs/:id/quote (gera quote)
+
+POST /api/ai/jobs/:id/approve (aprovação)
+
+POST /api/ai/jobs/:id/run (executar)
+
+GET /api/ai/jobs/:id (status + outputs)
+
+GET /api/reports/artifacts (Reports Library)
+
+GET /api/reports/artifacts/:id/download
+
+9) Execução e custos (regras obrigatórias)
+
+NUNCA executar job sem quote aprovado.
+
+Antes de rodar, verificar saldo suficiente.
+
+Ao concluir, debitar ledger com referência ao job:
+
+ledger.debit credits = final_credits (preferir usar estimated_credits no MVP; depois ajustar para “real”)
+
+Guardar no Audit Envelope:
+
+quote, approvals, outputs, hashes e timestamps
+
+10) Critérios de aceite (o que eu vou testar)
+
+Consigo recarregar wallet via Stripe e saldo atualiza.
+
+Consigo criar view no Dashboard Studio e salvar/publicar.
+
+AI Desk: crio job → recebo quote → aprovo → job executa → outputs aparecem na Reports Library.
+
+Créditos são debitados automaticamente do wallet e ledger registra com referência ao job.
+
+Audit Envelope é gerado com hashes e status.
+
+Aprovação por papel funciona (job acima do limite vai para Admin aprovar).
+
+Export/download de artefato disponível com sha256 registrado.
+
+11) Entrega esperada
+
+PR com migrações + UI mínima (Wallet / AI Desk / Reports / Dashboard Studio)
+
+Configuração Stripe (top-up) documentada
+
+Testes unitários do pricing (quote) e do debit do ledger
+
+Logs e idempotência básica (evitar duplicar debit e outputs)
+
+Observação final (produto)
+
+Manter as mensagens da UI “sem medo”:
+
+“Você verá o custo em créditos antes de executar.”
+
+“Você controla o escopo. A plataforma não altera suas regras.”
+
+“Caps e aprovações evitam surpresas.”

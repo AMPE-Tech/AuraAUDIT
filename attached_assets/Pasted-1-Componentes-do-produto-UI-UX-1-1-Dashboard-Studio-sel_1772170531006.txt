@@ -1,0 +1,118 @@
+1) Componentes do produto (UI/UX)
+1.1 Dashboard Studio (self-service)
+
+Biblioteca de widgets (cards) com drag & drop:
+
+Gastos (total, por categoria, por fornecedor, por centro de custo)
+
+Exceções/Policy (top violações, taxa de exceção)
+
+SLA/Qualidade (tempo de atendimento, fulfillment)
+
+Savings (oportunidades e recuperações)
+
+Risco (anomalias, recorrência, severidade)
+
+Fornecedores (ranking, divergências, compliance)
+
+Filtros globais: período, moeda, centro de custo, unidade, fornecedor, viajante, projeto, método de pagamento.
+
+“Salvar View”: nome, descrição, tags (ex.: CFO, Compliance, Agência).
+
+Permissões:
+
+Viewer: visualizar
+
+Analyst: criar/editar views
+
+Admin: publicar view “oficial”
+
+Saída auditável: salvar JSON da view (layout_json, filters_json, widgets_json) versionado.
+
+1.2 Reports Library
+
+Biblioteca de relatórios:
+
+“Oficiais” (templates fixos)
+
+“Rápidos” (on-demand)
+
+“AI Outputs” (jobs do AI Desk)
+
+Cada relatório/artefato deve ter:
+
+artifact_id, company_id, created_by, created_at_utc
+
+source_refs (uploads, runs, jobs)
+
+sha256 do arquivo final (quando exportável)
+
+status: draft / reviewed / approved
+
+Export: PDF, DOCX, XLSX, JSON (onde aplicável).
+
+2) Wallet de Créditos (billing por consumo)
+2.1 Conceito
+
+Criar Wallet por empresa (company_wallet).
+
+Créditos em “USD-equivalente”: 1 crédito = US$ 1 (default).
+
+Ledger contábil:
+
+compras (top-up)
+
+consumo (jobs)
+
+estornos
+
+ajustes
+
+2.2 Regras
+
+Todo job do AI Desk exige:
+
+Quote obrigatório antes de executar (estimativa de créditos)
+
+CAP por job (limite máximo sem aprovação adicional)
+
+Aprovação por papel acima de X créditos (CFO/Admin)
+
+2.3 Pagamentos / Recarga
+
+Stripe Checkout “Top-up” (pacotes):
+
+US$ 500 → 500 créditos
+
+US$ 1.500 → 1.500 créditos
+
+US$ 5.000 → 5.000 créditos
+
+Após pagamento, creditar ledger e atualizar saldo.
+
+Tela Wallet:
+
+saldo atual
+
+histórico (ledger)
+
+limites/caps
+
+botões “Recargar”
+
+3) AI Desk (Catálogo de Serviços) + Jobs
+3.1 Catálogo inicial (MVP)
+
+Implementar um catálogo com 4 serviços (primeira versão):
+
+Revisão de Contrato de Fornecedor
+
+Resposta a Edital / RFP / Licitação
+
+Criação de SLA + KPI + Scorecard
+
+Plano de Ação 30/60/90 dias baseado em achados/relatórios
+
+Cada serviço deve ter:
+
+service_id, nome, descrição, inputs exigidos, outputs, precificação, se requer revisão humana.
