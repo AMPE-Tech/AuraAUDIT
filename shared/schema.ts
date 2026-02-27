@@ -73,6 +73,7 @@ export const clients = pgTable("clients", {
   city: text("city"),
   state: text("state"),
   status: text("status").notNull().default("pending"),
+  contractedServices: text("contracted_services").array().default(sql`ARRAY[]::text[]`),
   notes: text("notes"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

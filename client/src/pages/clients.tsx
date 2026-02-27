@@ -61,12 +61,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+const AVAILABLE_SERVICES = [
+  { id: "auraaudit-pass", label: "AuraAudit Pass (Assinatura Mensal)" },
+  { id: "ai-desk", label: "AI Desk (11 Servicos de IA)" },
+  { id: "wallet", label: "Wallet de Creditos" },
+  { id: "dashboard-studio", label: "Dashboard Studio" },
+  { id: "reports-library", label: "Biblioteca de Relatorios" },
+  { id: "reconciliation", label: "Reconciliacao e Conciliacao" },
+  { id: "contract-review", label: "Revisao de Contratos" },
+  { id: "rfp-response", label: "Resposta a Edital/RFP" },
+  { id: "sla-kpi", label: "SLA + KPI + Scorecard" },
+  { id: "realtime-alerts", label: "Alertas em Tempo Real" },
+  { id: "api-connect", label: "Conectar API Fornecedores" },
+  { id: "executive-presentation", label: "Apresentacao Executiva" },
+  { id: "lost-saving", label: "Estrategia Lost Saving" },
+  { id: "action-plan", label: "Plano de Acao 30/60/90" },
+];
+
 const clientFormSchema = insertClientSchema.extend({
   name: z.string().min(2, "Nome obrigatorio"),
   type: z.string().min(1, "Tipo obrigatorio"),
   cnpj: z.string().min(14, "CNPJ invalido"),
   contactName: z.string().min(2, "Nome do contato obrigatorio"),
   contactEmail: z.string().email("Email invalido"),
+  contractedServices: z.array(z.string()).optional().default([]),
 });
 
 type ClientFormData = z.infer<typeof clientFormSchema>;
@@ -343,6 +361,34 @@ function ClientFormFields({ form, toast }: { form: ReturnType<typeof useForm<Cli
           )}
         />
       </div>
+      <div className="space-y-2">
+        <FormLabel>Servicos Contratados</FormLabel>
+        <div className="grid grid-cols-1 gap-1.5 p-3 rounded-md border bg-muted/30">
+          {AVAILABLE_SERVICES.map((svc) => {
+            const currentServices = form.getValues("contractedServices") || [];
+            const isChecked = currentServices.includes(svc.id);
+            return (
+              <label key={svc.id} className="flex items-center gap-2 text-sm cursor-pointer hover:bg-muted/50 rounded px-1 py-0.5" data-testid={`checkbox-service-${svc.id}`}>
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(e) => {
+                    const prev = form.getValues("contractedServices") || [];
+                    if (e.target.checked) {
+                      form.setValue("contractedServices", [...prev, svc.id]);
+                    } else {
+                      form.setValue("contractedServices", prev.filter((s: string) => s !== svc.id));
+                    }
+                  }}
+                  className="rounded border-gray-400"
+                />
+                <span className="font-medium">{svc.label}</span>
+              </label>
+            );
+          })}
+        </div>
+        <p className="text-[11px] text-muted-foreground">Selecione os modulos/servicos incluidos no contrato deste cliente</p>
+      </div>
       <FormField
         control={form.control}
         name="notes"
@@ -385,6 +431,7 @@ export default function Clients() {
       city: "",
       state: "",
       status: "pending",
+      contractedServices: [],
       notes: "",
     },
   });
@@ -402,6 +449,7 @@ export default function Clients() {
       city: "",
       state: "",
       status: "pending",
+      contractedServices: [],
       notes: "",
     },
   });
@@ -450,6 +498,7 @@ export default function Clients() {
       city: client.city || "",
       state: client.state || "",
       status: client.status,
+      contractedServices: client.contractedServices || [],
       notes: client.notes || "",
     });
   }

@@ -463,6 +463,18 @@ export default function AdminContracts() {
                     >
                       <MessageCircle className="w-3.5 h-3.5" />
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-xs gap-1.5"
+                      onClick={() => {
+                        window.open(`/api/contract/${contract.clientId}/pdf`, "_blank");
+                      }}
+                      data-testid={`button-pdf-${contract.clientId}`}
+                    >
+                      <FileText className="w-3.5 h-3.5" />
+                      PDF
+                    </Button>
                   </div>
                 </div>
               </CardContent>

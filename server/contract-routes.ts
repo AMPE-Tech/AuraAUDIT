@@ -1053,4 +1053,123 @@ ${auditor?.contactPhone || ""}`;
       return res.status(502).json({ error: "Falha na comunicacao com a Receita Federal." });
     }
   });
+
+  app.get("/api/contract/:clientId/pdf", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") {
+        return res.status(403).json({ error: "Acesso restrito ao administrador." });
+      }
+      const { clientId } = req.params;
+      const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
+      if (!client) {
+        return res.status(404).json({ error: "Cliente nao encontrado." });
+      }
+      const auditor = await getAuditorProfile();
+      const contractText = generateContractText(auditor, client);
+      const sha256 = hashContractText(contractText);
+
+      const PDFDocument = (await import("pdfkit")).default;
+      const doc = new PDFDocument({
+        size: "A4",
+        margins: { top: 60, bottom: 60, left: 50, right: 50 },
+        info: {
+          Title: `Contrato AUR-2025-0042 v${CONTRACT_VERSION} — ${client.name}`,
+          Author: "AuraAUDIT — CTS Brasil",
+          Subject: "Contrato de Auditoria Forense Independente",
+          Keywords: "auditoria, forense, travel, expense",
+        },
+      });
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="contrato-auraaudit-${client.cnpj?.replace(/\D/g, "") || clientId}.pdf"`
+      );
+      res.setHeader("X-SHA256", sha256);
+      doc.pipe(res);
+
+      doc
+        .fontSize(18)
+        .font("Helvetica-Bold")
+        .text("CONTRATO DE AUDITORIA FORENSE INDEPENDENTE", { align: "center" });
+      doc.moveDown(0.3);
+      doc.fontSize(10).font("Helvetica").text(`Versao ${CONTRACT_VERSION} | Contrato AUR-2025-0042`, { align: "center" });
+      doc.moveDown(0.3);
+      doc.fontSize(8).font("Helvetica").text(`SHA-256: ${sha256}`, { align: "center", color: "#666" });
+      doc.moveDown(1);
+
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#333");
+      doc.moveDown(0.5);
+
+      const lines = contractText.split("\n");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) {
+          doc.moveDown(0.3);
+          continue;
+        }
+
+        const isSectionHeader = /^={10,}/.test(trimmed);
+        if (isSectionHeader) {
+          doc.moveDown(0.3);
+          doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#ccc");
+          doc.moveDown(0.3);
+          continue;
+        }
+
+        const isMainClause = /^(\d{1,2})\.\s/.test(trimmed) && !trimmed.startsWith("  ");
+        const isSubClause = /^\d{1,2}\.\d+\./.test(trimmed);
+        const isPartHeader = /^PARTE\s+(I|II|III|IV|V)\s/.test(trimmed);
+        const isAnexoHeader = /^ANEXO\s+(I|II|III)/.test(trimmed);
+        const isCPHeader = /^CP-\d{2}:/.test(trimmed);
+        const isChecklistOk = trimmed.startsWith("[OK]");
+        const isChecklistPending = trimmed.startsWith("[!!]");
+        const isModule = /^M\d+\./.test(trimmed);
+        const isEvidence = /^E\d+\./.test(trimmed);
+
+        if (isPartHeader || isAnexoHeader) {
+          doc.moveDown(0.5);
+          doc.fontSize(13).font("Helvetica-Bold").text(trimmed);
+          doc.moveDown(0.3);
+        } else if (isCPHeader) {
+          doc.moveDown(0.3);
+          doc.fontSize(10).font("Helvetica-Bold").text(trimmed, { indent: 0 });
+        } else if (isMainClause) {
+          doc.moveDown(0.3);
+          doc.fontSize(11).font("Helvetica-Bold").text(trimmed);
+        } else if (isSubClause) {
+          doc.fontSize(9.5).font("Helvetica").text(trimmed, { indent: 10 });
+        } else if (isModule || isEvidence) {
+          doc.fontSize(9).font("Helvetica").text(trimmed, { indent: 15 });
+        } else if (isChecklistOk) {
+          doc.fontSize(9).font("Helvetica").text(trimmed, { indent: 10 });
+        } else if (isChecklistPending) {
+          doc.fontSize(9).font("Helvetica-Bold").text(trimmed, { indent: 10 });
+        } else if (trimmed.startsWith("  ")) {
+          doc.fontSize(9).font("Helvetica").text(trimmed, { indent: 20 });
+        } else {
+          doc.fontSize(9.5).font("Helvetica").text(trimmed);
+        }
+
+        if (doc.y > 720) {
+          doc.addPage();
+        }
+      }
+
+      doc.moveDown(1);
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#333");
+      doc.moveDown(0.5);
+      doc.fontSize(8).font("Helvetica").text(
+        `Documento gerado em ${new Date().toISOString()} | Integridade: SHA-256 ${sha256.substring(0, 16)}...`,
+        { align: "center" }
+      );
+
+      doc.end();
+    } catch (err) {
+      console.error("PDF generation error:", err);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: "Erro ao gerar PDF do contrato." });
+      }
+    }
+  });
 }

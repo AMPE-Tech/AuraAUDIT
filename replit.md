@@ -22,7 +22,8 @@ Aura Audit employs a modern full-stack architecture.
 
 **Key Features:**
 - **Modular Dashboard:** Home page with 8 audit categories (Travel/Events, Expenses, Contracts, Agencies, Telecom, Fleet, Benefits, Supplies), performance metrics, and methodology stages. A detailed dashboard provides KPI metrics, system overviews (OBT/Backoffice), financial volumes, and audit scope areas. Client Project Panel shows only real data from API (expenses, anomalies, audit-cases) with "Aguardando dados" placeholders for sections pending client data upload.
-- **Client Management:** Comprehensive client registration and management for travel agencies and corporate entities.
+- **Client Management:** Comprehensive client registration and management for travel agencies and corporate entities, with `contractedServices` field to track which platform modules/services are included in each client's contract.
+- **Contract PDF Export:** Admin endpoint `GET /api/contract/:clientId/pdf` generates professional A4 PDF with formatted contract text, SHA-256 hash header, section formatting, and metadata. Available from admin contracts page via "PDF" button.
 - **Data Integration Hub:** Centralized hub for integrating various data sources including financial institutions (Banco Bradesco EBTA), travel providers (agencies, airlines, hotels, car rentals), GDS systems (Sabre, Amadeus), and BSPlink.
 - **Expense and Audit Case Management:** CRUD operations for expenses with risk level identification, full audit case lifecycle management (methodology, scope, findings, recommendations), and anomaly detection workflows.
 - **Data Reconciliation:** Advanced reconciliation capabilities across OBT, Backoffice, billing systems, and virtual credit cards.
