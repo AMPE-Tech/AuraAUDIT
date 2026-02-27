@@ -19,327 +19,338 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "3.0.0";
+const CONTRACT_VERSION = "4.0.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
-  const auditorName = auditorData?.name || "AuraAUDIT - AuraDue Tecnologia Ltda";
+  const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
   const auditorCnpj = auditorData?.cnpj || "00.000.000/0001-00";
-  const auditorEmail = auditorData?.contactEmail || "contato@auraaudit.com";
+  const auditorEmail = auditorData?.contactEmail || "marcos@cts-brasil.com";
   const clientName = clientData?.name || "Cliente";
   const clientCnpj = clientData?.cnpj || "00.000.000/0000-00";
   const clientEmail = clientData?.contactEmail || "";
+  const clientAddress = clientData?.address || "";
+  const clientCity = clientData?.city || "";
+  const clientState = clientData?.state || "";
+  const clientContactName = clientData?.contactName || "";
 
-  return `CONTRATO TECNICO MASTER DE PRESTACAO DE SERVICOS DE AUDITORIA FORENSE
+  return `CONTRATO DE PRESTACAO DE SERVICOS DE AUDITORIA E CONSULTORIA ESPECIALIZADA EM VIAGENS E EVENTOS CORPORATIVOS
 
 Contrato n. AUR-2025-0042 | Versao ${CONTRACT_VERSION}
+Data da Proposta: 11 de Fevereiro de 2026
+Referencia: Proposta Comercial Ajustada
 
 CONTRATANTE: ${clientName}
 CNPJ: ${clientCnpj}
+Endereco: ${clientAddress}${clientCity ? `, ${clientCity}` : ""}${clientState ? ` - ${clientState}` : ""}
 Email: ${clientEmail}
+Atencao: ${clientContactName}
 
 CONTRATADA: ${auditorName}
 CNPJ: ${auditorCnpj}
+Endereco: Av. Paulista, 726 - 17 andar, sala 1707, Bela Vista, CEP 01310-100, Sao Paulo - SP
 Email: ${auditorEmail}
+Telefone: 11 99103-6692
+Responsavel: Marcos Costa — Chief Executive Officer
 
-OBJETO: Prestacao de servicos de auditoria forense independente, consultoria tecnica, monitoramento continuo, servicos de IA sob demanda e ferramentas digitais para gestao de despesas corporativas, viagens, eventos e contratos, conforme catalogo de servicos descrito neste instrumento.
+============================================================
+PARTE I — PROPOSTA TECNICA
+============================================================
 
---- PARTE I — CATALOGO DE SERVICOS ---
+1. OBJETO DO CONTRATO
 
-1. SERVICOS NIVEL P0 — CORE AURAAUDIT
+1.1. Prestacao de servicos de auditoria completa e independente da gestao de viagens corporativas do ${clientName}, com escopo ampliado voltado a:
+  a) Identificacao de falhas operacionais, financeiras, sistemicas e de conformidade
+  b) Mapeamento de vulnerabilidades
+  c) Proposicao de acoes corretivas e oportunidades de melhoria continua
+1.2. A auditoria abrange os exercicios de 2024 e 2025, considerando o volume, a complexidade e a criticidade do ambiente operacional envolvido.
+1.3. O ${clientName}, alinhado as melhores praticas de governanca corporativa, controle interno e eficiencia operacional, manifesta o interesse na realizacao de uma auditoria completa da gestao de viagens corporativas.
 
-1.1. REVISAO TECNICA / AUDITORIA FINANCEIRA
-1.1.1. Auditoria financeira 100% online com conciliacao multi-vias
-1.1.2. Conciliacao 4 vias: PNR/TKT/EMD + fatura + cartao/VCN + expense
-1.1.3. Auditoria de taxas/fees/markups (cobrado vs contratado)
-1.1.4. Auditoria de reembolsos/creditos, no-show, cancelamentos
-1.1.5. Hotel Folio Audit (reserva vs folio vs politica vs acordo)
-1.1.6. Auditoria de eventos (budget vs realizado + pagamentos + documentos)
+2. SOBRE A CONTRATADA
 
-1.2. MONITORAMENTO CONTINUO (ASSINATURA)
-1.2.1. Compliance + Savings + Alertas em regime de assinatura recorrente
-1.2.2. Auditoria recorrente (mensal/quinzenal/semanal/real-time)
-1.2.3. Score de compliance + ranking de excecoes
-1.2.4. Alertas de divergencia e cobranca indevida
-1.2.5. Relatorios executivos + evidence packs
+2.1. A ${auditorName} e pioneira no mercado brasileiro de auditoria em viagens e eventos corporativos, criada em 2007 para auxiliar empresas na gestao financeira de viagens e eventos corporativos atraves de servicos de revisao tecnica, consultoria, treinamento e suporte que visam principalmente a reducao de custos, apuracao e recuperacao de valores.
+2.2. Principais resultados acumulados (2015-2025):
+  - Mais de R$ 2,8 bilhoes em volume revisado
+  - Mais de R$ 448 milhoes em economia e recuperacao de valores
+  - Media de resultado superior a 16%
+2.3. Principais inconsistencias identificadas nos projetos anteriores: fraude, retencoes, reembolsos, cobranca de fee e descumprimento de acordos corporativos.
 
-1.3. CADEIA DE CUSTODIA & RASTREABILIDADE JURIDICA
-1.3.1. Evidence packs por caso/evento (raw + logs + versoes de regras)
-1.3.2. Trilha de auditoria de alteracoes (client-controlled)
-1.3.3. Dossie auditavel para Compliance, Juridico e auditoria externa
-1.3.4. Conformidade com Lei 13.964/2019 (Pacote Anticrime)
+3. ESCOPO DA AUDITORIA
 
-2. SERVICOS NIVEL P1 — ALTA RELEVANCIA
+3.1. Periodo Analisado:
+  a) Exercicio de 2024
+  b) Exercicio de 2025
 
-2.1. CONSULTORIA DE CONTRATOS TECNICOS
-2.1.1. Confeccao/revisao de contrato tecnico de agenciamento (TMC + fornecedores)
-2.1.2. Matriz contratado vs executado + SLAs + faturamento analitico
-2.1.3. Clausulas de evidencia, LGPD, governanca e dispute process
+3.2. Ambientes e Sistemas Envolvidos:
+  a) OBT (Online Booking Tool): Reserve e Argo
+  b) Backoffice: Wintour (2024) e Stur (2025)
 
-2.2. POLITICA DE VIAGENS & WORKFLOW DE EXCECOES
-2.2.1. Ajuste/criacao da policy (classes, tetos, preferenciais, antecedencia)
-2.2.2. Regras de excecao (alcadas, justificativas, evidencia obrigatoria)
-2.2.3. Medicao continua e revisao trimestral
+3.3. Volume Financeiro Auditado:
+  a) 2024: R$ 51.327.894,23
+  b) 2025: R$ 39.639.788,66
+  c) Volume total: R$ 90.967.682,89
 
-2.3. SLA & KPIS OPERACIONAIS
-2.3.1. Definicao e mensuracao de SLAs (emissao, pos-venda, 24/7)
-2.3.2. KPIs (FCR, TMA, backlog, reacomodacao, creditos)
-2.3.3. Scorecards mensais com plano de acao
+3.4. Abrangencia Tecnica da Auditoria:
+  a) Conformidade com politicas internas e melhores praticas de mercado
+  b) Governanca dos processos de viagens corporativas
+  c) Integridade e consistencia dos dados entre OBT, Backoffice e faturamento
+  d) Aderencia contratual com fornecedores e parceiros
+  e) Analise de controles, excecoes, aprovacoes e alcadas
+  f) Identificacao de falhas operacionais recorrentes
+  g) Mapeamento de vulnerabilidades financeiras e sistemicas
+  h) Avaliacao de riscos de perdas, desperdicios ou exposicoes indevidas
+  i) Oportunidades de otimizacao de processos e reducao de custos
 
-3. SERVICOS NIVEL P2 — RELEVANCIA MEDIA
+4. METODOLOGIA DE TRABALHO
 
-3.1. EXECUCAO DE CONCORRENCIAS (RFP/RFQ)
-3.1.1. RFP de TMC/OBT/hotel/locadora/eventos
-3.1.2. Matriz comparativa + recomendacao
-3.1.3. Apoio a negociacao (rodadas remotas)
+A metodologia aplicada segue padroes utilizados em projetos de auditoria corporativa de grande porte, estruturada nas seguintes etapas:
 
-3.2. ANTIFRAUDE & ANOMALIAS (AVANCADO)
-3.2.1. Regras avancadas e deteccao de padroes
-3.2.2. Segregacao de funcoes e alertas por risco
-3.2.3. Investigacoes internas com evidence packs
+4.1. Diagnostico Inicial e Entendimento do Ambiente
+4.2. Coleta, consolidacao e cruzamento de dados
+4.3. Analise tecnica, financeira e operacional
+4.4. Identificacao de falhas, riscos e vulnerabilidades
+4.5. Validacao de achados com as areas envolvidas
+4.6. Elaboracao de relatorio executivo e tecnico
+4.7. Apresentacao dos resultados e recomendacoes
 
-3.3. TREINAMENTOS (EAD)
-3.3.1. Treinamento de policy, uso do OBT, compliance de eventos, boas praticas
-3.3.2. Trilhas por papel (viajante, aprovador, financeiro, eventos)
+5. CRONOGRAMA DE REFERENCIA — 15 DIAS
 
-4. SERVICOS NIVEL P3 — VERTICAL PREMIUM
+Fase 01 | Dias 1-2  | Revisao de Escopo
+Revisao final do escopo do projeto, alinhamento de objetivos, validacao das premissas, definicao dos criterios de auditoria e confirmacao dos acessos necessarios.
 
-4.1. SUPORTE ADMINISTRATIVO HEALTH CARE
-4.1.1. Fluxo end-to-end para eventos e viagens no setor farmaceutico/healthcare
-4.1.2. Agendamento > cadastro > juridico/compliance > pre-evento > pos-evento > pagamento > fechamento > auditoria
-4.1.3. Gestao documental e contratos com conformidade (FMV/legislacao)
-4.1.4. Dossie para auditoria externa
+Fase 02 | Dias 3-5  | Coleta de Dados
+Coleta estruturada das bases de dados, extracoes dos sistemas (OBT, Backoffice, relatorios financeiros e operacionais) e organizacao das informacoes para analise.
 
---- PARTE II — MODULOS DIGITAIS & ADD-ONS ---
+Fase 03 | Dias 6-10 | Reconciliacao
+Cruzamento e reconciliacao das informacoes coletadas, identificacao de inconsistencias, falhas operacionais, vulnerabilidades financeiras e oportunidades de recuperacao ou economia.
 
-5. AURAAUDIT PASS (ASSINATURA DIGITAL)
-5.1. Plano base: US$ 99/mes para auditoria de ate US$ 10.000/mes em VAM (Volume Auditado Mensal)
-5.2. Taxa progressiva sobre excedente: 0,30% (ate US$ 100k), 0,28% (ate US$ 300k), 0,26% (ate US$ 600k), 0,24% (ate US$ 800k), 0,22% (ate US$ 1M), 0,20% (acima de US$ 1M)
-5.3. CAP maximo mensal: US$ 3.000/mes
-5.4. Inclui: dashboard interativo, trilha de auditoria, cadeia de custodia digital, relatorios automatizados
-5.5. Checkout via Stripe com aceite de termos (SHA-256 hash, IP, user-agent registrados)
+Fase 04 | Dias 11-12 | Apresentacao dos Resultados
+Consolidacao dos achados, validacao preliminar dos resultados e preparacao do material executivo com os valores, riscos e oportunidades identificadas.
 
-6. AI DESK — CATALOGO DE SERVICOS DE IA SOB DEMANDA (11 SERVICOS)
-6.1. Modelo de consumo: creditos pre-pagos (1 credito = US$ 1)
-6.2. Pacotes de recarga: US$ 50, US$ 100, US$ 500, US$ 1.000 ou valor personalizado (minimo US$ 1.000)
-6.3. Fluxo obrigatorio: Criar Job > Gerar Cotacao > Aprovar > Executar > Resultado + Envelope de Auditoria
-6.4. Servicos disponiveis:
-  6.4.1. Conciliacao e Reconciliacao — base 100 creditos + 5/arquivo (+60 conciliacao multi-via 4+ fontes)
-  6.4.2. Revisao de Contrato de Fornecedor — base 60 creditos + 6/pagina (revisao humana 1,5x)
-  6.4.3. Resposta a Edital/RFP/Licitacao — base 120 creditos + 8/pagina (+80 matriz de compliance)
-  6.4.4. SLA + KPI + Scorecard — base 150 creditos (+50 SLA tecnico, +50 KPI dashboard)
-  6.4.5. Assistente de Negociacao e Formacao de Preco — base 90 creditos + 8/cenario (+40 analise de formacao de preco)
-  6.4.6. Alertas em Tempo Real — base 80 creditos + 10/regra configurada (+30 thresholds customizados)
-  6.4.7. Conectar API de Fornecedores — base 200 creditos (setup obrigatorio com revisao humana) (+100 mapeamento de dados)
-  6.4.8. Relatorio Automatico (area/CC/depto/fornecedor) — base 70 creditos + 5/dimensao (+40 graficos avancados)
-  6.4.9. Apresentacao Executiva (marketshare/gastos/graficos) — base 120 creditos + 10/slide (+60 analise de marketshare)
-  6.4.10. Estrategia de Negociacao + Alertas Lost Saving — base 110 creditos + 8/fornecedor (+50 benchmark de mercado)
-  6.4.11. Plano de Acao 30/60/90 dias — base 80 creditos (+20 owners/cronograma)
-6.5. Cada job gera envelope de auditoria com SHA-256 (inputs, processamento, outputs, timestamps)
-6.6. Opcao de revisao humana disponivel para todos os servicos (multiplicador 1,5x quando aplicavel)
-6.7. Jobs acima do limite de auto-aprovacao requerem aprovacao administrativa
-6.8. Cada output gera automaticamente um artefato na Biblioteca de Relatorios com SHA-256
+Fase 05 | Dias 13-14 | Ajustes e Validacoes
+Ajustes finais dos achados com base em validacoes junto as areas envolvidas, refinamento das analises e consolidacao das recomendacoes.
 
-7. WALLET DE CREDITOS
-7.1. Carteira digital com saldo em creditos (1 credito = US$ 1)
-7.2. Recarga via Stripe: pacotes de US$ 50, US$ 100, US$ 500 e US$ 1.000
-7.3. Recarga personalizada: valor minimo de US$ 1.000, sem limite maximo
-7.4. Ledger completo e auditavel (topup, debit, refund, adjustment, vip_courtesy)
-7.5. Saldo verificado automaticamente antes da aprovacao de cada job
-7.6. Transparencia: orcamento detalhado antes de cada execucao
-7.7. Limites configuraveis por empresa: limite por job, limite mensal, auto-aprovacao
+Fase 06 | Dia 15 | Entrega Final
+Entrega do relatorio executivo e tecnico final, apresentacao formal dos resultados e encaminhamento das recomendacoes e proximos passos.
 
-8. DASHBOARD STUDIO
-8.1. Criacao de views personalizadas com widgets interativos
-8.2. Biblioteca de widgets: Gastos por Area, Excecoes de Politica, Performance SLA, Savings, Mapa de Riscos, Ranking de Fornecedores, Volume Mensal, Score de Compliance
-8.3. Filtros globais: periodo, departamento, fornecedor
-8.4. Versionamento de views (version incrementado a cada edicao)
-8.5. Publicacao administrativa: views publicadas ficam visiveis para toda a empresa
-8.6. Tags para organizacao e busca de views
+Observacao Importante: Os prazos acima consideram a disponibilizacao tempestiva dos acessos, bases de dados e documentos necessarios para execucao das atividades.
 
-9. BIBLIOTECA DE RELATORIOS E ARTEFATOS
-9.1. Repositorio centralizado de todos os artefatos gerados pela plataforma
-9.2. Tipos de artefatos: Oficiais (relatorios finais), Rapidos (analises ad-hoc), AI Outputs (resultados do AI Desk)
-9.3. Workflow de status: draft (rascunho) > reviewed (revisado) > approved (aprovado)
-9.4. Hash SHA-256 individual para cada artefato (integridade verificavel)
-9.5. Download com header X-SHA256 para verificacao de integridade
-9.6. Rastreabilidade: cada artefato de IA referencia o job_id, service_id e envelope_sha256 de origem
+6. ENTREGAVEIS
 
-10. CONFIGURACAO DE BILLING E LIMITES
-10.1. Limite de auto-aprovacao por empresa: jobs abaixo deste valor sao aprovados automaticamente (padrao: US$ 200)
-10.2. Limite por job individual: valor maximo por job sem aprovacao administrativa (padrao: US$ 200)
-10.3. Limite mensal de consumo da empresa: cap mensal de gastos na wallet (configuravel)
-10.4. Limite global por job da empresa: valor maximo por job para a empresa (padrao: US$ 500)
-10.5. Configuracao gerenciada pelo administrador via painel administrativo
+6.1. Relatorio executivo consolidado
+6.2. Relatorio tecnico detalhado com achados, evidencias e analises
+6.3. Mapeamento de riscos e vulnerabilidades
+6.4. Recomendacoes praticas para correcao e melhoria
+6.5. Plano de acao sugerido, priorizado por impacto e risco
+6.6. Dashboard Interativo de Resultados (tempo real via plataforma AuraAUDIT)
+6.7. Cadeia de Custodia Digital Completa (continuo)
 
---- PARTE III — DISPOSICOES GERAIS ---
+7. DOCUMENTACAO E ACESSOS NECESSARIOS
 
-11. ESCOPO ESPECIFICO DO PROJETO
-11.1. Auditoria forense dos exercicios 2024 (R$ 51,3M) e 2025 (R$ 39,6M)
-11.2. Reconciliacao OBT (Reserve, Argo) vs Backoffice (Wintour 2024, Stur 2025)
-11.3. Cruzamento com fontes externas: cias aereas, agencias, EBTA Bradesco, GDS Sabre/Amadeus, BSPlink
-11.4. Analise em 9 areas: conformidade, governanca, integridade, contratos, controles, falhas, vulnerabilidades, riscos, otimizacao
+Para execucao das atividades, serao necessarios os seguintes documentos e acessos:
 
-12. ENTREGAVEIS
-12.1. Relatorio Executivo de Auditoria (a cada fase concluida)
-12.2. Relatorio Tecnico Detalhado (ao final do projeto)
-12.3. Matriz de Riscos e Anomalias
-12.4. Parecer de Conformidade Legal
-12.5. Plano de Recomendacoes e Acoes Corretivas
-12.6. Dashboard Interativo de Resultados (tempo real)
-12.7. Cadeia de Custodia Digital Completa (continuo)
-12.8. Envelopes de auditoria para todos os servicos de IA executados
-12.9. Artefatos na Biblioteca de Relatorios com SHA-256 individual
+7.1. Contratos com prestadores e clientes
+7.2. Back office da agencia
+7.3. Administracao BSPLink, voeGol, voeAzul e demais cias integradas
+7.4. Portais administrativos de redes hoteleiras, operadores e consolidadores
+7.5. Todos os acordos corporativos (cias aereas, hotelaria, banco, etc.)
+7.6. Sistema de OBTs e GDSs
+7.7. Controle de reembolso e credito conciliados
+7.8. Relatorios gerenciais de pagamentos realizados e pendentes
+7.9. Relatorios gerenciais de receitas recebidas e pendentes
+7.10. Extratos originais dos cartoes de credito utilizados
+7.11. Reservas originais e faturas de hospedagens pagas
+7.12. Relatorio de cobranca de FEE, Rebate, Comissoes e Incentivos
 
-13. SLA — ACORDO DE NIVEL DE SERVICO
-13.1. Tempo de resposta a incidentes criticos: ate 4 horas uteis
-13.2. Atualizacao de status do projeto: diariamente via dashboard
-13.3. Entrega de relatorios parciais: ate 48 horas apos cada fase
-13.4. Entrega do relatorio final: ate 5 dias uteis apos conclusao
-13.5. Reunioes de alinhamento: semanalmente ou sob demanda
-13.6. Disponibilidade da equipe: dias uteis, 08h as 18h
-13.7. AI Desk: cotacao em ate 2 minutos, execucao em ate 10 minutos por job
+As atividades serao iniciadas somente apos confirmacao dos acessos e disponibilidade da documentacao.
 
-14. VIGENCIA
-14.1. Inicio: 15/01/2025
-14.2. Termino: 31/12/2025
-14.3. Podendo ser prorrogado mediante termo aditivo
+============================================================
+PARTE II — PROPOSTA COMERCIAL
+============================================================
 
-15. CADASTRO E VALIDACAO DE PARTES
-15.1. CNPJ validado matematicamente (algoritmo de digitos verificadores) antes de qualquer operacao
-15.2. Consulta a Receita Federal (BrasilAPI) para preenchimento automatico de dados cadastrais
-15.3. CPF do representante legal validado matematicamente quando informado
-15.4. Validacao aplicada em: cadastro de clientes, assinatura de contrato, perfis de empresa
+8. MODELO DE PRECIFICACAO
 
-16. CONFIDENCIALIDADE
-Todas as informacoes compartilhadas sao tratadas como confidenciais e protegidas por NDA assinado entre as partes.
+8.1. Modalidade: Honorarios por Hora + Taxa de Sucesso (Success Fee)
+Esta modalidade combina um custo fixo por hora com uma Taxa de Sucesso atrelada aos resultados financeiros efetivamente obtidos.
 
-17. CADEIA DE CUSTODIA DIGITAL
-17.1. Todos os dados e evidencias sao mantidos em cadeia de custodia digital certificada
-17.2. Hashes SHA-256 deterministicos para cada registro, documento e artefato
-17.3. Trilha de auditoria imutavel com integridade verificavel
-17.4. Envelopes de auditoria para servicos de IA (inputs + processamento + outputs + SHA-256)
-17.5. Conformidade com Lei 13.964/2019 (Pacote Anticrime)
-17.6. Artefatos na Biblioteca de Relatorios com SHA-256 individual e rastreabilidade de origem
+8.2. Honorarios Fixos por Hora:
 
-18. SISTEMA ANTIREGRESSAO
-18.1. Toda alteracao em dados auditados e registrada com estado anterior (dataBefore) e posterior (dataAfter)
-18.2. Hash de integridade SHA-256 calculado para cada entrada da trilha de auditoria
-18.3. Registros de auditoria sao imutaveis (append-only) — nao podem ser editados ou excluidos
-18.4. Versionamento de contratos: cada versao gera novo SHA-256, versoes anteriores permanecem registradas
-18.5. Ledger de creditos append-only: cada transacao e registrada individualmente sem alteracao de registros anteriores
-18.6. Validacao matematica de documentos (CNPJ/CPF) impede regressao de dados cadastrais invalidos
-18.7. Termos de servico versionados com SHA-256 — aceite vinculado a versao especifica
-18.8. Dashboard views versionadas: cada edicao incrementa version, historico preservado
+  Perfil Profissional: Auditor Senior
+  Valor Hora: R$ 240,00
+  Horas Estimadas: 52 horas
+  Valor Estimado: R$ 12.500,00
 
-19. SISTEMA ANTIALUCINACAO (AI DESK — 11 SERVICOS)
-19.1. Todos os outputs de IA sao acompanhados de envelope de auditoria com hash SHA-256
-19.2. Inputs do usuario sao registrados e hasheados — garantia de que o resultado corresponde a solicitacao original
-19.3. Cotacao obrigatoria antes da execucao — usuario ve o escopo antes de aprovar
-19.4. Opcao de revisao humana disponivel para todos os servicos de IA
-19.5. Outputs sao armazenados com hash individual — qualquer alteracao posterior e detectavel
-19.6. Modelo de IA, versao e parametros de execucao registrados no envelope de auditoria
-19.7. A IA sugere e gera, mas o usuario decide e aprova — controle humano em todas as etapas
-19.8. Jobs cancelados ou com falha sao registrados com status e motivo para rastreabilidade
-19.9. Jobs acima do limite de auto-aprovacao requerem aprovacao administrativa antes da execucao
-19.10. Cada output gera automaticamente um artefato na Biblioteca de Relatorios
+  Subtotal Honorarios Fixos: R$ 12.500,00
 
-20. PROPRIEDADE INTELECTUAL
-Os relatorios e analises produzidos sao de propriedade do contratante. A metodologia, ferramentas e modelos de IA permanecem propriedade da ${auditorName}.
+8.3. Taxa de Sucesso (Success Fee):
 
-21. PROTECAO DE DADOS
-O tratamento de dados pessoais segue rigorosamente a LGPD (Lei 13.709/2018), com medidas tecnicas e administrativas de seguranca. Dados de CPF sao armazenados e exibidos com mascaramento parcial.
+  Percentual: 20%
 
-22. INDEPENDENCIA
-A equipe de auditoria mantem total independencia e imparcialidade durante todo o processo, sem vinculo com as areas auditadas.
+  A Taxa de Sucesso incidira exclusivamente sobre os valores financeiros efetivamente reconhecidos, validados e implementados pelo contratante, decorrentes de:
+  a) Recuperacao de valores pagos indevidamente
+  b) Creditos aplicados ou compensados
+  c) Perdas evitadas comprovadas
+  d) Economias financeiras efetivamente implementadas
 
-23. RESCISAO
-O contrato pode ser rescindido por qualquer das partes com aviso previo de 30 dias, resguardados os direitos sobre trabalhos ja realizados e creditos nao utilizados.
+8.4. Condicoes Gerais de Precificacao:
+  a) Os valores acima sao estimativas e poderao ser ajustados conforme o escopo final aprovado
+  b) Nao estao inclusas despesas extraordinarias, viagens, hospedagem e locomocao da equipe. Qualquer despesa aplicavel devera ser previamente autorizada
+  c) A proposta possui validade de 30 (trinta) dias a contar da data de emissao
 
-24. VALIDADE JURIDICA DA ASSINATURA ELETRONICA
-24.1. Este contrato e assinado eletronicamente nos termos da Lei 14.063/2020 (assinatura eletronica simples) e da Medida Provisoria 2.200-2/2001
-24.2. Integridade garantida por hash criptografico SHA-256
-24.3. Registrados: IP, user-agent, timestamp, identificacao do signatario e CPF (quando informado)
-24.4. Cadeia de custodia da assinatura: contrato texto -> SHA-256 -> assinatura -> registro imutavel
+============================================================
+PARTE III — GOVERNANCA, CONFIDENCIALIDADE E INDEPENDENCIA
+============================================================
 
-25. CANAIS DE ASSINATURA E DISTRIBUICAO DO CONTRATO
-25.1. Disponibilidade: o contrato esta disponivel para assinatura online (versao padrao via plataforma nativa AuraAUDIT) e offline (versao customizada para o cliente, gerada pela plataforma para impressao e assinatura manual)
-25.2. Assinatura via plataforma: o contratante pode assinar digitalmente diretamente na plataforma AuraAUDIT, com registro automatico de SHA-256, IP, user-agent, timestamp e CPF (quando informado)
-25.3. Envio por email: o contrato pode ser enviado por email ao contratante com link direto para visualizacao e assinatura digital na plataforma
-25.4. Envio por WhatsApp: o contrato pode ser enviado via WhatsApp ao contratante com link para assinatura digital, facilitando acesso remoto e comunicacao direta
-25.5. Painel administrativo: o administrador pode gerenciar o envio, verificar status de assinatura, reenviar por email ou WhatsApp, e copiar link do contrato a partir do painel de contratos da plataforma
-25.6. Equivalencia juridica: a assinatura eletronica realizada em qualquer dos canais descritos possui a mesma validade juridica nos termos da Lei 14.063/2020 e MP 2.200-2/2001
-25.7. Rastreabilidade de envio: cada envio por email ou WhatsApp e registrado na trilha de auditoria com timestamp, canal utilizado e destinatario
+9. GOVERNANCA E CONFIDENCIALIDADE
 
---- ANEXO I — EVIDENCIAS TECNICAS ---
+9.1. Confidencialidade: Todas as informacoes compartilhadas sao tratadas como confidenciais e protegidas por NDA assinado entre as partes. Nenhuma informacao sera divulgada a terceiros sem autorizacao expressa do contratante.
+9.2. Independencia tecnica: A equipe de auditoria mantem total independencia e imparcialidade durante todo o processo, sem vinculo com as areas auditadas.
+9.3. Rastreabilidade juridica: Todos os dados analisados sao mantidos em cadeia de custodia digital certificada, com hashes SHA-256 deterministicos.
+9.4. Transparencia metodologica: A metodologia aplicada e documentada e disponibilizada ao contratante para verificacao.
+9.5. Cadeia de Custodia: Conformidade com Lei 13.964/2019 (Pacote Anticrime) — todos os dados e evidencias seguem cadeia de custodia digital com trilha de auditoria imutavel.
+
+10. PROTECAO DE DADOS
+
+10.1. O tratamento de dados pessoais segue rigorosamente a LGPD (Lei 13.709/2018), com medidas tecnicas e administrativas de seguranca.
+10.2. Dados de CPF sao armazenados e exibidos com mascaramento parcial.
+10.3. Dados do contratante sao utilizados exclusivamente para os fins previstos neste contrato.
+
+11. PROPRIEDADE INTELECTUAL
+
+11.1. Os relatorios e analises produzidos sao de propriedade do contratante.
+11.2. A metodologia, ferramentas, modelos de IA e plataforma tecnologica permanecem propriedade da ${auditorName}.
+
+============================================================
+PARTE IV — DISPOSICOES CONTRATUAIS
+============================================================
+
+12. SLA — ACORDO DE NIVEL DE SERVICO
+
+12.1. Tempo de resposta a incidentes criticos: ate 4 horas uteis
+12.2. Atualizacao de status do projeto: diariamente via dashboard
+12.3. Entrega de relatorios parciais: ate 48 horas apos cada fase
+12.4. Entrega do relatorio final: ate 5 dias uteis apos conclusao
+12.5. Reunioes de alinhamento: semanalmente ou sob demanda
+12.6. Disponibilidade da equipe: dias uteis, 08h as 18h
+
+13. VIGENCIA
+
+13.1. Inicio: na data de assinatura deste contrato
+13.2. Prazo do projeto: 15 dias uteis apos confirmacao dos acessos e documentacao
+13.3. Vigencia do contrato: ate 31/12/2026
+13.4. Podendo ser prorrogado mediante termo aditivo
+
+14. CADASTRO E VALIDACAO DE PARTES
+
+14.1. CNPJ validado matematicamente (algoritmo de digitos verificadores) antes de qualquer operacao
+14.2. Consulta a Receita Federal (BrasilAPI) para preenchimento automatico de dados cadastrais
+14.3. CPF do representante legal validado matematicamente quando informado
+14.4. Validacao aplicada em: cadastro de clientes, assinatura de contrato, perfis de empresa
+
+15. CADEIA DE CUSTODIA DIGITAL
+
+15.1. Todos os dados e evidencias sao mantidos em cadeia de custodia digital certificada
+15.2. Hashes SHA-256 deterministicos para cada registro, documento e artefato
+15.3. Trilha de auditoria imutavel com integridade verificavel
+15.4. Conformidade com Lei 13.964/2019 (Pacote Anticrime)
+
+16. SISTEMA ANTIREGRESSAO
+
+16.1. Toda alteracao em dados auditados e registrada com estado anterior (dataBefore) e posterior (dataAfter)
+16.2. Hash de integridade SHA-256 calculado para cada entrada da trilha de auditoria
+16.3. Registros de auditoria sao imutaveis (append-only) — nao podem ser editados ou excluidos
+16.4. Versionamento de contratos: cada versao gera novo SHA-256, versoes anteriores permanecem registradas
+16.5. Validacao matematica de documentos (CNPJ/CPF) impede regressao de dados cadastrais invalidos
+
+17. RESCISAO
+
+17.1. O contrato pode ser rescindido por qualquer das partes com aviso previo de 30 dias, resguardados os direitos sobre trabalhos ja realizados.
+17.2. Em caso de rescisao, os honorarios fixos serao devidos proporcionalmente as horas efetivamente trabalhadas.
+17.3. A Taxa de Sucesso sera devida sobre resultados ja validados e implementados ate a data da rescisao.
+
+18. VALIDADE JURIDICA DA ASSINATURA ELETRONICA
+
+18.1. Este contrato e assinado eletronicamente nos termos da Lei 14.063/2020 (assinatura eletronica simples) e da Medida Provisoria 2.200-2/2001
+18.2. Integridade garantida por hash criptografico SHA-256
+18.3. Registrados: IP, user-agent, timestamp, identificacao do signatario e CPF (quando informado)
+18.4. Cadeia de custodia da assinatura: contrato texto -> SHA-256 -> assinatura -> registro imutavel
+
+19. CANAIS DE ASSINATURA E DISTRIBUICAO DO CONTRATO
+
+19.1. Disponibilidade: o contrato esta disponivel para assinatura online (via plataforma AuraAUDIT) e offline (versao para impressao e assinatura manual)
+19.2. Assinatura via plataforma: registro automatico de SHA-256, IP, user-agent, timestamp e CPF
+19.3. Envio por email ou WhatsApp: com link direto para visualizacao e assinatura digital
+19.4. Equivalencia juridica: a assinatura eletronica realizada em qualquer canal possui a mesma validade juridica nos termos da Lei 14.063/2020 e MP 2.200-2/2001
+
+20. FORO
+
+20.1. Fica eleito o Foro da Comarca de Sao Paulo - SP para dirimir quaisquer controversias oriundas deste contrato, com renuncia expressa a qualquer outro, por mais privilegiado que seja.
+
+============================================================
+ANEXO I — EVIDENCIAS TECNICAS DO PROJETO
+============================================================
 
 E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal
 E2. Contrato dinamico: texto gerado a partir de dados cadastrais verificados do contratante e contratada
 E3. Assinatura digital: SHA-256 do texto integral, IP, user-agent, timestamp, CPF (quando informado, exibido mascarado)
 E4. Trilha de auditoria: registros imutaveis com hash de integridade por entrada
-E5. AI Desk: envelope de auditoria por job (inputs hasheados, modelo/versao, outputs hasheados, envelope SHA-256) — 11 servicos
-E6. Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos, valor USD) — 4 pacotes + custom
-E7. Antiregressao: dataBefore/dataAfter em cada mutacao, versionamento de contratos e termos
-E8. Antialucinacao: cotacao previa, aprovacao humana, revisao opcional, envelope SHA-256 por output
-E9. Assinatura online: plataforma nativa com formulario de assinatura digital, validacao de CPF/CNPJ, registro de prova (SHA-256, IP, user-agent, timestamp)
-E10. Assinatura offline: contrato customizado para o cliente, gerado pela plataforma com dados cadastrais especificos do contratante, disponivel para impressao e assinatura manual (diferente da versao online padrao)
-E11. Distribuicao por email: envio de contrato com link para assinatura via plataforma, registrado na trilha de auditoria
-E12. Distribuicao por WhatsApp: envio de contrato via WhatsApp com link direto para assinatura digital, com numero do destinatario e mensagem registrados
-E13. Dashboard Studio: views personalizadas com widgets, filtros globais, versionamento, publicacao administrativa
-E14. Biblioteca de Relatorios: artefatos com SHA-256 individual, workflow de status (draft > reviewed > approved), download com header X-SHA256
-E15. Billing Config: limites configuraveis por empresa (auto-aprovacao, limite por job, cap mensal)
-E16. Aprovacao administrativa: jobs acima do limite requerem aprovacao com registro em ai_job_approvals (decisao, notas, timestamp, usuario)
-E17. Artefatos automaticos: cada output do AI Desk gera artefato na Biblioteca com rastreabilidade (job_id, service_id, envelope_sha256)
+E5. Cadeia de custodia: conformidade com Lei 13.964/2019, hashes SHA-256 por registro
+E6. Antiregressao: dataBefore/dataAfter em cada mutacao, versionamento de contratos
+E7. Reconciliacao multi-via: cruzamento OBT vs Backoffice vs faturamento vs cartao/VCN
+E8. Evidence packs: documentacao por caso/evento com raw data, logs e versoes de regras
 
---- ANEXO II — ADITIVO DE 26/02/2026 (v2.1.0) ---
+============================================================
+ANEXO II — PLATAFORMA AURAAUDIT: MODULOS COMPLEMENTARES
+(Informativo — sem valores — disponivel para contratacao futura)
+============================================================
 
-ADITIVO CONTRATUAL — Versao 2.1.0
+A plataforma AuraAUDIT oferece modulos digitais complementares que podem potencializar os resultados da auditoria e estender a governanca de viagens corporativas do contratante. Abaixo, uma visao geral de cada modulo:
 
-Objeto do aditivo: Inclusao da clausula 22 (Canais de Assinatura e Distribuicao do Contrato) e das evidencias E9 a E12 ao Contrato Tecnico Master.
+M1. AURAAUDIT PASS (Assinatura Digital de Monitoramento Continuo)
+Plano de assinatura mensal que oferece auditoria continua com dashboard interativo, trilha de auditoria, cadeia de custodia digital e relatorios automatizados. Ideal para empresas que desejam monitoramento permanente apos a conclusao do projeto de auditoria pontual, garantindo compliance e savings recorrentes.
 
-Justificativa: Formalizar que o contrato esta disponivel para assinatura tanto offline quanto online via plataforma nativa AuraAUDIT, com opcao de envio por email e WhatsApp, garantindo flexibilidade, acessibilidade e rastreabilidade juridica em todos os canais.
+M2. AI DESK (11 Servicos de IA sob Demanda)
+Mesa de servicos com 11 funcionalidades de inteligencia artificial especializadas em viagens corporativas:
+  - Conciliacao e Reconciliacao: cruzamento automatizado de dados multi-via entre OBT, backoffice, faturamento e cartoes
+  - Revisao de Contratos: analise de clausulas, SLAs e conformidade contratual com fornecedores
+  - Resposta a Editais/RFP: montagem estruturada de propostas e licitacoes com matriz de compliance
+  - SLA + KPI + Scorecard: criacao e monitoramento de indicadores operacionais para gestao de agencias e fornecedores
+  - Assistente de Negociacao: formacao de preco e estrategia de negociacao com fornecedores, incluindo cenarios comparativos
+  - Alertas em Tempo Real: monitoramento continuo com notificacoes de desvios de politica, cobrancas indevidas e anomalias
+  - Conectar API de Fornecedores: integracao tecnica com sistemas de cias aereas, hoteis, locadoras e GDS
+  - Relatorio Automatico: geracao de relatorios por area, centro de custo, departamento ou fornecedor
+  - Apresentacao Executiva: slides com marketshare, gastos e graficos para apresentacao a diretoria
+  - Estrategia Lost Saving: identificacao de economias perdidas e estrategia de recuperacao com benchmark de mercado
+  - Plano de Acao 30/60/90: plano estruturado com responsaveis, prazos e acompanhamento de implementacao
+Cada servico gera um envelope de auditoria com SHA-256, garantindo rastreabilidade e integridade dos resultados.
 
-Alteracoes realizadas:
-A1. Adicionada clausula 22 — Canais de Assinatura e Distribuicao do Contrato (7 subcláusulas: 22.1 a 22.7)
-A2. Adicionadas evidencias E9 (assinatura online), E10 (assinatura offline), E11 (distribuicao por email), E12 (distribuicao por WhatsApp)
-A3. Versao do contrato atualizada de 2.0.0 para 2.1.0
-A4. Hash SHA-256 recalculado para refletir o texto integral atualizado
+M3. WALLET DE CREDITOS
+Carteira digital com creditos pre-pagos para consumo dos servicos do AI Desk. Permite controle de gastos por empresa, limites por job e cap mensal. Ledger completo e auditavel com transparencia total sobre o consumo.
 
-Vigencia do aditivo: Este aditivo entra em vigor na data de sua publicacao e integra-se ao Contrato Tecnico Master AUR-2025-0042.
+M4. DASHBOARD STUDIO
+Ferramenta para criacao de dashboards personalizados com widgets interativos (gastos por area, excecoes de politica, performance SLA, savings, mapa de riscos, ranking de fornecedores, volume mensal, score de compliance). Permite filtros globais, versionamento e publicacao de views para toda a empresa.
 
---- ANEXO III — ADITIVO DE 27/02/2026 (v3.0.0) ---
+M5. BIBLIOTECA DE RELATORIOS E ARTEFATOS
+Repositorio centralizado de todos os artefatos gerados pela plataforma, com workflow de status (rascunho > revisado > aprovado), hash SHA-256 individual por artefato e download com verificacao de integridade. Garante rastreabilidade completa de todos os outputs gerados.
 
-ADITIVO CONTRATUAL — Versao 3.0.0
+M6. SISTEMA ANTIALUCINACAO (IA)
+Mecanismo de controle que garante que todos os outputs de IA sejam acompanhados de envelope de auditoria, cotacao previa obrigatoria, aprovacao humana e registro de modelo/versao/parametros. A IA sugere e gera, mas o usuario decide e aprova em todas as etapas.
 
-Objeto do aditivo: Expansao significativa dos modulos digitais com inclusao de 7 novos servicos de IA (total 11), Dashboard Studio, Biblioteca de Relatorios, configuracao de billing e limites, e pacotes de recarga aprimorados.
+Para mais informacoes sobre qualquer modulo complementar, entre em contato com a equipe ${auditorName}.
 
-Justificativa: Atender a demanda aprovada pelo DPO para modelo unificado de billing por consumo, ampliacao do catalogo de servicos de IA, e inclusao de ferramentas de visualizacao e gestao de artefatos com cadeia de custodia digital.
+============================================================
+CONSIDERACOES FINAIS
+============================================================
 
-Alteracoes realizadas:
+Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-MODULOS E SERVICOS:
-B1. AI Desk expandido de 4 para 11 servicos (clausula 6): Conciliacao, Revisao de Contrato, RFP/Licitacao, SLA/KPI/Scorecard, Negociacao/Preco, Alertas Tempo Real, API Fornecedores, Relatorio Automatico, Apresentacao Executiva, Lost Saving, Plano de Acao
-B2. Wallet aprimorada (clausula 7): 4 pacotes (US$ 50/100/500/1.000) + recarga personalizada (minimo US$ 1.000)
-B3. Dashboard Studio (clausula 8): views, widgets, filtros, versionamento, publicacao
-B4. Biblioteca de Relatorios (clausula 9): artefatos, SHA-256, workflow de status, download verificavel
-B5. Configuracao de Billing (clausula 10): limites por usuario/empresa, auto-aprovacao, cap mensal
+Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 
-FLUXOS E CONTROLES:
-B6. Fluxo de aprovacao administrativa para jobs acima do limite configurado
-B7. Geracao automatica de artefatos a partir de outputs do AI Desk
-B8. Tabelas adicionadas: dashboard_views, artifacts, ai_job_approvals, ai_job_files, company_billing_config
-
-CONTRATO:
-B9. Renumeracao de clausulas (8-22 → 11-25) para acomodar novas clausulas 8-10
-B10. Evidencias adicionadas: E13 (Dashboard Studio), E14 (Biblioteca), E15 (Billing Config), E16 (Aprovacao), E17 (Artefatos automaticos)
-B11. Sistema Antialucinacao atualizado (clausula 19): 11 servicos, aprovacao administrativa, artefatos automaticos
-B12. Sistema Antiregressao atualizado (clausula 18): versionamento de dashboard views
-B13. Versao do contrato atualizada de 2.1.0 para 3.0.0
-B14. Hash SHA-256 recalculado para refletir o texto integral atualizado
-
-Vigencia do aditivo: Este aditivo entra em vigor na data de sua publicacao e integra-se ao Contrato Tecnico Master AUR-2025-0042.
+"Cuidado com as pequenas despesas, um pequeno vazamento afundara um grande navio." — Benjamin Franklin
 
 ${auditorName}
-Contrato Tecnico Master — Versao ${CONTRACT_VERSION}`;
+Contrato de Auditoria e Consultoria — Versao ${CONTRACT_VERSION}
+Av. Paulista, 726 - 17 andar, sala 1707, Bela Vista, CEP 01310-100, Sao Paulo - SP
+Marcos Costa | Telefone: 11 99103-6692 | Email: marcos@cts-brasil.com`;
 }
 
 function hashContractText(text: string): string {
@@ -440,7 +451,8 @@ export function registerContractRoutes(app: Express) {
     if (!client) return res.status(404).json({ error: "Cliente nao encontrado." });
     const phone = client.contactPhone?.replace(/\D/g, "") || "";
     const contractUrl = `${req.protocol}://${req.get("host")}/contract`;
-    const message = `Prezado(a) ${client.contactName || "Cliente"},\n\nSegue o link para visualizacao e assinatura digital do Contrato Tecnico Master de Auditoria Forense:\n\n${contractUrl}\n\nContrato: AUR-2025-0042 (v${CONTRACT_VERSION})\nEmpresa: ${client.name || ""}\nCNPJ: ${client.cnpj || ""}\n\nA assinatura e feita digitalmente com validade juridica (Lei 14.063/2020).\n\nAtenciosamente,\nAuraAUDIT`;
+    const auditor = await getAuditorProfile();
+    const message = `Prezado(a) ${client.contactName || "Cliente"},\n\nSegue o link para visualizacao e assinatura digital do Contrato de Auditoria e Consultoria:\n\n${contractUrl}\n\nContrato: AUR-2025-0042 (v${CONTRACT_VERSION})\nEmpresa: ${client.name || ""}\nCNPJ: ${client.cnpj || ""}\n\nA assinatura e feita digitalmente com validade juridica (Lei 14.063/2020).\n\nAtenciosamente,\n${auditor?.name || "CTS Brasil"}`;
     const whatsappUrl = `https://wa.me/${phone ? phone : ""}?text=${encodeURIComponent(message)}`;
     return res.json({ whatsappUrl, phone, message, clientName: client.name });
   });
@@ -620,7 +632,7 @@ export function registerContractRoutes(app: Express) {
     const client = await getClientProfile(userId);
     const phone = client?.contactPhone?.replace(/\D/g, "") || "";
     const contractUrl = `${req.protocol}://${req.get("host")}/contract`;
-    const message = `Prezado(a) ${client?.contactName || "Cliente"},\n\nSegue o link para visualizacao e assinatura digital do contrato de auditoria forense:\n\n${contractUrl}\n\nContrato: AUR-2025-0042\nEmpresa: ${client?.name || ""}\n\nA assinatura e feita digitalmente com validade juridica (Lei 14.063/2020).\n\nAtenciosamente,\nAuraAUDIT`;
+    const message = `Prezado(a) ${client?.contactName || "Cliente"},\n\nSegue o link para visualizacao e assinatura digital do contrato de auditoria:\n\n${contractUrl}\n\nContrato: AUR-2025-0042\nEmpresa: ${client?.name || ""}\n\nA assinatura e feita digitalmente com validade juridica (Lei 14.063/2020).\n\nAtenciosamente,\nAuraAUDIT`;
     const whatsappUrl = `https://wa.me/${phone ? phone : ""}?text=${encodeURIComponent(message)}`;
     return res.json({ whatsappUrl, phone, message });
   });
