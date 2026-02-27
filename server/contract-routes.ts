@@ -1,8 +1,8 @@
 import { Express, Request, Response } from "express";
 import { requireAuth } from "./auth";
 import { db } from "./db";
-import { contractSignatures, clients } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { contractSignatures, clients, users } from "@shared/schema";
+import { eq, desc, or } from "drizzle-orm";
 import { createHash } from "crypto";
 import { z } from "zod";
 import { validateCNPJ, validateCPF, detectDocumentType } from "@shared/validators";
@@ -803,11 +803,26 @@ ${auditor?.contactPhone || ""}`;
 
   app.get("/api/contract/signature", requireAuth, async (req: Request, res: Response) => {
     const userId = req.session.userId!;
-    const signatures = await db
-      .select()
-      .from(contractSignatures)
-      .where(eq(contractSignatures.userId, userId))
-      .orderBy(desc(contractSignatures.signedAt));
+
+    const [currentUser] = await db.select().from(users).where(eq(users.id, userId));
+    const clientId = currentUser?.clientId;
+
+    let signatures;
+    if (clientId) {
+      const companyUsers = await db.select({ id: users.id }).from(users).where(eq(users.clientId, clientId));
+      const companyUserIds = companyUsers.map(u => u.id);
+      signatures = await db
+        .select()
+        .from(contractSignatures)
+        .where(or(...companyUserIds.map(uid => eq(contractSignatures.userId, uid))))
+        .orderBy(desc(contractSignatures.signedAt));
+    } else {
+      signatures = await db
+        .select()
+        .from(contractSignatures)
+        .where(eq(contractSignatures.userId, userId))
+        .orderBy(desc(contractSignatures.signedAt));
+    }
 
     if (signatures.length === 0) {
       return res.json({ signed: false, signature: null });
