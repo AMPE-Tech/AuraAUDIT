@@ -741,6 +741,56 @@ ${auditor?.contactPhone || ""}`;
     });
   });
 
+  app.get("/api/client/project-overview", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session.userId!;
+      const client = await getClientProfile(userId);
+      if (!client) {
+        return res.json({
+          clientName: req.session.fullName || "Cliente",
+          clientType: "corporate_company",
+          projectCategory: "Viagens e Eventos",
+          volumes: null,
+          systems: [],
+          period: null,
+        });
+      }
+
+      const auditor = await getAuditorProfile();
+      const contractText = generateContractText(auditor, client);
+
+      const vol2024Match = contractText.match(/2024:\s*R\$\s*([\d.,]+)/);
+      const vol2025Match = contractText.match(/2025:\s*R\$\s*([\d.,]+)/);
+      const volTotalMatch = contractText.match(/Volume total:\s*R\$\s*([\d.,]+)/);
+
+      const systemsMatch = contractText.match(/OBT.*?:\s*(.+)/);
+      const backofficeMatch = contractText.match(/Backoffice:\s*(.+)/);
+
+      const systems: string[] = [];
+      if (systemsMatch) systems.push(systemsMatch[0].trim());
+      if (backofficeMatch) systems.push(backofficeMatch[0].trim());
+
+      res.json({
+        clientName: client.name,
+        clientType: client.type,
+        projectCategory: client.type === "travel_agency" ? "Viagens e Eventos" : "Corporativo",
+        volumes: {
+          year1: vol2024Match ? `R$ ${vol2024Match[1]}` : null,
+          year1Label: "2024",
+          year2: vol2025Match ? `R$ ${vol2025Match[1]}` : null,
+          year2Label: "2025",
+          total: volTotalMatch ? `R$ ${volTotalMatch[1]}` : null,
+        },
+        period: "2024-2025",
+        systems,
+        contractVersion: CONTRACT_VERSION,
+      });
+    } catch (error: any) {
+      console.error("Error fetching project overview:", error.message);
+      res.status(500).json({ error: "Failed to fetch project overview" });
+    }
+  });
+
   app.get("/api/contract/signature", requireAuth, async (req: Request, res: Response) => {
     const userId = req.session.userId!;
     const signatures = await db

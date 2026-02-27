@@ -26,26 +26,26 @@ import {
 import { useAuth } from "@/lib/auth";
 
 const SCOPE_ITEMS = [
-  "Conformidade com politicas de viagens",
+  "Conformidade com politicas internas",
   "Governanca e controles",
-  "Integridade de dados",
-  "Conformidade contratual",
-  "Controles e aprovacoes",
-  "Falhas operacionais",
-  "Vulnerabilidades financeiras",
-  "Avaliacao de riscos",
-  "Oportunidades de otimizacao",
+  "Integridade de dados entre sistemas",
+  "Conformidade contratual com fornecedores",
+  "Controles, aprovacoes e alcadas",
+  "Falhas operacionais recorrentes",
+  "Vulnerabilidades financeiras e sistemicas",
+  "Avaliacao de riscos e exposicoes",
+  "Oportunidades de otimizacao e economia",
 ];
 
-const EXPECTED_DATA = [
-  { source: "OBT Reserve", type: "Reservas e PNRs", status: "pending" },
-  { source: "OBT Argo", type: "Reservas e PNRs", status: "pending" },
-  { source: "Backoffice Wintour", type: "Emissoes e faturamento 2024", status: "pending" },
-  { source: "Backoffice Stur", type: "Emissoes e faturamento 2025", status: "pending" },
-  { source: "Cartoes Corporativos", type: "Extratos Bradesco EBTA", status: "pending" },
-  { source: "GDS Sabre / Amadeus", type: "Dados de PNR", status: "pending" },
-  { source: "BSPlink", type: "Faturamento e settlement", status: "pending" },
-  { source: "Agencias (CVC, Flytour, BRT)", type: "Management files", status: "pending" },
+const STANDARD_DATA_SOURCES = [
+  { source: "OBT (Online Booking Tool)", type: "Reservas e PNRs", status: "pending" },
+  { source: "Backoffice / ERP", type: "Emissoes e faturamento", status: "pending" },
+  { source: "Cartoes Corporativos", type: "Extratos e conciliacao", status: "pending" },
+  { source: "GDS (Sabre / Amadeus)", type: "Dados de PNR", status: "pending" },
+  { source: "BSPlink", type: "Faturamento IATA e settlement", status: "pending" },
+  { source: "Agencias de Viagens", type: "Management files", status: "pending" },
+  { source: "Contratos e Acordos", type: "Documentacao contratual", status: "pending" },
+  { source: "Relatorios Gerenciais", type: "Pagamentos e receitas", status: "pending" },
 ];
 
 export default function ClientDashboard() {
@@ -61,18 +61,21 @@ export default function ClientDashboard() {
     queryKey: ["/api/contract/signature"],
   });
 
+  const { data: projectOverview } = useQuery<{
+    clientName: string;
+    clientType: string;
+    projectCategory: string;
+    volumes: { year1: string | null; year1Label: string; year2: string | null; year2Label: string; total: string | null } | null;
+    period: string | null;
+    systems: string[];
+    contractVersion?: string;
+  }>({
+    queryKey: ["/api/client/project-overview"],
+  });
+
   const contractSigned = signatureData?.signed === true;
 
   const PROJECT_PHASES = [
-    {
-      phase: "Fase 00",
-      title: "Contrato Assinado",
-      description: "Assinatura digital do contrato com registro de IP, SHA-256 e timestamp conforme Lei 14.063/2020.",
-      status: contractSigned ? ("completed" as const) : ("blocking" as const),
-      detail: contractSigned
-        ? `Assinado por ${signatureData?.signature?.signerName} em ${new Date(signatureData?.signature?.signedAt || "").toLocaleDateString("pt-BR")}`
-        : "Pendente — assine o contrato para iniciar o projeto",
-    },
     {
       phase: "Fase 01",
       title: "Proposta Comercial",
@@ -82,6 +85,15 @@ export default function ClientDashboard() {
     },
     {
       phase: "Fase 02",
+      title: "Assinatura do Contrato",
+      description: "Assinatura digital do contrato com registro de IP, SHA-256 e timestamp conforme Lei 14.063/2020.",
+      status: contractSigned ? ("completed" as const) : ("blocking" as const),
+      detail: contractSigned
+        ? `Assinado por ${signatureData?.signature?.signerName} em ${new Date(signatureData?.signature?.signedAt || "").toLocaleDateString("pt-BR")}`
+        : "Pendente — assine o contrato para iniciar o projeto",
+    },
+    {
+      phase: "Fase 03",
       title: "Onboarding & Acessos",
       description: "Cadastro do cliente na plataforma, definicao de acessos, alinhamento de expectativas e prazos.",
       status: contractSigned ? ("in_progress" as const) : ("locked" as const),
@@ -90,7 +102,7 @@ export default function ClientDashboard() {
         : "Bloqueado — requer assinatura do contrato",
     },
     {
-      phase: "Fase 03",
+      phase: "Fase 04",
       title: "Coleta de Dados",
       description: "Recebimento das bases de dados dos sistemas (OBT, Backoffice, cartoes, GDS, BSP) para inicio das analises.",
       status: contractSigned ? ("pending" as const) : ("locked" as const),
@@ -99,7 +111,7 @@ export default function ClientDashboard() {
         : "Bloqueado — requer assinatura do contrato",
     },
     {
-      phase: "Fase 04",
+      phase: "Fase 05",
       title: "Reconciliacao & Analise",
       description: "Cruzamento e reconciliacao das informacoes, identificacao de inconsistencias, falhas e vulnerabilidades.",
       status: contractSigned ? ("pending" as const) : ("locked" as const),
@@ -108,7 +120,7 @@ export default function ClientDashboard() {
         : "Bloqueado — requer assinatura do contrato",
     },
     {
-      phase: "Fase 05",
+      phase: "Fase 06",
       title: "Apresentacao dos Resultados",
       description: "Consolidacao dos achados, dashboards executivos, relatorio tecnico e plano de acao.",
       status: contractSigned ? ("pending" as const) : ("locked" as const),
@@ -117,7 +129,7 @@ export default function ClientDashboard() {
         : "Bloqueado — requer assinatura do contrato",
     },
     {
-      phase: "Fase 06",
+      phase: "Fase 07",
       title: "Entrega Final",
       description: "Entrega do relatorio executivo e tecnico final, evidence packs e recomendacoes.",
       status: contractSigned ? ("pending" as const) : ("locked" as const),
@@ -251,33 +263,57 @@ export default function ClientDashboard() {
         <CardContent className="p-6">
           <div className="flex items-center gap-2 mb-1">
             <Plane className="w-5 h-5 text-primary" />
-            <h2 className="text-sm font-semibold" data-testid="text-project-name">Projeto — {user?.fullName}</h2>
-            <Badge variant="secondary" className="text-[10px]">Viagens e Eventos</Badge>
+            <h2 className="text-sm font-semibold" data-testid="text-project-name">Projeto — {projectOverview?.clientName || user?.fullName}</h2>
+            <Badge variant="secondary" className="text-[10px]">{projectOverview?.projectCategory || "Auditoria"}</Badge>
           </div>
           <p className="text-[11px] text-muted-foreground mb-4">Dados macro conforme proposta comercial aceita</p>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            {projectOverview?.volumes?.year1 ? (
+              <div className="p-3 rounded-md bg-background/60 text-center">
+                <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="text-volume-year1">{projectOverview.volumes.year1}</p>
+                <p className="text-[11px] text-muted-foreground">Volume {projectOverview.volumes.year1Label}</p>
+                <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
+              </div>
+            ) : (
+              <div className="p-3 rounded-md bg-background/60 text-center">
+                <p className="text-xl font-bold text-muted-foreground">—</p>
+                <p className="text-[11px] text-muted-foreground">Volume Ano 1</p>
+                <Badge variant="outline" className="text-[9px] mt-1">A definir</Badge>
+              </div>
+            )}
+            {projectOverview?.volumes?.year2 ? (
+              <div className="p-3 rounded-md bg-background/60 text-center">
+                <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-volume-year2">{projectOverview.volumes.year2}</p>
+                <p className="text-[11px] text-muted-foreground">Volume {projectOverview.volumes.year2Label}</p>
+                <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
+              </div>
+            ) : (
+              <div className="p-3 rounded-md bg-background/60 text-center">
+                <p className="text-xl font-bold text-muted-foreground">—</p>
+                <p className="text-[11px] text-muted-foreground">Volume Ano 2</p>
+                <Badge variant="outline" className="text-[9px] mt-1">A definir</Badge>
+              </div>
+            )}
+            {projectOverview?.volumes?.total ? (
+              <div className="p-3 rounded-md bg-background/60 text-center">
+                <p className="text-xl font-bold text-violet-600 dark:text-violet-400" data-testid="text-volume-total">{projectOverview.volumes.total}</p>
+                <p className="text-[11px] text-muted-foreground">Volume Total</p>
+                <Badge variant="outline" className="text-[9px] mt-1">Estimado</Badge>
+              </div>
+            ) : (
+              <div className="p-3 rounded-md bg-background/60 text-center">
+                <p className="text-xl font-bold text-muted-foreground">—</p>
+                <p className="text-[11px] text-muted-foreground">Volume Total</p>
+                <Badge variant="outline" className="text-[9px] mt-1">A definir</Badge>
+              </div>
+            )}
             <div className="p-3 rounded-md bg-background/60 text-center">
-              <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="text-volume-2024">R$ 51,3 MI</p>
-              <p className="text-[11px] text-muted-foreground">Volume 2024</p>
-              <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
-            </div>
-            <div className="p-3 rounded-md bg-background/60 text-center">
-              <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="text-volume-2025">R$ 39,6 MI</p>
-              <p className="text-[11px] text-muted-foreground">Volume 2025</p>
-              <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
-            </div>
-            <div className="p-3 rounded-md bg-background/60 text-center">
-              <p className="text-xl font-bold text-violet-600 dark:text-violet-400" data-testid="text-volume-total">R$ 90,9 MI</p>
-              <p className="text-[11px] text-muted-foreground">Volume Total</p>
-              <Badge variant="outline" className="text-[9px] mt-1">Estimado</Badge>
-            </div>
-            <div className="p-3 rounded-md bg-background/60 text-center">
-              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">2024–2025</p>
+              <p className="text-xl font-bold text-amber-600 dark:text-amber-400">{projectOverview?.period || "—"}</p>
               <p className="text-[11px] text-muted-foreground">Periodo</p>
               <Badge variant="outline" className="text-[9px] mt-1">Proposta</Badge>
             </div>
             <div className="p-3 rounded-md bg-background/60 text-center">
-              <p className="text-xl font-bold text-slate-600 dark:text-slate-400">4</p>
+              <p className="text-xl font-bold text-slate-600 dark:text-slate-400">{projectOverview?.systems?.length || "—"}</p>
               <p className="text-[11px] text-muted-foreground">Sistemas</p>
               <Badge variant="outline" className="text-[9px] mt-1 cursor-pointer" onClick={() => window.location.href = '/systems'}>Ver sistemas</Badge>
             </div>
@@ -387,7 +423,7 @@ export default function ClientDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {EXPECTED_DATA.map((item) => (
+              {STANDARD_DATA_SOURCES.map((item) => (
                 <div key={item.source} className="flex items-center justify-between gap-3 p-2.5 rounded-md bg-muted/50" data-testid={`data-source-${item.source.toLowerCase().replace(/\s/g, '-')}`}>
                   <div className="flex items-center gap-2.5 min-w-0">
                     <div className="flex items-center justify-center w-7 h-7 rounded-md bg-muted shrink-0">
