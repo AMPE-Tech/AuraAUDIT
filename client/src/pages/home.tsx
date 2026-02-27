@@ -600,7 +600,7 @@ export default function Home() {
               Ver como funciona
             </Button>
             <Button variant="outline" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
-              Solicitar diagnostico
+              Teste agora
             </Button>
             <Button variant="outline" size="sm" className="text-xs" data-testid="button-monthly-subscription" onClick={() => window.location.href = '/subscription'}>
               Plano Basico $99 / Mes
@@ -1269,7 +1269,7 @@ export default function Home() {
             Envie uma amostra de dados e receba um diagnostico com divergencias, oportunidades e evidencias rastreaveis.
           </p>
           <Button className="mt-2" data-testid="button-cta-contact">
-            Solicitar Diagnostico
+            Teste agora
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </CardContent>
