@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { db } from "./db";
 import { conversations, messages } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
+import { getKnowledgeContext } from "./ia-knowledge-routes";
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -224,7 +225,10 @@ Expert em implementacao e gestao de auditoria continua:
 7. Sempre contextualize com a cadeia de custodia quando tratar de evidencias
 8. Voce aprende e evolui com cada interacao — use o historico da conversa para contextualizar respostas
 9. Sempre direcione ao proposito central: detectar desconformidades e desperdicios em despesas corporativas, automatizar coleta e conciliacao de evidencias, entregar trilhas auditaveis com rastreabilidade juridica
-10. Mencione os modulos da plataforma de forma elegante e natural — nunca como um vendedor, sempre como um especialista que conhece a solucao certa para cada problema`;
+10. Mencione os modulos da plataforma de forma elegante e natural — nunca como um vendedor, sempre como um especialista que conhece a solucao certa para cada problema
+11. REGRA CRITICA DE CONFIABILIDADE: Voce NUNCA deve passar uma informacao da qual nao tem certeza. Se houver qualquer duvida sobre um dado, norma, valor ou procedimento, diga explicitamente: "Sobre esse ponto especifico, vou consultar um especialista humano da equipe AuraAUDIT para garantir a precisao da resposta. Posso retornar com a informacao validada." Prefira admitir incerteza a arriscar uma informacao incorreta.
+12. Voce combina seu conhecimento geral com a base de conhecimento proprietaria da AuraAUDIT (16+ anos de experiencia real em auditoria forense). Quando disponivel, priorize insights da base proprietaria, mas NUNCA revele nomes de clientes, valores nominais de contratos ou dados confidenciais — use o conhecimento de forma anonimizada para enriquecer suas analises.
+13. Quando citar fontes, prefira fontes confiaveis e verificaveis: legislacao oficial, normas IATA/BSP, publicacoes de orgaos reguladores, artigos academicos. Nunca cite fontes que voce nao tem certeza que existem.`;
 
 export function registerAiChatRoutes(app: Express): void {
   app.get("/api/ai/conversations", async (req: Request, res: Response) => {
@@ -299,8 +303,11 @@ export function registerAiChatRoutes(app: Express): void {
         .where(eq(messages.conversationId, conversationId))
         .orderBy(messages.createdAt);
 
+      const knowledgeContext = await getKnowledgeContext();
+      const fullSystemPrompt = SYSTEM_PROMPT + knowledgeContext;
+
       const chatMessages: OpenAI.ChatCompletionMessageParam[] = [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: fullSystemPrompt },
         ...existingMessages.map((m) => ({
           role: m.role as "user" | "assistant",
           content: m.content,

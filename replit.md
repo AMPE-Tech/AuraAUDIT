@@ -30,6 +30,7 @@ Aura Audit employs a modern full-stack architecture.
 - **Subscription System:** Features a self-service subscription model (AuraAudit Pass) with tiered pricing based on Value Under Management (VAM) and configurable monthly caps, integrated with Stripe for checkout and billing.
 - **Identity and Access Management:** Role-based authentication (Admin, Client) using express-session, bcrypt, and connect-pg-simple.
 - **Data Validation:** Implements robust CNPJ/CPF mathematical validation and integration with BrasilAPI for real-time company data lookup.
+- **IA Knowledge Base (Documentos IA):** Admin-only knowledge management system where audit expertise (16+ years of materials) is uploaded, categorized (14 categories), and injected into the AI system prompt. Auto-extracts text from .txt/.md/.csv/.json/.xml files; manual text input for PDFs/DOCs. Toggle active/inactive per document. AI applies knowledge confidentially (never reveals client names), prioritizes reliable sources, and explicitly says it will consult a human expert when uncertain.
 - **UI/UX:** The design prioritizes clear navigation and data visualization, with a consistent theme across public, admin, and client portals. The public site focuses on institutional information, services, methodology, and a free trial for basic AI analysis with chain of custody.
 
 ## External Dependencies

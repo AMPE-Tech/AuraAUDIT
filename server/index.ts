@@ -13,6 +13,7 @@ import { registerContractRoutes } from "./contract-routes";
 import { registerTrialRoutes } from "./trial-routes";
 import { registerDashboardRoutes } from "./dashboard-routes";
 import { registerArtifactsRoutes } from "./artifacts-routes";
+import { registerIaKnowledgeRoutes } from "./ia-knowledge-routes";
 
 const app = express();
 app.set("trust proxy", true);
@@ -146,6 +147,7 @@ async function initStripe() {
   registerTrialRoutes(app);
   registerDashboardRoutes(app);
   registerArtifactsRoutes(app);
+  registerIaKnowledgeRoutes(app);
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {

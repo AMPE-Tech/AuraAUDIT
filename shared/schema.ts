@@ -487,6 +487,26 @@ export const insertAiJobQuoteSchema = createInsertSchema(aiJobQuotes).omit({ id:
 export const insertAiJobOutputSchema = createInsertSchema(aiJobOutputs).omit({ id: true, createdAt: true });
 export const insertAuditEnvelopeSchema = createInsertSchema(auditEnvelopes).omit({ id: true, createdAt: true });
 export const insertDashboardViewSchema = createInsertSchema(dashboardViews).omit({ id: true, createdAt: true, updatedAt: true });
+export const iaKnowledgeDocs = pgTable("ia_knowledge_docs", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category").notNull().default("general"),
+  fileName: text("file_name").notNull(),
+  originalName: text("original_name").notNull(),
+  fileSize: integer("file_size").notNull(),
+  mimeType: text("mime_type"),
+  sha256: text("sha256").notNull(),
+  extractedText: text("extracted_text"),
+  isActive: boolean("is_active").notNull().default(true),
+  uploadedBy: varchar("uploaded_by"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertIaKnowledgeDocSchema = createInsertSchema(iaKnowledgeDocs).omit({ id: true, createdAt: true });
+export type InsertIaKnowledgeDoc = z.infer<typeof insertIaKnowledgeDocSchema>;
+export type IaKnowledgeDoc = typeof iaKnowledgeDocs.$inferSelect;
+
 export const insertArtifactSchema = createInsertSchema(artifacts).omit({ id: true, createdAt: true });
 export const insertAiJobApprovalSchema = createInsertSchema(aiJobApprovals).omit({ id: true, approvedAt: true });
 export const insertAiJobFileSchema = createInsertSchema(aiJobFiles).omit({ id: true, createdAt: true });

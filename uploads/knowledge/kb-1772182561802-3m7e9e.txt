@@ -1,0 +1,1 @@
+Metodologia AuraAUDIT para auditoria de viagens corporativas: 1) Coleta de dados brutos (CSV/XLSX); 2) Normalizacao e validacao; 3) Cruzamento multi-fonte (OBT x Backoffice x BSP x Cartao); 4) Deteccao de anomalias por regras e IA; 5) Classificacao de risco; 6) Cadeia de custodia SHA-256.

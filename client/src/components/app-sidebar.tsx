@@ -15,6 +15,7 @@ import {
   Wallet,
   Building2,
   FileSignature,
+  Brain,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -55,6 +56,7 @@ const cadastroItems = [
 
 const adminItems = [
   { title: "Painel Admin", url: "/admin", icon: Settings },
+  { title: "Documentos IA", url: "/ia-knowledge", icon: Brain },
 ];
 
 const systemItems = [
