@@ -407,7 +407,12 @@ export function registerContractRoutes(app: Express) {
     const allSignatures = await db.select().from(contractSignatures).orderBy(desc(contractSignatures.signedAt));
 
     const contracts = allClients.map((client) => {
-      const sig = allSignatures.find((s) => s.companyCnpj === client.cnpj || s.companyName === client.name);
+      const clientSig = allSignatures.find((s) =>
+        (s.companyCnpj === client.cnpj || s.companyName === client.name) && (!s.signerType || s.signerType === "client")
+      );
+      const contractorSig = allSignatures.find((s) =>
+        s.clientId === client.id && s.signerType === "contractor"
+      );
       const contractText = generateContractText(auditor, client);
       const sha256 = hashContractText(contractText);
       return {
@@ -420,8 +425,10 @@ export function registerContractRoutes(app: Express) {
         contractNumber: "AUR-2025-0042",
         contractVersion: CONTRACT_VERSION,
         contractSha256: sha256,
-        signed: !!sig,
-        signature: sig || null,
+        signed: !!clientSig,
+        signature: clientSig || null,
+        contractorSigned: !!contractorSig,
+        contractorSignature: contractorSig || null,
       };
     });
 
@@ -502,6 +509,74 @@ ${auditor?.contactPhone || ""}`;
       subject,
       body,
       clientName: client.name,
+    });
+  });
+
+  app.post("/api/admin/contracts/:clientId/contractor-sign", requireAuth, async (req: Request, res: Response) => {
+    if (req.session.role !== "admin") {
+      return res.status(403).json({ error: "Acesso restrito ao administrador." });
+    }
+    const { clientId } = req.params;
+    const { signerCpf } = req.body;
+    const userId = req.session.userId!;
+    const fullName = req.session.fullName || "Unknown";
+
+    const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
+    if (!client) return res.status(404).json({ error: "Cliente nao encontrado." });
+
+    const existing = await db
+      .select()
+      .from(contractSignatures)
+      .where(eq(contractSignatures.clientId, clientId));
+    const alreadySigned = existing.find((s) => s.signerType === "contractor");
+    if (alreadySigned) {
+      return res.status(400).json({ error: "Contrato ja assinado pela contratada para este cliente." });
+    }
+
+    let cpfDigits: string | null = null;
+    if (signerCpf) {
+      cpfDigits = signerCpf.replace(/\D/g, "");
+      if (!validateCPF(cpfDigits)) {
+        return res.status(400).json({ error: "CPF invalido — digitos verificadores nao conferem." });
+      }
+    }
+
+    const auditor = await getAuditorProfile();
+    const contractText = generateContractText(auditor, client);
+    const contractSha256 = hashContractText(contractText);
+    const ipAddress = req.headers["x-forwarded-for"]?.toString().split(",")[0] || req.socket.remoteAddress || "unknown";
+    const userAgent = req.headers["user-agent"] || "unknown";
+
+    const [signature] = await db
+      .insert(contractSignatures)
+      .values({
+        contractNumber: "AUR-2025-0042",
+        userId,
+        signerName: fullName,
+        signerRole: "Representante Legal — Contratada",
+        signerType: "contractor",
+        signerCpf: cpfDigits || null,
+        companyName: auditor?.name || "CTS Brasil",
+        companyCnpj: auditor?.cnpj || null,
+        clientId,
+        contractTextSha256: contractSha256,
+        contractVersion: CONTRACT_VERSION,
+        contractType: "custom",
+        ipAddress,
+        userAgent,
+      })
+      .returning();
+
+    return res.json({
+      success: true,
+      signature,
+      proof: {
+        contractSha256,
+        ipAddress,
+        userAgent,
+        signedAt: signature.signedAt,
+        legalBasis: "Lei 14.063/2020 (assinatura eletronica simples), MP 2.200-2/2001",
+      },
     });
   });
 
