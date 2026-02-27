@@ -33,10 +33,10 @@ interface Conversation {
 }
 
 const SUGGESTIONS = [
-  "Quais arquivos devo carregar para auditar despesas de viagem?",
-  "Como a AuraAUDIT detecta desperdicios em despesas corporativas?",
-  "Como funciona a conciliacao OBT vs Backoffice?",
-  "O que a cadeia de custodia digital garante na auditoria?",
+  "Quais categorias de despesas a AuraAUDIT audita?",
+  "Como auditar contratos com fornecedores e detectar sobrepreco?",
+  "Como reduzir custos de telecom e licencas de software?",
+  "Quais arquivos carregar para auditar cartoes corporativos?",
 ];
 
 export function FloatingAiChat() {
