@@ -441,26 +441,15 @@ const MAIN_SEGMENTS = [
   "Varejo & E-commerce", "Saude & Hospitalar", "Engenharia & Construcao", "Seguros", "Telecomunicacoes",
 ];
 
-const LATAM_ECOSYSTEM_CATEGORIES = [
-  { name: "GDS", icon: Network, description: "Global Distribution Systems" },
-  { name: "OBT", icon: Monitor, description: "Online Booking Tool" },
-  { name: "TMC", icon: Building2, description: "Travel Management Company" },
-  { name: "Midoffice / Backoffice", icon: Database, description: "Conciliacao e faturamento" },
-  { name: "Pagamentos", icon: CreditCard, description: "Pagamentos Corporativos" },
-  { name: "Cias Aereas", icon: Plane, description: "Companhias Aereas" },
-  { name: "Hotelaria", icon: Hotel, description: "Hotelaria Corporativa" },
-  { name: "Car Rental", icon: Car, description: "Locadoras de Veiculos" },
-  { name: "Seguros", icon: Shield, description: "Seguradoras e Assistencia" },
-  { name: "MICE", icon: CalendarDays, description: "Eventos Corporativos" },
-];
-
 const LATAM_COUNTRIES = [
-  { name: "Brasil", code: "BR" },
-  { name: "Mexico", code: "MX" },
-  { name: "Colombia", code: "CO" },
-  { name: "Chile", code: "CL" },
-  { name: "Argentina", code: "AR" },
-  { name: "Peru", code: "PE" },
+  { name: "Brasil", code: "BR", flag: "\u{1F1E7}\u{1F1F7}" },
+  { name: "Mexico", code: "MX", flag: "\u{1F1F2}\u{1F1FD}" },
+  { name: "Colombia", code: "CO", flag: "\u{1F1E8}\u{1F1F4}" },
+  { name: "Chile", code: "CL", flag: "\u{1F1E8}\u{1F1F1}" },
+  { name: "Argentina", code: "AR", flag: "\u{1F1E6}\u{1F1F7}" },
+  { name: "Peru", code: "PE", flag: "\u{1F1F5}\u{1F1EA}" },
+  { name: "Uruguai", code: "UY", flag: "\u{1F1FA}\u{1F1FE}" },
+  { name: "Paraguai", code: "PY", flag: "\u{1F1F5}\u{1F1FE}" },
 ];
 
 function ExpandableServiceCard({ service }: { service: typeof CORPORATE_SERVICES[0] }) {
@@ -996,33 +985,57 @@ export default function Home() {
 
       <Separator />
 
-      <div className="space-y-4" data-testid="section-latam-reach">
+      <div className="space-y-5" data-testid="section-latam-reach">
         <div className="flex items-center gap-2">
           <Globe className="w-4 h-4 text-primary" />
-          <h2 className="text-sm font-semibold">Cobertura Nacional e LATAM</h2>
+          <h2 className="text-sm font-semibold">Cobertura America Latina</h2>
         </div>
         <p className="text-xs text-muted-foreground max-w-3xl leading-relaxed">
-          Cobertura completa do ecossistema corporativo de despesas, desde GDS e OBTs ate eventos corporativos (MICE), com atuacao em toda a America Latina.
+          do ecossistema de auditoria de despesas corporativas.
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-          {LATAM_ECOSYSTEM_CATEGORIES.map((cat) => (
-            <div
-              key={cat.name}
-              className="flex items-center gap-2 p-3 rounded-lg bg-muted/50"
-              data-testid={`latam-category-${cat.name.toLowerCase().replace(/[\s/]/g, '-')}`}
-            >
-              <cat.icon className="w-4 h-4 text-primary shrink-0" />
-              <span className="text-sm font-medium">{cat.name}</span>
+
+        <div className="relative rounded-xl border bg-gradient-to-br from-slate-900/80 via-slate-800/60 to-slate-900/80 p-6 overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.07]" style={{
+            backgroundImage: `radial-gradient(circle at 30% 40%, rgba(59,130,246,0.5) 0%, transparent 50%),
+                              radial-gradient(circle at 70% 60%, rgba(16,185,129,0.4) 0%, transparent 50%)`,
+          }} />
+
+          <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {LATAM_COUNTRIES.map((country, i) => {
+              const sizes = [
+                "col-span-2 sm:col-span-2",
+                "col-span-1",
+                "col-span-1",
+                "col-span-1",
+                "col-span-1",
+                "col-span-1",
+                "col-span-1",
+                "col-span-2 sm:col-span-2",
+              ];
+              return (
+                <div
+                  key={country.code}
+                  className={`${sizes[i] || ""} group relative flex items-center gap-3 p-4 rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-primary/40 transition-all duration-300`}
+                  data-testid={`badge-country-${country.code.toLowerCase()}`}
+                >
+                  <span className="text-2xl">{country.flag}</span>
+                  <div className="flex flex-col">
+                    <span className="text-[11px] font-mono text-primary/70 tracking-wider">{country.code}</span>
+                    <span className="text-sm font-medium text-white/90">{country.name}</span>
+                  </div>
+                  <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="relative mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+            <span className="text-[11px] text-white/40 font-mono tracking-wider">LATAM COVERAGE</span>
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+              <span className="text-[11px] text-emerald-400/80">8 paises ativos</span>
             </div>
-          ))}
-        </div>
-        <div className="flex flex-wrap items-center gap-2 pt-2">
-          <span className="text-sm text-muted-foreground mr-1" data-testid="text-latam-countries-label">Atuacao LATAM:</span>
-          {LATAM_COUNTRIES.map((country) => (
-            <Badge key={country.code} variant="outline" className="text-xs" data-testid={`badge-country-${country.code.toLowerCase()}`}>
-              {country.code} {country.name}
-            </Badge>
-          ))}
+          </div>
         </div>
       </div>
 
