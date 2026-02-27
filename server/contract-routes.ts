@@ -25,6 +25,11 @@ function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
   const auditorCnpj = auditorData?.cnpj || "00.000.000/0001-00";
   const auditorEmail = auditorData?.contactEmail || "marcos@cts-brasil.com";
+  const auditorPhone = auditorData?.contactPhone || "11 99103-6692";
+  const auditorAddress = auditorData?.address || "Av. Paulista, 726 - 17 andar, sala 1707";
+  const auditorCity = auditorData?.city || "Sao Paulo";
+  const auditorState = auditorData?.state || "SP";
+  const auditorContactName = auditorData?.contactName || "Marcos Costa";
   const clientName = clientData?.name || "Cliente";
   const clientCnpj = clientData?.cnpj || "00.000.000/0000-00";
   const clientEmail = clientData?.contactEmail || "";
@@ -47,10 +52,10 @@ Atencao: ${clientContactName}
 
 CONTRATADA: ${auditorName}
 CNPJ: ${auditorCnpj}
-Endereco: Av. Paulista, 726 - 17 andar, sala 1707, Bela Vista, CEP 01310-100, Sao Paulo - SP
+Endereco: ${auditorAddress}${auditorCity ? `, ${auditorCity}` : ""}${auditorState ? ` - ${auditorState}` : ""}
 Email: ${auditorEmail}
-Telefone: 11 99103-6692
-Responsavel: Marcos Costa — Chief Executive Officer
+Telefone: ${auditorPhone}
+Responsavel: ${auditorContactName} — Chief Executive Officer
 
 ============================================================
 PARTE I — PROPOSTA TECNICA
@@ -349,8 +354,8 @@ Certos de que nossa experiencia nos qualifica para atender plenamente o projeto,
 
 ${auditorName}
 Contrato de Auditoria e Consultoria — Versao ${CONTRACT_VERSION}
-Av. Paulista, 726 - 17 andar, sala 1707, Bela Vista, CEP 01310-100, Sao Paulo - SP
-Marcos Costa | Telefone: 11 99103-6692 | Email: marcos@cts-brasil.com`;
+${auditorAddress}${auditorCity ? `, ${auditorCity}` : ""}${auditorState ? ` - ${auditorState}` : ""}
+${auditorContactName} | Telefone: ${auditorPhone} | Email: ${auditorEmail}`;
 }
 
 function hashContractText(text: string): string {
