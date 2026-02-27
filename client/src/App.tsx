@@ -7,7 +7,6 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { ClientSidebar } from "@/components/client-sidebar";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
@@ -115,7 +114,7 @@ function AuthenticatedApp() {
                   <User className="w-4 h-4" />
                   <span data-testid="text-user-name">{user.fullName}</span>
                 </div>
-                <ThemeToggle />
+                
                 <Button
                   variant="ghost"
                   size="sm"
@@ -148,7 +147,7 @@ function AuthenticatedApp() {
                 <User className="w-4 h-4" />
                 <span data-testid="text-user-name">{user?.fullName}</span>
               </div>
-              <ThemeToggle />
+              
               <Button
                 variant="ghost"
                 size="sm"
@@ -187,7 +186,7 @@ function PublicHome() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <ThemeToggle />
+            
             {user ? (
               <Button size="sm" onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
                 <User className="w-4 h-4 mr-2" />
@@ -243,7 +242,7 @@ function AppContent() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <ThemeToggle />
+              
               {user ? (
                 <Button size="sm" onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
                   <User className="w-4 h-4 mr-2" />
@@ -279,7 +278,7 @@ function AppContent() {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <ThemeToggle />
+              
               {user ? (
                 <Button size="sm" onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
                   <User className="w-4 h-4 mr-2" />
