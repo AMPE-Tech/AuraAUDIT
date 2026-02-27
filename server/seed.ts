@@ -15,7 +15,7 @@ async function seedUsers(clientIds: Record<string, string>) {
 
   console.log("Seeding users...");
   const adminHash = await bcrypt.hash("aura2025!", 10);
-  const stabiaHash = await bcrypt.hash("stabia2025!", 10);
+  const stabiaHash = await bcrypt.hash("stabia2026!", 10);
 
   await db.insert(users).values([
     {
