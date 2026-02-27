@@ -883,6 +883,9 @@ ${auditor?.contactPhone || ""}`;
     const ipAddress = req.headers["x-forwarded-for"]?.toString().split(",")[0] || req.socket.remoteAddress || "unknown";
     const userAgent = req.headers["user-agent"] || "unknown";
 
+    const [currentUser] = await db.select().from(users).where(eq(users.id, userId));
+    const userClientId = currentUser?.clientId || null;
+
     const [signature] = await db
       .insert(contractSignatures)
       .values({
@@ -890,9 +893,11 @@ ${auditor?.contactPhone || ""}`;
         userId,
         signerName: fullName,
         signerRole,
+        signerType: "client",
         signerCpf: cpfDigits || null,
         companyName: companyName || client?.name || null,
         companyCnpj: companyCnpj || client?.cnpj || null,
+        clientId: userClientId,
         contractTextSha256: contractSha256,
         contractVersion: CONTRACT_VERSION,
         ipAddress,
