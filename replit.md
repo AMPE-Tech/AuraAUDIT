@@ -26,11 +26,11 @@ Aura Audit employs a modern full-stack architecture.
 - **Reports Library (Artifacts):** Centralized artifact management with SHA-256 integrity, status workflow (draft→reviewed→approved), and automatic artifact generation from AI Desk outputs.
 - **Billing Overview:** Unified billing page showing AuraAudit Pass subscription alongside Wallet balance and consumption.
 - **Company Billing Config:** Configurable limits per company (auto-approve threshold, per-job limit, monthly cap).
-- **Contract v3.0.0:** Technical master contract with 25 clauses, 17 evidences, and 3 annexes documenting all modules.
+- **Contract v5.0.0:** Technical master contract with 28 clauses (including 8 new platform clauses 21-28), 21 evidences (E1-E21), 3 annexes, 25-item compliance checklist (20 OK, 5 observations), 9 implemented modules (M1-M9), and dual-signature system.
 - **Subscription System:** Features a self-service subscription model (AuraAudit Pass) with tiered pricing based on Value Under Management (VAM) and configurable monthly caps, integrated with Stripe for checkout and billing.
 - **Identity and Access Management:** Role-based authentication (Admin, Client) using express-session, bcrypt, and connect-pg-simple.
 - **Data Validation:** Implements robust CNPJ/CPF mathematical validation and integration with BrasilAPI for real-time company data lookup.
-- **IA Knowledge Base (Documentos IA):** Admin-only knowledge management system where audit expertise (16+ years of materials) is uploaded, categorized (14 categories), and injected into the AI system prompt. Auto-extracts text from .txt/.md/.csv/.json/.xml files; manual text input for PDFs/DOCs. Toggle active/inactive per document. AI applies knowledge confidentially (never reveals client names), prioritizes reliable sources, and explicitly says it will consult a human expert when uncertain.
+- **IA Knowledge Base (Documentos IA):** Admin-only knowledge management system where audit expertise (16+ years of materials) is uploaded, categorized (14 categories), and injected into the AI system prompt. Auto-extracts text from PDF (pdf-parse), Word/DOCX (mammoth), Excel/XLSX (xlsx), TXT, MD, CSV, JSON, XML files. Toggle active/inactive per document. AI applies knowledge confidentially (never reveals client names), prioritizes reliable sources, and explicitly says it will consult a human expert when uncertain.
 - **UI/UX:** The design prioritizes clear navigation and data visualization, with a consistent theme across public, admin, and client portals. The public site focuses on institutional information, services, methodology, and a free trial for basic AI analysis with chain of custody.
 
 ## External Dependencies

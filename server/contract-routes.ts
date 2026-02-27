@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "4.0.0";
+const CONTRACT_VERSION = "5.0.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
@@ -291,56 +291,214 @@ PARTE IV — DISPOSICOES CONTRATUAIS
 20.1. Fica eleito o Foro da Comarca de Sao Paulo - SP para dirimir quaisquer controversias oriundas deste contrato, com renuncia expressa a qualquer outro, por mais privilegiado que seja.
 
 ============================================================
-ANEXO I — EVIDENCIAS TECNICAS DO PROJETO
+PARTE V — PLATAFORMA DIGITAL AURAAUDIT
 ============================================================
 
-E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal
+21. AI DESK — 11 SERVICOS DE IA SOB DEMANDA
+
+21.1. A plataforma AuraAUDIT disponibiliza 11 servicos de inteligencia artificial especializados em Travel & Expense, cada um com precificacao transparente baseada em creditos:
+
+  S1. Conciliacao e Reconciliacao — base 100 creditos + 5/arquivo
+       Add-on: Conciliacao multi-via 4+ fontes (+60 creditos)
+  S2. Revisao de Contratos — base 60 creditos + 6/pagina
+  S3. Resposta a Edital/RFP — base 120 creditos + 8/pagina
+       Add-on: Matriz de conformidade + anexos (+80 creditos)
+  S4. SLA + KPI + Scorecard — base 150 creditos
+       Add-ons: SLA tecnico detalhado (+50), KPI dashboard pack (+50)
+  S5. Assistente de Negociacao — base 90 creditos + 8/cenario
+       Add-on: Analise de formacao de preco (+40 creditos)
+  S6. Alertas em Tempo Real — base 80 creditos + 10/regra
+       Add-on: Thresholds customizados (+30 creditos)
+  S7. Conectar API de Fornecedores — base 200 creditos (requer revisao humana)
+       Add-on: Mapeamento de dados + transformacao (+100 creditos)
+  S8. Relatorio Automatico — base 70 creditos + 5/dimensao
+       Add-on: Pacote de graficos avancados (+40 creditos)
+  S9. Apresentacao Executiva — base 120 creditos + 10/slide
+       Add-on: Analise de marketshare (+60 creditos)
+  S10. Estrategia Lost Saving — base 110 creditos + 8/fornecedor
+       Add-on: Dados de benchmark do mercado (+50 creditos)
+  S11. Plano de Acao 30/60/90 — base 80 creditos
+       Add-on: Owners/Responsaveis + Cronograma (+20 creditos)
+
+21.2. Cada servico gera um envelope de auditoria com SHA-256, garantindo rastreabilidade e integridade dos resultados.
+21.3. Fluxo de aprovacao: cotacao automatica → aprovacao (automatica se abaixo do limite configuravel, manual se acima) → execucao → geracao de artefato.
+21.4. Jobs acima do limite de auto-aprovacao exigem autorizacao administrativa antes da execucao.
+
+22. WALLET DE CREDITOS
+
+22.1. Carteira digital com creditos pre-pagos para consumo dos servicos do AI Desk.
+22.2. Pacotes padrao disponiveis:
+  - 50 creditos — US$ 50
+  - 100 creditos — US$ 100
+  - 500 creditos — US$ 500
+  - 1.000 creditos — US$ 1.000
+22.3. Valores personalizados: recarga customizada a partir de US$ 1.000 (sem limite superior).
+22.4. Ledger completo e auditavel com transparencia total sobre consumo, debitos, recargas e ajustes.
+22.5. Tipos de lancamento: topup (recarga), debit (consumo), refund (estorno), adjustment (ajuste), vip_courtesy (cortesia).
+
+23. DASHBOARD STUDIO
+
+23.1. Ferramenta para criacao de dashboards personalizados.
+23.2. Biblioteca de 8 widgets interativos:
+  W1. Gastos por Area/CC (PieChart)
+  W2. Excecoes de Politica (AlertTriangle)
+  W3. Performance de SLA (Activity/Line)
+  W4. Savings Identificados (TrendingUp/Area)
+  W5. Mapa de Riscos (Shield/Heatmap)
+  W6. Ranking de Fornecedores (Award/Bar)
+  W7. Volume Mensal Auditado (BarChart)
+  W8. Score de Compliance (CheckCircle/Gauge)
+23.3. Filtros globais: periodo, departamento, fornecedor.
+23.4. Versionamento automatico de views com historico.
+23.5. Publicacao administrativa: admin pode tornar views publicas para todos os usuarios da empresa.
+
+24. BIBLIOTECA DE RELATORIOS E ARTEFATOS (REPORTS LIBRARY)
+
+24.1. Repositorio centralizado de todos os artefatos gerados pela plataforma.
+24.2. Tipos de artefato: ai_output (gerados pelo AI Desk), official (relatorios oficiais), quick (relatorios rapidos).
+24.3. Workflow de status: draft (rascunho) → reviewed (revisado) → approved (aprovado).
+24.4. Transicoes de status controladas — apenas administrador pode avancar status.
+24.5. Hash SHA-256 individual por artefato, calculado automaticamente a partir do conteudo.
+24.6. Download com header X-SHA256 para verificacao de integridade pelo destinatario.
+24.7. Artefatos do AI Desk sao criados automaticamente ao concluir um job, vinculados via sourceRefsJson.
+
+25. CONFIGURACAO DE FATURAMENTO POR EMPRESA (COMPANY BILLING CONFIG)
+
+25.1. Limite por job por usuario (padrao: 200 creditos).
+25.2. Limite por job por empresa (padrao: 500 creditos).
+25.3. Cap mensal de wallet por empresa (configuravel, sem limite padrao).
+25.4. Threshold de auto-aprovacao (padrao: 200 creditos) — jobs abaixo deste valor sao aprovados automaticamente.
+25.5. Configuracao pode ser ajustada pelo administrador por empresa.
+
+26. ASSINATURA DUAL DE CONTRATOS
+
+26.1. O contrato requer assinatura de ambas as partes: Contratada e Cliente.
+26.2. Cada assinatura e registrada independentemente com:
+  a) CPF do signatario (mascarado na exibicao)
+  b) Hash SHA-256 do texto integral do contrato
+  c) IP do dispositivo
+  d) User-agent do navegador
+  e) Timestamp UTC
+26.3. Tipos de assinatura: "contractor" (contratada) e "client" (cliente).
+26.4. Solicitacao de assinatura pode ser enviada por email ou WhatsApp.
+26.5. Badges visuais indicam status de cada assinatura: verde (assinado), vermelho/ambar (pendente).
+
+27. BASE DE CONHECIMENTO IA (DOCUMENTOS IA)
+
+27.1. Modulo administrativo para gestao de conhecimento proprietario (16+ anos de expertise em auditoria).
+27.2. Upload de documentos com extracao automatica de texto:
+  a) PDF — extracao via pdf-parse
+  b) Word (.docx) — extracao via mammoth
+  c) Excel (.xlsx/.xls) — conversao para CSV via xlsx
+  d) TXT, MD, CSV, JSON, XML — extracao direta
+27.3. 14 categorias de conhecimento: metodologia-auditoria, benchmark-mercado, legislacao-compliance, contratos-fornecedores, conciliacao-financeira, gestao-viagens, fraude-prevencao, treinamento-capacitacao, relatorios-modelos, ferramentas-sistemas, boas-praticas, glossario-termos, casos-referencia, politicas-internas.
+27.4. Toggle ativo/inativo por documento — controla o que a IA consome.
+27.5. Limite: 100.000 caracteres por documento; 30.000 caracteres por chamada de IA (priorizando documentos ativos).
+27.6. Hash SHA-256 calculado para cada documento na submissao.
+27.7. Regras comportamentais da IA:
+  R11. A IA admite quando nao tem certeza e informa que vai consultar especialista humano.
+  R12. Usa conhecimento proprietario de forma confidencial — nunca revela nomes de clientes ou dados sensíveis de outros projetos.
+  R13. Prioriza fontes confiaveis e verificaveis (legislacao, IATA, orgaos reguladores).
+
+28. SISTEMA ANTIALUCINACAO (IA)
+
+28.1. Todos os outputs de IA sao acompanhados de envelope de auditoria SHA-256.
+28.2. Cotacao previa obrigatoria antes de execucao.
+28.3. Aprovacao humana em todas as etapas (o usuario decide e aprova).
+28.4. Registro de modelo/versao/parametros em cada execucao.
+28.5. Fluxo completo: draft → quoted → pending_approval → approved → running → completed.
+
+============================================================
+ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E21)
+============================================================
+
+E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal (BrasilAPI)
 E2. Contrato dinamico: texto gerado a partir de dados cadastrais verificados do contratante e contratada
-E3. Assinatura digital: SHA-256 do texto integral, IP, user-agent, timestamp, CPF (quando informado, exibido mascarado)
-E4. Trilha de auditoria: registros imutaveis com hash de integridade por entrada
+E3. Assinatura digital: SHA-256 do texto integral, IP, user-agent, timestamp, CPF mascarado
+E4. Trilha de auditoria: registros imutaveis com hash de integridade por entrada (append-only)
 E5. Cadeia de custodia: conformidade com Lei 13.964/2019, hashes SHA-256 por registro
 E6. Antiregressao: dataBefore/dataAfter em cada mutacao, versionamento de contratos
 E7. Reconciliacao multi-via: cruzamento OBT vs Backoffice vs faturamento vs cartao/VCN
 E8. Evidence packs: documentacao por caso/evento com raw data, logs e versoes de regras
+E9. AI Desk: 11 servicos implementados com envelope SHA-256, cotacao e aprovacao por job
+E10. Wallet: 4 pacotes padrao + valor personalizado, ledger completo com 5 tipos de lancamento
+E11. Dashboard Studio: 8 widgets, filtros globais, versionamento, publicacao admin
+E12. Reports Library: 3 tipos de artefato, workflow draft→reviewed→approved, SHA-256 por artefato
+E13. Company Billing Config: limites por usuario/empresa, cap mensal, auto-aprovacao configuravel
+E14. Assinatura dual: contratada + cliente com rastreamento independente, CPF + SHA-256 + IP + user-agent
+E15. Documentos IA: upload com extracao automatica (PDF/Word/Excel), 14 categorias, toggle ativo/inativo
+E16. Injecao de conhecimento: getKnowledgeContext() injeta docs ativos no system prompt (cap 30K chars)
+E17. Regras IA: R11 (consultar humano), R12 (confidencialidade), R13 (fontes verificaveis)
+E18. Stripe integrado: checkout para wallet (topup) e subscription (AuraAudit Pass)
+E19. Assinatura eletronica: Lei 14.063/2020 + MP 2.200-2/2001
+E20. LGPD: mascaramento de CPF, dados pessoais protegidos, finalidade contratual
+E21. Pagina publica: chat IA flutuante com trial gratuito e cadeia de custodia
 
 ============================================================
-ANEXO II — PLATAFORMA AURAAUDIT: MODULOS COMPLEMENTARES
-(Informativo — sem valores — disponivel para contratacao futura)
+ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
 ============================================================
 
-A plataforma AuraAUDIT oferece modulos digitais complementares que podem potencializar os resultados da auditoria e estender a governanca de viagens corporativas do contratante. Abaixo, uma visao geral de cada modulo:
+A plataforma AuraAUDIT oferece os seguintes modulos digitais, todos implementados e operacionais:
 
-M1. AURAAUDIT PASS (Assinatura Digital de Monitoramento Continuo)
-Plano de assinatura mensal que oferece auditoria continua com dashboard interativo, trilha de auditoria, cadeia de custodia digital e relatorios automatizados. Ideal para empresas que desejam monitoramento permanente apos a conclusao do projeto de auditoria pontual, garantindo compliance e savings recorrentes.
+M1. AURAAUDIT PASS (Assinatura Mensal)
+Plano de assinatura mensal que oferece auditoria continua com dashboard interativo, trilha de auditoria, cadeia de custodia digital e relatorios automatizados. Integrado com Stripe para checkout e faturamento automatico. Status: IMPLEMENTADO.
 
-M2. AI DESK (11 Servicos de IA sob Demanda)
-Mesa de servicos com 11 funcionalidades de inteligencia artificial especializadas em viagens corporativas:
-  - Conciliacao e Reconciliacao: cruzamento automatizado de dados multi-via entre OBT, backoffice, faturamento e cartoes
-  - Revisao de Contratos: analise de clausulas, SLAs e conformidade contratual com fornecedores
-  - Resposta a Editais/RFP: montagem estruturada de propostas e licitacoes com matriz de compliance
-  - SLA + KPI + Scorecard: criacao e monitoramento de indicadores operacionais para gestao de agencias e fornecedores
-  - Assistente de Negociacao: formacao de preco e estrategia de negociacao com fornecedores, incluindo cenarios comparativos
-  - Alertas em Tempo Real: monitoramento continuo com notificacoes de desvios de politica, cobrancas indevidas e anomalias
-  - Conectar API de Fornecedores: integracao tecnica com sistemas de cias aereas, hoteis, locadoras e GDS
-  - Relatorio Automatico: geracao de relatorios por area, centro de custo, departamento ou fornecedor
-  - Apresentacao Executiva: slides com marketshare, gastos e graficos para apresentacao a diretoria
-  - Estrategia Lost Saving: identificacao de economias perdidas e estrategia de recuperacao com benchmark de mercado
-  - Plano de Acao 30/60/90: plano estruturado com responsaveis, prazos e acompanhamento de implementacao
-Cada servico gera um envelope de auditoria com SHA-256, garantindo rastreabilidade e integridade dos resultados.
+M2. AI DESK (11 Servicos de IA)
+Mesa de servicos com 11 funcionalidades de IA — conciliacao, contratos, editais/RFP, SLA/KPI/Scorecard, negociacao, alertas, APIs, relatorios, apresentacoes, lost saving, plano de acao. Cada servico gera envelope SHA-256. Fluxo: draft → quoted → pending_approval → approved → running → completed. Status: IMPLEMENTADO.
 
 M3. WALLET DE CREDITOS
-Carteira digital com creditos pre-pagos para consumo dos servicos do AI Desk. Permite controle de gastos por empresa, limites por job e cap mensal. Ledger completo e auditavel com transparencia total sobre o consumo.
+Carteira digital com 4 pacotes padrao (US$50/100/500/1000) + valor personalizado (min US$1000). Ledger auditavel com 5 tipos de lancamento. Checkout via Stripe. Status: IMPLEMENTADO.
 
 M4. DASHBOARD STUDIO
-Ferramenta para criacao de dashboards personalizados com widgets interativos (gastos por area, excecoes de politica, performance SLA, savings, mapa de riscos, ranking de fornecedores, volume mensal, score de compliance). Permite filtros globais, versionamento e publicacao de views para toda a empresa.
+Dashboards personalizados com 8 widgets, filtros globais, versionamento e publicacao admin. Status: IMPLEMENTADO.
 
-M5. BIBLIOTECA DE RELATORIOS E ARTEFATOS
-Repositorio centralizado de todos os artefatos gerados pela plataforma, com workflow de status (rascunho > revisado > aprovado), hash SHA-256 individual por artefato e download com verificacao de integridade. Garante rastreabilidade completa de todos os outputs gerados.
+M5. BIBLIOTECA DE RELATORIOS (ARTIFACTS)
+Repositorio de artefatos com 3 tipos, workflow de status, SHA-256 por artefato, download com verificacao de integridade. Artefatos do AI Desk criados automaticamente. Status: IMPLEMENTADO.
 
 M6. SISTEMA ANTIALUCINACAO (IA)
-Mecanismo de controle que garante que todos os outputs de IA sejam acompanhados de envelope de auditoria, cotacao previa obrigatoria, aprovacao humana e registro de modelo/versao/parametros. A IA sugere e gera, mas o usuario decide e aprova em todas as etapas.
+Envelope SHA-256, cotacao obrigatoria, aprovacao humana, registro de modelo/parametros. Status: IMPLEMENTADO.
 
-Para mais informacoes sobre qualquer modulo complementar, entre em contato com a equipe ${auditorName}.
+M7. DOCUMENTOS IA — BASE DE CONHECIMENTO
+Upload de documentos com extracao automatica (PDF/Word/Excel/TXT/MD/CSV/JSON/XML), 14 categorias, toggle ativo/inativo, injecao no prompt IA (cap 30K chars), regras comportamentais R11/R12/R13. Status: IMPLEMENTADO.
+
+M8. ASSINATURA DUAL DE CONTRATOS
+Contratada + Cliente com rastreamento independente, CPF + SHA-256 + IP + user-agent. Solicitacao por email/WhatsApp. Status: IMPLEMENTADO.
+
+M9. CONFIGURACAO DE FATURAMENTO (BILLING CONFIG)
+Limites por usuario/empresa, cap mensal, threshold de auto-aprovacao. Configuravel por empresa via admin. Status: IMPLEMENTADO.
+
+============================================================
+ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
+============================================================
+
+[OK] CL01. Validacao CNPJ: algoritmo matematico + consulta BrasilAPI (Receita Federal)
+[OK] CL02. Validacao CPF: algoritmo matematico com mascaramento na exibicao
+[OK] CL03. Contrato dinamico: texto gerado com dados verificados de ambas as partes
+[OK] CL04. Assinatura digital: SHA-256, IP, user-agent, timestamp, CPF, Lei 14.063/2020
+[OK] CL05. Assinatura dual: contratada e cliente assinam independentemente
+[OK] CL06. Trilha de auditoria: registros imutaveis (append-only) com hash SHA-256
+[OK] CL07. Cadeia de custodia: conformidade Lei 13.964/2019 (Pacote Anticrime)
+[OK] CL08. Antiregressao: dataBefore/dataAfter, versionamento de contratos
+[OK] CL09. AI Desk: 11 servicos com envelope SHA-256, cotacao e aprovacao
+[OK] CL10. Wallet: 4 pacotes + customizado, ledger completo, checkout Stripe
+[OK] CL11. Dashboard Studio: 8 widgets, filtros, versionamento, publicacao
+[OK] CL12. Reports Library: 3 tipos, workflow de status, SHA-256, download verificavel
+[OK] CL13. Billing Config: limites, cap mensal, auto-aprovacao configuravel
+[OK] CL14. Documentos IA: upload, extracao automatica, 14 categorias, toggle
+[OK] CL15. Regras IA: R11 consultar humano, R12 confidencialidade, R13 fontes verificaveis
+[OK] CL16. LGPD: mascaramento CPF, finalidade contratual, dados protegidos
+[OK] CL17. Stripe: checkout wallet + subscription integrados
+[OK] CL18. Pagina publica: trial gratuito com cadeia de custodia
+[OK] CL19. Reconciliacao: cruzamento multi-via (OBT/Backoffice/fatura/cartao)
+[OK] CL20. Role-based access: admin, client, auditor com controle de acesso por rota
+
+ITENS PENDENTES / EM OBSERVACAO:
+
+[!!] CL21. Extracao de texto PDF: funcional para PDFs com texto selecionavel; PDFs escaneados (imagens) requerem OCR nao implementado — campo de edicao manual disponivel como fallback.
+[!!] CL22. Backup e recuperacao: nao ha rotina automatizada de backup do banco PostgreSQL — depende da infraestrutura Replit. Recomendacao: configurar backup externo periodico.
+[!!] CL23. Testes automatizados: cobertura de testes unitarios/integracao nao implementada — validacao manual via e2e e curl. Recomendacao: implementar suite de testes.
+[!!] CL24. Rate limiting: nao ha rate limiting explicito nas APIs — depende da camada de infraestrutura. Recomendacao: adicionar middleware de rate limit.
+[!!] CL25. Multi-idioma: plataforma opera em portugues brasileiro; nao ha suporte a outros idiomas. Recomendacao: avaliar necessidade futura.
 
 ============================================================
 CONSIDERACOES FINAIS
@@ -348,12 +506,15 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M9, com 21 evidencias tecnicas documentadas, 25 itens de checklist de conformidade (20 conformes, 5 em observacao) e 3 anexos detalhados.
+
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 
 "Cuidado com as pequenas despesas, um pequeno vazamento afundara um grande navio." — Benjamin Franklin
 
 ${auditorName}
 Contrato de Auditoria e Consultoria — Versao ${CONTRACT_VERSION}
+Total de clausulas: 28 | Evidencias: 21 | Anexos: 3
 ${auditorAddress}${auditorCity ? `, ${auditorCity}` : ""}${auditorState ? ` - ${auditorState}` : ""}
 ${auditorContactName} | Telefone: ${auditorPhone} | Email: ${auditorEmail}`;
 }
