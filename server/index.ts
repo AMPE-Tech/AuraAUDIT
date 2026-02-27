@@ -11,6 +11,8 @@ import { registerAiDeskRoutes } from "./ai-desk-routes";
 import { registerUploadRoutes } from "./upload-routes";
 import { registerContractRoutes } from "./contract-routes";
 import { registerTrialRoutes } from "./trial-routes";
+import { registerDashboardRoutes } from "./dashboard-routes";
+import { registerArtifactsRoutes } from "./artifacts-routes";
 
 const app = express();
 app.set("trust proxy", true);
@@ -142,6 +144,8 @@ async function initStripe() {
   registerUploadRoutes(app);
   registerContractRoutes(app);
   registerTrialRoutes(app);
+  registerDashboardRoutes(app);
+  registerArtifactsRoutes(app);
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {

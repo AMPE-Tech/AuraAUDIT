@@ -32,6 +32,7 @@ import {
 
 const mainItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Dashboard Studio", url: "/dashboard-studio", icon: LayoutDashboard },
   { title: "Despesas", url: "/expenses", icon: Receipt },
   { title: "Reconciliacao", url: "/reconciliation", icon: ArrowRightLeft },
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
@@ -42,6 +43,7 @@ const servicosItems = [
   { title: "Servicos", url: "/services", icon: Briefcase },
   { title: "AI Desk", url: "/ai-desk", icon: Zap },
   { title: "Carteira", url: "/wallet", icon: Wallet },
+  { title: "Faturamento", url: "/billing", icon: Receipt },
 ];
 
 const cadastroItems = [

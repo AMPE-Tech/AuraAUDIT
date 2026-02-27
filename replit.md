@@ -21,7 +21,12 @@ Aura Audit employs a modern full-stack architecture.
 - **Data Reconciliation:** Advanced reconciliation capabilities across OBT, Backoffice, billing systems, and virtual credit cards.
 - **Immutable Audit Trail:** Ensures data integrity and compliance through deterministic SHA-256 integrity hashes for all audit activities.
 - **Structured Reporting:** Generates comprehensive audit reports (executive, technical, risk mapping, action plan) aligned with project deliverables.
-- **AI Desk & Wallet System:** Provides AI-powered services through an AI Desk with job creation, quoting, approval, and execution workflows, alongside a credit-based wallet system for managing service consumption.
+- **AI Desk (11 Services) & Wallet System:** AI-powered services through an AI Desk with 11 services (Reconciliation, Contract Review, RFP/RFP, SLA/KPI/Scorecard, Negotiation Assistant, Real-time Alerts, API Connect, Auto Report, Executive Presentation, Lost Saving Strategy, Action Plan), full lifecycle (draft→quoted→pending_approval→approved→running→completed), audit envelope with SHA-256, and approval flow for jobs above configurable limits. Credit-based wallet with 4 packages (US$50/100/500/1000) plus custom amounts (min US$1000).
+- **Dashboard Studio:** Customizable dashboard views with 8 widget types, global filters, versioning, and admin publication workflow.
+- **Reports Library (Artifacts):** Centralized artifact management with SHA-256 integrity, status workflow (draft→reviewed→approved), and automatic artifact generation from AI Desk outputs.
+- **Billing Overview:** Unified billing page showing AuraAudit Pass subscription alongside Wallet balance and consumption.
+- **Company Billing Config:** Configurable limits per company (auto-approve threshold, per-job limit, monthly cap).
+- **Contract v3.0.0:** Technical master contract with 25 clauses, 17 evidences, and 3 annexes documenting all modules.
 - **Subscription System:** Features a self-service subscription model (AuraAudit Pass) with tiered pricing based on Value Under Management (VAM) and configurable monthly caps, integrated with Stripe for checkout and billing.
 - **Identity and Access Management:** Role-based authentication (Admin, Client) using express-session, bcrypt, and connect-pg-simple.
 - **Data Validation:** Implements robust CNPJ/CPF mathematical validation and integration with BrasilAPI for real-time company data lookup.

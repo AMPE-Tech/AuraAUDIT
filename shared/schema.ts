@@ -414,6 +414,68 @@ export const insertClientUploadSchema = createInsertSchema(clientUploads).omit({
 export type InsertClientUpload = z.infer<typeof insertClientUploadSchema>;
 export type ClientUpload = typeof clientUploads.$inferSelect;
 
+export const dashboardViews = pgTable("dashboard_views", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  createdByUserId: varchar("created_by_user_id").notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  layoutJson: jsonb("layout_json"),
+  filtersJson: jsonb("filters_json"),
+  widgetsJson: jsonb("widgets_json"),
+  tags: text("tags").array(),
+  version: integer("version").notNull().default(1),
+  isPublished: boolean("is_published").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const artifacts = pgTable("artifacts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  createdByUserId: varchar("created_by_user_id").notNull(),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  status: text("status").notNull().default("draft"),
+  storageRef: text("storage_ref"),
+  content: text("content"),
+  sha256: text("sha256"),
+  sourceRefsJson: jsonb("source_refs_json"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const aiJobApprovals = pgTable("ai_job_approvals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  jobId: varchar("job_id").notNull(),
+  approvedByUserId: varchar("approved_by_user_id").notNull(),
+  approvedAt: timestamp("approved_at").notNull().defaultNow(),
+  decision: text("decision").notNull(),
+  notes: text("notes"),
+});
+
+export const aiJobFiles = pgTable("ai_job_files", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  jobId: varchar("job_id").notNull(),
+  uploadId: varchar("upload_id"),
+  sha256: text("sha256"),
+  storageRef: text("storage_ref"),
+  filename: text("filename").notNull(),
+  mimeType: text("mime_type"),
+  sizeBytes: integer("size_bytes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const companyBillingConfig = pgTable("company_billing_config", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull(),
+  userJobLimitDefault: decimal("user_job_limit_default", { precision: 10, scale: 2 }).notNull().default("200"),
+  companyJobLimitDefault: decimal("company_job_limit_default", { precision: 10, scale: 2 }).notNull().default("500"),
+  companyMonthlyWalletCap: decimal("company_monthly_wallet_cap", { precision: 10, scale: 2 }),
+  autoApproveBelow: decimal("auto_approve_below", { precision: 10, scale: 2 }).default("200"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const insertWalletSchema = createInsertSchema(wallets).omit({ id: true, createdAt: true });
 export const insertWalletLedgerSchema = createInsertSchema(walletLedger).omit({ id: true, createdAt: true });
 export const insertAiServiceSchema = createInsertSchema(aiServices).omit({ id: true, createdAt: true });
@@ -421,6 +483,11 @@ export const insertAiJobSchema = createInsertSchema(aiJobs).omit({ id: true, cre
 export const insertAiJobQuoteSchema = createInsertSchema(aiJobQuotes).omit({ id: true, createdAt: true });
 export const insertAiJobOutputSchema = createInsertSchema(aiJobOutputs).omit({ id: true, createdAt: true });
 export const insertAuditEnvelopeSchema = createInsertSchema(auditEnvelopes).omit({ id: true, createdAt: true });
+export const insertDashboardViewSchema = createInsertSchema(dashboardViews).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertArtifactSchema = createInsertSchema(artifacts).omit({ id: true, createdAt: true });
+export const insertAiJobApprovalSchema = createInsertSchema(aiJobApprovals).omit({ id: true, approvedAt: true });
+export const insertAiJobFileSchema = createInsertSchema(aiJobFiles).omit({ id: true, createdAt: true });
+export const insertCompanyBillingConfigSchema = createInsertSchema(companyBillingConfig).omit({ id: true, createdAt: true, updatedAt: true });
 
 export type InsertWallet = z.infer<typeof insertWalletSchema>;
 export type Wallet = typeof wallets.$inferSelect;
@@ -436,3 +503,13 @@ export type InsertAiJobOutput = z.infer<typeof insertAiJobOutputSchema>;
 export type AiJobOutput = typeof aiJobOutputs.$inferSelect;
 export type InsertAuditEnvelope = z.infer<typeof insertAuditEnvelopeSchema>;
 export type AuditEnvelope = typeof auditEnvelopes.$inferSelect;
+export type InsertDashboardView = z.infer<typeof insertDashboardViewSchema>;
+export type DashboardView = typeof dashboardViews.$inferSelect;
+export type InsertArtifact = z.infer<typeof insertArtifactSchema>;
+export type Artifact = typeof artifacts.$inferSelect;
+export type InsertAiJobApproval = z.infer<typeof insertAiJobApprovalSchema>;
+export type AiJobApproval = typeof aiJobApprovals.$inferSelect;
+export type InsertAiJobFile = z.infer<typeof insertAiJobFileSchema>;
+export type AiJobFile = typeof aiJobFiles.$inferSelect;
+export type InsertCompanyBillingConfig = z.infer<typeof insertCompanyBillingConfigSchema>;
+export type CompanyBillingConfig = typeof companyBillingConfig.$inferSelect;

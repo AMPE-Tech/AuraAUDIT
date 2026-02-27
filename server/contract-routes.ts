@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "2.1.0";
+const CONTRACT_VERSION = "3.0.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "AuraAUDIT - AuraDue Tecnologia Ltda";
@@ -118,118 +118,157 @@ OBJETO: Prestacao de servicos de auditoria forense independente, consultoria tec
 5.4. Inclui: dashboard interativo, trilha de auditoria, cadeia de custodia digital, relatorios automatizados
 5.5. Checkout via Stripe com aceite de termos (SHA-256 hash, IP, user-agent registrados)
 
-6. AI DESK — CATALOGO DE SERVICOS DE IA SOB DEMANDA
+6. AI DESK — CATALOGO DE SERVICOS DE IA SOB DEMANDA (11 SERVICOS)
 6.1. Modelo de consumo: creditos pre-pagos (1 credito = US$ 1)
-6.2. Pacotes de recarga: 500, 1.500 ou 5.000 creditos
+6.2. Pacotes de recarga: US$ 50, US$ 100, US$ 500, US$ 1.000 ou valor personalizado (minimo US$ 1.000)
 6.3. Fluxo obrigatorio: Criar Job > Gerar Cotacao > Aprovar > Executar > Resultado + Envelope de Auditoria
 6.4. Servicos disponiveis:
-  6.4.1. Revisao de Contrato — base 60 creditos + 6/pagina (revisao humana 1,5x)
-  6.4.2. Resposta a Edital/RFP — base 120 creditos + 8/pagina (+80 matriz de compliance)
-  6.4.3. SLA + KPI + Scorecard — base 150 creditos (+50 SLA tecnico, +50 KPI dashboard)
-  6.4.4. Plano 30/60/90 — base 80 creditos (+20 owners/timeline)
+  6.4.1. Conciliacao e Reconciliacao — base 100 creditos + 5/arquivo (+60 conciliacao multi-via 4+ fontes)
+  6.4.2. Revisao de Contrato de Fornecedor — base 60 creditos + 6/pagina (revisao humana 1,5x)
+  6.4.3. Resposta a Edital/RFP/Licitacao — base 120 creditos + 8/pagina (+80 matriz de compliance)
+  6.4.4. SLA + KPI + Scorecard — base 150 creditos (+50 SLA tecnico, +50 KPI dashboard)
+  6.4.5. Assistente de Negociacao e Formacao de Preco — base 90 creditos + 8/cenario (+40 analise de formacao de preco)
+  6.4.6. Alertas em Tempo Real — base 80 creditos + 10/regra configurada (+30 thresholds customizados)
+  6.4.7. Conectar API de Fornecedores — base 200 creditos (setup obrigatorio com revisao humana) (+100 mapeamento de dados)
+  6.4.8. Relatorio Automatico (area/CC/depto/fornecedor) — base 70 creditos + 5/dimensao (+40 graficos avancados)
+  6.4.9. Apresentacao Executiva (marketshare/gastos/graficos) — base 120 creditos + 10/slide (+60 analise de marketshare)
+  6.4.10. Estrategia de Negociacao + Alertas Lost Saving — base 110 creditos + 8/fornecedor (+50 benchmark de mercado)
+  6.4.11. Plano de Acao 30/60/90 dias — base 80 creditos (+20 owners/cronograma)
 6.5. Cada job gera envelope de auditoria com SHA-256 (inputs, processamento, outputs, timestamps)
-6.6. Opcao de revisao humana disponivel para todos os servicos
+6.6. Opcao de revisao humana disponivel para todos os servicos (multiplicador 1,5x quando aplicavel)
+6.7. Jobs acima do limite de auto-aprovacao requerem aprovacao administrativa
+6.8. Cada output gera automaticamente um artefato na Biblioteca de Relatorios com SHA-256
 
 7. WALLET DE CREDITOS
-7.1. Carteira digital com saldo em creditos
-7.2. Recarga via Stripe (pacotes de 500, 1.500 ou 5.000 creditos)
-7.3. Ledger completo e auditavel (topup, debit, refund, adjustment)
-7.4. Saldo verificado automaticamente antes da aprovacao de cada job
-7.5. Transparencia: orcamento detalhado antes de cada execucao
+7.1. Carteira digital com saldo em creditos (1 credito = US$ 1)
+7.2. Recarga via Stripe: pacotes de US$ 50, US$ 100, US$ 500 e US$ 1.000
+7.3. Recarga personalizada: valor minimo de US$ 1.000, sem limite maximo
+7.4. Ledger completo e auditavel (topup, debit, refund, adjustment, vip_courtesy)
+7.5. Saldo verificado automaticamente antes da aprovacao de cada job
+7.6. Transparencia: orcamento detalhado antes de cada execucao
+7.7. Limites configuraveis por empresa: limite por job, limite mensal, auto-aprovacao
+
+8. DASHBOARD STUDIO
+8.1. Criacao de views personalizadas com widgets interativos
+8.2. Biblioteca de widgets: Gastos por Area, Excecoes de Politica, Performance SLA, Savings, Mapa de Riscos, Ranking de Fornecedores, Volume Mensal, Score de Compliance
+8.3. Filtros globais: periodo, departamento, fornecedor
+8.4. Versionamento de views (version incrementado a cada edicao)
+8.5. Publicacao administrativa: views publicadas ficam visiveis para toda a empresa
+8.6. Tags para organizacao e busca de views
+
+9. BIBLIOTECA DE RELATORIOS E ARTEFATOS
+9.1. Repositorio centralizado de todos os artefatos gerados pela plataforma
+9.2. Tipos de artefatos: Oficiais (relatorios finais), Rapidos (analises ad-hoc), AI Outputs (resultados do AI Desk)
+9.3. Workflow de status: draft (rascunho) > reviewed (revisado) > approved (aprovado)
+9.4. Hash SHA-256 individual para cada artefato (integridade verificavel)
+9.5. Download com header X-SHA256 para verificacao de integridade
+9.6. Rastreabilidade: cada artefato de IA referencia o job_id, service_id e envelope_sha256 de origem
+
+10. CONFIGURACAO DE BILLING E LIMITES
+10.1. Limite de auto-aprovacao por empresa: jobs abaixo deste valor sao aprovados automaticamente (padrao: US$ 200)
+10.2. Limite por job individual: valor maximo por job sem aprovacao administrativa (padrao: US$ 200)
+10.3. Limite mensal de consumo da empresa: cap mensal de gastos na wallet (configuravel)
+10.4. Limite global por job da empresa: valor maximo por job para a empresa (padrao: US$ 500)
+10.5. Configuracao gerenciada pelo administrador via painel administrativo
 
 --- PARTE III — DISPOSICOES GERAIS ---
 
-8. ESCOPO ESPECIFICO DO PROJETO
-8.1. Auditoria forense dos exercicios 2024 (R$ 51,3M) e 2025 (R$ 39,6M)
-8.2. Reconciliacao OBT (Reserve, Argo) vs Backoffice (Wintour 2024, Stur 2025)
-8.3. Cruzamento com fontes externas: cias aereas, agencias, EBTA Bradesco, GDS Sabre/Amadeus, BSPlink
-8.4. Analise em 9 areas: conformidade, governanca, integridade, contratos, controles, falhas, vulnerabilidades, riscos, otimizacao
+11. ESCOPO ESPECIFICO DO PROJETO
+11.1. Auditoria forense dos exercicios 2024 (R$ 51,3M) e 2025 (R$ 39,6M)
+11.2. Reconciliacao OBT (Reserve, Argo) vs Backoffice (Wintour 2024, Stur 2025)
+11.3. Cruzamento com fontes externas: cias aereas, agencias, EBTA Bradesco, GDS Sabre/Amadeus, BSPlink
+11.4. Analise em 9 areas: conformidade, governanca, integridade, contratos, controles, falhas, vulnerabilidades, riscos, otimizacao
 
-9. ENTREGAVEIS
-9.1. Relatorio Executivo de Auditoria (a cada fase concluida)
-9.2. Relatorio Tecnico Detalhado (ao final do projeto)
-9.3. Matriz de Riscos e Anomalias
-9.4. Parecer de Conformidade Legal
-9.5. Plano de Recomendacoes e Acoes Corretivas
-9.6. Dashboard Interativo de Resultados (tempo real)
-9.7. Cadeia de Custodia Digital Completa (continuo)
-9.8. Envelopes de auditoria para todos os servicos de IA executados
+12. ENTREGAVEIS
+12.1. Relatorio Executivo de Auditoria (a cada fase concluida)
+12.2. Relatorio Tecnico Detalhado (ao final do projeto)
+12.3. Matriz de Riscos e Anomalias
+12.4. Parecer de Conformidade Legal
+12.5. Plano de Recomendacoes e Acoes Corretivas
+12.6. Dashboard Interativo de Resultados (tempo real)
+12.7. Cadeia de Custodia Digital Completa (continuo)
+12.8. Envelopes de auditoria para todos os servicos de IA executados
+12.9. Artefatos na Biblioteca de Relatorios com SHA-256 individual
 
-10. SLA — ACORDO DE NIVEL DE SERVICO
-10.1. Tempo de resposta a incidentes criticos: ate 4 horas uteis
-10.2. Atualizacao de status do projeto: diariamente via dashboard
-10.3. Entrega de relatorios parciais: ate 48 horas apos cada fase
-10.4. Entrega do relatorio final: ate 5 dias uteis apos conclusao
-10.5. Reunioes de alinhamento: semanalmente ou sob demanda
-10.6. Disponibilidade da equipe: dias uteis, 08h as 18h
-10.7. AI Desk: cotacao em ate 2 minutos, execucao em ate 10 minutos por job
+13. SLA — ACORDO DE NIVEL DE SERVICO
+13.1. Tempo de resposta a incidentes criticos: ate 4 horas uteis
+13.2. Atualizacao de status do projeto: diariamente via dashboard
+13.3. Entrega de relatorios parciais: ate 48 horas apos cada fase
+13.4. Entrega do relatorio final: ate 5 dias uteis apos conclusao
+13.5. Reunioes de alinhamento: semanalmente ou sob demanda
+13.6. Disponibilidade da equipe: dias uteis, 08h as 18h
+13.7. AI Desk: cotacao em ate 2 minutos, execucao em ate 10 minutos por job
 
-11. VIGENCIA
-11.1. Inicio: 15/01/2025
-11.2. Termino: 31/12/2025
-11.3. Podendo ser prorrogado mediante termo aditivo
+14. VIGENCIA
+14.1. Inicio: 15/01/2025
+14.2. Termino: 31/12/2025
+14.3. Podendo ser prorrogado mediante termo aditivo
 
-12. CADASTRO E VALIDACAO DE PARTES
-12.1. CNPJ validado matematicamente (algoritmo de digitos verificadores) antes de qualquer operacao
-12.2. Consulta a Receita Federal (BrasilAPI) para preenchimento automatico de dados cadastrais
-12.3. CPF do representante legal validado matematicamente quando informado
-12.4. Validacao aplicada em: cadastro de clientes, assinatura de contrato, perfis de empresa
+15. CADASTRO E VALIDACAO DE PARTES
+15.1. CNPJ validado matematicamente (algoritmo de digitos verificadores) antes de qualquer operacao
+15.2. Consulta a Receita Federal (BrasilAPI) para preenchimento automatico de dados cadastrais
+15.3. CPF do representante legal validado matematicamente quando informado
+15.4. Validacao aplicada em: cadastro de clientes, assinatura de contrato, perfis de empresa
 
-13. CONFIDENCIALIDADE
+16. CONFIDENCIALIDADE
 Todas as informacoes compartilhadas sao tratadas como confidenciais e protegidas por NDA assinado entre as partes.
 
-14. CADEIA DE CUSTODIA DIGITAL
-14.1. Todos os dados e evidencias sao mantidos em cadeia de custodia digital certificada
-14.2. Hashes SHA-256 deterministicos para cada registro, documento e artefato
-14.3. Trilha de auditoria imutavel com integridade verificavel
-14.4. Envelopes de auditoria para servicos de IA (inputs + processamento + outputs + SHA-256)
-14.5. Conformidade com Lei 13.964/2019 (Pacote Anticrime)
+17. CADEIA DE CUSTODIA DIGITAL
+17.1. Todos os dados e evidencias sao mantidos em cadeia de custodia digital certificada
+17.2. Hashes SHA-256 deterministicos para cada registro, documento e artefato
+17.3. Trilha de auditoria imutavel com integridade verificavel
+17.4. Envelopes de auditoria para servicos de IA (inputs + processamento + outputs + SHA-256)
+17.5. Conformidade com Lei 13.964/2019 (Pacote Anticrime)
+17.6. Artefatos na Biblioteca de Relatorios com SHA-256 individual e rastreabilidade de origem
 
-15. SISTEMA ANTIREGRESSAO
-15.1. Toda alteracao em dados auditados e registrada com estado anterior (dataBefore) e posterior (dataAfter)
-15.2. Hash de integridade SHA-256 calculado para cada entrada da trilha de auditoria
-15.3. Registros de auditoria sao imutaveis (append-only) — nao podem ser editados ou excluidos
-15.4. Versionamento de contratos: cada versao gera novo SHA-256, versoes anteriores permanecem registradas
-15.5. Ledger de creditos append-only: cada transacao e registrada individualmente sem alteracao de registros anteriores
-15.6. Validacao matematica de documentos (CNPJ/CPF) impede regressao de dados cadastrais invalidos
-15.7. Termos de servico versionados com SHA-256 — aceite vinculado a versao especifica
+18. SISTEMA ANTIREGRESSAO
+18.1. Toda alteracao em dados auditados e registrada com estado anterior (dataBefore) e posterior (dataAfter)
+18.2. Hash de integridade SHA-256 calculado para cada entrada da trilha de auditoria
+18.3. Registros de auditoria sao imutaveis (append-only) — nao podem ser editados ou excluidos
+18.4. Versionamento de contratos: cada versao gera novo SHA-256, versoes anteriores permanecem registradas
+18.5. Ledger de creditos append-only: cada transacao e registrada individualmente sem alteracao de registros anteriores
+18.6. Validacao matematica de documentos (CNPJ/CPF) impede regressao de dados cadastrais invalidos
+18.7. Termos de servico versionados com SHA-256 — aceite vinculado a versao especifica
+18.8. Dashboard views versionadas: cada edicao incrementa version, historico preservado
 
-16. SISTEMA ANTIALUCINACAO (AI DESK)
-16.1. Todos os outputs de IA sao acompanhados de envelope de auditoria com hash SHA-256
-16.2. Inputs do usuario sao registrados e hasheados — garantia de que o resultado corresponde a solicitacao original
-16.3. Cotacao obrigatoria antes da execucao — usuario ve o escopo antes de aprovar
-16.4. Opcao de revisao humana disponivel para todos os servicos de IA
-16.5. Outputs sao armazenados com hash individual — qualquer alteracao posterior e detectavel
-16.6. Modelo de IA, versao e parametros de execucao registrados no envelope de auditoria
-16.7. A IA sugere e gera, mas o usuario decide e aprova — controle humano em todas as etapas
-16.8. Jobs cancelados ou com falha sao registrados com status e motivo para rastreabilidade
+19. SISTEMA ANTIALUCINACAO (AI DESK — 11 SERVICOS)
+19.1. Todos os outputs de IA sao acompanhados de envelope de auditoria com hash SHA-256
+19.2. Inputs do usuario sao registrados e hasheados — garantia de que o resultado corresponde a solicitacao original
+19.3. Cotacao obrigatoria antes da execucao — usuario ve o escopo antes de aprovar
+19.4. Opcao de revisao humana disponivel para todos os servicos de IA
+19.5. Outputs sao armazenados com hash individual — qualquer alteracao posterior e detectavel
+19.6. Modelo de IA, versao e parametros de execucao registrados no envelope de auditoria
+19.7. A IA sugere e gera, mas o usuario decide e aprova — controle humano em todas as etapas
+19.8. Jobs cancelados ou com falha sao registrados com status e motivo para rastreabilidade
+19.9. Jobs acima do limite de auto-aprovacao requerem aprovacao administrativa antes da execucao
+19.10. Cada output gera automaticamente um artefato na Biblioteca de Relatorios
 
-17. PROPRIEDADE INTELECTUAL
+20. PROPRIEDADE INTELECTUAL
 Os relatorios e analises produzidos sao de propriedade do contratante. A metodologia, ferramentas e modelos de IA permanecem propriedade da ${auditorName}.
 
-18. PROTECAO DE DADOS
+21. PROTECAO DE DADOS
 O tratamento de dados pessoais segue rigorosamente a LGPD (Lei 13.709/2018), com medidas tecnicas e administrativas de seguranca. Dados de CPF sao armazenados e exibidos com mascaramento parcial.
 
-19. INDEPENDENCIA
+22. INDEPENDENCIA
 A equipe de auditoria mantem total independencia e imparcialidade durante todo o processo, sem vinculo com as areas auditadas.
 
-20. RESCISAO
+23. RESCISAO
 O contrato pode ser rescindido por qualquer das partes com aviso previo de 30 dias, resguardados os direitos sobre trabalhos ja realizados e creditos nao utilizados.
 
-21. VALIDADE JURIDICA DA ASSINATURA ELETRONICA
-21.1. Este contrato e assinado eletronicamente nos termos da Lei 14.063/2020 (assinatura eletronica simples) e da Medida Provisoria 2.200-2/2001
-21.2. Integridade garantida por hash criptografico SHA-256
-21.3. Registrados: IP, user-agent, timestamp, identificacao do signatario e CPF (quando informado)
-21.4. Cadeia de custodia da assinatura: contrato texto -> SHA-256 -> assinatura -> registro imutavel
+24. VALIDADE JURIDICA DA ASSINATURA ELETRONICA
+24.1. Este contrato e assinado eletronicamente nos termos da Lei 14.063/2020 (assinatura eletronica simples) e da Medida Provisoria 2.200-2/2001
+24.2. Integridade garantida por hash criptografico SHA-256
+24.3. Registrados: IP, user-agent, timestamp, identificacao do signatario e CPF (quando informado)
+24.4. Cadeia de custodia da assinatura: contrato texto -> SHA-256 -> assinatura -> registro imutavel
 
-22. CANAIS DE ASSINATURA E DISTRIBUICAO DO CONTRATO
-22.1. Disponibilidade: o contrato esta disponivel para assinatura online (versao padrao via plataforma nativa AuraAUDIT) e offline (versao customizada para o cliente, gerada pela plataforma para impressao e assinatura manual)
-22.2. Assinatura via plataforma: o contratante pode assinar digitalmente diretamente na plataforma AuraAUDIT, com registro automatico de SHA-256, IP, user-agent, timestamp e CPF (quando informado)
-22.3. Envio por email: o contrato pode ser enviado por email ao contratante com link direto para visualizacao e assinatura digital na plataforma
-22.4. Envio por WhatsApp: o contrato pode ser enviado via WhatsApp ao contratante com link para assinatura digital, facilitando acesso remoto e comunicacao direta
-22.5. Painel administrativo: o administrador pode gerenciar o envio, verificar status de assinatura, reenviar por email ou WhatsApp, e copiar link do contrato a partir do painel de contratos da plataforma
-22.6. Equivalencia juridica: a assinatura eletronica realizada em qualquer dos canais descritos possui a mesma validade juridica nos termos da Lei 14.063/2020 e MP 2.200-2/2001
-22.7. Rastreabilidade de envio: cada envio por email ou WhatsApp e registrado na trilha de auditoria com timestamp, canal utilizado e destinatario
+25. CANAIS DE ASSINATURA E DISTRIBUICAO DO CONTRATO
+25.1. Disponibilidade: o contrato esta disponivel para assinatura online (versao padrao via plataforma nativa AuraAUDIT) e offline (versao customizada para o cliente, gerada pela plataforma para impressao e assinatura manual)
+25.2. Assinatura via plataforma: o contratante pode assinar digitalmente diretamente na plataforma AuraAUDIT, com registro automatico de SHA-256, IP, user-agent, timestamp e CPF (quando informado)
+25.3. Envio por email: o contrato pode ser enviado por email ao contratante com link direto para visualizacao e assinatura digital na plataforma
+25.4. Envio por WhatsApp: o contrato pode ser enviado via WhatsApp ao contratante com link para assinatura digital, facilitando acesso remoto e comunicacao direta
+25.5. Painel administrativo: o administrador pode gerenciar o envio, verificar status de assinatura, reenviar por email ou WhatsApp, e copiar link do contrato a partir do painel de contratos da plataforma
+25.6. Equivalencia juridica: a assinatura eletronica realizada em qualquer dos canais descritos possui a mesma validade juridica nos termos da Lei 14.063/2020 e MP 2.200-2/2001
+25.7. Rastreabilidade de envio: cada envio por email ou WhatsApp e registrado na trilha de auditoria com timestamp, canal utilizado e destinatario
 
 --- ANEXO I — EVIDENCIAS TECNICAS ---
 
@@ -237,16 +276,21 @@ E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita F
 E2. Contrato dinamico: texto gerado a partir de dados cadastrais verificados do contratante e contratada
 E3. Assinatura digital: SHA-256 do texto integral, IP, user-agent, timestamp, CPF (quando informado, exibido mascarado)
 E4. Trilha de auditoria: registros imutaveis com hash de integridade por entrada
-E5. AI Desk: envelope de auditoria por job (inputs hasheados, modelo/versao, outputs hasheados, envelope SHA-256)
-E6. Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos, valor USD)
+E5. AI Desk: envelope de auditoria por job (inputs hasheados, modelo/versao, outputs hasheados, envelope SHA-256) — 11 servicos
+E6. Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos, valor USD) — 4 pacotes + custom
 E7. Antiregressao: dataBefore/dataAfter em cada mutacao, versionamento de contratos e termos
 E8. Antialucinacao: cotacao previa, aprovacao humana, revisao opcional, envelope SHA-256 por output
 E9. Assinatura online: plataforma nativa com formulario de assinatura digital, validacao de CPF/CNPJ, registro de prova (SHA-256, IP, user-agent, timestamp)
 E10. Assinatura offline: contrato customizado para o cliente, gerado pela plataforma com dados cadastrais especificos do contratante, disponivel para impressao e assinatura manual (diferente da versao online padrao)
 E11. Distribuicao por email: envio de contrato com link para assinatura via plataforma, registrado na trilha de auditoria
 E12. Distribuicao por WhatsApp: envio de contrato via WhatsApp com link direto para assinatura digital, com numero do destinatario e mensagem registrados
+E13. Dashboard Studio: views personalizadas com widgets, filtros globais, versionamento, publicacao administrativa
+E14. Biblioteca de Relatorios: artefatos com SHA-256 individual, workflow de status (draft > reviewed > approved), download com header X-SHA256
+E15. Billing Config: limites configuraveis por empresa (auto-aprovacao, limite por job, cap mensal)
+E16. Aprovacao administrativa: jobs acima do limite requerem aprovacao com registro em ai_job_approvals (decisao, notas, timestamp, usuario)
+E17. Artefatos automaticos: cada output do AI Desk gera artefato na Biblioteca com rastreabilidade (job_id, service_id, envelope_sha256)
 
---- ANEXO II — ADITIVO DE 26/02/2026 ---
+--- ANEXO II — ADITIVO DE 26/02/2026 (v2.1.0) ---
 
 ADITIVO CONTRATUAL — Versao 2.1.0
 
@@ -259,6 +303,38 @@ A1. Adicionada clausula 22 — Canais de Assinatura e Distribuicao do Contrato (
 A2. Adicionadas evidencias E9 (assinatura online), E10 (assinatura offline), E11 (distribuicao por email), E12 (distribuicao por WhatsApp)
 A3. Versao do contrato atualizada de 2.0.0 para 2.1.0
 A4. Hash SHA-256 recalculado para refletir o texto integral atualizado
+
+Vigencia do aditivo: Este aditivo entra em vigor na data de sua publicacao e integra-se ao Contrato Tecnico Master AUR-2025-0042.
+
+--- ANEXO III — ADITIVO DE 27/02/2026 (v3.0.0) ---
+
+ADITIVO CONTRATUAL — Versao 3.0.0
+
+Objeto do aditivo: Expansao significativa dos modulos digitais com inclusao de 7 novos servicos de IA (total 11), Dashboard Studio, Biblioteca de Relatorios, configuracao de billing e limites, e pacotes de recarga aprimorados.
+
+Justificativa: Atender a demanda aprovada pelo DPO para modelo unificado de billing por consumo, ampliacao do catalogo de servicos de IA, e inclusao de ferramentas de visualizacao e gestao de artefatos com cadeia de custodia digital.
+
+Alteracoes realizadas:
+
+MODULOS E SERVICOS:
+B1. AI Desk expandido de 4 para 11 servicos (clausula 6): Conciliacao, Revisao de Contrato, RFP/Licitacao, SLA/KPI/Scorecard, Negociacao/Preco, Alertas Tempo Real, API Fornecedores, Relatorio Automatico, Apresentacao Executiva, Lost Saving, Plano de Acao
+B2. Wallet aprimorada (clausula 7): 4 pacotes (US$ 50/100/500/1.000) + recarga personalizada (minimo US$ 1.000)
+B3. Dashboard Studio (clausula 8): views, widgets, filtros, versionamento, publicacao
+B4. Biblioteca de Relatorios (clausula 9): artefatos, SHA-256, workflow de status, download verificavel
+B5. Configuracao de Billing (clausula 10): limites por usuario/empresa, auto-aprovacao, cap mensal
+
+FLUXOS E CONTROLES:
+B6. Fluxo de aprovacao administrativa para jobs acima do limite configurado
+B7. Geracao automatica de artefatos a partir de outputs do AI Desk
+B8. Tabelas adicionadas: dashboard_views, artifacts, ai_job_approvals, ai_job_files, company_billing_config
+
+CONTRATO:
+B9. Renumeracao de clausulas (8-22 → 11-25) para acomodar novas clausulas 8-10
+B10. Evidencias adicionadas: E13 (Dashboard Studio), E14 (Biblioteca), E15 (Billing Config), E16 (Aprovacao), E17 (Artefatos automaticos)
+B11. Sistema Antialucinacao atualizado (clausula 19): 11 servicos, aprovacao administrativa, artefatos automaticos
+B12. Sistema Antiregressao atualizado (clausula 18): versionamento de dashboard views
+B13. Versao do contrato atualizada de 2.1.0 para 3.0.0
+B14. Hash SHA-256 recalculado para refletir o texto integral atualizado
 
 Vigencia do aditivo: Este aditivo entra em vigor na data de sua publicacao e integra-se ao Contrato Tecnico Master AUR-2025-0042.
 

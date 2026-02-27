@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge";
 
 const projetoItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Dashboard Studio", url: "/dashboard-studio", icon: LayoutDashboard },
   { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3 },
   { title: "Meu Cadastro", url: "/my-profile", icon: Building2 },
   { title: "Sistemas", url: "/systems", icon: Monitor },
@@ -45,6 +46,7 @@ const auditoriaItems = [
 const iaItems = [
   { title: "AI Desk", url: "/ai-desk", icon: Zap },
   { title: "Carteira", url: "/wallet", icon: Wallet },
+  { title: "Faturamento", url: "/billing", icon: Receipt },
 ];
 
 const comercialItems = [

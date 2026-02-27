@@ -1090,19 +1090,19 @@ export default function Home() {
           <Card className="border-amber-500/30" data-testid="card-module-aidesk">
             <CardContent className="p-4 space-y-2">
               <Badge variant="secondary" className="text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">Por consumo</Badge>
-              <h3 className="text-sm font-semibold">AI Desk</h3>
+              <h3 className="text-sm font-semibold">AI Desk — 11 Servicos</h3>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Servicos de IA sob demanda: revisao de contratos, respostas a editais, SLA/KPI e planos de acao — pagos por creditos.
+                11 servicos de IA sob demanda: conciliacao, contratos, editais, SLA/KPI, negociacao, alertas, APIs, relatorios, apresentacoes, lost saving e planos de acao.
               </p>
               <div className="space-y-1 pt-1">
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Zap className="w-3 h-3 text-amber-600" /> Revisao de contratos
+                  <Zap className="w-3 h-3 text-amber-600" /> Conciliacao + Contratos + RFP
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Zap className="w-3 h-3 text-amber-600" /> Resposta a editais/RFP
+                  <Zap className="w-3 h-3 text-amber-600" /> Alertas + APIs + Relatorios
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Zap className="w-3 h-3 text-amber-600" /> SLA + KPI + Scorecard
+                  <Zap className="w-3 h-3 text-amber-600" /> Negociacao + Lost Saving + Planos
                 </div>
               </div>
               <Button size="sm" className="w-full mt-2 text-xs" onClick={() => window.location.href = "/ai-desk"} data-testid="button-module-aidesk">
@@ -1110,26 +1110,26 @@ export default function Home() {
               </Button>
             </CardContent>
           </Card>
-          <Card className="opacity-60" data-testid="card-module-studio">
+          <Card className="border-indigo-500/30" data-testid="card-module-studio">
             <CardContent className="p-4 space-y-2">
-              <Badge variant="outline" className="text-[10px]">Em breve</Badge>
+              <Badge variant="secondary" className="text-[10px] bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400">Ativo</Badge>
               <h3 className="text-sm font-semibold">Dashboard Studio</h3>
               <p className="text-[11px] text-muted-foreground leading-relaxed">
-                Customize seus dashboards com drag & drop — views para CFO, Compliance, Agencia, com filtros e exports.
+                Customize seus dashboards com widgets interativos — views para CFO, Compliance, Agencia, com filtros e publicacao.
               </p>
               <div className="space-y-1 pt-1">
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Settings className="w-3 h-3" /> Widgets arrastaveis
+                  <Settings className="w-3 h-3 text-indigo-600" /> 8 widgets disponiveis
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Settings className="w-3 h-3" /> Salvar e publicar views
+                  <Settings className="w-3 h-3 text-indigo-600" /> Salvar e publicar views
                 </div>
                 <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-                  <Settings className="w-3 h-3" /> Export PDF/XLSX
+                  <Settings className="w-3 h-3 text-indigo-600" /> Filtros globais
                 </div>
               </div>
-              <Button variant="outline" size="sm" className="w-full mt-2 text-xs" disabled data-testid="button-module-studio">
-                Em breve
+              <Button size="sm" className="w-full mt-2 text-xs" onClick={() => window.location.href = "/dashboard-studio"} data-testid="button-module-studio">
+                Abrir Studio <ArrowRight className="w-3 h-3 ml-1" />
               </Button>
             </CardContent>
           </Card>

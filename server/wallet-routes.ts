@@ -1,15 +1,16 @@
 import { Express, Request, Response } from "express";
 import { db } from "./db";
-import { wallets, walletLedger, users } from "@shared/schema";
+import { wallets, walletLedger, users, companyBillingConfig } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 import { requireAuth } from "./auth";
 import { getUncachableStripeClient, getStripePublishableKey } from "./stripeClient";
 import { z } from "zod";
 
 const TOPUP_PACKAGES = [
-  { credits: 500, usd: 500, label: "500 creditos" },
-  { credits: 1500, usd: 1500, label: "1.500 creditos" },
-  { credits: 5000, usd: 5000, label: "5.000 creditos" },
+  { credits: 50, usd: 50, label: "50 créditos" },
+  { credits: 100, usd: 100, label: "100 créditos" },
+  { credits: 500, usd: 500, label: "500 créditos" },
+  { credits: 1000, usd: 1000, label: "1.000 créditos" },
 ];
 
 const VIP_USERS = ["stabia"];
@@ -81,11 +82,33 @@ export function registerWalletRoutes(app: Express) {
     }
   });
 
+  app.get("/api/wallet/packages", requireAuth, async (_req: Request, res: Response) => {
+    res.json({ packages: TOPUP_PACKAGES });
+  });
+
   app.post("/api/wallet/topup", requireAuth, async (req: Request, res: Response) => {
     try {
-      const schema = z.object({ packageIndex: z.number().min(0).max(2) });
-      const { packageIndex } = schema.parse(req.body);
-      const pkg = TOPUP_PACKAGES[packageIndex];
+      const topupSchema = z.union([
+        z.object({ packageIndex: z.number().min(0).max(3) }),
+        z.object({ customAmount: z.number().min(1000) }),
+      ]);
+
+      const parsed = topupSchema.parse(req.body);
+
+      let credits: number;
+      let usd: number;
+      let label: string;
+
+      if ("packageIndex" in parsed) {
+        const pkg = TOPUP_PACKAGES[parsed.packageIndex];
+        credits = pkg.credits;
+        usd = pkg.usd;
+        label = pkg.label;
+      } else {
+        credits = parsed.customAmount;
+        usd = parsed.customAmount;
+        label = `${parsed.customAmount.toLocaleString("pt-BR")} créditos (personalizado)`;
+      }
 
       const userId = req.session.userId!;
       const wallet = await getOrCreateWallet(userId);
@@ -101,10 +124,10 @@ export function registerWalletRoutes(app: Express) {
           {
             price_data: {
               currency: "usd",
-              unit_amount: pkg.usd * 100,
+              unit_amount: usd * 100,
               product_data: {
-                name: `AuraAudit AI Desk — ${pkg.label}`,
-                description: `Recarga de ${pkg.credits} creditos para servicos de IA`,
+                name: `AuraAudit AI Desk — ${label}`,
+                description: `Recarga de ${credits} creditos para servicos de IA`,
               },
             },
             quantity: 1,
@@ -113,10 +136,10 @@ export function registerWalletRoutes(app: Express) {
         metadata: {
           wallet_id: wallet.id,
           user_id: userId,
-          credits: String(pkg.credits),
+          credits: String(credits),
           type: "wallet_topup",
         },
-        success_url: `${baseUrl}/wallet?topup=success&credits=${pkg.credits}`,
+        success_url: `${baseUrl}/wallet?topup=success&credits=${credits}`,
         cancel_url: `${baseUrl}/wallet?topup=cancel`,
       });
 
@@ -155,6 +178,112 @@ export function registerWalletRoutes(app: Express) {
     } catch (error: any) {
       console.error("Error crediting wallet:", error.message);
       res.status(500).json({ error: "Failed to credit wallet" });
+    }
+  });
+
+  app.get("/api/wallet/caps", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session.userId!;
+
+      const userRows = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+      if (userRows.length === 0) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const user = userRows[0];
+      const companyId = user.clientId;
+
+      const defaults = {
+        userJobLimitDefault: "200",
+        companyJobLimitDefault: "500",
+        companyMonthlyWalletCap: null as string | null,
+        autoApproveBelow: "200",
+      };
+
+      if (!companyId) {
+        return res.json({ config: defaults, companyId: null });
+      }
+
+      const configRows = await db
+        .select()
+        .from(companyBillingConfig)
+        .where(eq(companyBillingConfig.companyId, companyId))
+        .limit(1);
+
+      if (configRows.length === 0) {
+        return res.json({ config: defaults, companyId });
+      }
+
+      const cfg = configRows[0];
+      return res.json({
+        config: {
+          userJobLimitDefault: cfg.userJobLimitDefault,
+          companyJobLimitDefault: cfg.companyJobLimitDefault,
+          companyMonthlyWalletCap: cfg.companyMonthlyWalletCap,
+          autoApproveBelow: cfg.autoApproveBelow,
+        },
+        companyId,
+      });
+    } catch (error: any) {
+      console.error("Error fetching caps:", error.message);
+      res.status(500).json({ error: "Failed to fetch caps" });
+    }
+  });
+
+  app.post("/api/wallet/admin/caps", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const role = req.session.role;
+      if (role !== "admin") {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+
+      const capsSchema = z.object({
+        companyId: z.string().min(1),
+        userJobLimitDefault: z.string().optional(),
+        companyJobLimitDefault: z.string().optional(),
+        companyMonthlyWalletCap: z.string().nullable().optional(),
+        autoApproveBelow: z.string().optional(),
+      });
+
+      const parsed = capsSchema.parse(req.body);
+
+      const existing = await db
+        .select()
+        .from(companyBillingConfig)
+        .where(eq(companyBillingConfig.companyId, parsed.companyId))
+        .limit(1);
+
+      if (existing.length > 0) {
+        const updateData: Record<string, any> = { updatedAt: new Date() };
+        if (parsed.userJobLimitDefault !== undefined) updateData.userJobLimitDefault = parsed.userJobLimitDefault;
+        if (parsed.companyJobLimitDefault !== undefined) updateData.companyJobLimitDefault = parsed.companyJobLimitDefault;
+        if (parsed.companyMonthlyWalletCap !== undefined) updateData.companyMonthlyWalletCap = parsed.companyMonthlyWalletCap;
+        if (parsed.autoApproveBelow !== undefined) updateData.autoApproveBelow = parsed.autoApproveBelow;
+
+        const [updated] = await db
+          .update(companyBillingConfig)
+          .set(updateData)
+          .where(eq(companyBillingConfig.companyId, parsed.companyId))
+          .returning();
+
+        return res.json({ config: updated });
+      } else {
+        const [created] = await db
+          .insert(companyBillingConfig)
+          .values({
+            companyId: parsed.companyId,
+            userJobLimitDefault: parsed.userJobLimitDefault || "200",
+            companyJobLimitDefault: parsed.companyJobLimitDefault || "500",
+            companyMonthlyWalletCap: parsed.companyMonthlyWalletCap || null,
+            autoApproveBelow: parsed.autoApproveBelow || "200",
+          })
+          .returning();
+
+        return res.json({ config: created });
+      }
+    } catch (error: any) {
+      console.error("Error updating caps:", error.message);
+      res.status(500).json({ error: "Failed to update caps" });
     }
   });
 }

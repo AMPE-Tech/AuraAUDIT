@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
@@ -15,12 +17,16 @@ import {
   Shield,
   Info,
   Zap,
+  Coins,
+  Settings2,
+  AlertCircle,
 } from "lucide-react";
 
 const PACKAGES = [
-  { index: 0, credits: 500, usd: 500, label: "500", popular: false },
-  { index: 1, credits: 1500, usd: 1500, label: "1.500", popular: true },
-  { index: 2, credits: 5000, usd: 5000, label: "5.000", popular: false },
+  { index: 0, credits: 50, usd: 50, label: "50", popular: false },
+  { index: 1, credits: 100, usd: 100, label: "100", popular: true },
+  { index: 2, credits: 500, usd: 500, label: "500", popular: false },
+  { index: 3, credits: 1000, usd: 1000, label: "1.000", popular: false },
 ];
 
 function formatDate(dateStr: string) {
@@ -35,9 +41,14 @@ function LedgerTypeBadge({ type }: { type: string }) {
     debit: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
     refund: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
     adjustment: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    vip_courtesy: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400",
   };
   const labels: Record<string, string> = {
-    topup: "Recarga", debit: "Consumo", refund: "Estorno", adjustment: "Ajuste",
+    topup: "Recarga",
+    debit: "Consumo",
+    refund: "Estorno",
+    adjustment: "Ajuste",
+    vip_courtesy: "Cortesia VIP",
   };
   return (
     <Badge className={`text-[10px] ${styles[type] || ""}`} variant="outline" data-testid={`badge-ledger-type-${type}`}>
@@ -48,14 +59,20 @@ function LedgerTypeBadge({ type }: { type: string }) {
 
 export default function WalletPage() {
   const { toast } = useToast();
+  const [customAmount, setCustomAmount] = useState<string>("");
+  const [customError, setCustomError] = useState<string>("");
 
   const { data, isLoading } = useQuery<{ wallet: any; ledger: any[] }>({
     queryKey: ["/api/wallet"],
   });
 
+  const { data: capsData, isLoading: capsLoading } = useQuery<{ config: any; companyId: string | null }>({
+    queryKey: ["/api/wallet/caps"],
+  });
+
   const topupMutation = useMutation({
-    mutationFn: async (packageIndex: number) => {
-      const res = await apiRequest("POST", "/api/wallet/topup", { packageIndex });
+    mutationFn: async (body: { packageIndex: number } | { customAmount: number }) => {
+      const res = await apiRequest("POST", "/api/wallet/topup", body);
       return res.json();
     },
     onSuccess: (data) => {
@@ -81,6 +98,16 @@ export default function WalletPage() {
       toast({ title: "Erro", description: "Falha ao adicionar creditos", variant: "destructive" });
     },
   });
+
+  const handleCustomTopup = () => {
+    const amount = parseInt(customAmount, 10);
+    if (isNaN(amount) || amount < 1000) {
+      setCustomError("Valor minimo: 1.000 creditos (US$ 1.000)");
+      return;
+    }
+    setCustomError("");
+    topupMutation.mutate({ customAmount: amount });
+  };
 
   const balance = data?.wallet ? parseFloat(data.wallet.balanceCredits) : 0;
   const ledger = data?.ledger || [];
@@ -116,7 +143,7 @@ export default function WalletPage() {
 
       <Card data-testid="card-wallet-balance">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Saldo disponivel</p>
               <div className="flex items-baseline gap-2">
@@ -137,7 +164,7 @@ export default function WalletPage() {
           <CreditCard className="w-4 h-4 text-primary" />
           <h2 className="text-sm font-semibold">Recarregar Creditos</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {PACKAGES.map((pkg) => (
             <Card
               key={pkg.index}
@@ -150,6 +177,9 @@ export default function WalletPage() {
                 </Badge>
               )}
               <CardContent className="p-5 text-center space-y-3">
+                <div className="flex justify-center">
+                  <Coins className="w-8 h-8 text-primary/70" />
+                </div>
                 <div>
                   <p className="text-2xl font-bold">{pkg.label}</p>
                   <p className="text-xs text-muted-foreground">creditos</p>
@@ -158,7 +188,7 @@ export default function WalletPage() {
                 <Button
                   className="w-full"
                   variant={pkg.popular ? "default" : "outline"}
-                  onClick={() => topupMutation.mutate(pkg.index)}
+                  onClick={() => topupMutation.mutate({ packageIndex: pkg.index })}
                   disabled={topupMutation.isPending}
                   data-testid={`button-topup-${pkg.credits}`}
                 >
@@ -169,6 +199,47 @@ export default function WalletPage() {
             </Card>
           ))}
         </div>
+
+        <Card className="mt-4" data-testid="card-custom-topup">
+          <CardContent className="p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Settings2 className="w-4 h-4 text-primary" />
+              <h3 className="text-sm font-semibold">Valor Personalizado</h3>
+            </div>
+            <p className="text-xs text-muted-foreground mb-3">Para recargas a partir de 1.000 creditos (US$ 1.000)</p>
+            <div className="flex items-start gap-3 flex-wrap">
+              <div className="flex-1 min-w-[200px]">
+                <Input
+                  type="number"
+                  min={1000}
+                  step={100}
+                  placeholder="Ex: 2000"
+                  value={customAmount}
+                  onChange={(e) => {
+                    setCustomAmount(e.target.value);
+                    setCustomError("");
+                  }}
+                  data-testid="input-custom-amount"
+                />
+                {customError && (
+                  <div className="flex items-center gap-1 mt-1.5">
+                    <AlertCircle className="w-3 h-3 text-destructive" />
+                    <p className="text-xs text-destructive" data-testid="text-custom-error">{customError}</p>
+                  </div>
+                )}
+              </div>
+              <Button
+                onClick={handleCustomTopup}
+                disabled={topupMutation.isPending || !customAmount}
+                data-testid="button-custom-topup"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Recarregar Valor Personalizado
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="mt-3">
           <Button
             variant="ghost"
@@ -182,6 +253,46 @@ export default function WalletPage() {
           </Button>
         </div>
       </div>
+
+      <Card data-testid="card-caps">
+        <CardHeader className="flex flex-row items-center gap-2 pb-2">
+          <Shield className="w-4 h-4 text-primary" />
+          <CardTitle className="text-sm">Limites e Configuracoes</CardTitle>
+        </CardHeader>
+        <CardContent className="p-5 pt-0">
+          {capsLoading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          ) : capsData?.config ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1" data-testid="cap-user-limit">
+                <p className="text-xs text-muted-foreground">Limite por usuario (job)</p>
+                <p className="text-sm font-medium">{capsData.config.userJobLimitDefault} creditos</p>
+              </div>
+              <div className="space-y-1" data-testid="cap-company-limit">
+                <p className="text-xs text-muted-foreground">Limite por empresa (job)</p>
+                <p className="text-sm font-medium">{capsData.config.companyJobLimitDefault} creditos</p>
+              </div>
+              <div className="space-y-1" data-testid="cap-monthly">
+                <p className="text-xs text-muted-foreground">CAP mensal da empresa</p>
+                <p className="text-sm font-medium">
+                  {capsData.config.companyMonthlyWalletCap
+                    ? `${parseFloat(capsData.config.companyMonthlyWalletCap).toLocaleString("pt-BR")} creditos`
+                    : "Sem limite definido"}
+                </p>
+              </div>
+              <div className="space-y-1" data-testid="cap-auto-approve">
+                <p className="text-xs text-muted-foreground">Aprovacao automatica abaixo de</p>
+                <p className="text-sm font-medium">{capsData.config.autoApproveBelow} creditos</p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-xs text-muted-foreground">Nenhuma configuracao encontrada</p>
+          )}
+        </CardContent>
+      </Card>
 
       <Card className="bg-muted/30" data-testid="card-trust-messages">
         <CardContent className="p-4 space-y-2">
@@ -239,10 +350,11 @@ export default function WalletPage() {
                   <tbody>
                     {ledger.map((entry: any) => {
                       const credits = parseFloat(entry.credits);
+                      const displayType = entry.referenceType === "vip_courtesy" ? "vip_courtesy" : entry.type;
                       return (
                         <tr key={entry.id} className="border-b last:border-0" data-testid={`row-ledger-${entry.id}`}>
                           <td className="p-3 text-muted-foreground">{formatDate(entry.createdAt)}</td>
-                          <td className="p-3"><LedgerTypeBadge type={entry.type} /></td>
+                          <td className="p-3"><LedgerTypeBadge type={displayType} /></td>
                           <td className="p-3">{entry.description || "—"}</td>
                           <td className={`p-3 text-right font-medium ${credits >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                             {credits >= 0 ? "+" : ""}{credits.toLocaleString("pt-BR")}
@@ -258,7 +370,7 @@ export default function WalletPage() {
         )}
       </div>
 
-      <div className="flex items-center justify-between text-xs text-muted-foreground pb-4">
+      <div className="flex items-center justify-between gap-2 flex-wrap text-xs text-muted-foreground pb-4">
         <div className="flex items-center gap-2">
           <Shield className="w-3 h-3" />
           <span>Wallet auditavel — AuraDue</span>
