@@ -599,7 +599,7 @@ export default function Home() {
             <Button variant="default" size="sm" className="text-xs" data-testid="button-how-it-works" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>
               Ver como funciona
             </Button>
-            <Button variant="outline" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => document.getElementById('cta-diagnostico')?.scrollIntoView({ behavior: 'smooth' })}>
+            <Button variant="outline" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => window.location.href = '/teste-agora'}>
               Teste agora
             </Button>
             <Button variant="outline" size="sm" className="text-xs" data-testid="button-monthly-subscription" onClick={() => window.location.href = '/subscription'}>
@@ -1268,7 +1268,7 @@ export default function Home() {
           <p className="text-xs text-muted-foreground max-w-xl mx-auto">
             Envie uma amostra de dados e receba um diagnostico com divergencias, oportunidades e evidencias rastreaveis.
           </p>
-          <Button className="mt-2" data-testid="button-cta-contact">
+          <Button className="mt-2" data-testid="button-cta-contact" onClick={() => window.location.href = '/teste-agora'}>
             Teste agora
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>

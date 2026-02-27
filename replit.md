@@ -49,6 +49,7 @@ server/
 - GET/POST /api/anomalies, PATCH /api/anomalies/:id
 - GET/POST /api/clients, GET /api/clients/:id, GET /api/clients/type/:type, PATCH /api/clients/:id
 - GET/POST /api/data-sources, GET /api/data-sources/:id, GET /api/data-sources/client/:clientId, PATCH /api/data-sources/:id
+- POST /api/trial/analyze (public, no auth — free trial diagnostic with file upload + AI analysis)
 - GET /api/audit-trail
 - GET/POST /api/uploads, PATCH /api/uploads/:id/check, DELETE /api/uploads/:id
 - GET/POST /api/ai/conversations, GET/DELETE /api/ai/conversations/:id, POST /api/ai/conversations/:id/messages (SSE streaming)
@@ -75,6 +76,7 @@ server/
 ## Routes (Public)
 - `/` - Home publica (site institucional, servicos, diferenciais, LATAM, metodologia, pricing, CTA)
 - `/login` - Tela de login (admin ou client)
+- `/teste-agora` - Teste gratuito (upload ate 3 arquivos + IA gera relatorio basico com cadeia de custodia)
 
 ## Routes (Admin)
 - `/dashboard` - Dashboard (project KPIs, online audit timeline, scope areas)
@@ -140,6 +142,7 @@ GDS (Amadeus, Sabre, Travelport), OBT (Reserve, Argo, Concur, Cytric, Navan, Tra
 - **Frontend integration**: "Buscar" button on CNPJ fields in clients.tsx, company-profile.tsx, client-profile.tsx auto-fills all form fields from Receita Federal
 
 ## Recent Changes
+- 2026-02-27: Added "Teste Agora" free trial page (/teste-agora): upload up to 3 files, describe intent, AI generates basic diagnostic report with full chain of custody (SHA-256 hashes, audit envelope), CTA for subscription
 - 2026-02-26: Upgraded to Contrato Tecnico Master v2.1.0: added clause 22 (Canais de Assinatura e Distribuicao — offline/online/email/WhatsApp), evidences E9-E12, Anexo II (Aditivo de 26/02/2026), 22 clauses total
 - 2026-02-26: Upgraded to Contrato Tecnico Master v2.0.0: full service catalog (P0-P3), digital modules (Pass/AI Desk/Wallet), anti-regression system, anti-hallucination system, evidence annex (E1-E8), 21 clauses
 - 2026-02-26: Contract signing CPF of legal representative is optional; validated mathematically when provided, shown masked in signature proof

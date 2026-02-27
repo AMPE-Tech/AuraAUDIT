@@ -41,6 +41,7 @@ import AiDeskPage from "@/pages/ai-desk";
 import CompanyProfile from "@/pages/company-profile";
 import ClientProfile from "@/pages/client-profile";
 import AdminContracts from "@/pages/admin-contracts";
+import TesteAgora from "@/pages/teste-agora";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -225,6 +226,41 @@ function AppContent() {
 
   if (location === "/" || location === "") {
     return <PublicHome />;
+  }
+
+  if (location === "/teste-agora") {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+          <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
+              <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary">
+                <Shield className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-sm font-semibold tracking-tight">AuraAUDIT</h1>
+                <p className="text-[10px] text-muted-foreground">Auditoria Forense Independente</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              {user ? (
+                <Button size="sm" onClick={() => navigate("/dashboard")} data-testid="button-go-dashboard">
+                  <User className="w-4 h-4 mr-2" />
+                  Plataforma
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" onClick={() => navigate("/login")} data-testid="button-go-login">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Entrar
+                </Button>
+              )}
+            </div>
+          </div>
+        </header>
+        <TesteAgora />
+      </div>
+    );
   }
 
   if (location === "/subscription") {
