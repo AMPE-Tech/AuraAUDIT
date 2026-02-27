@@ -43,6 +43,7 @@ import AdminContracts from "@/pages/admin-contracts";
 import BillingPage from "@/pages/billing";
 import DashboardStudio from "@/pages/dashboard-studio";
 import IaKnowledge from "@/pages/ia-knowledge";
+import EmailCampaigns from "@/pages/email-campaigns";
 import TesteAgora from "@/pages/teste-agora";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -71,6 +72,7 @@ function AdminRouter() {
       <Route path="/billing" component={BillingPage} />
       <Route path="/dashboard-studio" component={DashboardStudio} />
       <Route path="/ia-knowledge" component={IaKnowledge} />
+      <Route path="/email-campaigns" component={EmailCampaigns} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={NotFound} />
     </Switch>

@@ -16,6 +16,7 @@ import {
   Building2,
   FileSignature,
   Brain,
+  Mail,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import {
@@ -57,6 +58,7 @@ const cadastroItems = [
 const adminItems = [
   { title: "Painel Admin", url: "/admin", icon: Settings },
   { title: "Documentos IA", url: "/ia-knowledge", icon: Brain },
+  { title: "Email Marketing", url: "/email-campaigns", icon: Mail },
 ];
 
 const systemItems = [

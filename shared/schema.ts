@@ -537,3 +537,36 @@ export type InsertAiJobFile = z.infer<typeof insertAiJobFileSchema>;
 export type AiJobFile = typeof aiJobFiles.$inferSelect;
 export type InsertCompanyBillingConfig = z.infer<typeof insertCompanyBillingConfigSchema>;
 export type CompanyBillingConfig = typeof companyBillingConfig.$inferSelect;
+
+export const emailCampaigns = pgTable("email_campaigns", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  subject: text("subject").notNull(),
+  body: text("body").notNull(),
+  fromEmail: text("from_email").notNull().default("contato@auradue.com"),
+  fromName: text("from_name").notNull().default("AuraAUDIT"),
+  recipientCount: integer("recipient_count").notNull().default(0),
+  sentCount: integer("sent_count").notNull().default(0),
+  failedCount: integer("failed_count").notNull().default(0),
+  status: text("status").notNull().default("draft"),
+  sentByUserId: varchar("sent_by_user_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  sentAt: timestamp("sent_at"),
+});
+
+export const emailRecipients = pgTable("email_recipients", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  campaignId: varchar("campaign_id").notNull(),
+  email: text("email").notNull(),
+  name: text("name"),
+  company: text("company"),
+  status: text("status").notNull().default("pending"),
+  sentAt: timestamp("sent_at"),
+  error: text("error"),
+});
+
+export const insertEmailCampaignSchema = createInsertSchema(emailCampaigns).omit({ id: true, createdAt: true });
+export const insertEmailRecipientSchema = createInsertSchema(emailRecipients).omit({ id: true });
+export type InsertEmailCampaign = z.infer<typeof insertEmailCampaignSchema>;
+export type EmailCampaign = typeof emailCampaigns.$inferSelect;
+export type InsertEmailRecipient = z.infer<typeof insertEmailRecipientSchema>;
+export type EmailRecipient = typeof emailRecipients.$inferSelect;
