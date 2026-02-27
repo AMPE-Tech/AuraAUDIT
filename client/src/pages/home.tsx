@@ -676,14 +676,11 @@ export default function Home() {
             <span className="font-medium text-foreground">dashboards executivos</span> e monitoramento continuo — no padrao que Compliance exige.
           </p>
           <div className="flex flex-wrap gap-3 pt-1">
-            <Button variant="default" size="sm" className="text-xs" data-testid="button-how-it-works" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>
-              Ver como funciona
+            <Button variant="default" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => window.location.href = '/teste-agora'}>
+              Teste Agora
             </Button>
-            <Button variant="outline" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => window.location.href = '/teste-agora'}>
-              Teste agora
-            </Button>
-            <Button variant="outline" size="sm" className="text-xs" data-testid="button-monthly-subscription" onClick={() => window.location.href = '/subscription'}>
-              Plano Basico $99 / Mes
+            <Button variant="outline" size="sm" className="text-xs" data-testid="button-pay-as-you-go" onClick={() => window.location.href = '/wallet'}>
+              Pague so o que usar
             </Button>
           </div>
         </CardContent>
