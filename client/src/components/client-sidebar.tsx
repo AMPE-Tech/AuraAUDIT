@@ -12,6 +12,7 @@ import {
   Wallet,
   FolderOpen,
   Building2,
+  Lock,
 } from "lucide-react";
 import { useLocation, Link } from "wouter";
 import { useAuth } from "@/lib/auth";
@@ -30,29 +31,29 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 const projetoItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Dashboard Studio", url: "/dashboard-studio", icon: LayoutDashboard },
-  { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3 },
-  { title: "Meu Cadastro", url: "/my-profile", icon: Building2 },
-  { title: "Sistemas", url: "/systems", icon: Monitor },
-  { title: "Meus Documentos", url: "/documents", icon: FolderOpen },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, enabled: true },
+  { title: "Dashboard Studio", url: "/dashboard-studio", icon: LayoutDashboard, enabled: false },
+  { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3, enabled: false },
+  { title: "Meu Cadastro", url: "/my-profile", icon: Building2, enabled: false },
+  { title: "Sistemas", url: "/systems", icon: Monitor, enabled: false },
+  { title: "Meus Documentos", url: "/documents", icon: FolderOpen, enabled: true },
 ];
 
 const auditoriaItems = [
-  { title: "Tipos de Despesas", url: "/expense-types", icon: Receipt },
-  { title: "Integracoes", url: "/integrations", icon: Plug },
+  { title: "Tipos de Despesas", url: "/expense-types", icon: Receipt, enabled: false },
+  { title: "Integracoes", url: "/integrations", icon: Plug, enabled: false },
 ];
 
 const iaItems = [
-  { title: "AI Desk", url: "/ai-desk", icon: Zap },
-  { title: "Carteira", url: "/wallet", icon: Wallet },
-  { title: "Faturamento", url: "/billing", icon: Receipt },
+  { title: "AI Desk", url: "/ai-desk", icon: Zap, enabled: false },
+  { title: "Carteira", url: "/wallet", icon: Wallet, enabled: false },
+  { title: "Faturamento", url: "/billing", icon: Receipt, enabled: false },
 ];
 
 const comercialItems = [
-  { title: "Produtos & Servicos", url: "/products", icon: Package },
-  { title: "Contrato", url: "/contract", icon: FileText },
-  { title: "Ecossistema LATAM", url: "/latam-scope", icon: Globe },
+  { title: "Produtos & Servicos", url: "/products", icon: Package, enabled: false },
+  { title: "Contrato", url: "/contract", icon: FileText, enabled: false },
+  { title: "Ecossistema LATAM", url: "/latam-scope", icon: Globe, enabled: false },
 ];
 
 
@@ -63,16 +64,28 @@ export function ClientSidebar() {
   const renderMenuItems = (items: typeof projetoItems) =>
     items.map((item) => (
       <SidebarMenuItem key={item.title}>
-        <SidebarMenuButton
-          asChild
-          isActive={location.startsWith(item.url)}
-          data-testid={`sidebar-link-${item.url.replace("/", "")}`}
-        >
-          <Link href={item.url}>
+        {item.enabled ? (
+          <SidebarMenuButton
+            asChild
+            isActive={location.startsWith(item.url)}
+            data-testid={`sidebar-link-${item.url.replace("/", "")}`}
+          >
+            <Link href={item.url}>
+              <item.icon className="w-4 h-4" />
+              <span>{item.title}</span>
+            </Link>
+          </SidebarMenuButton>
+        ) : (
+          <SidebarMenuButton
+            disabled
+            className="opacity-40 cursor-not-allowed"
+            data-testid={`sidebar-link-${item.url.replace("/", "")}-locked`}
+          >
             <item.icon className="w-4 h-4" />
             <span>{item.title}</span>
-          </Link>
-        </SidebarMenuButton>
+            <Lock className="w-3 h-3 ml-auto" />
+          </SidebarMenuButton>
+        )}
       </SidebarMenuItem>
     ));
 
