@@ -84,7 +84,7 @@ export default function Login() {
             <Shield className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight" data-testid="text-login-title">AuraAUDIT</h1>
-          <p className="text-sm text-muted-foreground">Auditoria Forense Independente</p>
+          <p className="text-sm text-muted-foreground">Due Diligence Platform</p>
         </div>
 
         <Card>

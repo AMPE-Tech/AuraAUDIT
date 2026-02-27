@@ -190,7 +190,7 @@ function PublicHome() {
             </div>
             <div>
               <h1 className="text-sm font-semibold tracking-tight">AuraAUDIT</h1>
-              <p className="text-[10px] text-muted-foreground">Auditoria Forense Independente</p>
+              <p className="text-[10px] text-muted-foreground">Due Diligence Platform</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -246,7 +246,7 @@ function AppContent() {
               </div>
               <div>
                 <h1 className="text-sm font-semibold tracking-tight">AuraAUDIT</h1>
-                <p className="text-[10px] text-muted-foreground">Auditoria Forense Independente</p>
+                <p className="text-[10px] text-muted-foreground">Due Diligence Platform</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -282,7 +282,7 @@ function AppContent() {
               </div>
               <div>
                 <h1 className="text-sm font-semibold tracking-tight">AuraAUDIT</h1>
-                <p className="text-[10px] text-muted-foreground">Auditoria Forense Independente</p>
+                <p className="text-[10px] text-muted-foreground">Due Diligence Platform</p>
               </div>
             </div>
             <div className="flex items-center gap-3">

@@ -393,7 +393,7 @@ export default function ClientProfile() {
           <Shield className="w-3 h-3" />
           <span>Cadeia de Custodia Digital — AuraDue</span>
         </div>
-        <span>AuraAUDIT — Auditoria Forense Independente</span>
+        <span>AuraAUDIT — Due Diligence Platform</span>
       </div>
     </div>
   );

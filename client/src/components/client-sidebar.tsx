@@ -87,7 +87,7 @@ export function ClientSidebar() {
             <div>
               <h1 className="text-sm font-semibold tracking-tight">AuraAUDIT</h1>
               <p className="text-[11px] text-muted-foreground">
-                Auditoria Forense Independente
+                Due Diligence Platform
               </p>
             </div>
           </div>
