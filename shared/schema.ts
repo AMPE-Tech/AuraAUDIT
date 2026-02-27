@@ -361,6 +361,18 @@ export const auditEnvelopes = pgTable("audit_envelopes", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const trialUsage = pgTable("trial_usage", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  ipAddress: text("ip_address").notNull(),
+  envelopeId: text("envelope_id").notNull(),
+  filesCount: integer("files_count").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertTrialUsageSchema = createInsertSchema(trialUsage).omit({ id: true, createdAt: true });
+export type InsertTrialUsage = z.infer<typeof insertTrialUsageSchema>;
+export type TrialUsage = typeof trialUsage.$inferSelect;
+
 export const contractSignatures = pgTable("contract_signatures", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   contractNumber: text("contract_number").notNull(),

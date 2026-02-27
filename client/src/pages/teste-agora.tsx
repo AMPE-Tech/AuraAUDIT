@@ -1,12 +1,14 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
 import {
   Upload, FileText, Trash2, Shield, ArrowRight, CheckCircle2,
-  Loader2, AlertTriangle, Lock, BarChart3, Zap, Globe, Hash
+  Loader2, AlertTriangle, Lock, BarChart3, Zap, Globe, Hash, Ban
 } from "lucide-react";
 
 interface FileDetail {
@@ -35,10 +37,17 @@ interface AuditEnvelope {
   envelopeSha256: string;
 }
 
+interface TrialStatus {
+  used: number;
+  remaining: number;
+  limit: number;
+}
+
 interface AnalysisResult {
   report: string;
   envelope: AuditEnvelope;
   files: FileDetail[];
+  trialStatus?: TrialStatus;
 }
 
 export default function TesteAgora() {
@@ -48,6 +57,15 @@ export default function TesteAgora() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { data: trialStatus, refetch: refetchStatus } = useQuery<TrialStatus>({
+    queryKey: ["/api/trial/status"],
+  });
+
+  const remaining = trialStatus?.remaining ?? 3;
+  const used = trialStatus?.used ?? 0;
+  const limit = trialStatus?.limit ?? 3;
+  const isBlocked = remaining <= 0;
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = Array.from(e.target.files || []);
@@ -91,11 +109,15 @@ export default function TesteAgora() {
 
       if (!response.ok) {
         const errData = await response.json();
+        if (response.status === 429) {
+          refetchStatus();
+        }
         throw new Error(errData.error || "Erro ao processar.");
       }
 
       const data = await response.json();
       setResult(data);
+      refetchStatus();
     } catch (err: any) {
       setError(err.message || "Erro ao processar analise.");
     } finally {
@@ -108,6 +130,66 @@ export default function TesteAgora() {
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
+
+  if (isBlocked && !result) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-12 space-y-6">
+        <div className="text-center space-y-3">
+          <Ban className="w-12 h-12 text-muted-foreground mx-auto" />
+          <h1 className="text-xl font-bold" data-testid="text-trial-blocked">Seus testes gratuitos acabaram</h1>
+          <p className="text-sm text-muted-foreground max-w-md mx-auto">
+            Voce utilizou todos os {limit} diagnosticos gratuitos disponíveis.
+            Para continuar usando a plataforma com recursos completos, ative o AuraAudit Pass.
+          </p>
+        </div>
+
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="pt-6 space-y-4">
+            <h3 className="text-base font-semibold text-center">Continue com o AuraAudit Pass</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex items-start gap-2">
+                <Globe className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs font-medium">Integracao API em Tempo Real</p>
+                  <p className="text-[10px] text-muted-foreground">OBT, Backoffice, GDS, BSP, cartoes corporativos</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <BarChart3 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs font-medium">Dashboard Interativo</p>
+                  <p className="text-[10px] text-muted-foreground">KPIs, alertas e controles em tempo real</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs font-medium">Conciliacao Multi-vias</p>
+                  <p className="text-[10px] text-muted-foreground">PNR/TKT/EMD + fatura + cartao + expense</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2">
+                <Shield className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs font-medium">Cadeia de Custodia Certificada</p>
+                  <p className="text-[10px] text-muted-foreground">SHA-256, Lei 13.964/2019</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
+              <Button onClick={() => window.location.href = "/subscription"} data-testid="button-blocked-subscribe">
+                AuraAudit Pass — US$ 99/mes
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button variant="outline" onClick={() => window.location.href = "/login"} data-testid="button-blocked-login">
+                Ja tenho conta — Entrar
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -126,6 +208,29 @@ export default function TesteAgora() {
           <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> Resultado em segundos</span>
         </div>
       </div>
+
+      {trialStatus && !result && (
+        <Card className={remaining === 1 ? "border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20" : ""}>
+          <CardContent className="pt-4 pb-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium" data-testid="text-trial-counter">
+                {remaining === 1
+                  ? "Ultimo teste gratuito disponivel"
+                  : `${remaining} de ${limit} testes restantes`}
+              </span>
+              <Badge variant={remaining === 1 ? "destructive" : "secondary"} className="text-[10px]">
+                {used}/{limit} usados
+              </Badge>
+            </div>
+            <Progress value={(used / limit) * 100} className="h-1.5" />
+            {remaining === 1 && (
+              <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-2">
+                Aproveite! Apos este teste, voce podera continuar com o AuraAudit Pass.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {!result && (
         <>
@@ -191,7 +296,7 @@ export default function TesteAgora() {
             </CardHeader>
             <CardContent>
               <Textarea
-                placeholder="Ex: Quero conciliar os bilhetes aereos emitidos pela agencia com as faturas do cartao corporativo para identificar divergencias de valores e possíveis cobranças duplicadas no período de outubro a dezembro de 2025..."
+                placeholder="Ex: Quero conciliar os bilhetes aereos emitidos pela agencia com as faturas do cartao corporativo para identificar divergencias de valores e possiveis cobrancas duplicadas no periodo de outubro a dezembro de 2025..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
@@ -213,7 +318,7 @@ export default function TesteAgora() {
             className="w-full"
             size="lg"
             onClick={handleAnalyze}
-            disabled={isAnalyzing || files.length === 0}
+            disabled={isAnalyzing || files.length === 0 || description.trim().length < 10}
             data-testid="button-analyze"
           >
             {isAnalyzing ? (
@@ -233,6 +338,26 @@ export default function TesteAgora() {
 
       {result && (
         <div className="space-y-6">
+          {result.trialStatus && (
+            <Card className={result.trialStatus.remaining === 0 ? "border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20" : ""}>
+              <CardContent className="pt-4 pb-3">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium" data-testid="text-trial-result-counter">
+                    {result.trialStatus.remaining === 0
+                      ? "Voce utilizou todos os seus testes gratuitos"
+                      : result.trialStatus.remaining === 1
+                        ? "Voce ainda tem 1 teste gratuito restante"
+                        : `Voce ainda tem ${result.trialStatus.remaining} testes gratuitos restantes`}
+                  </span>
+                  <Badge variant={result.trialStatus.remaining === 0 ? "destructive" : "secondary"} className="text-[10px]">
+                    {result.trialStatus.used}/{result.trialStatus.limit}
+                  </Badge>
+                </div>
+                <Progress value={(result.trialStatus.used / result.trialStatus.limit) * 100} className="h-1.5" />
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="border-primary/30">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
@@ -324,7 +449,11 @@ export default function TesteAgora() {
 
           <Card className="bg-primary/5 border-primary/20">
             <CardContent className="pt-6 space-y-4">
-              <h3 className="text-base font-semibold text-center">Quer ir alem do diagnostico?</h3>
+              <h3 className="text-base font-semibold text-center">
+                {result.trialStatus?.remaining === 0
+                  ? "Seus testes gratuitos acabaram — continue com o plano completo"
+                  : "Quer ir alem do diagnostico?"}
+              </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="flex items-start gap-2">
                   <Globe className="w-4 h-4 text-primary mt-0.5 shrink-0" />
@@ -363,9 +492,11 @@ export default function TesteAgora() {
                 <Button variant="outline" onClick={() => window.location.href = "/login"} data-testid="button-trial-login">
                   Acessar Plataforma
                 </Button>
-                <Button variant="ghost" onClick={() => { setResult(null); setFiles([]); setDescription(""); }} data-testid="button-trial-new">
-                  Novo Teste
-                </Button>
+                {result.trialStatus && result.trialStatus.remaining > 0 && (
+                  <Button variant="ghost" onClick={() => { setResult(null); setFiles([]); setDescription(""); }} data-testid="button-trial-new">
+                    Novo Teste ({result.trialStatus.remaining} restante{result.trialStatus.remaining > 1 ? "s" : ""})
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

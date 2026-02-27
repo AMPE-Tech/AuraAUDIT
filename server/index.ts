@@ -13,6 +13,7 @@ import { registerContractRoutes } from "./contract-routes";
 import { registerTrialRoutes } from "./trial-routes";
 
 const app = express();
+app.set("trust proxy", true);
 const httpServer = createServer(app);
 
 declare module "http" {

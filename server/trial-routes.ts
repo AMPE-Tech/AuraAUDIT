@@ -4,6 +4,11 @@ import { createHash } from "crypto";
 import path from "path";
 import fs from "fs";
 import OpenAI from "openai";
+import { db } from "./db";
+import { trialUsage } from "@shared/schema";
+import { eq, sql } from "drizzle-orm";
+
+const MAX_TRIALS = 3;
 
 const openai = new OpenAI({
   apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
@@ -46,6 +51,28 @@ function hashText(text: string): string {
   return createHash("sha256").update(text, "utf8").digest("hex");
 }
 
+function getClientIp(req: Request): string {
+  return req.ip || req.socket.remoteAddress || "unknown";
+}
+
+async function getTrialCount(ip: string): Promise<number> {
+  const result = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(trialUsage)
+    .where(eq(trialUsage.ipAddress, ip));
+  return result[0]?.count || 0;
+}
+
+async function atomicTrialInsert(ip: string, envelopeId: string, filesCount: number): Promise<boolean> {
+  const result = await db.execute(sql`
+    INSERT INTO trial_usage (id, ip_address, envelope_id, files_count, created_at)
+    SELECT gen_random_uuid(), ${ip}, ${envelopeId}, ${filesCount}, NOW()
+    WHERE (SELECT COUNT(*) FROM trial_usage WHERE ip_address = ${ip}) < ${MAX_TRIALS}
+    RETURNING id
+  `);
+  return (result as any).rows?.length > 0 || (result as any).length > 0;
+}
+
 const TRIAL_SYSTEM_PROMPT = `Voce e a AuraAI, assistente de auditoria forense da AuraAUDIT, especializada em conciliacao e analise de despesas corporativas de viagens e eventos (T&E).
 
 O usuario esta fazendo um TESTE GRATUITO da plataforma. Ele enviou ate 3 arquivos e descreveu o que deseja analisar.
@@ -72,12 +99,39 @@ Responda em portugues brasileiro. Seja profissional mas acessivel. Use markdown 
 O relatorio deve ter entre 400-800 palavras. Nao invente dados numericos especificos dos arquivos.`;
 
 export function registerTrialRoutes(app: Express) {
+  app.get("/api/trial/status", async (req: Request, res: Response) => {
+    try {
+      const ip = getClientIp(req);
+      const used = await getTrialCount(ip);
+      const remaining = Math.max(0, MAX_TRIALS - used);
+      return res.json({ used, remaining, limit: MAX_TRIALS });
+    } catch (error: any) {
+      console.error("Trial status error:", error.message);
+      return res.status(500).json({ error: "Erro ao verificar status." });
+    }
+  });
+
   app.post("/api/trial/analyze", upload.array("files", 3), async (req: Request, res: Response) => {
     try {
+      const ip = getClientIp(req);
+      const used = await getTrialCount(ip);
+
+      if (used >= MAX_TRIALS) {
+        const files = req.files as Express.Multer.File[] || [];
+        files.forEach((f) => { try { fs.unlinkSync(f.path); } catch {} });
+        return res.status(429).json({
+          error: `Voce ja utilizou seus ${MAX_TRIALS} testes gratuitos. Assine o AuraAudit Pass para continuar.`,
+          used,
+          limit: MAX_TRIALS,
+          remaining: 0,
+        });
+      }
+
       const files = req.files as Express.Multer.File[] || [];
       const description = req.body.description || "";
 
       if (!description || description.trim().length < 10) {
+        files.forEach((f) => { try { fs.unlinkSync(f.path); } catch {} });
         return res.status(400).json({ error: "Descreva o que voce deseja analisar (minimo 10 caracteres)." });
       }
 
@@ -134,14 +188,33 @@ ${description}`;
       };
       envelope.envelopeSha256 = hashText(JSON.stringify(envelope));
 
+      const inserted = await atomicTrialInsert(ip, envelopeId, files.length);
+      if (!inserted) {
+        files.forEach((f) => { try { fs.unlinkSync(f.path); } catch {} });
+        return res.status(429).json({
+          error: `Voce ja utilizou seus ${MAX_TRIALS} testes gratuitos. Assine o AuraAudit Pass para continuar.`,
+          used: MAX_TRIALS,
+          limit: MAX_TRIALS,
+          remaining: 0,
+        });
+      }
+
       files.forEach((f) => {
         try { fs.unlinkSync(f.path); } catch {}
       });
+
+      const newUsed = used + 1;
+      const remaining = Math.max(0, MAX_TRIALS - newUsed);
 
       return res.json({
         report,
         envelope,
         files: fileDetails,
+        trialStatus: {
+          used: newUsed,
+          remaining,
+          limit: MAX_TRIALS,
+        },
       });
     } catch (error: any) {
       console.error("Trial analysis error:", error.message);
