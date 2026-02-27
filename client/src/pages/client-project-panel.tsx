@@ -11,7 +11,6 @@ import {
   Activity,
   AlertTriangle,
   CheckCircle2,
-  Clock,
   Target,
   Layers,
   FileSearch,
@@ -19,15 +18,10 @@ import {
   ArrowDownRight,
   Minus,
   Zap,
-  Eye,
-  FileText,
   DollarSign,
-  Users,
   Building2,
-  Plane,
-  Hotel,
-  Car,
-  Receipt,
+  Lock,
+  Database,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/formatters";
 import { useAuth } from "@/lib/auth";
@@ -43,16 +37,6 @@ import {
   PieChart,
   Pie,
   Cell,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-  Legend,
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -65,49 +49,6 @@ const COLORS = {
   violet: "hsl(262, 60%, 50%)",
   slate: "hsl(215, 20%, 65%)",
 };
-
-const MONTHLY_EVOLUTION = [
-  { month: "Jul", despesas: 42500, economia: 6800, anomalias: 3 },
-  { month: "Ago", despesas: 38200, economia: 5100, anomalias: 2 },
-  { month: "Set", despesas: 51800, economia: 9200, anomalias: 5 },
-  { month: "Out", despesas: 47300, economia: 7600, anomalias: 4 },
-  { month: "Nov", despesas: 55100, economia: 12400, anomalias: 7 },
-  { month: "Dez", despesas: 49200, economia: 8900, anomalias: 4 },
-];
-
-const SAVINGS_BY_AREA = [
-  { area: "Aereo", valor: 18500, percent: 12.4 },
-  { area: "Hotel", valor: 14200, percent: 9.8 },
-  { area: "Eventos", valor: 8900, percent: 15.2 },
-  { area: "Transporte", valor: 4300, percent: 7.1 },
-  { area: "Alimentacao", valor: 3200, percent: 6.5 },
-];
-
-const COMPLIANCE_RADAR = [
-  { subject: "Politica", A: 72, fullMark: 100 },
-  { subject: "Aprovacoes", A: 85, fullMark: 100 },
-  { subject: "Comprovantes", A: 68, fullMark: 100 },
-  { subject: "Limites", A: 78, fullMark: 100 },
-  { subject: "Preferenciais", A: 55, fullMark: 100 },
-  { subject: "Antecedencia", A: 63, fullMark: 100 },
-];
-
-const TOP_VENDORS = [
-  { name: "LATAM Airlines", total: 28450, txns: 12, status: "ok" },
-  { name: "GOL Linhas Aereas", total: 18920, txns: 8, status: "ok" },
-  { name: "Accor Hotels", total: 15600, txns: 6, status: "alert" },
-  { name: "Localiza Hertz", total: 9800, txns: 5, status: "ok" },
-  { name: "Copacabana Palace", total: 12500, txns: 1, status: "critical" },
-  { name: "Restaurante Fasano", total: 4500, txns: 1, status: "alert" },
-];
-
-const AUDIT_PROGRESS = [
-  { area: "Passagens Aereas", total: 45, revisados: 38, anomalias: 4 },
-  { area: "Hospedagem", total: 32, revisados: 28, anomalias: 3 },
-  { area: "Alimentacao", total: 28, revisados: 22, anomalias: 1 },
-  { area: "Transporte Terrestre", total: 18, revisados: 15, anomalias: 1 },
-  { area: "Eventos/MICE", total: 12, revisados: 10, anomalias: 0 },
-];
 
 function MetricCard({ icon: Icon, label, value, subValue, trend, color }: {
   icon: any;
@@ -144,6 +85,35 @@ function MetricCard({ icon: Icon, label, value, subValue, trend, color }: {
   );
 }
 
+function AwaitingDataCard({ title, icon: Icon, description, testId }: { title: string; icon: any; description: string; testId?: string }) {
+  const id = testId || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  return (
+    <Card data-testid={`card-awaiting-${id}`}>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <Icon className="w-4 h-4 text-muted-foreground" />
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[200px] flex flex-col items-center justify-center gap-3 text-center">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-muted">
+            <Lock className="w-5 h-5 text-muted-foreground" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-muted-foreground" data-testid={`text-awaiting-${id}`}>Aguardando dados</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-xs">{description}</p>
+          </div>
+          <Badge variant="outline" className="text-[10px]" data-testid={`badge-awaiting-${id}`}>
+            <Database className="w-3 h-3 mr-1" />
+            Sera preenchido apos upload dos dados
+          </Badge>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function ClientProjectPanel() {
   const { user } = useAuth();
 
@@ -167,6 +137,9 @@ export default function ClientProjectPanel() {
   const unresolvedAnomalies = anomalies?.filter((a) => !a.resolved) || [];
   const resolvedAnomalies = anomalies?.filter((a) => a.resolved) || [];
   const totalItems = expenses?.length || 0;
+
+  const hasExpenseData = expenses && expenses.length > 0;
+  const hasAnomalyData = anomalies && anomalies.length > 0;
 
   const categoryBreakdown = expenses
     ? Object.entries(
@@ -283,49 +256,39 @@ export default function ClientProjectPanel() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-primary" />
-              Evolucao Mensal — Despesas vs. Economia
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={280}>
-              <AreaChart data={MONTHLY_EVOLUTION}>
-                <defs>
-                  <linearGradient id="colorDespesas" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.15} />
-                    <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorEconomia" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor={COLORS.success} stopOpacity={0.15} />
-                    <stop offset="95%" stopColor={COLORS.success} stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
-                <Tooltip
-                  formatter={(value: number, name: string) => [formatCurrency(value), name === "despesas" ? "Despesas" : "Economia"]}
-                  contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }}
-                />
-                <Area type="monotone" dataKey="despesas" stroke={COLORS.primary} fillOpacity={1} fill="url(#colorDespesas)" strokeWidth={2} name="despesas" />
-                <Area type="monotone" dataKey="economia" stroke={COLORS.success} fillOpacity={1} fill="url(#colorEconomia)" strokeWidth={2} name="economia" />
-              </AreaChart>
-            </ResponsiveContainer>
-            <div className="flex gap-6 justify-center mt-2">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.primary }} />
-                <span className="text-xs text-muted-foreground">Despesas Auditadas</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS.success }} />
-                <span className="text-xs text-muted-foreground">Economia Identificada</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {hasExpenseData ? (
+          <Card className="lg:col-span-2">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                Despesas por Categoria
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {categoryBreakdown.length > 0 ? (
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart data={categoryBreakdown} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                    <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
+                    <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} width={80} />
+                    <Tooltip formatter={(value: number) => [formatCurrency(value), "Valor"]} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                    <Bar dataKey="value" fill={COLORS.primary} radius={[0, 4, 4, 0]} barSize={20} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[280px] flex items-center justify-center text-sm text-muted-foreground">Sem dados</div>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="lg:col-span-2">
+            <AwaitingDataCard
+              title="Evolucao Mensal — Despesas vs. Economia"
+              icon={TrendingUp}
+              description="Os graficos de evolucao mensal serao exibidos apos o envio e processamento dos dados do cliente."
+            />
+          </div>
+        )}
 
         <Card>
           <CardHeader className="pb-2">
@@ -364,84 +327,25 @@ export default function ClientProjectPanel() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-primary" />
-              Despesas por Categoria
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {categoryBreakdown.length > 0 ? (
-              <ResponsiveContainer width="100%" height={240}>
-                <BarChart data={categoryBreakdown} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-                  <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
-                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} width={80} />
-                  <Tooltip formatter={(value: number) => [formatCurrency(value), "Valor"]} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                  <Bar dataKey="value" fill={COLORS.primary} radius={[0, 4, 4, 0]} barSize={20} />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="h-[240px] flex items-center justify-center text-sm text-muted-foreground">Sem dados</div>
-            )}
-          </CardContent>
-        </Card>
+        <AwaitingDataCard
+          title="Radar de Conformidade"
+          icon={Zap}
+          description="O radar de aderencia por dimensao da politica corporativa sera calculado a partir dos dados reais do cliente."
+        />
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Zap className="w-4 h-4 text-primary" />
-              Radar de Conformidade
-            </CardTitle>
-            <p className="text-[11px] text-muted-foreground">Aderencia por dimensao da politica corporativa</p>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={240}>
-              <RadarChart cx="50%" cy="50%" outerRadius="70%" data={COMPLIANCE_RADAR}>
-                <PolarGrid stroke="hsl(var(--border))" />
-                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} />
-                <Radar name="Aderencia %" dataKey="A" stroke={COLORS.primary} fill={COLORS.primary} fillOpacity={0.2} strokeWidth={2} />
-              </RadarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+        <AwaitingDataCard
+          title="Economia por Area"
+          icon={TrendingDown}
+          description="A economia identificada por area sera calculada apos a analise forense dos dados enviados pelo cliente."
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <TrendingDown className="w-4 h-4 text-green-600" />
-                Economia por Area
-              </CardTitle>
-              <Badge variant="secondary" className="text-[10px]">{SAVINGS_BY_AREA.length} areas</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {SAVINGS_BY_AREA.map((item) => (
-                <div key={item.area} className="space-y-1.5" data-testid={`saving-area-${item.area.toLowerCase()}`}>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{item.area}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-green-600 dark:text-green-400 font-semibold">{formatCurrency(item.valor)}</span>
-                      <Badge variant="outline" className="text-[10px]">{item.percent}%</Badge>
-                    </div>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div
-                      className="bg-green-500 h-2 rounded-full transition-all"
-                      style={{ width: `${Math.min(item.percent * 5, 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <AwaitingDataCard
+          title="Progresso da Auditoria por Area"
+          icon={Layers}
+          description="O progresso detalhado por area sera preenchido conforme a auditoria avanca com os dados reais do cliente."
+        />
 
         <Card>
           <CardHeader className="pb-2">
@@ -485,86 +389,11 @@ export default function ClientProjectPanel() {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Layers className="w-4 h-4 text-primary" />
-              Progresso da Auditoria por Area
-            </CardTitle>
-            <Badge variant="secondary" className="text-[10px]">
-              {AUDIT_PROGRESS.reduce((s, a) => s + a.revisados, 0)} / {AUDIT_PROGRESS.reduce((s, a) => s + a.total, 0)} itens
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {AUDIT_PROGRESS.map((item) => {
-              const pct = Math.round((item.revisados / item.total) * 100);
-              return (
-                <div key={item.area} className="space-y-1.5" data-testid={`progress-${item.area.toLowerCase().replace(/\s/g, '-')}`}>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">{item.area}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-muted-foreground">{item.revisados}/{item.total} revisados</span>
-                      {item.anomalias > 0 && (
-                        <Badge variant="destructive" className="text-[10px]">{item.anomalias} anomalias</Badge>
-                      )}
-                      <span className="text-xs font-semibold w-10 text-right">{pct}%</span>
-                    </div>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2.5">
-                    <div
-                      className="h-2.5 rounded-full transition-all"
-                      style={{
-                        width: `${pct}%`,
-                        backgroundColor: pct >= 80 ? COLORS.success : pct >= 50 ? COLORS.info : COLORS.warning,
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <Building2 className="w-4 h-4 text-primary" />
-              Principais Fornecedores Auditados
-            </CardTitle>
-            <Badge variant="secondary" className="text-[10px]">{TOP_VENDORS.length} fornecedores</Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {TOP_VENDORS.map((vendor) => (
-              <div
-                key={vendor.name}
-                className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
-                data-testid={`vendor-${vendor.name.toLowerCase().replace(/\s/g, '-')}`}
-              >
-                <div>
-                  <p className="text-sm font-medium">{vendor.name}</p>
-                  <p className="text-xs text-muted-foreground">{vendor.txns} transacoes</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold">{formatCurrency(vendor.total)}</p>
-                  <Badge
-                    variant={vendor.status === "critical" ? "destructive" : vendor.status === "alert" ? "secondary" : "outline"}
-                    className="text-[10px]"
-                  >
-                    {vendor.status === "critical" ? "Critico" : vendor.status === "alert" ? "Atencao" : "Regular"}
-                  </Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      <AwaitingDataCard
+        title="Principais Fornecedores Auditados"
+        icon={Building2}
+        description="O ranking de fornecedores sera populado automaticamente a partir dos dados de despesas enviados pelo cliente."
+      />
 
       <Separator />
 

@@ -14,6 +14,8 @@ import {
   RefreshCw,
   Plug,
   ShieldCheck,
+  Lock,
+  Upload,
 } from "lucide-react";
 
 interface IntegrationType {
@@ -21,18 +23,6 @@ interface IntegrationType {
   label: string;
   icon: any;
   description: string;
-}
-
-interface ProjectIntegration {
-  key: string;
-  label: string;
-  icon: any;
-  description: string;
-  status: "connected" | "available";
-  lastSync?: string;
-  totalRecords?: number;
-  fileFormat?: string;
-  syncFrequency?: string;
 }
 
 const ALL_INTEGRATIONS: IntegrationType[] = [
@@ -92,68 +82,7 @@ const ALL_INTEGRATIONS: IntegrationType[] = [
   },
 ];
 
-const PROJECT_INTEGRATIONS: ProjectIntegration[] = [
-  {
-    key: "bradesco_ebta",
-    label: "Banco Bradesco (EBTA)",
-    icon: CreditCard,
-    description: "Extratos EBTA - contas 131882, 131883, 131884",
-    status: "connected",
-    lastSync: "22/02/2026 14:30",
-    totalRecords: 45230,
-    fileFormat: "XLSX",
-    syncFrequency: "Mensal",
-  },
-  {
-    key: "travel_agency",
-    label: "Agencia Stabia Viagens",
-    icon: Briefcase,
-    description: "Base geral da agencia - aereo e terrestre",
-    status: "connected",
-    lastSync: "20/02/2026 09:15",
-    totalRecords: 128450,
-    fileFormat: "XLSX",
-    syncFrequency: "Mensal",
-  },
-  {
-    key: "airline",
-    label: "Cias Aereas (via Agencia)",
-    icon: Plane,
-    description: "Bilhetes aereos emitidos via agencia e OBT",
-    status: "connected",
-    lastSync: "20/02/2026 09:15",
-    totalRecords: 89200,
-    fileFormat: "CSV",
-    syncFrequency: "Mensal",
-  },
-  {
-    key: "gds_sabre",
-    label: "GDS Sabre",
-    icon: Globe,
-    description: "PNRs e reservas via Sabre - sistema Reserve",
-    status: "connected",
-    lastSync: "18/02/2026 16:45",
-    totalRecords: 67800,
-    fileFormat: "XML",
-    syncFrequency: "Semanal",
-  },
-];
-
-const activeKeys = new Set(PROJECT_INTEGRATIONS.map((p) => p.key));
-
-const AVAILABLE_INTEGRATIONS = ALL_INTEGRATIONS.filter(
-  (i) => !activeKeys.has(i.key)
-);
-
 export default function ClientIntegrations() {
-  const connectedCount = PROJECT_INTEGRATIONS.filter(
-    (i) => i.status === "connected"
-  ).length;
-  const totalRecords = PROJECT_INTEGRATIONS.reduce(
-    (sum, i) => sum + (i.totalRecords || 0),
-    0
-  );
-
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
       <div>
@@ -177,17 +106,17 @@ export default function ClientIntegrations() {
                   Conectadas
                 </p>
                 <p
-                  className="text-2xl font-bold tracking-tight text-green-600 dark:text-green-400"
+                  className="text-2xl font-bold tracking-tight text-muted-foreground"
                   data-testid="text-connected-integrations"
                 >
-                  {connectedCount}
+                  0
                 </p>
                 <span className="text-xs text-muted-foreground">
-                  integracoes ativas
+                  nenhuma integracao ativa
                 </span>
               </div>
-              <div className="flex items-center justify-center w-10 h-10 rounded-md bg-green-600/10 dark:bg-green-400/10">
-                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-md bg-muted">
+                <Lock className="w-5 h-5 text-muted-foreground" />
               </div>
             </div>
           </CardContent>
@@ -203,7 +132,7 @@ export default function ClientIntegrations() {
                   className="text-2xl font-bold tracking-tight"
                   data-testid="text-available-integrations"
                 >
-                  {AVAILABLE_INTEGRATIONS.length}
+                  {ALL_INTEGRATIONS.length}
                 </p>
                 <span className="text-xs text-muted-foreground">
                   para ativacao
@@ -223,95 +152,45 @@ export default function ClientIntegrations() {
                   Registros Ingeridos
                 </p>
                 <p
-                  className="text-2xl font-bold tracking-tight"
+                  className="text-2xl font-bold tracking-tight text-muted-foreground"
                   data-testid="text-total-records"
                 >
-                  {totalRecords.toLocaleString("pt-BR")}
+                  0
                 </p>
                 <span className="text-xs text-muted-foreground">
-                  total processados
+                  aguardando dados
                 </span>
               </div>
-              <div className="flex items-center justify-center w-10 h-10 rounded-md bg-primary/10">
-                <Database className="w-5 h-5 text-primary" />
+              <div className="flex items-center justify-center w-10 h-10 rounded-md bg-muted">
+                <Database className="w-5 h-5 text-muted-foreground" />
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card data-testid="card-project-integrations">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+            <Lock className="w-4 h-4 text-muted-foreground" />
             Integracoes deste Projeto
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            Fontes de dados conectadas e ativas para a auditoria Grupo Stabia
+            Nenhuma integracao ativa — configure apos o envio dos dados
           </p>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {PROJECT_INTEGRATIONS.map((integration) => {
-              const Icon = integration.icon;
-              return (
-                <div
-                  key={integration.key}
-                  className="flex items-center justify-between gap-4 p-4 rounded-md bg-background"
-                  data-testid={`integration-active-${integration.key}`}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="flex items-center justify-center w-9 h-9 rounded-md bg-green-600/10 dark:bg-green-400/10 shrink-0">
-                      <Icon className="w-4 h-4 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <p
-                          className="text-sm font-medium"
-                          data-testid={`text-integration-name-${integration.key}`}
-                        >
-                          {integration.label}
-                        </p>
-                        {integration.fileFormat && (
-                          <Badge variant="outline" className="text-[10px]">
-                            {integration.fileFormat}
-                          </Badge>
-                        )}
-                        {integration.syncFrequency && (
-                          <Badge variant="outline" className="text-[10px]">
-                            {integration.syncFrequency}
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        {integration.description}
-                      </p>
-                      <div className="flex items-center gap-3 mt-1 flex-wrap">
-                        {integration.totalRecords != null && (
-                          <span className="text-xs text-muted-foreground">
-                            {integration.totalRecords.toLocaleString("pt-BR")}{" "}
-                            registros
-                          </span>
-                        )}
-                        {integration.lastSync && (
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <RefreshCw className="w-3 h-3" />
-                            {integration.lastSync}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <Badge
-                    variant="default"
-                    data-testid={`badge-status-${integration.key}`}
-                  >
-                    <CheckCircle className="w-3 h-3 mr-1" />
-                    Conectado
-                  </Badge>
-                </div>
-              );
-            })}
+          <div className="flex flex-col items-center justify-center py-8 gap-3 text-center">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-muted">
+              <Upload className="w-6 h-6 text-muted-foreground" />
+            </div>
+            <p className="text-sm font-medium text-muted-foreground" data-testid="text-awaiting-integrations">
+              Aguardando envio de dados
+            </p>
+            <p className="text-xs text-muted-foreground max-w-md">
+              As integracoes serao ativadas conforme os arquivos do cliente forem enviados e processados pela plataforma.
+              Cada fonte de dados sera conectada individualmente com validacao de formato e registro de custodia.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -323,12 +202,12 @@ export default function ClientIntegrations() {
             Integracoes Disponiveis
           </CardTitle>
           <p className="text-xs text-muted-foreground">
-            Fontes de dados adicionais suportadas pela plataforma AuraAUDIT
+            Fontes de dados suportadas pela plataforma AuraAUDIT
           </p>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {AVAILABLE_INTEGRATIONS.map((integration) => {
+            {ALL_INTEGRATIONS.map((integration) => {
               const Icon = integration.icon;
               return (
                 <div

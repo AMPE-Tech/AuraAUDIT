@@ -14,7 +14,7 @@ Aura Audit employs a modern full-stack architecture.
 **AI Integration:** Leverages OpenAI via Replit AI Integrations (gpt-5.2) for advanced analytics and generative assistance.
 
 **Key Features:**
-- **Modular Dashboard:** Home page with 8 audit categories (Travel/Events, Expenses, Contracts, Agencies, Telecom, Fleet, Benefits, Supplies), performance metrics, and methodology stages. A detailed dashboard provides KPI metrics, system overviews (OBT/Backoffice), financial volumes, and audit scope areas.
+- **Modular Dashboard:** Home page with 8 audit categories (Travel/Events, Expenses, Contracts, Agencies, Telecom, Fleet, Benefits, Supplies), performance metrics, and methodology stages. A detailed dashboard provides KPI metrics, system overviews (OBT/Backoffice), financial volumes, and audit scope areas. Client Project Panel shows only real data from API (expenses, anomalies, audit-cases) with "Aguardando dados" placeholders for sections pending client data upload.
 - **Client Management:** Comprehensive client registration and management for travel agencies and corporate entities.
 - **Data Integration Hub:** Centralized hub for integrating various data sources including financial institutions (Banco Bradesco EBTA), travel providers (agencies, airlines, hotels, car rentals), GDS systems (Sabre, Amadeus), and BSPlink.
 - **Expense and Audit Case Management:** CRUD operations for expenses with risk level identification, full audit case lifecycle management (methodology, scope, findings, recommendations), and anomaly detection workflows.
