@@ -52,7 +52,8 @@ Versao: ${PRICING.TERMS_VERSION}
 - Franquia: ate US$ 10.000 de VAM/mes sem variavel
 - Variavel (progressiva): aliquota conforme VAM do mes sobre o excedente:
   Excedente = max(0, VAM - 10.000)
-- CAP mensal: total (fixo + variavel) limitado a US$ 3.000/mes
+- CAP mensal: total (fixo + variavel) limitado ao valor definido pelo CONTRATANTE (padrao US$ 3.000/mes, configuravel de US$ 99 a US$ 50.000/mes)
+- Aprovacao ao atingir CAP: o CONTRATANTE escolhe entre (a) aprovacao manual — plataforma pausa e notifica, aguardando liberacao expressa, ou (b) aprovacao automatica — plataforma continua operando sem interrupcao
 
 Faixas de aliquota (rate(VAM)) — continuas:
   VAM <= US$ 100.000 -> 0,30%
@@ -62,7 +63,7 @@ Faixas de aliquota (rate(VAM)) — continuas:
   VAM <= US$ 1.000.000 -> 0,22%
   VAM > US$ 1.000.000 -> 0,20%
 
-Formula: min(3000, 99 + rate(VAM) x max(0, VAM - 10.000))
+Formula: min(CAP, 99 + rate(VAM) x max(0, VAM - 10.000))
 
 5) Evidencias, trilhas e rastreabilidade: A Plataforma registra logs e metadados (trilhas auditaveis) e preserva evidencias (cadeia de custodia). O Servico nao constitui parecer juridico.
 
@@ -82,6 +83,8 @@ const checkoutSchema = z.object({
   companyName: z.string().min(1),
   companyCnpj: z.string().optional(),
   acceptedTerms: z.boolean().refine(v => v === true, { message: "Aceite obrigatorio" }),
+  customCap: z.number().min(99).max(50000).default(3000),
+  autoApprove: z.boolean().default(false),
 });
 
 export function registerStripeRoutes(app: Express) {
@@ -105,7 +108,11 @@ export function registerStripeRoutes(app: Express) {
       currency: "USD",
       monthlyFixed: PRICING.MONTHLY_FIXED_USD,
       franchiseVam: PRICING.FRANCHISE_USD,
-      capUsd: PRICING.CAP_USD,
+      defaultCapUsd: PRICING.CAP_USD,
+      capCustomizable: true,
+      capMin: 99,
+      capMax: 50000,
+      capPresets: [500, 1000, 2000, 3000, 5000],
       tiers: [
         { maxVam: 100000, rate: 0.0030, label: "0,30%" },
         { maxVam: 300000, rate: 0.0028, label: "0,28%" },
@@ -114,7 +121,7 @@ export function registerStripeRoutes(app: Express) {
         { maxVam: 1000000, rate: 0.0022, label: "0,22%" },
         { maxVam: null, rate: 0.0020, label: "0,20%" },
       ],
-      formula: "min(3000, 250 + rate(VAM) * max(0, VAM - 25000))",
+      formula: "min(CAP, 99 + rate(VAM) * max(0, VAM - 10000))",
       examples,
     });
   });
@@ -144,16 +151,21 @@ export function registerStripeRoutes(app: Express) {
           userId,
           companyName: body.companyName,
           companyCnpj: body.companyCnpj || "",
+          customCap: String(body.customCap),
+          autoApprove: String(body.autoApprove),
         },
       });
+
+      const capAddendum = `\n\nADENDO DE CAP PERSONALIZADO:\n- CAP mensal definido pelo CONTRATANTE: US$ ${body.customCap}\n- Modo de aprovacao: ${body.autoApprove ? "automatica (plataforma continua operando sem interrupcao)" : "manual (plataforma pausa ao atingir o CAP e aguarda liberacao expressa do CONTRATANTE)"}`;
+      const fullTermsSnapshot = TERMS_TEXT_SHORT + capAddendum;
 
       await db.insert(termsAcceptance).values({
         userId,
         companyName: body.companyName,
         companyCnpj: body.companyCnpj || null,
         termsVersion: PRICING.TERMS_VERSION,
-        termsTextSha256: hashTermsText(TERMS_TEXT_SHORT),
-        termsTextSnapshot: TERMS_TEXT_SHORT,
+        termsTextSha256: hashTermsText(fullTermsSnapshot),
+        termsTextSnapshot: fullTermsSnapshot,
         ipAddress: req.ip || req.headers["x-forwarded-for"]?.toString() || null,
         userAgent: req.headers["user-agent"] || null,
       });
@@ -169,9 +181,9 @@ export function registerStripeRoutes(app: Express) {
               currency: "usd",
               product_data: {
                 name: "AuraAudit Pass",
-                description: "Auditoria forense online — US$ 250/mes + variavel por VAM (CAP US$ 3.000/mes)",
+                description: `Auditoria forense online — US$ 99/mes + variavel por VAM (CAP US$ ${body.customCap}/mes, ${body.autoApprove ? "aprovacao automatica" : "aprovacao manual"})`,
               },
-              unit_amount: 25000,
+              unit_amount: 9900,
               recurring: { interval: "month" },
             },
             quantity: 1,
@@ -183,6 +195,8 @@ export function registerStripeRoutes(app: Express) {
         metadata: {
           userId,
           companyName: body.companyName,
+          customCap: String(body.customCap),
+          autoApprove: String(body.autoApprove),
         },
       });
 
@@ -197,16 +211,21 @@ export function registerStripeRoutes(app: Express) {
   });
 
   app.post("/api/stripe/simulate-vam", async (req: Request, res: Response) => {
-    const { vam } = req.body;
+    const { vam, customCap } = req.body;
     if (typeof vam !== "number" || vam < 0) {
       return res.status(400).json({ error: "VAM deve ser um numero positivo" });
     }
+    const cap = typeof customCap === "number" && customCap >= 99 ? customCap : PRICING.CAP_USD;
     const result = calculateMonthlyTotal(vam);
+    const cappedTotal = Math.min(cap, result.subtotal);
     res.json({
       vam,
       ...result,
+      total: cappedTotal,
+      cap,
+      capHit: result.subtotal >= cap,
       ratePercent: `${(result.rate * 100).toFixed(2)}%`,
-      formula: `min(3000, 250 + ${result.rate} * max(0, ${vam} - 25000))`,
+      formula: `min(${cap}, 99 + ${result.rate} * max(0, ${vam} - 10000))`,
     });
   });
 

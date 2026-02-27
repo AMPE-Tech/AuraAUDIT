@@ -8,11 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import {
   Shield, Check, ArrowRight, Calculator, FileText,
   DollarSign, TrendingUp, Lock, ChevronDown, ChevronRight,
-  AlertTriangle, Zap, BarChart3, Globe, ShieldCheck, Eye
+  AlertTriangle, Zap, BarChart3, Globe, ShieldCheck, Eye,
+  Settings2, ShieldAlert, CheckCircle2
 } from "lucide-react";
 
 function formatUSD(value: number): string {
@@ -28,15 +30,19 @@ function rateForVam(vam: number): number {
   return 0.0020;
 }
 
-function calculateTotal(vam: number): { fixed: number; excess: number; rate: number; variable: number; subtotal: number; total: number } {
+function calculateTotal(vam: number, customCap: number): { fixed: number; excess: number; rate: number; variable: number; subtotal: number; total: number; capHit: boolean } {
   const fixed = 99;
   const excess = Math.max(0, vam - 10000);
   const rate = rateForVam(vam);
   const subtotal = fixed + rate * excess;
-  const total = Math.min(3000, subtotal);
+  const cap = customCap > 0 ? customCap : 3000;
+  const total = Math.min(cap, subtotal);
   const variable = Math.max(0, total - fixed);
-  return { fixed, excess, rate, variable, subtotal, total };
+  const capHit = subtotal >= cap;
+  return { fixed, excess, rate, variable, subtotal, total, capHit };
 }
+
+const CAP_PRESETS = [500, 1000, 2000, 3000, 5000];
 
 const RATE_TIERS = [
   { label: "Ate US$ 100.000", rate: "0,30%", value: 0.003 },
@@ -55,6 +61,8 @@ export default function Subscription() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
   const [showTiers, setShowTiers] = useState(false);
+  const [customCap, setCustomCap] = useState(3000);
+  const [autoApprove, setAutoApprove] = useState(false);
 
   const termsQuery = useQuery({
     queryKey: ["/api/stripe/terms"],
@@ -69,7 +77,7 @@ export default function Subscription() {
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ companyName, companyCnpj, acceptedTerms }),
+        body: JSON.stringify({ companyName, companyCnpj, acceptedTerms, customCap, autoApprove }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -91,7 +99,7 @@ export default function Subscription() {
     },
   });
 
-  const simulated = calculateTotal(vamSlider);
+  const simulated = calculateTotal(vamSlider, customCap);
 
   const examples = [
     { vam: 10000, label: "US$ 10k" },
@@ -132,12 +140,76 @@ export default function Subscription() {
               </p>
             </div>
 
-            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-lg p-3">
+            <div className="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-lg p-3 space-y-3">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                <Settings2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                 <p className="text-xs font-medium text-emerald-700 dark:text-emerald-300" data-testid="text-cap-guarantee">
-                  Sem sustos: o total mensal nunca passa de <strong>US$ 3.000</strong>.
+                  Voce define seu limite mensal. A plataforma trava ao atingir.
                 </p>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] text-emerald-700 dark:text-emerald-300">Seu CAP mensal (US$)</Label>
+                <div className="flex gap-1.5 flex-wrap">
+                  {CAP_PRESETS.map((preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => setCustomCap(preset)}
+                      className={`text-[10px] px-2 py-1 rounded border transition-colors ${
+                        customCap === preset
+                          ? "bg-emerald-600 text-white border-emerald-600"
+                          : "border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
+                      }`}
+                      data-testid={`button-cap-${preset}`}
+                    >
+                      {formatUSD(preset)}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min={99}
+                    max={50000}
+                    value={customCap}
+                    onChange={(e) => setCustomCap(Math.max(99, Number(e.target.value)))}
+                    className="h-7 text-xs w-28 bg-white dark:bg-emerald-950/50"
+                    data-testid="input-custom-cap"
+                  />
+                  <span className="text-[10px] text-emerald-700 dark:text-emerald-300">USD/mes</span>
+                </div>
+              </div>
+              <Separator className="bg-emerald-200 dark:bg-emerald-800" />
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <p className="text-[10px] font-medium text-emerald-700 dark:text-emerald-300">Aprovacao automatica</p>
+                  <p className="text-[9px] text-emerald-600 dark:text-emerald-400">
+                    {autoApprove
+                      ? "Liberado automaticamente ao atingir o CAP"
+                      : "Plataforma trava e aguarda sua aprovacao manual"}
+                  </p>
+                </div>
+                <Switch
+                  checked={autoApprove}
+                  onCheckedChange={setAutoApprove}
+                  data-testid="switch-auto-approve"
+                />
+              </div>
+              <div className="flex items-start gap-1.5 bg-emerald-100 dark:bg-emerald-900/40 rounded p-2">
+                {autoApprove ? (
+                  <>
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
+                    <p className="text-[9px] text-emerald-700 dark:text-emerald-300">
+                      A plataforma continua operando apos atingir {formatUSD(customCap)}, sem interrupcao.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <ShieldAlert className="w-3 h-3 text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
+                    <p className="text-[9px] text-emerald-700 dark:text-emerald-300">
+                      Ao atingir {formatUSD(customCap)}, a plataforma pausa e notifica voce. Voce entra, revisa e aprova para continuar.
+                    </p>
+                  </>
+                )}
               </div>
             </div>
 
@@ -243,7 +315,7 @@ export default function Subscription() {
                 <span className="font-medium font-mono">{(simulated.rate * 100).toFixed(2)}%</span>
               </div>
               <div className="flex justify-between">
-                <span>Excedente (VAM - 25k)</span>
+                <span>Excedente (VAM - 10k)</span>
                 <span className="font-medium">{formatUSD(simulated.excess)}</span>
               </div>
               <div className="flex justify-between">
@@ -255,10 +327,10 @@ export default function Subscription() {
                 <span>Total mensal</span>
                 <span className="text-primary" data-testid="text-simulated-total">{formatUSD(simulated.total)}</span>
               </div>
-              {simulated.total >= 3000 && (
+              {simulated.capHit && (
                 <Badge variant="outline" className="text-[10px]">
                   <AlertTriangle className="w-2.5 h-2.5 mr-1" />
-                  CAP atingido — US$ 3.000/mes
+                  CAP atingido — {formatUSD(customCap)}/mes
                 </Badge>
               )}
             </div>
@@ -267,7 +339,7 @@ export default function Subscription() {
               <p className="text-[10px] text-muted-foreground font-medium">Exemplos rapidos:</p>
               <div className="grid grid-cols-5 gap-1">
                 {examples.map((ex) => {
-                  const calc = calculateTotal(ex.vam);
+                  const calc = calculateTotal(ex.vam, customCap);
                   return (
                     <button
                       key={ex.vam}
@@ -284,7 +356,7 @@ export default function Subscription() {
             </div>
 
             <div className="bg-muted/30 rounded p-2 text-[10px] text-muted-foreground">
-              <strong>Formula:</strong> min(3.000, 99 + rate(VAM) x max(0, VAM - 10.000))
+              <strong>Formula:</strong> min({formatUSD(customCap).replace('$', '$ ')}, 99 + rate(VAM) x max(0, VAM - 10.000))
             </div>
 
             <Button
@@ -314,7 +386,7 @@ export default function Subscription() {
               { vam: 500000, desc: "0,26%" },
               { vam: 1500000, desc: "CAP aplica" },
             ].map((ex) => {
-              const calc = calculateTotal(ex.vam);
+              const calc = calculateTotal(ex.vam, customCap);
               return (
                 <div key={ex.vam} className="bg-background rounded-lg border p-3 text-center" data-testid={`example-card-${ex.vam}`}>
                   <p className="text-[10px] text-muted-foreground">VAM = {formatUSD(ex.vam)}</p>
@@ -383,7 +455,7 @@ export default function Subscription() {
                 data-testid="checkbox-accept-terms"
               />
               <label htmlFor="acceptTerms" className="text-[11px] leading-tight cursor-pointer">
-                Li e aceito os Termos de Adesao do AuraAudit Pass: US$ 99/mes, franquia ate US$ 10.000 auditados/mes e adicional progressivo sobre o excedente (0,30% ate US$ 100k; 0,28% ate US$ 300k; 0,26% ate US$ 600k; 0,24% ate US$ 800k; 0,22% ate US$ 1M; 0,20% acima de US$ 1M), com CAP de US$ 3.000/mes.
+                Li e aceito os Termos de Adesao do AuraAudit Pass: US$ 99/mes, franquia ate US$ 10.000 auditados/mes e adicional progressivo sobre o excedente (0,30% ate US$ 100k; 0,28% ate US$ 300k; 0,26% ate US$ 600k; 0,24% ate US$ 800k; 0,22% ate US$ 1M; 0,20% acima de US$ 1M), com CAP definido por mim de {formatUSD(customCap)}/mes{autoApprove ? " (aprovacao automatica)" : " (com aprovacao manual ao atingir)"}.
               </label>
             </div>
           </div>
@@ -434,7 +506,7 @@ export default function Subscription() {
           <Separator />
           <div>
             <p className="font-medium">Como funciona o CAP?</p>
-            <p className="text-muted-foreground">O total mensal (fixo + variavel) nunca ultrapassa US$ 3.000, independente do volume auditado. Sem surpresas.</p>
+            <p className="text-muted-foreground">Voce define seu proprio limite mensal (CAP). Ao atingir, a plataforma pausa e aguarda sua aprovacao para continuar — ou, se preferir, voce ativa a aprovacao automatica e a plataforma segue sem interrupcao. O controle e totalmente seu.</p>
           </div>
           <Separator />
           <div>
