@@ -628,16 +628,6 @@ export default function Home() {
           <h2 className="text-sm font-semibold" data-testid="text-performance-title">Performance</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="border-blue-200 dark:border-blue-900">
-            <CardContent className="p-6 text-center">
-              <div className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-2">
-                <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-              </div>
-              <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
-              <p className="text-xs text-muted-foreground mt-1">Media de Resultado</p>
-              <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
-            </CardContent>
-          </Card>
           <Card className="border-emerald-200 dark:border-emerald-900">
             <CardContent className="p-6 text-center">
               <div className="flex items-center justify-center w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-2">
@@ -656,6 +646,16 @@ export default function Home() {
               <p className="text-xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-recovered">+448 MI</p>
               <p className="text-xs text-muted-foreground mt-1">Economizados</p>
               <p className="text-xs text-muted-foreground">media do total revisado</p>
+            </CardContent>
+          </Card>
+          <Card className="border-blue-200 dark:border-blue-900">
+            <CardContent className="p-6 text-center">
+              <div className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-2">
+                <TrendingUp className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-avg-result">16%</p>
+              <p className="text-xs text-muted-foreground mt-1">Media da Economia</p>
+              <p className="text-xs text-muted-foreground">sobre o volume revisado</p>
             </CardContent>
           </Card>
         </div>
