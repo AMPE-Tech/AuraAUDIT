@@ -36,8 +36,8 @@ async function seedUsers(clientIds: Record<string, string>) {
 }
 
 export async function seedDatabase() {
-  const existingExpenses = await db.select({ id: expenses.id }).from(expenses).limit(1);
-  if (existingExpenses.length > 0) {
+  const existingClients = await db.select({ id: clients.id }).from(clients).limit(1);
+  if (existingClients.length > 0) {
     await seedUsers({});
     return;
   }

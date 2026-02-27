@@ -48,16 +48,14 @@ const DELIVERABLES = [
 ];
 
 const EXPECTED_DOCUMENTS = [
-  { key: "obt-reserve", name: "Extratos OBT Reserve (reservas e PNRs)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
-  { key: "obt-argo", name: "Extratos OBT Argo (reservas e PNRs)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
-  { key: "backoffice-wintour", name: "Base Backoffice Wintour (emissoes 2024)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
-  { key: "backoffice-stur", name: "Base Backoffice Stur (emissoes 2025)", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
-  { key: "bradesco-ebta", name: "Extratos Bradesco EBTA (cartoes corporativos)", responsible: "Grupo Stabia", formats: ".csv, .xlsx, .pdf" },
-  { key: "gds-sabre-amadeus", name: "Dados GDS Sabre / Amadeus", responsible: "Grupo Stabia", formats: ".csv, .xlsx" },
-  { key: "bsplink", name: "Faturamento BSPlink", responsible: "Grupo Stabia", formats: ".csv, .xlsx, .pdf" },
-  { key: "management-files", name: "Management files agencias (CVC, Flytour, BRT)", responsible: "Grupo Stabia", formats: ".csv, .xlsx, .pdf" },
-  { key: "politica-viagens", name: "Politica de viagens vigente", responsible: "Grupo Stabia", formats: ".pdf, .doc, .docx" },
-  { key: "tabela-aprovadores", name: "Tabela de aprovadores e limites", responsible: "Grupo Stabia", formats: ".xlsx, .pdf" },
+  { key: "obt-extratos", name: "Extratos do sistema OBT (reservas e PNRs)", responsible: "Cliente", formats: ".csv, .xlsx" },
+  { key: "backoffice-emissoes", name: "Base Backoffice (emissoes e faturamento)", responsible: "Cliente", formats: ".csv, .xlsx" },
+  { key: "cartoes-corporativos", name: "Extratos de cartoes corporativos", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "gds-dados", name: "Dados GDS (reservas e PNRs)", responsible: "Cliente", formats: ".csv, .xlsx" },
+  { key: "bsplink", name: "Faturamento BSPlink", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "management-files", name: "Arquivos gerenciais de agencias", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "politica-viagens", name: "Politica de viagens vigente", responsible: "Cliente", formats: ".pdf, .doc, .docx" },
+  { key: "tabela-aprovadores", name: "Tabela de aprovadores e limites", responsible: "Cliente", formats: ".xlsx, .pdf" },
 ];
 
 function formatFileSize(bytes: number) {

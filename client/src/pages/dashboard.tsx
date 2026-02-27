@@ -221,7 +221,7 @@ export default function Dashboard() {
             Dashboard de Auditoria
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            AuraAUDIT - Auditoria Forense em Despesas | Grupo Stabia
+            AuraAUDIT — Due Diligence Platform
           </p>
         </div>
         <div className="flex items-center gap-2">

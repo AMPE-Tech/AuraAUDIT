@@ -172,7 +172,7 @@ export default function ClientExpenseTypes() {
                 Tipos Contratados neste Projeto
               </CardTitle>
               <p className="text-xs text-muted-foreground">
-                Categorias ativas na auditoria do Grupo Stabia
+                Categorias ativas na auditoria do cliente
               </p>
             </CardHeader>
             <CardContent className="space-y-3">

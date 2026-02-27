@@ -36,7 +36,7 @@ import { validateCPF, formatCPF } from "@shared/validators";
 
 const CONTRACT_DATA = {
   number: "AUR-2025-0042",
-  client: "Grupo Stabia",
+  client: "",
   startDate: "2025-01-15",
   endDate: "2025-12-31",
   type: "Contrato Tecnico Master — Auditoria Forense & Servicos Digitais",
@@ -345,7 +345,7 @@ export default function ClientContract() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-3 rounded-md bg-background/60">
               <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Cliente</p>
-              <p className="text-sm font-medium" data-testid="text-contract-client">{CONTRACT_DATA.client}</p>
+              <p className="text-sm font-medium" data-testid="text-contract-client">{clientData?.name || user?.fullName || "Cliente"}</p>
             </div>
             <div className="p-3 rounded-md bg-background/60">
               <p className="text-[11px] text-muted-foreground uppercase tracking-wide mb-1">Tipo de Servico</p>

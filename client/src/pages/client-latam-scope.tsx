@@ -93,7 +93,7 @@ const CATEGORIES: LatamCategory[] = [
       "Reconciliacao fatura vs PNR vs cartao",
     ],
     evidenceTypes: ["Contrato + Fees", "Service Reports", "Faturas Detalhadas", "PNR Audit"],
-    providers: ["CVC Corp", "Flytour", "BRT", "Copastur", "Rextur", "Alatur JTB"],
+    providers: [],
   },
   {
     id: "midbackoffice",
