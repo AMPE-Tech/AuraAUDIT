@@ -501,12 +501,22 @@ ITENS PENDENTES / EM OBSERVACAO:
 [!!] CL25. Multi-idioma: plataforma opera em portugues brasileiro; nao ha suporte a outros idiomas. Recomendacao: avaliar necessidade futura.
 
 ============================================================
+CLAUSULAS PETREAS (REGRAS VINCULANTES IMUTAVEIS)
+============================================================
+
+As clausulas abaixo sao imutaveis e prevalecem sobre todas as demais disposicoes deste contrato. Nao podem ser revogadas, flexibilizadas ou contornadas sob nenhuma circunstancia.
+
+CP-01: ZERO DADOS FICTICIOS — A partir da entrada em modulo de producao, todo dado exibido em qualquer pagina do portal do cliente deve ter origem exclusiva em uma de duas fontes: (1) a proposta comercial/contrato assinado (via API /api/client/project-overview ou texto contratual), ou (2) dados enviados pelo cliente atraves de sua sessao autenticada. Nenhum dado de amostra hardcoded, valor placeholder, numero ficticio, nome de fornecedor inventado, data falsa, contagem de registros inventada ou metrica sintetica e permitido em qualquer parte do portal do cliente. Secoes aguardando dados reais devem exibir estado explicito "Aguardando dados" com icone de lock. A violacao desta clausula constitui descumprimento contratual.
+
+CP-02: SEM ALTERACOES EM BILLING/ASSINATURA SEM APROVACAO — Nenhuma alteracao em arquivos relacionados a logica de cobranca e assinatura pode ser feita sem aprovacao explicita e previa do CONTRATANTE.
+
+============================================================
 CONSIDERACOES FINAIS
 ============================================================
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M9, com 21 evidencias tecnicas documentadas, 25 itens de checklist de conformidade (20 conformes, 5 em observacao) e 3 anexos detalhados.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M9, com 21 evidencias tecnicas documentadas, 25 itens de checklist de conformidade (20 conformes, 5 em observacao), 3 anexos detalhados e 2 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 

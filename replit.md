@@ -6,6 +6,13 @@ Aura Audit is a forensic audit platform designed for corporate travel and event 
 ## User Preferences
 I prefer clear and concise communication. For any proposed changes, please provide a high-level overview first, explaining the rationale and potential impact. I value iterative development, with regular updates on progress and opportunities for feedback. When implementing features, prioritize maintainability and scalability. I prefer detailed explanations for complex technical decisions. Do not make changes to files related to billing and subscription logic without explicit approval.
 
+## Binding Rules (Clausulas Petreas)
+The following rules are immutable and take precedence over all other directives. They cannot be overridden, relaxed, or bypassed under any circumstances.
+
+**CP-01: ZERO FICTITIOUS DATA** — Effective immediately upon entering production module. Every piece of data displayed on any client-facing page MUST originate exclusively from one of two sources: (1) the commercial proposal/signed contract (via API `/api/client/project-overview` or contract text), or (2) data uploaded by the client through their authenticated session. No hardcoded sample data, placeholder values, mock numbers, fictitious vendor names, fake dates, invented record counts, or synthetic metrics are permitted anywhere in the client portal. Sections awaiting real data MUST display an explicit "Aguardando dados" state with a lock icon. Violation of this rule constitutes a contractual breach.
+
+**CP-02: NO BILLING/SUBSCRIPTION CHANGES WITHOUT APPROVAL** — Do not make changes to files related to billing and subscription logic without explicit user approval.
+
 ## System Architecture
 Aura Audit employs a modern full-stack architecture.
 **Frontend:** Built with React, Vite, TailwindCSS, shadcn/ui, and Recharts for a responsive and data-rich user interface. Wouter is used for client-side routing and TanStack React Query for state management.
