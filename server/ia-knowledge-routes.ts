@@ -7,6 +7,24 @@ import { createHash } from "crypto";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+let pdfParse: any;
+let mammoth: any;
+let XLSX: any;
+
+async function loadExtractors() {
+  if (!pdfParse) {
+    const mod = await import("pdf-parse");
+    pdfParse = mod.default || mod;
+  }
+  if (!mammoth) {
+    const mod = await import("mammoth");
+    mammoth = mod.default || mod;
+  }
+  if (!XLSX) {
+    const mod = await import("xlsx");
+    XLSX = mod.default || mod;
+  }
+}
 
 const KNOWLEDGE_DIR = path.join(process.cwd(), "uploads", "knowledge");
 
@@ -57,10 +75,44 @@ const CATEGORIES = [
   { id: "general", label: "Conhecimento Geral" },
 ];
 
-function extractTextFromTxt(filePath: string): string {
+async function extractText(filePath: string, ext: string): Promise<string> {
   try {
-    return fs.readFileSync(filePath, "utf-8").slice(0, 100000);
-  } catch {
+    await loadExtractors();
+
+    if ([".txt", ".md", ".csv", ".json", ".xml"].includes(ext)) {
+      return fs.readFileSync(filePath, "utf-8").slice(0, 100000);
+    }
+
+    if (ext === ".pdf") {
+      const buffer = fs.readFileSync(filePath);
+      const result = await pdfParse(buffer);
+      return (result.text || "").slice(0, 100000);
+    }
+
+    if (ext === ".docx" || ext === ".doc") {
+      const buffer = fs.readFileSync(filePath);
+      const result = await mammoth.extractRawText({ buffer });
+      return (result.value || "").slice(0, 100000);
+    }
+
+    if (ext === ".xlsx" || ext === ".xls") {
+      const workbook = XLSX.readFile(filePath);
+      const sheets: string[] = [];
+      for (const sheetName of workbook.SheetNames) {
+        const sheet = workbook.Sheets[sheetName];
+        const csv = XLSX.utils.sheet_to_csv(sheet);
+        sheets.push(`[${sheetName}]\n${csv}`);
+      }
+      return sheets.join("\n\n").slice(0, 100000);
+    }
+
+    if (ext === ".pptx" || ext === ".ppt") {
+      return "";
+    }
+
+    return "";
+  } catch (error) {
+    console.error(`Text extraction failed for ${ext}:`, error);
     return "";
   }
 }
@@ -106,11 +158,8 @@ export function registerIaKnowledgeRoutes(app: Express) {
         const fileBuffer = fs.readFileSync(filePath);
         const sha256 = createHash("sha256").update(fileBuffer).digest("hex");
 
-        let extractedText = "";
         const ext = path.extname(req.file.originalname).toLowerCase();
-        if ([".txt", ".md", ".csv", ".json", ".xml"].includes(ext)) {
-          extractedText = extractTextFromTxt(filePath);
-        }
+        const extractedText = await extractText(filePath, ext);
 
         const [doc] = await db.insert(iaKnowledgeDocs).values({
           title,

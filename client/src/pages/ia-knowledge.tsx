@@ -463,7 +463,10 @@ export default function IaKnowledge() {
                 data-testid="input-upload-file"
               />
               <p className="text-[10px] text-muted-foreground">
-                Formatos: PDF, DOC, XLSX, CSV, TXT, MD, JSON, XML, PPTX (max 50MB)
+                Formatos aceitos: PDF, DOC/DOCX, XLS/XLSX, CSV, TXT, MD, JSON, XML, PPTX (max 50MB)
+              </p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
+                Extracao automatica de texto: PDF, Word (.docx), Excel (.xlsx/.xls), TXT, MD, CSV, JSON, XML
               </p>
             </div>
 

@@ -58,6 +58,7 @@
     "framer-motion": "^11.13.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.453.0",
+    "mammoth": "^1.11.0",
     "memoizee": "^0.4.17",
     "memorystore": "^1.6.7",
     "multer": "^2.0.2",
@@ -68,6 +69,7 @@
     "p-retry": "^7.1.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "pdf-parse": "^1.1.1",
     "pg": "^8.16.3",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
@@ -84,6 +86,7 @@
     "vaul": "^1.1.2",
     "wouter": "^3.3.5",
     "ws": "^8.18.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.76",
     "zod-validation-error": "^3.5.4"
   },
