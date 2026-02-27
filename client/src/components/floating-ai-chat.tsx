@@ -33,10 +33,10 @@ interface Conversation {
 }
 
 const SUGGESTIONS = [
-  "Quais indicadores acompanhar na auditoria de viagens?",
+  "Quais arquivos devo carregar para auditar despesas de viagem?",
+  "Como a AuraAUDIT detecta desperdicios em despesas corporativas?",
   "Como funciona a conciliacao OBT vs Backoffice?",
-  "Como identificar markups indevidos em tarifas aereas?",
-  "O que verificar em auditoria de hotel corporativo?",
+  "O que a cadeia de custodia digital garante na auditoria?",
 ];
 
 export function FloatingAiChat() {

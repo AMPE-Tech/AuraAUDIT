@@ -259,6 +259,7 @@ function AppContent() {
           </div>
         </header>
         <TesteAgora />
+        <FloatingAiChat />
       </div>
     );
   }

@@ -588,8 +588,9 @@ export default function Home() {
             <h2 className="text-sm font-semibold">O que fazemos</h2>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
-            Uma <span className="font-medium text-foreground">plataforma forense de auditoria online</span> que detecta desconformidades e desperdicios em{" "}
-            <span className="font-medium text-foreground">despesas corporativas</span>, automatiza a coleta e a conciliacao de evidencias e entrega{" "}
+            Uma <span className="font-medium text-foreground">plataforma forense de auditoria online</span>, com{" "}
+            <span className="font-medium text-foreground">IAs Generativas altamente treinadas</span> para que detecta desconformidades e desperdicios em{" "}
+            <span className="font-medium text-foreground">despesas corporativas</span>, plataforma automatiza a coleta e a conciliacao de evidencias e entrega{" "}
             <span className="font-medium text-foreground">trilhas auditaveis</span>, alertas em tempo real,{" "}
             <span className="font-medium text-foreground">cadeia de custodia</span> e{" "}
             <span className="font-medium text-foreground">rastreabilidade juridica</span>, com{" "}
