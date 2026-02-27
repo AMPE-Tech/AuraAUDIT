@@ -679,8 +679,8 @@ export default function Home() {
             <Button variant="default" size="sm" className="text-xs" data-testid="button-request-diagnostic" onClick={() => window.location.href = '/teste-agora'}>
               Teste Agora
             </Button>
-            <Button variant="outline" size="sm" className="text-xs" data-testid="button-pay-as-you-go" onClick={() => window.location.href = '/wallet'}>
-              Pague so o que usar
+            <Button variant="outline" size="sm" className="text-xs" data-testid="button-view-plans" onClick={() => window.location.href = '/subscription'}>
+              Conhecer Planos
             </Button>
           </div>
         </CardContent>
