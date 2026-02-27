@@ -14,7 +14,7 @@ const TOPUP_PACKAGES = [
 ];
 
 const VIP_USERS = ["stabia"];
-const VIP_INITIAL_CREDITS = 10000;
+const VIP_INITIAL_CREDITS = 3000;
 
 async function getOrCreateWallet(userId: string) {
   const existing = await db.select().from(wallets).where(eq(wallets.userId, userId)).limit(1);
