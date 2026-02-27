@@ -452,6 +452,96 @@ const LATAM_COUNTRIES = [
   { name: "Paraguai", code: "PY", flag: "\u{1F1F5}\u{1F1FE}" },
 ];
 
+const LATAM_MAP_COUNTRIES = [
+  { code: "MX", path: "M48,18 L55,15 L62,12 L72,10 L82,12 L95,15 L105,18 L112,22 L115,28 L118,35 L122,42 L128,48 L132,52 L126,56 L120,58 L115,62 L108,65 L100,62 L94,58 L88,55 L82,52 L78,48 L72,50 L66,48 L60,45 L55,42 L50,38 L45,32 L42,26 L44,22 Z", cx: 88, cy: 38 },
+  { code: "CO", path: "M108,65 L115,62 L120,58 L126,56 L132,60 L138,65 L142,72 L145,78 L148,85 L150,92 L148,98 L144,102 L140,98 L135,95 L130,92 L125,95 L120,98 L115,95 L110,92 L105,88 L102,82 L100,76 L102,70 Z", cx: 126, cy: 80 },
+  { code: "PE", path: "M102,98 L108,95 L115,95 L120,98 L125,95 L130,98 L128,105 L125,112 L122,118 L118,125 L115,132 L112,138 L108,145 L105,150 L100,148 L96,145 L92,140 L88,135 L86,128 L88,122 L90,115 L92,108 L95,102 Z", cx: 108, cy: 122 },
+  { code: "BR", path: "M148,85 L155,82 L162,80 L170,78 L178,80 L185,82 L192,85 L198,88 L205,92 L210,96 L215,100 L218,105 L222,112 L225,118 L228,125 L230,132 L232,140 L233,148 L232,155 L230,162 L228,170 L225,178 L222,185 L218,192 L215,198 L210,205 L205,210 L200,215 L195,218 L190,222 L185,225 L178,228 L172,230 L165,228 L160,225 L155,220 L150,215 L148,210 L145,205 L142,198 L140,192 L138,185 L136,178 L135,170 L134,162 L135,155 L136,148 L138,140 L140,132 L142,125 L144,118 L145,112 L146,105 L148,98 Z", cx: 188, cy: 158 },
+  { code: "CL", path: "M92,145 L96,148 L98,155 L96,162 L94,170 L92,178 L90,185 L88,192 L86,200 L84,208 L82,215 L80,222 L78,230 L76,238 L74,245 L72,252 L70,258 L68,265 L66,272 L64,278 L62,285 L60,290 L58,296 L56,302 L54,308 L52,315 L50,322 L48,328 L46,335 L44,340 L42,345 L40,350 L38,355 L36,360 L38,365 L42,362 L44,356 L46,350 L48,344 L50,338 L52,332 L54,326 L56,318 L58,312 L60,305 L62,298 L64,290 L66,282 L68,275 L70,268 L72,260 L74,252 L76,245 L78,238 L80,230 L82,222 L84,215 L86,208 L88,200 L90,192 L92,185 L94,178 L96,170 L98,162 L96,155 Z", cx: 58, cy: 260 },
+  { code: "AR", path: "M96,200 L100,198 L105,195 L110,198 L115,202 L120,205 L125,210 L128,215 L130,222 L132,228 L130,235 L128,242 L126,248 L124,255 L122,262 L120,268 L118,275 L116,282 L114,288 L112,295 L110,302 L108,308 L106,315 L104,322 L102,328 L100,335 L98,340 L96,345 L94,350 L92,355 L88,358 L84,355 L80,350 L78,345 L76,340 L74,335 L72,328 L74,322 L76,315 L78,308 L80,302 L82,295 L84,288 L86,280 L88,272 L90,265 L88,258 L86,250 L88,242 L90,235 L92,228 L94,220 L92,212 L90,205 Z", cx: 102, cy: 280 },
+  { code: "PY", path: "M130,195 L138,192 L145,195 L148,202 L150,210 L148,215 L144,218 L140,215 L135,212 L130,210 L128,205 L128,200 Z", cx: 140, cy: 205 },
+  { code: "UY", path: "M140,222 L148,218 L155,220 L158,225 L160,232 L158,238 L155,242 L150,240 L145,238 L140,235 L138,230 L138,225 Z", cx: 150, cy: 230 },
+];
+
+const INACTIVE_COUNTRIES = [
+  { code: "VE", path: "M132,52 L138,48 L145,45 L152,48 L158,52 L165,55 L170,58 L175,62 L178,68 L180,74 L178,78 L175,75 L170,72 L165,68 L160,65 L155,68 L150,72 L148,78 L145,72 L142,68 L138,65 L132,60 Z" },
+  { code: "EC", path: "M95,92 L100,88 L105,88 L102,95 L100,102 L96,108 L92,105 L88,100 L86,95 L90,92 Z" },
+  { code: "BO", path: "M112,148 L118,145 L125,148 L130,152 L135,158 L138,165 L140,172 L138,178 L135,182 L130,185 L125,182 L120,178 L115,175 L112,168 L110,162 L108,155 Z" },
+  { code: "GY", path: "M165,55 L170,52 L175,55 L178,58 L180,62 L178,68 L175,72 L170,68 L168,62 L165,58 Z" },
+  { code: "SR", path: "M178,55 L184,52 L188,55 L190,60 L188,65 L185,68 L182,65 L180,60 Z" },
+  { code: "GF", path: "M192,52 L198,50 L202,55 L200,60 L196,62 L192,58 Z" },
+  { code: "CA", path: "M108,65 L112,68 L115,72 L120,78 L125,82 L128,86 L132,90 L128,92 L122,88 L118,84 L114,80 L110,76 L106,72 Z" },
+];
+
+function LatamMap() {
+  const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
+  return (
+    <svg viewBox="20 0 220 390" className="w-full h-auto max-h-[500px]" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="activeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#10b981" stopOpacity="0.35" />
+        </linearGradient>
+        <linearGradient id="hoverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.7" />
+          <stop offset="100%" stopColor="#10b981" stopOpacity="0.6" />
+        </linearGradient>
+        <linearGradient id="inactiveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#475569" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#475569" stopOpacity="0.08" />
+        </linearGradient>
+        <filter id="mapGlow">
+          <feGaussianBlur stdDeviation="2.5" result="blur" />
+          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <filter id="pinDrop">
+          <feDropShadow dx="0" dy="1" stdDeviation="1.5" floodColor="rgba(0,0,0,0.6)" />
+        </filter>
+      </defs>
+
+      {INACTIVE_COUNTRIES.map((c) => (
+        <path key={c.code} d={c.path} fill="url(#inactiveGrad)" stroke="rgba(100,116,139,0.15)" strokeWidth="0.4" />
+      ))}
+
+      {LATAM_MAP_COUNTRIES.map((c) => (
+        <path
+          key={c.code}
+          d={c.path}
+          fill={hoveredCountry === c.code ? "url(#hoverGrad)" : "url(#activeGrad)"}
+          stroke={hoveredCountry === c.code ? "rgba(59,130,246,0.8)" : "rgba(59,130,246,0.35)"}
+          strokeWidth={hoveredCountry === c.code ? "1.2" : "0.6"}
+          className="transition-all duration-300 cursor-pointer"
+          onMouseEnter={() => setHoveredCountry(c.code)}
+          onMouseLeave={() => setHoveredCountry(null)}
+          data-testid={`map-country-${c.code.toLowerCase()}`}
+        />
+      ))}
+
+      {LATAM_MAP_COUNTRIES.map((c) => (
+        <g key={`pin-${c.code}`} filter="url(#pinDrop)" data-testid={`map-pin-${c.code.toLowerCase()}`}>
+          <circle cx={c.cx} cy={c.cy} r={hoveredCountry === c.code ? "8" : "6"} fill="rgba(5,15,30,0.75)" stroke="rgba(59,130,246,0.5)" strokeWidth="1" className="transition-all duration-300" />
+          <circle cx={c.cx} cy={c.cy} r="3" fill="#10b981" className="animate-pulse" />
+          <text x={c.cx} y={c.cy - 10} textAnchor="middle" fill={hoveredCountry === c.code ? "#ffffff" : "rgba(255,255,255,0.7)"} fontSize={hoveredCountry === c.code ? "8" : "7"} fontWeight="600" fontFamily="system-ui, sans-serif" className="transition-all duration-300 select-none">
+            {c.code}
+          </text>
+        </g>
+      ))}
+
+      {(() => {
+        const pairs = [
+          ["MX", "CO"], ["CO", "PE"], ["PE", "BR"], ["BR", "PY"], ["PY", "AR"], ["AR", "CL"], ["BR", "UY"],
+        ];
+        return pairs.map(([from, to]) => {
+          const f = LATAM_MAP_COUNTRIES.find((c) => c.code === from);
+          const t = LATAM_MAP_COUNTRIES.find((c) => c.code === to);
+          if (!f || !t) return null;
+          return <line key={`${from}-${to}`} x1={f.cx} y1={f.cy} x2={t.cx} y2={t.cy} stroke="rgba(59,130,246,0.1)" strokeWidth="0.4" strokeDasharray="3,3" />;
+        });
+      })()}
+    </svg>
+  );
+}
+
 function ExpandableServiceCard({ service }: { service: typeof CORPORATE_SERVICES[0] }) {
   const [expanded, setExpanded] = useState(false);
   return (
@@ -994,46 +1084,45 @@ export default function Home() {
           do ecossistema de auditoria de despesas corporativas.
         </p>
 
-        <div className="relative rounded-xl border bg-gradient-to-br from-slate-900/80 via-slate-800/60 to-slate-900/80 p-6 overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.07]" style={{
-            backgroundImage: `radial-gradient(circle at 30% 40%, rgba(59,130,246,0.5) 0%, transparent 50%),
-                              radial-gradient(circle at 70% 60%, rgba(16,185,129,0.4) 0%, transparent 50%)`,
+        <div className="relative rounded-xl border bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.08]" style={{
+            backgroundImage: `radial-gradient(circle at 40% 35%, rgba(59,130,246,0.6) 0%, transparent 45%),
+                              radial-gradient(circle at 60% 65%, rgba(16,185,129,0.5) 0%, transparent 45%)`,
+          }} />
+          <div className="absolute inset-0 opacity-[0.03]" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
           }} />
 
-          <div className="relative grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {LATAM_COUNTRIES.map((country, i) => {
-              const sizes = [
-                "col-span-2 sm:col-span-2",
-                "col-span-1",
-                "col-span-1",
-                "col-span-1",
-                "col-span-1",
-                "col-span-1",
-                "col-span-1",
-                "col-span-2 sm:col-span-2",
-              ];
-              return (
+          <div className="relative flex flex-col lg:flex-row items-center gap-6 p-6 lg:p-8">
+            <div className="relative w-full lg:w-[55%] flex-shrink-0">
+              <LatamMap />
+            </div>
+
+            <div className="w-full lg:w-[45%] flex flex-col gap-3">
+              {LATAM_COUNTRIES.map((country) => (
                 <div
                   key={country.code}
-                  className={`${sizes[i] || ""} group relative flex items-center gap-3 p-4 rounded-lg border border-white/10 bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:border-primary/40 transition-all duration-300`}
+                  className="group relative flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.08] hover:border-primary/30 transition-all duration-300"
                   data-testid={`badge-country-${country.code.toLowerCase()}`}
                 >
-                  <span className="text-2xl">{country.flag}</span>
-                  <div className="flex flex-col">
-                    <span className="text-[11px] font-mono text-primary/70 tracking-wider">{country.code}</span>
+                  <span className="text-xl">{country.flag}</span>
+                  <div className="flex flex-col flex-1">
                     <span className="text-sm font-medium text-white/90">{country.name}</span>
                   </div>
-                  <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
+                    <span className="text-[10px] font-mono text-emerald-400/70 tracking-wider">{country.code}</span>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+              ))}
 
-          <div className="relative mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
-            <span className="text-[11px] text-white/40 font-mono tracking-wider">LATAM COVERAGE</span>
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
-              <span className="text-[11px] text-emerald-400/80">8 paises ativos</span>
+              <div className="mt-2 pt-3 border-t border-white/10 flex items-center justify-between">
+                <span className="text-[11px] text-white/30 font-mono tracking-wider">LATAM COVERAGE</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+                  <span className="text-[11px] text-emerald-400/80">8 paises ativos</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
