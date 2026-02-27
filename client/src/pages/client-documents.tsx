@@ -30,32 +30,36 @@ import { useAuth } from "@/lib/auth";
 const SCOPE_ITEMS = [
   { item: "Auditoria forense completa em despesas de viagens corporativas e eventos", status: "combinado" },
   { item: "Analise de conformidade com politicas internas de viagens", status: "combinado" },
-  { item: "Reconciliacao entre sistemas OBT (Reserve, Argo) e Backoffice (Wintour, Stur)", status: "combinado" },
+  { item: "Reconciliacao entre sistemas OBT e Backoffice", status: "combinado" },
   { item: "Identificacao de anomalias, duplicidades e fraudes potenciais", status: "combinado" },
-  { item: "Cruzamento de dados com fontes externas (cias aereas, agencias, EBTA)", status: "combinado" },
+  { item: "Cruzamento de dados com fontes externas (cias aereas, agencias, cartoes)", status: "combinado" },
   { item: "Avaliacao de eficiencia operacional e oportunidades de economia", status: "combinado" },
   { item: "Verificacao de aderencia a Lei 13.964/2019 e normas anticorrupcao", status: "combinado" },
 ];
 
 const DELIVERABLES = [
-  { name: "Relatorio Executivo de Auditoria", deadline: "A cada fase concluida", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
-  { name: "Relatorio Tecnico Detalhado", deadline: "Ao final do projeto", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
-  { name: "Matriz de Riscos e Anomalias", deadline: "Fase 03 — Reconciliacao", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
-  { name: "Parecer de Conformidade Legal", deadline: "Fase 04 — Apresentacao", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
-  { name: "Plano de Recomendacoes e Acoes Corretivas", deadline: "Fase 05 — Ajustes", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
-  { name: "Dashboard Interativo de Resultados", deadline: "Disponivel em tempo real", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
-  { name: "Cadeia de Custodia Digital Completa", deadline: "Continuo durante o projeto", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
+  { name: "Relatorio executivo consolidado", deadline: "A cada fase concluida", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
+  { name: "Relatorio tecnico detalhado com achados, evidencias e analises", deadline: "Ao final do projeto", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
+  { name: "Mapeamento de riscos e vulnerabilidades", deadline: "Fase 03 — Reconciliacao", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
+  { name: "Recomendacoes praticas para correcao e melhoria", deadline: "Fase 04 — Apresentacao", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
+  { name: "Plano de acao sugerido, priorizado por impacto e risco", deadline: "Fase 05 — Ajustes", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
+  { name: "Dashboard Interativo de Resultados (tempo real via plataforma AuraAUDIT)", deadline: "Disponivel em tempo real", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
+  { name: "Cadeia de Custodia Digital Completa (continuo)", deadline: "Continuo durante o projeto", clientStatus: "aguardando_dados", auditStatus: "aguardando_dados" },
 ];
 
 const EXPECTED_DOCUMENTS = [
-  { key: "obt-extratos", name: "Extratos do sistema OBT (reservas e PNRs)", responsible: "Cliente", formats: ".csv, .xlsx" },
-  { key: "backoffice-emissoes", name: "Base Backoffice (emissoes e faturamento)", responsible: "Cliente", formats: ".csv, .xlsx" },
-  { key: "cartoes-corporativos", name: "Extratos de cartoes corporativos", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "gds-dados", name: "Dados GDS (reservas e PNRs)", responsible: "Cliente", formats: ".csv, .xlsx" },
-  { key: "bsplink", name: "Faturamento BSPlink", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "management-files", name: "Arquivos gerenciais de agencias", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "politica-viagens", name: "Politica de viagens vigente", responsible: "Cliente", formats: ".pdf, .doc, .docx" },
-  { key: "tabela-aprovadores", name: "Tabela de aprovadores e limites", responsible: "Cliente", formats: ".xlsx, .pdf" },
+  { key: "contratos-prestadores", name: "7.1 Contratos com prestadores e clientes", responsible: "Cliente", formats: ".pdf, .doc, .docx" },
+  { key: "backoffice-agencia", name: "7.2 Back office da agencia", responsible: "Cliente", formats: ".csv, .xlsx" },
+  { key: "admin-bsplink-cias", name: "7.3 Administracao BSPLink e cias aereas integradas", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "portais-hoteleiros", name: "7.4 Portais administrativos de redes hoteleiras, operadores e consolidadores", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "acordos-corporativos", name: "7.5 Todos os acordos corporativos (cias aereas, hotelaria, banco, etc.)", responsible: "Cliente", formats: ".pdf, .doc, .docx" },
+  { key: "obt-gds", name: "7.6 Sistema de OBTs e GDSs", responsible: "Cliente", formats: ".csv, .xlsx" },
+  { key: "reembolso-credito", name: "7.7 Controle de reembolso e credito conciliados", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "pgtos-realizados", name: "7.8 Relatorios gerenciais de pagamentos realizados e pendentes", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "receitas-recebidas", name: "7.9 Relatorios gerenciais de receitas recebidas e pendentes", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "extratos-cartoes", name: "7.10 Extratos originais dos cartoes de credito utilizados", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "reservas-hospedagem", name: "7.11 Reservas originais e faturas de hospedagens pagas", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "fee-rebate-comissoes", name: "7.12 Relatorio de cobranca de FEE, Rebate, Comissoes e Incentivos", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
 ];
 
 function formatFileSize(bytes: number) {
