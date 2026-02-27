@@ -120,6 +120,22 @@ export default function AdminContracts() {
     }
   };
 
+  const handleRequestSignature = async (clientId: string) => {
+    try {
+      const res = await fetch(`/api/admin/contracts/${clientId}/request-signature`, { credentials: "include" });
+      const data = await res.json();
+      if (data.mailtoUrl) {
+        window.open(data.mailtoUrl, "_blank");
+        toast({
+          title: "Email de solicitacao preparado",
+          description: `Solicitacao de assinatura para ${data.clientName}`,
+        });
+      }
+    } catch {
+      toast({ title: "Erro", description: "Falha ao preparar solicitacao de assinatura", variant: "destructive" });
+    }
+  };
+
   const handleCopyLink = () => {
     const url = `${window.location.origin}/contract`;
     navigator.clipboard.writeText(url);
@@ -273,7 +289,7 @@ export default function AdminContracts() {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap">
                     <Button
                       variant="outline"
                       size="sm"
@@ -287,6 +303,17 @@ export default function AdminContracts() {
                       <Eye className="w-3.5 h-3.5" />
                       Ver Contrato
                     </Button>
+                    {!contract.signed && (
+                      <Button
+                        size="sm"
+                        className="text-xs gap-1.5 bg-primary hover:bg-primary/90"
+                        onClick={() => handleRequestSignature(contract.clientId)}
+                        data-testid={`button-request-signature-${contract.clientId}`}
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                        Solicitar Assinatura
+                      </Button>
+                    )}
                     <Button
                       variant="outline"
                       size="sm"
@@ -295,8 +322,14 @@ export default function AdminContracts() {
                       data-testid={`button-whatsapp-${contract.clientId}`}
                     >
                       <MessageCircle className="w-3.5 h-3.5" />
-                      Enviar WhatsApp
+                      WhatsApp
                     </Button>
+                    {contract.signed && (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-800">
+                        <CheckCircle className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">Assinado</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -381,8 +414,17 @@ export default function AdminContracts() {
                     <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">Pendente de Assinatura</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">O cliente ainda nao assinou este contrato. Envie o link via WhatsApp ou copie o link para compartilhar.</p>
-                  <div className="flex items-center gap-2 mt-3">
+                  <p className="text-xs text-muted-foreground">O cliente ainda nao assinou este contrato. Solicite a assinatura por email, WhatsApp ou copie o link.</p>
+                  <div className="flex items-center gap-2 mt-3 flex-wrap">
+                    <Button
+                      size="sm"
+                      className="text-xs gap-1.5 bg-primary hover:bg-primary/90"
+                      onClick={() => selectedContract && handleRequestSignature(selectedContract.clientId)}
+                      data-testid="button-dialog-request-signature"
+                    >
+                      <Send className="w-3.5 h-3.5" />
+                      Solicitar Assinatura por Email
+                    </Button>
                     <Button
                       variant="default"
                       size="sm"

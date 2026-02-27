@@ -462,6 +462,49 @@ export function registerContractRoutes(app: Express) {
     return res.json({ whatsappUrl, phone, message, clientName: client.name });
   });
 
+  app.get("/api/admin/contracts/:clientId/request-signature", requireAuth, async (req: Request, res: Response) => {
+    if (req.session.role !== "admin") {
+      return res.status(403).json({ error: "Acesso restrito ao administrador." });
+    }
+    const { clientId } = req.params;
+    const [client] = await db.select().from(clients).where(eq(clients.id, clientId));
+    if (!client) return res.status(404).json({ error: "Cliente nao encontrado." });
+    const auditor = await getAuditorProfile();
+    const contractUrl = `${req.protocol}://${req.get("host")}/contract`;
+    const subject = `Solicitacao de Assinatura — Contrato AUR-2025-0042 (v${CONTRACT_VERSION})`;
+    const body = `Prezado(a) ${client.contactName || "Cliente"},
+
+Encaminhamos o Contrato de Prestacao de Servicos de Auditoria e Consultoria Especializada em Viagens e Eventos Corporativos para sua analise e assinatura digital.
+
+Dados do Contrato:
+- Numero: AUR-2025-0042
+- Versao: ${CONTRACT_VERSION}
+- Empresa: ${client.name || ""}
+- CNPJ: ${client.cnpj || ""}
+
+Para visualizar e assinar o contrato digitalmente, acesse o link abaixo:
+${contractUrl}
+
+A assinatura e feita de forma digital com validade juridica conforme Lei 14.063/2020 (assinatura eletronica simples) e MP 2.200-2/2001. Integridade garantida por hash criptografico SHA-256.
+
+Ficamos a disposicao para quaisquer esclarecimentos.
+
+Atenciosamente,
+${auditor?.contactName || "Marcos Costa"}
+${auditor?.name || "CTS Brasil"}
+${auditor?.contactEmail || "marcos@cts-brasil.com"}
+${auditor?.contactPhone || ""}`;
+
+    const mailtoUrl = `mailto:${client.contactEmail || ""}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    return res.json({
+      mailtoUrl,
+      email: client.contactEmail,
+      subject,
+      body,
+      clientName: client.name,
+    });
+  });
+
   app.get("/api/contract/signature", requireAuth, async (req: Request, res: Response) => {
     const userId = req.session.userId!;
     const signatures = await db
