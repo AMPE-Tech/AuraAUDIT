@@ -86,13 +86,12 @@ PARTE I — PROPOSTA TECNICA
   b) Exercicio de 2025
 
 3.2. Ambientes e Sistemas Envolvidos:
-  a) OBT (Online Booking Tool): Reserve e Argo
-  b) Backoffice: Wintour (2024) e Stur (2025)
+  a) OBT (Online Booking Tool)
+  b) Backoffice / ERP
+  c) GDS, BSPlink e demais sistemas integrados
 
 3.3. Volume Financeiro Auditado:
-  a) 2024: R$ 51.327.894,23
-  b) 2025: R$ 39.639.788,66
-  c) Volume total: R$ 90.967.682,89
+  Conforme definido na proposta comercial aceita pelo CONTRATANTE.
 
 3.4. Abrangencia Tecnica da Auditoria:
   a) Conformidade com politicas internas e melhores praticas de mercado
@@ -769,30 +768,13 @@ ${auditor?.contactPhone || ""}`;
       const auditor = await getAuditorProfile();
       const contractText = generateContractText(auditor, client);
 
-      const vol2024Match = contractText.match(/2024:\s*R\$\s*([\d.,]+)/);
-      const vol2025Match = contractText.match(/2025:\s*R\$\s*([\d.,]+)/);
-      const volTotalMatch = contractText.match(/Volume total:\s*R\$\s*([\d.,]+)/);
-
-      const systemsMatch = contractText.match(/OBT.*?:\s*(.+)/);
-      const backofficeMatch = contractText.match(/Backoffice:\s*(.+)/);
-
-      const systems: string[] = [];
-      if (systemsMatch) systems.push(systemsMatch[0].trim());
-      if (backofficeMatch) systems.push(backofficeMatch[0].trim());
-
       res.json({
         clientName: client.name,
         clientType: client.type,
         projectCategory: client.type === "travel_agency" ? "Viagens e Eventos" : "Corporativo",
-        volumes: {
-          year1: vol2024Match ? `R$ ${vol2024Match[1]}` : null,
-          year1Label: "2024",
-          year2: vol2025Match ? `R$ ${vol2025Match[1]}` : null,
-          year2Label: "2025",
-          total: volTotalMatch ? `R$ ${volTotalMatch[1]}` : null,
-        },
-        period: "2024-2025",
-        systems,
+        volumes: null,
+        period: null,
+        systems: [],
         contractVersion: CONTRACT_VERSION,
       });
     } catch (error: any) {
