@@ -37,7 +37,7 @@ async function getOrCreateWallet(userId: string) {
       credits: String(VIP_INITIAL_CREDITS),
       usdAmount: "0",
       referenceType: "vip_courtesy",
-      description: "Cortesia VIP — Grupo Stabia (Viagens e Eventos)",
+      description: "Cortesia VIP — creditos iniciais",
     });
   }
 
