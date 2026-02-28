@@ -57,9 +57,9 @@ import {
 
 const DATA_SOURCE_TYPE_CONFIG: Record<string, { label: string; icon: any; description: string }> = {
   bradesco_ebta: {
-    label: "Banco Bradesco (EBTA)",
+    label: "Cartao Corporativo (EBTA)",
     icon: CreditCard,
-    description: "Cartao de credito corporativo - Extrato Bancario de Transacoes Aereas",
+    description: "Extrato Bancario de Transacoes Aereas — cartao de credito corporativo",
   },
   travel_agency: {
     label: "Agencias de Viagens",

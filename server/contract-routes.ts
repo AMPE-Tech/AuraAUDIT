@@ -509,13 +509,15 @@ CP-01: ZERO DADOS FICTICIOS — A partir da entrada em modulo de producao, todo 
 
 CP-02: SEM ALTERACOES EM BILLING/ASSINATURA SEM APROVACAO — Nenhuma alteracao em arquivos relacionados a logica de cobranca e assinatura pode ser feita sem aprovacao explicita e previa do CONTRATANTE.
 
+CP-03: CONFIDENCIALIDADE ABSOLUTA DE IDENTIDADE — Nenhuma pagina, relatorio, dashboard, output de IA, log, artefato ou qualquer outro elemento visivel da plataforma pode exibir, sugerir ou permitir a inferencia de nomes de empresas (PJ), pessoas fisicas (PF), CNPJs, CPFs ou quaisquer dados identificaveis de terceiros — sejam clientes, fornecedores, parceiros ou colaboradores — exceto os dados do proprio usuario autenticado e da empresa a ele vinculada. Esta regra se aplica tanto a outputs gerados por inteligencia artificial quanto a textos descritivos, labels, placeholders, listas de exemplo, seeds de banco de dados e qualquer conteudo estatico ou dinamico da plataforma. A violacao desta clausula constitui descumprimento contratual e potencial infracao a LGPD (Lei 13.709/2018).
+
 ============================================================
 CONSIDERACOES FINAIS
 ============================================================
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M9, com 21 evidencias tecnicas documentadas, 25 itens de checklist de conformidade (20 conformes, 5 em observacao), 3 anexos detalhados e 2 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M9, com 21 evidencias tecnicas documentadas, 25 itens de checklist de conformidade (20 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 

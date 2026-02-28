@@ -28,9 +28,9 @@ interface IntegrationType {
 const ALL_INTEGRATIONS: IntegrationType[] = [
   {
     key: "bradesco_ebta",
-    label: "Banco Bradesco (EBTA)",
+    label: "Cartao Corporativo (EBTA)",
     icon: CreditCard,
-    description: "Cartao de credito corporativo - Extrato Bancario de Transacoes Aereas",
+    description: "Extrato Bancario de Transacoes Aereas — cartao de credito corporativo",
   },
   {
     key: "travel_agency",

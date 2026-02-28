@@ -926,7 +926,7 @@ export default function Home() {
               </div>
               <div className="space-y-1">
                 <p className="text-[9px] text-slate-500 uppercase tracking-wider">Origem</p>
-                <div className="text-[10px] text-slate-300 bg-slate-900/60 rounded px-2 py-1 border border-slate-700/40">Bradesco EBTA</div>
+                <div className="text-[10px] text-slate-300 bg-slate-900/60 rounded px-2 py-1 border border-slate-700/40">Cartao Corporativo</div>
               </div>
               <div className="space-y-1">
                 <p className="text-[9px] text-slate-500 uppercase tracking-wider">Status</p>

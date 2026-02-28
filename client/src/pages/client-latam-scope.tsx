@@ -125,7 +125,7 @@ const CATEGORIES: LatamCategory[] = [
       "Chargebacks e disputas",
     ],
     evidenceTypes: ["Extratos Raw", "VCN Logs", "Approval Audit", "Chargeback Reports"],
-    providers: ["Bradesco EBTA", "IVT", "HCard", "Conferma Pay", "WEX", "AirPlus"],
+    providers: [],
   },
   {
     id: "airlines",
@@ -142,7 +142,7 @@ const CATEGORIES: LatamCategory[] = [
       "Emissao conforme acordo negociado",
     ],
     evidenceTypes: ["E-tickets/EMDs", "BSP Reports", "Flown Revenue", "ADM/ACM Docs"],
-    providers: ["LATAM Airlines", "GOL", "Azul", "American Airlines", "United", "Copa Airlines"],
+    providers: [],
   },
   {
     id: "hotels",
@@ -158,7 +158,7 @@ const CATEGORIES: LatamCategory[] = [
       "Taxas extras e cobrancas indevidas",
     ],
     evidenceTypes: ["Rate Sheets", "Folios Detalhados", "No-show Logs", "Availability Logs"],
-    providers: ["Accor", "Atlantica", "Marriott", "Hilton", "IHG", "Blue Tree"],
+    providers: [],
   },
   {
     id: "carrental",
@@ -174,7 +174,7 @@ const CATEGORIES: LatamCategory[] = [
       "No-show e cancelamentos",
     ],
     evidenceTypes: ["Contrato Corporativo", "Vouchers", "Faturas Detalhadas", "Reservation Logs"],
-    providers: ["Localiza Hertz", "Movida", "Unidas", "Avis", "Budget", "Enterprise"],
+    providers: [],
   },
   {
     id: "insurance",
@@ -190,7 +190,7 @@ const CATEGORIES: LatamCategory[] = [
       "Cobrancas duplicadas",
     ],
     evidenceTypes: ["Apolice + Endossos", "Vouchers Emitidos", "Sinistro Reports", "Billing Trails"],
-    providers: ["Porto Seguro", "Allianz Travel", "Assist Card", "Travel Ace", "GTA"],
+    providers: [],
   },
   {
     id: "mice",
@@ -207,7 +207,7 @@ const CATEGORIES: LatamCategory[] = [
       "Split de custos por centro de custo",
     ],
     evidenceTypes: ["RFPs + Propostas", "Contratos + Aditivos", "NFs/Faturas", "Attendance Records"],
-    providers: ["MCI Group", "GL Events", "InEvent", "Sympla Business", "Cvent"],
+    providers: [],
   },
 ];
 

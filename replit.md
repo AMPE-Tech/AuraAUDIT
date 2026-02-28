@@ -13,6 +13,8 @@ The following rules are immutable and take precedence over all other directives.
 
 **CP-02: NO BILLING/SUBSCRIPTION CHANGES WITHOUT APPROVAL** — Do not make changes to files related to billing and subscription logic without explicit user approval.
 
+**CP-03: ABSOLUTE IDENTITY CONFIDENTIALITY** — No page, report, dashboard, AI output, log, artifact, or any other visible element of the platform may display, suggest, or allow the inference of names of companies (PJ), individuals (PF), CNPJs, CPFs, or any identifiable data of third parties — whether clients, suppliers, partners, or employees — except the data of the authenticated user themselves and the company linked to them. This rule applies to both AI-generated outputs and descriptive text, labels, placeholders, example lists, database seeds, and any static or dynamic content on the platform. Violation of this rule constitutes a contractual breach and a potential violation of LGPD (Law 13.709/2018).
+
 ## System Architecture
 Aura Audit employs a modern full-stack architecture.
 **Frontend:** Built with React, Vite, TailwindCSS, shadcn/ui, and Recharts for a responsive and data-rich user interface. Wouter is used for client-side routing and TanStack React Query for state management.
