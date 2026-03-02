@@ -2,7 +2,7 @@ import { Express, Request, Response } from "express";
 import { artifacts } from "@shared/schema";
 import { requireAuth } from "./auth";
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 import { createHash } from "crypto";
 
 const VALID_TYPES = ["ai_output", "official", "quick"] as const;
@@ -44,7 +44,7 @@ export function registerArtifactsRoutes(app: Express) {
       const [artifact] = await db
         .select()
         .from(artifacts)
-        .where(eq(artifacts.id, id));
+        .where(sql`${artifacts.id} = ${id}` as any);
 
       if (!artifact) {
         return res.status(404).json({ error: "Artifact not found" });
@@ -59,7 +59,6 @@ export function registerArtifactsRoutes(app: Express) {
 
   app.post("/api/reports/artifacts", requireAuth, async (req: Request, res: Response) => {
     try {
-      const user = req.user as any;
       const { type, title, content, storageRef, sourceRefsJson } = req.body;
 
       if (!type || !VALID_TYPES.includes(type)) {
@@ -77,8 +76,8 @@ export function registerArtifactsRoutes(app: Express) {
       const [artifact] = await db
         .insert(artifacts)
         .values({
-          companyId: user.clientId || null,
-          createdByUserId: user.id,
+          companyId: req.session.clientId || null,
+          createdByUserId: req.session.userId!,
           type,
           title: title.trim(),
           status: "draft",
@@ -98,8 +97,7 @@ export function registerArtifactsRoutes(app: Express) {
 
   app.put("/api/reports/artifacts/:id/status", requireAuth, async (req: Request, res: Response) => {
     try {
-      const user = req.user as any;
-      if (user.role !== "admin") {
+      if (req.session.role !== "admin") {
         return res.status(403).json({ error: "Admin access required" });
       }
 
@@ -113,7 +111,7 @@ export function registerArtifactsRoutes(app: Express) {
       const [existing] = await db
         .select()
         .from(artifacts)
-        .where(eq(artifacts.id, id));
+        .where(sql`${artifacts.id} = ${id}` as any);
 
       if (!existing) {
         return res.status(404).json({ error: "Artifact not found" });
@@ -129,7 +127,7 @@ export function registerArtifactsRoutes(app: Express) {
       const [updated] = await db
         .update(artifacts)
         .set({ status })
-        .where(eq(artifacts.id, id))
+        .where(sql`${artifacts.id} = ${id}` as any)
         .returning();
 
       res.json(updated);
@@ -145,7 +143,7 @@ export function registerArtifactsRoutes(app: Express) {
       const [artifact] = await db
         .select()
         .from(artifacts)
-        .where(eq(artifacts.id, id));
+        .where(sql`${artifacts.id} = ${id}` as any);
 
       if (!artifact) {
         return res.status(404).json({ error: "Artifact not found" });

@@ -41,10 +41,10 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import type { Artifact } from "@shared/schema";
 
-const STATUS_CONFIG: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  draft: { label: "Rascunho", variant: "secondary" },
-  reviewed: { label: "Revisado", variant: "default" },
-  approved: { label: "Aprovado", variant: "outline" },
+const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
+  draft: { label: "Rascunho", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 border-yellow-200 dark:border-yellow-800" },
+  reviewed: { label: "Revisado", className: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 border-blue-200 dark:border-blue-800" },
+  approved: { label: "Aprovado", className: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 border-green-200 dark:border-green-800" },
 };
 
 const TYPE_CONFIG: Record<string, { label: string; icon: typeof FileBarChart }> = {
@@ -59,7 +59,12 @@ function ArtifactList({ type }: { type: string }) {
   const isAdmin = user?.role === "admin";
 
   const { data: artifacts, isLoading } = useQuery<Artifact[]>({
-    queryKey: ["/api/reports/artifacts", `?type=${type}`],
+    queryKey: ["/api/reports/artifacts", type],
+    queryFn: async () => {
+      const res = await fetch(`/api/reports/artifacts?type=${type}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch artifacts");
+      return res.json();
+    },
   });
 
   const advanceStatusMutation = useMutation({
@@ -148,7 +153,7 @@ function ArtifactList({ type }: { type: string }) {
                       <Badge variant="outline" className="text-[10px]" data-testid={`badge-artifact-type-${artifact.id}`}>
                         {typeCfg.label}
                       </Badge>
-                      <Badge variant={statusCfg.variant} className="text-[10px]" data-testid={`badge-artifact-status-${artifact.id}`}>
+                      <Badge variant="outline" className={`text-[10px] ${statusCfg.className}`} data-testid={`badge-artifact-status-${artifact.id}`}>
                         {statusCfg.label}
                       </Badge>
                     </div>
