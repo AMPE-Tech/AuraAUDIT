@@ -1,5 +1,5 @@
 import { db } from "./db";
-import { expenses, auditCases, anomalies, auditTrail, clients, dataSources, users } from "@shared/schema";
+import { expenses, auditCases, anomalies, auditTrail, clients, dataSources, users, contractSignatures } from "@shared/schema";
 import { createHash } from "crypto";
 import { sql, eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
@@ -52,10 +52,58 @@ async function seedUsers(clientIds: Record<string, string>) {
   }
 }
 
+async function ensureContractSignatures() {
+  const existing = await db.select({ id: contractSignatures.id }).from(contractSignatures).where(eq(contractSignatures.contractNumber, "AUR-2025-0042")).limit(1);
+  if (existing.length > 0) return;
+
+  const [fabioUser] = await db.select({ id: users.id }).from(users).where(eq(users.username, "fabio@stabia.com.br")).limit(1);
+  const [adminUser] = await db.select({ id: users.id }).from(users).where(eq(users.username, "nml.costa@gmail.com")).limit(1);
+  const [stabiaClient] = await db.select({ id: clients.id }).from(clients).where(eq(clients.cnpj, "10.586.640/0001-89")).limit(1);
+
+  if (!fabioUser || !adminUser || !stabiaClient) return;
+
+  await db.insert(contractSignatures).values([
+    {
+      contractNumber: "AUR-2025-0042",
+      userId: fabioUser.id,
+      signerName: "Fabio Antununcio",
+      signerRole: "Ceo",
+      signerType: "client",
+      signerCpf: "00941064956",
+      companyName: "Stabia Viagens e Turismo",
+      companyCnpj: "10.586.640/0001-89",
+      clientId: stabiaClient.id,
+      contractTextSha256: "5ad03e11b6eb8261e140de433328b5bc533f7dbcc0fd570bbd880bac7371b3ec",
+      contractVersion: "5.0.0",
+      contractType: "standard",
+      ipAddress: "177.51.205.125",
+      userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.3 Mobile/15E148 Safari/604.1",
+    },
+    {
+      contractNumber: "AUR-2025-0042",
+      userId: adminUser.id,
+      signerName: "Administrador AuraAUDIT",
+      signerRole: "Representante Legal — Contratada",
+      signerType: "contractor",
+      signerCpf: "19491307894",
+      companyName: "CTS SERVICOS ADMINISTRATIVOS",
+      companyCnpj: "46.715.429/0001-66",
+      clientId: stabiaClient.id,
+      contractTextSha256: "4110a45da3a50c4c1653e0fb3c45822d2629b4fb8564e16d10c1faa1d62112cf",
+      contractVersion: "5.0.0",
+      contractType: "custom",
+      ipAddress: "177.137.72.216",
+      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 Edg/145.0.0.0",
+    },
+  ]);
+  console.log("Contract signatures replicated to production");
+}
+
 export async function seedDatabase() {
   const existingClients = await db.select({ id: clients.id }).from(clients).limit(1);
   if (existingClients.length > 0) {
     await seedUsers({});
+    await ensureContractSignatures();
     return;
   }
 
