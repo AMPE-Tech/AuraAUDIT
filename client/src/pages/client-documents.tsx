@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
@@ -24,6 +25,10 @@ import {
   File,
   Trash2,
   Loader2,
+  HelpCircle,
+  CreditCard,
+  Database,
+  Search,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 
@@ -85,6 +90,164 @@ function getStatusBadge(status: string) {
   }
 }
 
+function RequirementsDialog({ documentKey, documentName }: { documentKey: string; documentName: string }) {
+  const [open, setOpen] = useState(false);
+  const { data, isLoading, isError } = useQuery<{
+    title: string;
+    requirements: string[];
+    commonServices: string[];
+    paymentMethods: string[];
+    minimumFields: string[];
+    knowledgeNotes: string[] | null;
+  }>({
+    queryKey: ["/api/uploads/requirements", documentKey],
+    queryFn: async () => {
+      const res = await fetch(`/api/uploads/requirements/${documentKey}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Erro");
+      return res.json();
+    },
+    enabled: open,
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-[11px] h-7 gap-1.5 text-primary hover:text-primary"
+          data-testid={`button-requirements-${documentKey}`}
+        >
+          <HelpCircle className="w-3 h-3" />
+          Requisitos
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-sm flex items-center gap-2">
+            <Info className="w-4 h-4 text-primary" />
+            {documentName}
+          </DialogTitle>
+        </DialogHeader>
+
+        {isError ? (
+          <div className="py-4 text-center text-sm text-muted-foreground">
+            <AlertCircle className="w-6 h-6 mx-auto mb-2 text-destructive" />
+            <p>Nao foi possivel carregar os requisitos.</p>
+            <p className="text-[11px] mt-1">Tente novamente mais tarde.</p>
+          </div>
+        ) : isLoading ? (
+          <div className="space-y-3 py-4">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        ) : data ? (
+          <div className="space-y-4 text-xs">
+            <div>
+              <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                Requisitos do Documento
+              </h4>
+              <ul className="space-y-1.5">
+                {data.requirements.map((req, i) => (
+                  <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                    <span className="text-primary mt-0.5">•</span>
+                    <span>{req}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <Separator />
+
+            <div>
+              <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+                <Database className="w-3.5 h-3.5 text-primary" />
+                Campos Minimos Obrigatorios
+              </h4>
+              <div className="flex flex-wrap gap-1.5">
+                {data.minimumFields.map((field, i) => (
+                  <Badge key={i} variant="outline" className="text-[10px]">{field}</Badge>
+                ))}
+              </div>
+            </div>
+
+            {data.commonServices.length > 0 && (
+              <>
+                <Separator />
+                <div>
+                  <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+                    <ListChecks className="w-3.5 h-3.5 text-primary" />
+                    Servicos / Fornecedores Comuns
+                  </h4>
+                  <div className="flex flex-wrap gap-1.5">
+                    {data.commonServices.map((svc, i) => (
+                      <Badge key={i} variant="secondary" className="text-[10px]">{svc}</Badge>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {data.paymentMethods.length > 0 && (
+              <>
+                <Separator />
+                <div>
+                  <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+                    <CreditCard className="w-3.5 h-3.5 text-primary" />
+                    Formas de Pagamento Aceitas / Esperadas
+                  </h4>
+                  <ul className="space-y-1">
+                    {data.paymentMethods.map((pm, i) => (
+                      <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                        <span className="text-primary mt-0.5">•</span>
+                        <span>{pm}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            )}
+
+            {data.knowledgeNotes && data.knowledgeNotes.length > 0 && (
+              <>
+                <Separator />
+                <div>
+                  <h4 className="font-semibold text-sm mb-2 flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-primary" />
+                    Notas da Base de Conhecimento
+                  </h4>
+                  <div className="space-y-2">
+                    {data.knowledgeNotes.map((note, i) => {
+                      const titleMatch = note.match(/^\[(.+?)\]:\s/);
+                      const title = titleMatch ? titleMatch[1] : `Nota ${i + 1}`;
+                      const content = titleMatch ? note.replace(titleMatch[0], "") : note;
+                      return (
+                        <div key={i} className="p-2 rounded bg-muted/50 border">
+                          <p className="text-[10px] font-semibold mb-1">{title}</p>
+                          <p className="text-[10px] text-muted-foreground line-clamp-4">{content.substring(0, 500)}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="p-3 rounded-lg bg-amber-50/50 dark:bg-amber-950/20 border border-amber-300 dark:border-amber-800">
+              <p className="text-[11px] text-amber-800 dark:text-amber-300 font-medium">
+                Ao enviar o arquivo, o sistema realizara uma primeira analise automatica e o status mudara para "Em analise".
+                Marque "Dados conferidos" quando estiver pronto para validacao pela equipe de auditoria.
+              </p>
+            </div>
+          </div>
+        ) : null}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadingKey }: {
   doc: typeof EXPECTED_DOCUMENTS[0];
   uploads: any[];
@@ -103,6 +266,7 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
     if (!hasUpload) return "pendente";
     if (latestUpload.status === "aguardando_validacao") return "aguardando_validacao";
     if (latestUpload.status === "validado") return "validado";
+    if (latestUpload.status === "em_analise") return "em_analise";
     return "uploaded";
   };
 
@@ -116,6 +280,8 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
           ) : status === "aguardando_validacao" ? (
             <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          ) : status === "em_analise" ? (
+            <Search className="w-4 h-4 text-blue-500 shrink-0 mt-0.5 animate-pulse" />
           ) : hasUpload ? (
             <File className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
           ) : (
@@ -138,6 +304,12 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
           )}
           {status === "validado" && (
             <Badge className="text-[9px] bg-emerald-600">Validado</Badge>
+          )}
+          {status === "em_analise" && (
+            <Badge variant="outline" className="text-[9px] gap-1 text-blue-600 border-blue-300 dark:border-blue-700 dark:text-blue-400">
+              <Search className="w-2.5 h-2.5" />
+              Em analise
+            </Badge>
           )}
           {status === "pendente" && (
             <Badge variant="outline" className="text-[9px]">Pendente</Badge>
@@ -190,7 +362,7 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
         </div>
       )}
 
-      <div className="mt-2 ml-6">
+      <div className="mt-2 ml-6 flex items-center gap-2">
         <input
           ref={fileRef}
           type="file"
@@ -218,6 +390,7 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
           )}
           {hasUpload ? "Enviar outro arquivo" : "Enviar arquivo"}
         </Button>
+        <RequirementsDialog documentKey={doc.key} documentName={doc.name} />
       </div>
     </div>
   );
