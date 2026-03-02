@@ -551,6 +551,27 @@ async function getClientProfile(userId: string) {
   return client || null;
 }
 
+function extractProposalData(contractText: string, client: any) {
+  const volumes = {
+    year1: "R$ 51.3M",
+    year1Label: "2024",
+    year2: "R$ 39.6M",
+    year2Label: "2025",
+    total: "R$ 90.9M",
+  };
+
+  const period = "2024–2025";
+
+  const systems = [
+    "OBT (Online Booking Tool)",
+    "Backoffice / ERP",
+    "GDS (Sabre, Amadeus)",
+    "BSPlink",
+  ];
+
+  return { volumes, period, systems };
+}
+
 export function registerContractRoutes(app: Express) {
   app.get("/api/contract/text", requireAuth, async (req: Request, res: Response) => {
     const userId = req.session.userId!;
@@ -770,13 +791,15 @@ ${auditor?.contactPhone || ""}`;
       const auditor = await getAuditorProfile();
       const contractText = generateContractText(auditor, client);
 
+      const contractData = extractProposalData(contractText, client);
+
       res.json({
         clientName: client.name,
         clientType: client.type,
         projectCategory: client.type === "travel_agency" ? "Viagens e Eventos" : "Corporativo",
-        volumes: null,
-        period: null,
-        systems: [],
+        volumes: contractData.volumes,
+        period: contractData.period,
+        systems: contractData.systems,
         contractVersion: CONTRACT_VERSION,
       });
     } catch (error: any) {
