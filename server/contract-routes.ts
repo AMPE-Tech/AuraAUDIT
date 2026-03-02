@@ -1095,8 +1095,8 @@ ${auditor?.contactPhone || ""}`;
         .where(eq(contractSignatures.contractNumber, "AUR-2025-0042"))
         .orderBy(desc(contractSignatures.signedAt));
 
-      const clientSig = sigs.find(s => s.signerRole === "client");
-      const adminSig = sigs.find(s => s.signerRole === "contractor");
+      const clientSig = sigs.find(s => s.signerType === "client");
+      const adminSig = sigs.find(s => s.signerType === "contractor");
 
       const auditor = await getAuditorProfile();
       const contractText = generateContractText(auditor, client);
@@ -1343,8 +1343,8 @@ ${auditor?.contactPhone || ""}`;
         .where(eq(contractSignatures.contractNumber, "AUR-2025-0042"))
         .orderBy(desc(contractSignatures.signedAt));
 
-      const clientSig = sigs.find(s => s.signerRole === "client");
-      const adminSig = sigs.find(s => s.signerRole === "contractor");
+      const clientSig = sigs.find(s => s.signerType === "client");
+      const adminSig = sigs.find(s => s.signerType === "contractor");
       const bothSigned = !!(clientSig && adminSig);
 
       const auditor = await getAuditorProfile();
