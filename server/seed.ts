@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { expenses, auditCases, anomalies, auditTrail, clients, dataSources, users } from "@shared/schema";
 import { createHash } from "crypto";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 function hash(data: any, timestamp: string): string {
@@ -9,30 +9,47 @@ function hash(data: any, timestamp: string): string {
   return createHash("sha256").update(payload).digest("hex");
 }
 
+async function ensureStabiaClient(): Promise<string | null> {
+  const existing = await db.select({ id: clients.id }).from(clients).where(eq(clients.cnpj, "10.586.640/0001-89")).limit(1);
+  if (existing.length > 0) return existing[0].id;
+  const [created] = await db.insert(clients).values({
+    name: "Stabia Viagens e Turismo",
+    type: "travel_agency",
+    cnpj: "10.586.640/0001-89",
+    contactName: "Fabio Antununcio",
+    contactEmail: "fabio@stabia.com.br",
+    contactPhone: "(11) 99999-0000",
+    address: "",
+    city: "Sao Paulo",
+    state: "SP",
+    status: "active",
+    notes: "",
+  }).returning({ id: clients.id });
+  console.log("Created Stabia client:", created.id);
+  return created.id;
+}
+
 async function seedUsers(clientIds: Record<string, string>) {
-  const existingUsers = await db.select({ id: users.id }).from(users).limit(1);
-  if (existingUsers.length > 0) return;
+  const stabiaClientId = await ensureStabiaClient();
 
-  console.log("Seeding users...");
-  const adminHash = await bcrypt.hash("aura2025!", 10);
-  const stabiaHash = await bcrypt.hash("stabia2026!", 10);
+  const requiredUsers = [
+    { username: "nml.costa@gmail.com", password: "aura2025!", fullName: "Administrador AuraAUDIT", role: "admin", clientId: null },
+    { username: "stabia", password: "stabia2026!", fullName: "Grupo Stabia", role: "client", clientId: stabiaClientId },
+    { username: "fabio@stabia.com.br", password: "stabia2026!", fullName: "Fabio Antununcio", role: "client", clientId: stabiaClientId },
+  ];
 
-  await db.insert(users).values([
-    {
-      username: "nml.costa@gmail.com",
-      password: adminHash,
-      fullName: "Administrador AuraAUDIT",
-      role: "admin",
-      clientId: null,
-    },
-    {
-      username: "stabia",
-      password: stabiaHash,
-      fullName: "Grupo Stabia",
-      role: "client",
-      clientId: clientIds["Stabia Viagens e Turismo"] || null,
-    },
-  ]);
+  for (const u of requiredUsers) {
+    const existing = await db.select({ id: users.id }).from(users).where(eq(users.username, u.username)).limit(1);
+    if (existing.length > 0) {
+      if (u.clientId && u.role === "client") {
+        await db.update(users).set({ clientId: u.clientId }).where(eq(users.id, existing[0].id));
+      }
+      continue;
+    }
+    const hashed = await bcrypt.hash(u.password, 10);
+    await db.insert(users).values({ username: u.username, password: hashed, fullName: u.fullName, role: u.role, clientId: u.clientId });
+    console.log(`Created user: ${u.username}`);
+  }
 }
 
 export async function seedDatabase() {
