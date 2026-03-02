@@ -228,6 +228,25 @@ export default function ClientDocuments() {
   const { toast } = useToast();
   const [uploadingKey, setUploadingKey] = useState<string | null>(null);
 
+  const { data: projectDocs } = useQuery<{
+    documents: Array<{
+      id: string;
+      title: string;
+      description: string;
+      type: string;
+      status: string;
+      sha256?: string;
+      downloadUrl: string;
+      signedAt: string | null;
+      signers?: {
+        client: { name: string; date: string } | null;
+        contractor: { name: string; date: string } | null;
+      };
+    }>;
+  }>({
+    queryKey: ["/api/client/documents/project"],
+  });
+
   const { data: uploadsData, isLoading } = useQuery<{ uploads: any[] }>({
     queryKey: ["/api/uploads"],
   });
@@ -335,6 +354,91 @@ export default function ClientDocuments() {
           </div>
         </CardContent>
       </Card>
+
+      {projectDocs?.documents && projectDocs.documents.length > 0 && (
+        <Card className="border-primary/20">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Shield className="w-4 h-4 text-primary" />
+              Documentos do Projeto
+            </CardTitle>
+            <p className="text-[11px] text-muted-foreground">Contrato assinado e proposta comercial aceita — disponíveis para download</p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {projectDocs.documents.map((doc) => (
+                <div
+                  key={doc.id}
+                  className="p-4 rounded-lg bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors"
+                  data-testid={`project-doc-${doc.id}`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3 min-w-0 flex-1">
+                      <FileText className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold">{doc.title}</p>
+                        <p className="text-[11px] text-muted-foreground mt-0.5">{doc.description}</p>
+                        {doc.sha256 && (
+                          <p className="text-[10px] text-muted-foreground mt-1 font-mono">
+                            SHA-256: {doc.sha256.substring(0, 24)}...
+                          </p>
+                        )}
+                        {doc.signers && (
+                          <div className="flex flex-wrap gap-3 mt-2">
+                            {doc.signers.client && (
+                              <div className="flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span className="text-[10px] text-muted-foreground">
+                                  Cliente: {new Date(doc.signers.client.date).toLocaleDateString("pt-BR")}
+                                </span>
+                              </div>
+                            )}
+                            {doc.signers.contractor && (
+                              <div className="flex items-center gap-1.5">
+                                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                                <span className="text-[10px] text-muted-foreground">
+                                  Auditoria: {new Date(doc.signers.contractor.date).toLocaleDateString("pt-BR")}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Badge
+                        className={`text-[9px] ${
+                          doc.status === "assinado"
+                            ? "bg-emerald-600"
+                            : doc.status === "aceita"
+                            ? "bg-blue-600"
+                            : doc.status === "parcial"
+                            ? "bg-amber-600"
+                            : ""
+                        }`}
+                      >
+                        {doc.status === "assinado" ? "Assinado" : doc.status === "aceita" ? "Aceita" : doc.status === "parcial" ? "Parcial" : "Pendente"}
+                      </Badge>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="text-[11px] h-7 gap-1.5"
+                        onClick={() => {
+                          window.open(doc.downloadUrl, "_blank");
+                        }}
+                        data-testid={`button-download-${doc.id}`}
+                      >
+                        <Download className="w-3 h-3" />
+                        PDF
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader className="pb-2">

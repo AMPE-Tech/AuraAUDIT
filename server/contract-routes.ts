@@ -1081,6 +1081,309 @@ ${auditor?.contactPhone || ""}`;
     }
   });
 
+  app.get("/api/client/contract/pdf", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session.userId!;
+      const client = await getClientProfile(userId);
+      if (!client) {
+        return res.status(404).json({ error: "Perfil do cliente nao encontrado." });
+      }
+
+      const sigs = await db
+        .select()
+        .from(contractSignatures)
+        .where(eq(contractSignatures.contractNumber, "AUR-2025-0042"))
+        .orderBy(desc(contractSignatures.signedAt));
+
+      const clientSig = sigs.find(s => s.signerRole === "client");
+      const adminSig = sigs.find(s => s.signerRole === "contractor");
+
+      const auditor = await getAuditorProfile();
+      const contractText = generateContractText(auditor, client);
+      const sha256 = hashContractText(contractText);
+
+      const PDFDocument = (await import("pdfkit")).default;
+      const doc = new PDFDocument({
+        size: "A4",
+        margins: { top: 60, bottom: 60, left: 50, right: 50 },
+        info: {
+          Title: `Contrato AUR-2025-0042 v${CONTRACT_VERSION} — Assinado`,
+          Author: "AuraAUDIT — CTS Brasil",
+          Subject: "Contrato de Auditoria Forense Independente — Copia Assinada",
+        },
+      });
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="contrato-assinado-auraaudit-${CONTRACT_VERSION}.pdf"`
+      );
+      res.setHeader("X-SHA256", sha256);
+      doc.pipe(res);
+
+      doc.fontSize(18).font("Helvetica-Bold").text("CONTRATO DE AUDITORIA FORENSE INDEPENDENTE", { align: "center" });
+      doc.moveDown(0.3);
+      doc.fontSize(10).font("Helvetica").text(`Versao ${CONTRACT_VERSION} | Contrato AUR-2025-0042`, { align: "center" });
+      doc.moveDown(0.3);
+      doc.fontSize(8).font("Helvetica").text(`SHA-256: ${sha256}`, { align: "center" });
+      doc.moveDown(0.2);
+
+      if (clientSig && adminSig) {
+        doc.fontSize(9).font("Helvetica-Bold").fillColor("#006600").text("STATUS: CONTRATO ASSINADO POR AMBAS AS PARTES", { align: "center" });
+        doc.fillColor("#000");
+      }
+      doc.moveDown(1);
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#333");
+      doc.moveDown(0.5);
+
+      const lines = contractText.split("\n");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) { doc.moveDown(0.3); continue; }
+        const isSectionHeader = /^={10,}/.test(trimmed);
+        if (isSectionHeader) { doc.moveDown(0.3); doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#ccc"); doc.moveDown(0.3); continue; }
+        const isMainClause = /^(\d{1,2})\.\s/.test(trimmed) && !trimmed.startsWith("  ");
+        const isSubClause = /^\d{1,2}\.\d+\./.test(trimmed);
+        const isPartHeader = /^PARTE\s+(I|II|III|IV|V)\s/.test(trimmed);
+        const isAnexoHeader = /^ANEXO\s+(I|II|III)/.test(trimmed);
+        if (isPartHeader || isAnexoHeader) { doc.moveDown(0.5); doc.fontSize(13).font("Helvetica-Bold").text(trimmed); doc.moveDown(0.3); }
+        else if (isMainClause) { doc.moveDown(0.3); doc.fontSize(11).font("Helvetica-Bold").text(trimmed); }
+        else if (isSubClause) { doc.fontSize(9.5).font("Helvetica").text(trimmed, { indent: 10 }); }
+        else if (trimmed.startsWith("  ")) { doc.fontSize(9).font("Helvetica").text(trimmed, { indent: 20 }); }
+        else { doc.fontSize(9.5).font("Helvetica").text(trimmed); }
+        if (doc.y > 720) { doc.addPage(); }
+      }
+
+      doc.addPage();
+      doc.fontSize(14).font("Helvetica-Bold").text("REGISTRO DE ASSINATURAS DIGITAIS", { align: "center" });
+      doc.moveDown(1);
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#333");
+      doc.moveDown(1);
+
+      if (clientSig) {
+        doc.fontSize(11).font("Helvetica-Bold").text("CONTRATANTE (Cliente):");
+        doc.fontSize(10).font("Helvetica").text(`Nome: ${clientSig.signerName}`);
+        doc.text(`Data: ${new Date(clientSig.signedAt!).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}`);
+        doc.text(`Hash SHA-256: ${clientSig.sha256Hash}`);
+        doc.text(`IP: ${clientSig.ipAddress || "N/A"}`);
+        doc.moveDown(1);
+      }
+
+      if (adminSig) {
+        doc.fontSize(11).font("Helvetica-Bold").text("CONTRATADA (AuraAUDIT / CTS Brasil):");
+        doc.fontSize(10).font("Helvetica").text(`Nome: ${adminSig.signerName}`);
+        doc.text(`Data: ${new Date(adminSig.signedAt!).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })}`);
+        doc.text(`Hash SHA-256: ${adminSig.sha256Hash}`);
+        doc.text(`IP: ${adminSig.ipAddress || "N/A"}`);
+        doc.moveDown(1);
+      }
+
+      doc.moveDown(1);
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#333");
+      doc.moveDown(0.5);
+      doc.fontSize(8).font("Helvetica").text(
+        `Documento gerado em ${new Date().toISOString()} | Integridade: SHA-256 ${sha256.substring(0, 16)}...`,
+        { align: "center" }
+      );
+
+      doc.end();
+    } catch (err) {
+      console.error("Client contract PDF error:", err);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: "Erro ao gerar PDF do contrato." });
+      }
+    }
+  });
+
+  app.get("/api/client/proposal/pdf", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session.userId!;
+      const client = await getClientProfile(userId);
+      if (!client) {
+        return res.status(404).json({ error: "Perfil do cliente nao encontrado." });
+      }
+
+      const auditor = await getAuditorProfile();
+      const contractText = generateContractText(auditor, client);
+      const proposalData = extractProposalData(contractText, client);
+
+      const PDFDocument = (await import("pdfkit")).default;
+      const doc = new PDFDocument({
+        size: "A4",
+        margins: { top: 60, bottom: 60, left: 50, right: 50 },
+        info: {
+          Title: "Proposta Comercial Aceita — AuraAUDIT",
+          Author: "AuraAUDIT — CTS Brasil",
+          Subject: "Resumo da Proposta Comercial Aceita",
+        },
+      });
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="proposta-comercial-aceita-auraaudit.pdf"`
+      );
+      doc.pipe(res);
+
+      doc.fontSize(18).font("Helvetica-Bold").text("PROPOSTA COMERCIAL ACEITA", { align: "center" });
+      doc.moveDown(0.3);
+      doc.fontSize(10).font("Helvetica").text("AuraAUDIT — Auditoria Forense Independente", { align: "center" });
+      doc.moveDown(0.3);
+      doc.fontSize(9).font("Helvetica").text(`Contrato AUR-2025-0042 | Versao ${CONTRACT_VERSION}`, { align: "center" });
+      doc.moveDown(1);
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#333");
+      doc.moveDown(1);
+
+      doc.fontSize(13).font("Helvetica-Bold").text("1. DADOS DO PROJETO");
+      doc.moveDown(0.5);
+      doc.fontSize(10).font("Helvetica");
+      doc.text(`Cliente: ${client.name}`);
+      doc.text(`Tipo: ${client.type === "travel_agency" ? "Agencia de Viagens" : "Empresa Corporativa"}`);
+      doc.text(`CNPJ: ${client.cnpj || "N/A"}`);
+      doc.text(`Categoria: ${client.type === "travel_agency" ? "Viagens e Eventos" : "Corporativo"}`);
+      doc.text(`Periodo de Analise: ${proposalData.period}`);
+      doc.moveDown(1);
+
+      doc.fontSize(13).font("Helvetica-Bold").text("2. VOLUMES SOB GESTAO (VAM)");
+      doc.moveDown(0.5);
+      doc.fontSize(10).font("Helvetica");
+      doc.text(`Volume ${proposalData.volumes.year1Label}: ${proposalData.volumes.year1}`);
+      doc.text(`Volume ${proposalData.volumes.year2Label}: ${proposalData.volumes.year2}`);
+      doc.text(`Volume Total Estimado: ${proposalData.volumes.total}`);
+      doc.moveDown(1);
+
+      doc.fontSize(13).font("Helvetica-Bold").text("3. SISTEMAS E FONTES DE DADOS");
+      doc.moveDown(0.5);
+      doc.fontSize(10).font("Helvetica");
+      proposalData.systems.forEach((sys: string, i: number) => {
+        doc.text(`  ${i + 1}. ${sys}`);
+      });
+      doc.moveDown(1);
+
+      doc.fontSize(13).font("Helvetica-Bold").text("4. ESCOPO DA AUDITORIA");
+      doc.moveDown(0.5);
+      doc.fontSize(10).font("Helvetica");
+      const scopeItems = [
+        "Auditoria forense completa em despesas de viagens corporativas e eventos",
+        "Analise de conformidade com politicas internas de viagens",
+        "Reconciliacao entre sistemas OBT e Backoffice",
+        "Identificacao de anomalias, duplicidades e fraudes potenciais",
+        "Cruzamento de dados com fontes externas (cias aereas, agencias, cartoes)",
+        "Avaliacao de eficiencia operacional e oportunidades de economia",
+        "Verificacao de aderencia a Lei 13.964/2019 e normas anticorrupcao",
+      ];
+      scopeItems.forEach((item, i) => {
+        doc.text(`  ${i + 1}. ${item}`);
+      });
+      doc.moveDown(1);
+
+      doc.fontSize(13).font("Helvetica-Bold").text("5. ENTREGAVEIS");
+      doc.moveDown(0.5);
+      doc.fontSize(10).font("Helvetica");
+      const deliverables = [
+        "Relatorio executivo consolidado (a cada fase concluida)",
+        "Relatorio tecnico detalhado com achados, evidencias e analises",
+        "Mapeamento de riscos e vulnerabilidades",
+        "Recomendacoes praticas para correcao e melhoria",
+        "Plano de acao sugerido, priorizado por impacto e risco",
+        "Dashboard Interativo de Resultados (tempo real via plataforma AuraAUDIT)",
+        "Cadeia de Custodia Digital Completa (continuo)",
+      ];
+      deliverables.forEach((item, i) => {
+        doc.text(`  ${i + 1}. ${item}`);
+      });
+      doc.moveDown(1);
+
+      doc.fontSize(13).font("Helvetica-Bold").text("6. METODOLOGIA");
+      doc.moveDown(0.5);
+      doc.fontSize(10).font("Helvetica");
+      const phases = [
+        "Fase 01 — Proposta Comercial (Definicao de escopo e aceite)",
+        "Fase 02 — Coleta de Dados (Recebimento e validacao dos documentos)",
+        "Fase 03 — Reconciliacao (Cruzamento e analise forense)",
+        "Fase 04 — Apresentacao (Relatorio executivo e achados)",
+        "Fase 05 — Ajustes Finais (Plano de acao e acompanhamento)",
+      ];
+      phases.forEach((item) => {
+        doc.text(`  ${item}`);
+      });
+
+      doc.moveDown(2);
+      doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke("#333");
+      doc.moveDown(0.5);
+      doc.fontSize(8).font("Helvetica").text(
+        `Proposta comercial aceita — vinculada ao Contrato AUR-2025-0042 v${CONTRACT_VERSION}`,
+        { align: "center" }
+      );
+      doc.fontSize(8).text(
+        `Documento gerado em ${new Date().toISOString()}`,
+        { align: "center" }
+      );
+
+      doc.end();
+    } catch (err) {
+      console.error("Proposal PDF error:", err);
+      if (!res.headersSent) {
+        return res.status(500).json({ error: "Erro ao gerar PDF da proposta." });
+      }
+    }
+  });
+
+  app.get("/api/client/documents/project", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session.userId!;
+      const client = await getClientProfile(userId);
+      if (!client) {
+        return res.json({ documents: [] });
+      }
+
+      const sigs = await db
+        .select()
+        .from(contractSignatures)
+        .where(eq(contractSignatures.contractNumber, "AUR-2025-0042"))
+        .orderBy(desc(contractSignatures.signedAt));
+
+      const clientSig = sigs.find(s => s.signerRole === "client");
+      const adminSig = sigs.find(s => s.signerRole === "contractor");
+      const bothSigned = !!(clientSig && adminSig);
+
+      const auditor = await getAuditorProfile();
+      const contractText = generateContractText(auditor, client);
+      const sha256 = hashContractText(contractText);
+
+      const documents = [
+        {
+          id: "contract-signed",
+          title: "Contrato Assinado — AUR-2025-0042",
+          description: `Contrato v${CONTRACT_VERSION} de Auditoria Forense Independente`,
+          type: "contract",
+          status: bothSigned ? "assinado" : clientSig ? "parcial" : "pendente",
+          sha256: sha256,
+          downloadUrl: "/api/client/contract/pdf",
+          signedAt: clientSig?.signedAt ? new Date(clientSig.signedAt).toISOString() : null,
+          signers: {
+            client: clientSig ? { name: clientSig.signerName, date: new Date(clientSig.signedAt!).toISOString() } : null,
+            contractor: adminSig ? { name: adminSig.signerName, date: new Date(adminSig.signedAt!).toISOString() } : null,
+          },
+        },
+        {
+          id: "proposal-accepted",
+          title: "Proposta Comercial Aceita",
+          description: "Resumo da proposta comercial com volumes, sistemas e escopo",
+          type: "proposal",
+          status: "aceita",
+          downloadUrl: "/api/client/proposal/pdf",
+          signedAt: clientSig?.signedAt ? new Date(clientSig.signedAt).toISOString() : null,
+        },
+      ];
+
+      res.json({ documents });
+    } catch (err) {
+      console.error("Project documents error:", err);
+      res.status(500).json({ error: "Erro ao buscar documentos do projeto." });
+    }
+  });
+
   app.get("/api/contract/:clientId/pdf", requireAuth, async (req: Request, res: Response) => {
     try {
       if (req.session.role !== "admin") {
