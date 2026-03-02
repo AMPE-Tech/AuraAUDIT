@@ -387,6 +387,54 @@ export function registerUploadRoutes(app: Express) {
     }
   });
 
+  app.get("/api/admin/uploads", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") {
+        return res.status(403).json({ error: "Acesso restrito a administradores" });
+      }
+      const allUploads = await db
+        .select()
+        .from(clientUploads)
+        .orderBy(desc(clientUploads.uploadedAt));
+      res.json({ uploads: allUploads });
+    } catch (error: any) {
+      console.error("Error fetching admin uploads:", error.message);
+      res.status(500).json({ error: "Failed to fetch uploads" });
+    }
+  });
+
+  app.patch("/api/admin/uploads/:id/status", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") {
+        return res.status(403).json({ error: "Acesso restrito a administradores" });
+      }
+
+      const { status } = req.body;
+      const validStatuses = ["em_analise", "auditado", "reprovado"];
+      if (!status || !validStatuses.includes(status)) {
+        return res.status(400).json({ error: "Status invalido. Use: em_analise, auditado, reprovado" });
+      }
+
+      const [updated] = await db
+        .update(clientUploads)
+        .set({
+          status,
+          validatedAt: (status === "auditado" || status === "reprovado") ? new Date() : null,
+        })
+        .where(eq(clientUploads.id, req.params.id))
+        .returning();
+
+      if (!updated) {
+        return res.status(404).json({ error: "Upload nao encontrado" });
+      }
+
+      res.json({ upload: updated });
+    } catch (error: any) {
+      console.error("Error updating upload status:", error.message);
+      res.status(500).json({ error: "Failed to update status" });
+    }
+  });
+
   app.delete("/api/uploads/:id", requireAuth, async (req: Request, res: Response) => {
     try {
       const userId = req.session.userId!;

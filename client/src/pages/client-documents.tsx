@@ -264,26 +264,33 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
 
   const getDocStatus = () => {
     if (!hasUpload) return "pendente";
-    if (latestUpload.status === "aguardando_validacao") return "aguardando_validacao";
-    if (latestUpload.status === "validado") return "validado";
+    if (latestUpload.status === "auditado") return "auditado";
+    if (latestUpload.status === "reprovado") return "reprovado";
+    if (latestUpload.status === "aguardando_validacao") return "em_analise";
+    if (latestUpload.status === "validado") return "auditado";
     if (latestUpload.status === "em_analise") return "em_analise";
-    return "uploaded";
+    return "em_analise";
   };
 
   const status = getDocStatus();
 
+  const cardClasses = {
+    pendente: "p-3 rounded-lg border border-border/50 bg-muted/20 transition-colors",
+    em_analise: "p-3 rounded-lg border border-amber-400/60 bg-amber-50/40 dark:bg-amber-950/20 transition-colors",
+    auditado: "p-3 rounded-lg border border-emerald-400/60 bg-emerald-50/40 dark:bg-emerald-950/20 transition-colors",
+    reprovado: "p-3 rounded-lg border border-red-400/60 bg-red-50/40 dark:bg-red-950/20 transition-colors",
+  };
+
   return (
-    <div className="p-3 rounded-lg bg-muted/30 border border-transparent hover:border-border/50 transition-colors" data-testid={`doc-row-${doc.key}`}>
+    <div className={cardClasses[status] || cardClasses.pendente} data-testid={`doc-row-${doc.key}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2.5 min-w-0 flex-1">
-          {status === "validado" ? (
+          {status === "auditado" ? (
             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-          ) : status === "aguardando_validacao" ? (
-            <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+          ) : status === "reprovado" ? (
+            <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
           ) : status === "em_analise" ? (
-            <Search className="w-4 h-4 text-blue-500 shrink-0 mt-0.5 animate-pulse" />
-          ) : hasUpload ? (
-            <File className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+            <Search className="w-4 h-4 text-amber-500 shrink-0 mt-0.5 animate-pulse" />
           ) : (
             <Circle className="w-3.5 h-3.5 text-muted-foreground shrink-0 mt-0.5" />
           )}
@@ -296,28 +303,17 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          {status === "aguardando_validacao" && (
-            <Badge variant="outline" className="text-[9px] gap-1 text-amber-600 border-amber-300 dark:border-amber-700 dark:text-amber-400">
-              <Clock className="w-2.5 h-2.5" />
-              Aguardando validacao
-            </Badge>
+          {status === "auditado" && (
+            <Badge className="text-[9px] bg-emerald-600">Auditado</Badge>
           )}
-          {status === "validado" && (
-            <Badge className="text-[9px] bg-emerald-600">Validado</Badge>
+          {status === "reprovado" && (
+            <Badge className="text-[9px] bg-red-600">Reprovado</Badge>
           )}
           {status === "em_analise" && (
-            <Badge variant="outline" className="text-[9px] gap-1 text-blue-600 border-blue-300 dark:border-blue-700 dark:text-blue-400">
-              <Search className="w-2.5 h-2.5" />
-              Em analise
-            </Badge>
+            <Badge className="text-[9px] bg-amber-500 text-amber-950">Em analise</Badge>
           )}
           {status === "pendente" && (
             <Badge variant="outline" className="text-[9px]">Pendente</Badge>
-          )}
-          {status === "uploaded" && (
-            <Badge variant="outline" className="text-[9px] text-blue-600 border-blue-300 dark:border-blue-700 dark:text-blue-400">
-              Arquivo carregado
-            </Badge>
           )}
         </div>
       </div>

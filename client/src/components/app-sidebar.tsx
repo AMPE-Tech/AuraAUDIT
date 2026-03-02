@@ -57,6 +57,7 @@ const cadastroItems = [
 
 const adminItems = [
   { title: "Painel Admin", url: "/admin", icon: Settings },
+  { title: "Documentos Cliente", url: "/admin/documents", icon: FolderSearch },
   { title: "Documentos IA", url: "/ia-knowledge", icon: Brain },
   { title: "Email Marketing", url: "/email-campaigns", icon: Mail },
 ];
