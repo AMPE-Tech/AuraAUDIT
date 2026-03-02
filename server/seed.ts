@@ -30,7 +30,7 @@ async function seedUsers(clientIds: Record<string, string>) {
       password: stabiaHash,
       fullName: "Grupo Stabia",
       role: "client",
-      clientId: clientIds["Petrobras S.A."] || null,
+      clientId: clientIds["Stabia Viagens e Turismo"] || null,
     },
   ]);
 }
