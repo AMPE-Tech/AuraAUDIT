@@ -13,7 +13,6 @@ import {
   CreditCard,
   ArrowUpCircle,
   ArrowDownCircle,
-  RefreshCw,
   Shield,
   Info,
   Zap,
@@ -85,19 +84,6 @@ export default function WalletPage() {
     },
   });
 
-  const creditMutation = useMutation({
-    mutationFn: async (credits: number) => {
-      const res = await apiRequest("POST", "/api/wallet/credit", { credits, description: `Recarga demo de ${credits} creditos` });
-      return res.json();
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/wallet"] });
-      toast({ title: "Creditos adicionados", description: "Saldo atualizado com sucesso" });
-    },
-    onError: () => {
-      toast({ title: "Erro", description: "Falha ao adicionar creditos", variant: "destructive" });
-    },
-  });
 
   const handleCustomTopup = () => {
     const amount = parseInt(customAmount, 10);
@@ -240,18 +226,6 @@ export default function WalletPage() {
           </CardContent>
         </Card>
 
-        <div className="mt-3">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => creditMutation.mutate(100)}
-            disabled={creditMutation.isPending}
-            data-testid="button-demo-credit"
-          >
-            <RefreshCw className="w-3 h-3 mr-1" />
-            Adicionar 100 creditos (demo)
-          </Button>
-        </div>
       </div>
 
       <Card data-testid="card-caps">

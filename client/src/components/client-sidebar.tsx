@@ -33,7 +33,7 @@ import { Badge } from "@/components/ui/badge";
 const projetoItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, enabled: true },
   { title: "Dashboard Studio", url: "/dashboard-studio", icon: LayoutDashboard, enabled: false },
-  { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3, enabled: false },
+  { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3, enabled: true },
   { title: "Meu Cadastro", url: "/my-profile", icon: Building2, enabled: false },
   { title: "Sistemas", url: "/systems", icon: Monitor, enabled: false },
   { title: "Meus Documentos", url: "/documents", icon: FolderOpen, enabled: true },
@@ -45,8 +45,8 @@ const auditoriaItems = [
 ];
 
 const iaItems = [
-  { title: "AI Desk", url: "/ai-desk", icon: Zap, enabled: false },
-  { title: "Carteira", url: "/wallet", icon: Wallet, enabled: false },
+  { title: "AI Desk", url: "/ai-desk", icon: Zap, enabled: true },
+  { title: "Carteira", url: "/wallet", icon: Wallet, enabled: true },
   { title: "Faturamento", url: "/billing", icon: Receipt, enabled: false },
 ];
 
