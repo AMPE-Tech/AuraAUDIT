@@ -1,0 +1,246 @@
+1️⃣ GDS e APIs globais de viagens (principais do mundo)
+
+São as plataformas centrais usadas por agências e TMCs.
+
+Amadeus
+
+Sabre
+
+Travelport
+
+Amadeus NDC API
+
+Sabre NDC
+
+Travelport Universal API
+
+Funções:
+
+emissão de passagens
+
+reservas
+
+tarifas
+
+ancillaries
+
+seat maps
+
+2️⃣ APIs NDC (New Distribution Capability – IATA)
+
+Usadas para acessar conteúdo direto das companhias aéreas.
+
+Principais companhias com NDC:
+
+LATAM NDC
+
+American Airlines NDC
+
+Lufthansa Group NDC
+
+Air France / KLM NDC
+
+Emirates NDC
+
+Qatar Airways NDC
+
+British Airways NDC
+
+Iberia NDC
+
+No Brasil, LATAM é a mais usada.
+
+3️⃣ Sistemas IATA e BSP
+
+Fundamentais para agências de viagem.
+
+BSPLink
+
+IATA Billing and Settlement Plan
+
+IATA Financial Gateway
+
+IATA EasyPay
+
+ARC (para EUA)
+
+Esses sistemas não têm API pública direta — normalmente usam:
+
+integração via GDS
+
+arquivos BSP
+
+integração contábil
+
+4️⃣ APIs de hotelaria
+
+Muito usadas em travel tech.
+
+Omnibees API
+
+Hotelbeds API
+
+Booking.com API
+
+Expedia Rapid API
+
+Despegar API
+
+Sabre Hospitality
+
+SiteMinder
+
+Cloudbeds
+
+Accor API
+
+Marriott API
+
+5️⃣ Consolidadoras (Brasil)
+
+Essenciais para agências corporativas.
+
+RexturAdvance
+
+Ancoradouro
+
+Flytour Consolidadora
+
+BRT Operadora
+
+Trend Operadora
+
+Sakura
+
+Skyteam consolidação
+
+Confiança
+
+New Age
+
+Diversa Turismo
+
+Normalmente integração via:
+
+API
+
+XML
+
+GDS
+
+6️⃣ Operadoras de turismo
+
+CVC Corp
+
+Visual Turismo
+
+Agaxtur
+
+Teresa Perez
+
+Queensberry
+
+Schultz
+
+Diversa Turismo
+
+Orinter
+
+Lusanova
+
+Europamundo
+
+7️⃣ Seguros viagem
+
+Muito usados em TMCs.
+
+Assist Card
+
+GTA Seguro Viagem
+
+Coris
+
+Allianz Travel
+
+Travel Ace
+
+April Brasil
+
+Intermac
+
+Universal Assistance
+
+8️⃣ Sistemas corporativos de pagamento (travel)
+
+Muito importantes para auditoria.
+
+EBTA (Bradesco Corporate Travel Account)
+
+Itaú Purchase
+
+Santander Corporate Card
+
+Banco do Brasil Corporate
+
+Mastercard Corporate Travel
+
+Visa Corporate
+
+Hotelcard
+
+ETTC
+
+Airplus
+
+Wex Travel
+
+9️⃣ Plataformas de gestão de viagens (TMC)
+
+SAP Concur
+
+Argo Solutions
+
+Lemontech
+
+Reserve
+
+Paytrack
+
+Onfly
+
+ExpenseOn
+
+Wooba
+
+TMS Travel
+
+Egencia
+
+🔟 Sistemas de eventos
+
+Sympla API
+
+Eventbrite API
+
+Cvent
+
+Bizzabo
+
+Even3
+
+Ticket360
+
+📊 Ecossistema total relevante para AuraAudit
+Segmento	Sistemas
+GDS	6
+NDC	8
+IATA/BSP	5
+Hotelaria	10
+Consolidadoras	10
+Operadoras	10
+Seguros	8
+Pagamentos travel	10
+TMC	10
+Eventos	6
+
+Total relevante ≈ 80 plataformas
