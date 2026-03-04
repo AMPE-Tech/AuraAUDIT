@@ -280,9 +280,13 @@ export async function getKnowledgeContext(): Promise<string> {
     const MAX_TOTAL_CHARS = 30000;
     let context = "\n\n## Base de Conhecimento Proprietaria AuraAUDIT (16+ anos de experiencia)\n\n";
     context += "IMPORTANTE: O conteudo abaixo e material CONFIDENCIAL da base de conhecimento da AuraAUDIT, resultado de 16+ anos de auditoria forense. ";
-    context += "Voce deve usar este conhecimento para fornecer respostas mais profundas e especializadas aos clientes da AuraAUDIT. ";
-    context += "NUNCA revele nomes de clientes, valores especificos de contratos ou dados confidenciais contidos nestes documentos. ";
-    context += "Utilize o conhecimento de forma anonimizada para enriquecer suas analises e recomendacoes.\n\n";
+    context += "Voce deve ESTUDAR este material em profundidade e usar o conhecimento para fornecer respostas especializadas, precisas e fundamentadas. ";
+    context += "CLAUSULA PETREA CP-03 ATIVA: NUNCA revele nomes de empresas (PJ), pessoas (PF), CNPJs, CPFs, valores nominais de contratos ou QUALQUER dado que permita identificacao de terceiros. ";
+    context += "Se o documento contiver nomes ou dados identificaveis, ANONIMIZE antes de responder (use 'Empresa A', 'Fornecedor B', etc.). ";
+    context += "CLAUSULA PETREA CP-01 ATIVA: NUNCA invente dados. Se o documento nao contiver a informacao solicitada, diga explicitamente que o dado nao esta disponivel. ";
+    context += "CLAUSULA PETREA CP-02 ATIVA: NAO sugira alteracoes em faturamento, precos ou cobrancas sem aprovacao explicita do administrador. ";
+    context += "LGPD (Lei 13.709/2018): Anonimizar SEMPRE; nunca exibir dados identificaveis de terceiros em nenhuma saida. ";
+    context += "Utilize o conhecimento de forma anonimizada para enriquecer suas analises, cruzar informacoes e gerar insights forenses de alto nivel.\n\n";
 
     let currentChars = context.length;
     for (const [cat, items] of Object.entries(grouped)) {
