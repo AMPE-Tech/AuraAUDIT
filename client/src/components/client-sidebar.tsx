@@ -41,7 +41,7 @@ const projetoItems = [
 
 const auditoriaItems = [
   { title: "Tipos de Despesas", url: "/expense-types", icon: Receipt, enabled: false },
-  { title: "Integracoes", url: "/integrations", icon: Plug, enabled: false },
+  { title: "Integracoes", url: "/integrations", icon: Plug, enabled: true },
 ];
 
 const iaItems = [

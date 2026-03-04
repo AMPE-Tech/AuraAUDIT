@@ -1,0 +1,154 @@
+Marriott International
+
+Hilton Hotels
+
+Accor Hotels
+
+IHG – InterContinental Hotels Group
+
+Hyatt Hotels
+
+Wyndham Hotels
+
+Choice Hotels
+
+Best Western
+
+Radisson Hotel Group
+
+Mandarin Oriental
+
+Four Seasons
+
+Minor Hotels (Anantara / Tivoli)
+
+NH Hotel Group
+
+Melia Hotels
+
+Rosewood Hotels
+
+Integração normalmente via:
+
+Amadeus / Sabre / Travelport
+
+Omnibees
+
+SiteMinder
+
+Hotelbeds
+
+2️⃣ Redes hoteleiras brasileiras (FOHB – Fórum de Operadores Hoteleiros do Brasil)
+
+Principais redes nacionais presentes no FOHB:
+
+Atlantica Hospitality
+
+Bourbon Hotéis & Resorts
+
+Blue Tree Hotels
+
+Deville Hotéis
+
+Intercity Hotels
+
+Slaviero Hotéis
+
+Tauá Resorts
+
+Wish Hotels
+
+Vila Galé Brasil
+
+Nobile Hotéis
+
+Transamerica Hospitality
+
+BHG – Brazil Hospitality Group
+
+Hotéis Othon
+
+Bristol Hotels
+
+Laghetto Hotéis
+
+Essas redes normalmente integram via:
+
+Omnibees
+
+SiteMinder
+
+TravelClick
+
+Cloudbeds
+
+3️⃣ Locadoras de veículos globais
+
+Essas empresas possuem APIs próprias ou integração via GDS.
+
+Hertz
+
+Avis
+
+Budget
+
+Enterprise
+
+National Car Rental
+
+Alamo
+
+Sixt
+
+Europcar
+
+Thrifty
+
+Dollar Rent a Car
+
+4️⃣ Locadoras de veículos no Brasil
+
+Muito usadas por TMCs corporativas.
+
+Localiza
+
+Unidas
+
+Movida
+
+Ouro Verde
+
+Foco Rent a Car
+
+FlexFleet
+
+Turbi (car sharing)
+
+Kovi (frotas corporativas)
+
+Integração geralmente via:
+
+API
+
+GDS
+
+plataformas corporativas de mobilidade
+
+5️⃣ Ecossistema completo do setor (visão consolidada)
+
+Para o AuraAudit o universo típico de integrações fica assim:
+
+Categoria	Plataformas principais
+GDS	Amadeus, Sabre, Travelport
+NDC airlines	LATAM, Lufthansa, Emirates etc.
+Companhias aéreas	IATA carriers + low cost
+Hotelaria global	Marriott, Hilton, Accor etc.
+Hotelaria Brasil (FOHB)	Atlantica, Bourbon, Intercity etc.
+Distribuição hotel	Omnibees, SiteMinder, Hotelbeds
+Locadoras globais	Hertz, Avis, Europcar
+Locadoras Brasil	Localiza, Movida, Unidas
+Consolidadoras	Rextur, Ancoradouro, Flytour
+Operadoras	CVC, Orinter, Diversa
+Seguros	Assist Card, Allianz, GTA
+Pagamentos travel	EBTA, AirPlus, Hotelcard
+Bancos	Itaú, Bradesco, Santander, BB
