@@ -433,6 +433,7 @@ E19. Assinatura eletronica: Lei 14.063/2020 + MP 2.200-2/2001
 E20. LGPD: mascaramento de CPF, dados pessoais protegidos, finalidade contratual
 E21. Pagina publica: chat IA flutuante com trial gratuito e cadeia de custodia
 E22. Ecossistema de Integracoes: 149+ plataformas mapeadas em 15 segmentos (GDS, NDC Airlines, IATA/BSP, Hotelaria Global, Hotelaria Brasil/FOHB, Locadoras, Consolidadoras, Operadoras, Seguros, Pagamentos, TMC Globais, TMC Nacionais/ABRACORP, Agencias de Eventos/MICE, TravelTech, Plataformas de Eventos)
+E23. AuditPag: auditoria pre-pagamento com cruzamento solicitacao/reserva/financeiro/extrato bancario, perfis agencia e corporativo, monitoramento diario de entradas/saidas, achados tipificados, conformidade pre-aprovacao CFO
 
 ============================================================
 ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
@@ -470,6 +471,9 @@ Limites por usuario/empresa, cap mensal, threshold de auto-aprovacao. Configurav
 M10. ECOSSISTEMA DE INTEGRACOES (149+ PLATAFORMAS)
 Mapeamento completo do ecossistema de integracao com 149+ plataformas em 15 segmentos: GDS (Amadeus, Sabre, Travelport), NDC Airlines (LATAM, GOL, Azul, Lufthansa, Emirates, Qatar, British Airways, Iberia, Air France/KLM, American Airlines), IATA/BSP (BSPLink, Financial Gateway, EasyPay, ARC), Hotelaria Global (Marriott, Hilton, Accor, IHG, Hyatt, Wyndham, Omnibees, Hotelbeds, Booking, Expedia, SiteMinder), Hotelaria Brasil/FOHB (Atlantica, Bourbon, Blue Tree, Intercity, Slaviero, Taua, Wish, Vila Gale, Nobile, Transamerica, BHG, Othon, Bristol, Laghetto, Deville), Locadoras (Localiza, Movida, Unidas, Hertz, Avis, Budget, Enterprise, Sixt, Europcar), Consolidadoras (RexturAdvance, Ancoradouro, Flytour, BRT, Trend, Sakura, Confianca, New Age, Diversa), Operadoras (CVC, Visual, Agaxtur, Teresa Perez, Queensberry, Schultz, Orinter, Lusanova, Europamundo), Seguros (Assist Card, GTA, Coris, Allianz, Travel Ace, April, Intermac, Universal Assistance, Porto Seguro), Pagamentos (EBTA Bradesco, Itau, Santander, BB, Mastercard Corporate, Visa Corporate, AirPlus, Hotelcard, WEX, ETTC), TMC Globais (Amex GBT, BCD Travel, CWT, FCM Travel, CTM, Egencia), TMC Nacionais/ABRACORP (Flytour Business Travel, Avipam, Alatur JTB, Costa Brava, Kontik, Grupo Arbaitman, Reserve Travel, Hostway, Copastur, VoeTur, SAP Concur, ExpenseOn, TMS Travel), Agencias de Eventos/MICE (MCI Brasil, Alatur Eventos, Flytour Eventos, Sherpa42, TM1 Eventos, SRCOM, Banco de Eventos, Holding Clube, Agencia Samba, BFerraz), TravelTech (Onfly, Paytrack, Lemontech, Argo Solutions, Wooba, Reserve), Plataformas de Eventos (Sympla, Eventbrite, Cvent, Bizzabo, Even3, Ticket360). Metodos: API REST, XML, GDS, NDC, SFTP, CSV/XLSX, Portal. Pagina de ecossistema com busca e visualizacao por segmento. Status: IMPLEMENTADO.
 
+M11. AUDITPAG — AUDITORIA PRE-APROVACAO DE PAGAMENTOS
+Modulo de auditoria pontual que valida a cadeia completa de pagamento antes da aprovacao do CFO/Gerente Financeiro. Fluxo: Solicitacao (quem pediu, departamento, destino) → Reserva (codigo PNR, confirmacao fornecedor, datas) → Financeiro (meio de pagamento: faturado/Pix/cartao corporativo/cartao de credito/boleto, valores solicitado/faturado/fornecedor, NF, vencimento) → Acordos e Comissoes (acordo corporativo, comissao %, incentivos, rebates — perfil agencia) → Conciliacao Bancaria (extrato banco via API, match/unmatch/parcial) → Monitoramento Diario (entradas/saidas, conformidade/desconformidade). Dois perfis: Agencia (com comissao, incentivos, rebates, NF agencia) e Corporativo (sem comissao, foco em solicitacao vs fatura/extrato cartao). Dashboard com KPIs (conformes %, nao conformes %, pendentes, total auditado R$), charts por meio de pagamento e status. Achados tipificados (valor divergente, documento ausente, reserva incompativel, pagamento duplicado, comissao irregular, sem aprovacao, fora da politica). Estrutura modular replicavel para outros segmentos do AuraAUDIT. Status: IMPLEMENTADO.
+
 ============================================================
 ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 ============================================================
@@ -495,6 +499,7 @@ ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 [OK] CL19. Reconciliacao: cruzamento multi-via (OBT/Backoffice/fatura/cartao)
 [OK] CL20. Role-based access: admin, client, auditor com controle de acesso por rota
 [OK] CL21-ECO. Ecossistema de Integracoes: 149+ plataformas em 15 segmentos, busca, metodos de integracao, APIs privadas e publicas
+[OK] CL22-PAG. AuditPag: auditoria pre-pagamento com perfis agencia/corporativo, cruzamento solicitacao-reserva-financeiro-extrato, monitoramento diario, achados tipificados
 
 ITENS PENDENTES / EM OBSERVACAO:
 
@@ -522,7 +527,7 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M9, com 21 evidencias tecnicas documentadas, 25 itens de checklist de conformidade (20 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M11, com 23 evidencias tecnicas documentadas, 27 itens de checklist de conformidade (22 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 
@@ -530,7 +535,7 @@ Certos de que nossa experiencia nos qualifica para atender plenamente o projeto,
 
 ${auditorName}
 Contrato de Auditoria e Consultoria — Versao ${CONTRACT_VERSION}
-Total de clausulas: 28 | Evidencias: 21 | Anexos: 3
+Total de clausulas: 28 | Evidencias: 23 | Anexos: 3 | Modulos: 11
 ${auditorAddress}${auditorCity ? `, ${auditorCity}` : ""}${auditorState ? ` - ${auditorState}` : ""}
 ${auditorContactName} | Telefone: ${auditorPhone} | Email: ${auditorEmail}`;
 }

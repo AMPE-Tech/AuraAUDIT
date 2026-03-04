@@ -6,6 +6,7 @@ import {
   Package,
   FileText,
   Shield,
+  ShieldCheck,
   Globe,
   BarChart3,
   Zap,
@@ -40,6 +41,7 @@ const projetoItems = [
 ];
 
 const auditoriaItems = [
+  { title: "AuditPag", url: "/audit-pag", icon: ShieldCheck, enabled: true },
   { title: "Tipos de Despesas", url: "/expense-types", icon: Receipt, enabled: false },
   { title: "Integracoes", url: "/integrations", icon: Plug, enabled: true },
 ];

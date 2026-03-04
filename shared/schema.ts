@@ -570,3 +570,79 @@ export type InsertEmailCampaign = z.infer<typeof insertEmailCampaignSchema>;
 export type EmailCampaign = typeof emailCampaigns.$inferSelect;
 export type InsertEmailRecipient = z.infer<typeof insertEmailRecipientSchema>;
 export type EmailRecipient = typeof emailRecipients.$inferSelect;
+
+export const auditPagCases = pgTable("audit_pag_cases", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  createdByUserId: varchar("created_by_user_id"),
+  profileType: text("profile_type").notNull().default("agency"),
+  status: text("status").notNull().default("draft"),
+  requesterName: text("requester_name"),
+  requesterDepartment: text("requester_department"),
+  destination: text("destination"),
+  travelDate: timestamp("travel_date"),
+  returnDate: timestamp("return_date"),
+  supplierName: text("supplier_name"),
+  reservationCode: text("reservation_code"),
+  supplierConfirmation: text("supplier_confirmation"),
+  paymentMethod: text("payment_method"),
+  requestedAmount: decimal("requested_amount", { precision: 14, scale: 2 }),
+  invoicedAmount: decimal("invoiced_amount", { precision: 14, scale: 2 }),
+  supplierPayAmount: decimal("supplier_pay_amount", { precision: 14, scale: 2 }),
+  invoiceNumber: text("invoice_number"),
+  invoiceDueDate: timestamp("invoice_due_date"),
+  hasCorporateAgreement: boolean("has_corporate_agreement").notNull().default(false),
+  commissionPercent: decimal("commission_percent", { precision: 6, scale: 2 }),
+  commissionAmount: decimal("commission_amount", { precision: 14, scale: 2 }),
+  hasIncentive: boolean("has_incentive").notNull().default(false),
+  incentiveAmount: decimal("incentive_amount", { precision: 14, scale: 2 }),
+  hasRebate: boolean("has_rebate").notNull().default(false),
+  rebateAmount: decimal("rebate_amount", { precision: 14, scale: 2 }),
+  agencyInvoiceRef: text("agency_invoice_ref"),
+  bankStatementMatch: text("bank_statement_match").notNull().default("pending"),
+  bankMatchAmount: decimal("bank_match_amount", { precision: 14, scale: 2 }),
+  bankMatchDate: timestamp("bank_match_date"),
+  conformityStatus: text("conformity_status").notNull().default("pending_review"),
+  conformityNotes: text("conformity_notes"),
+  findings: jsonb("findings"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auditPagDocuments = pgTable("audit_pag_documents", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  auditPagCaseId: varchar("audit_pag_case_id").notNull(),
+  documentType: text("document_type").notNull(),
+  fileName: text("file_name").notNull(),
+  originalName: text("original_name").notNull(),
+  fileSize: integer("file_size").notNull(),
+  mimeType: text("mime_type"),
+  sha256: text("sha256"),
+  status: text("status").notNull().default("uploaded"),
+  notes: text("notes"),
+  uploadedAt: timestamp("uploaded_at").notNull().defaultNow(),
+});
+
+export const auditPagMonitoring = pgTable("audit_pag_monitoring", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  monitorDate: timestamp("monitor_date").notNull(),
+  totalInflows: decimal("total_inflows", { precision: 14, scale: 2 }).notNull().default("0"),
+  totalOutflows: decimal("total_outflows", { precision: 14, scale: 2 }).notNull().default("0"),
+  matchedCount: integer("matched_count").notNull().default(0),
+  unmatchedCount: integer("unmatched_count").notNull().default(0),
+  conformantCount: integer("conformant_count").notNull().default(0),
+  nonConformantCount: integer("non_conformant_count").notNull().default(0),
+  summaryJson: jsonb("summary_json"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertAuditPagCaseSchema = createInsertSchema(auditPagCases).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagDocumentSchema = createInsertSchema(auditPagDocuments).omit({ id: true, uploadedAt: true });
+export const insertAuditPagMonitoringSchema = createInsertSchema(auditPagMonitoring).omit({ id: true, createdAt: true });
+export type InsertAuditPagCase = z.infer<typeof insertAuditPagCaseSchema>;
+export type AuditPagCase = typeof auditPagCases.$inferSelect;
+export type InsertAuditPagDocument = z.infer<typeof insertAuditPagDocumentSchema>;
+export type AuditPagDocument = typeof auditPagDocuments.$inferSelect;
+export type InsertAuditPagMonitoring = z.infer<typeof insertAuditPagMonitoringSchema>;
+export type AuditPagMonitoring = typeof auditPagMonitoring.$inferSelect;
