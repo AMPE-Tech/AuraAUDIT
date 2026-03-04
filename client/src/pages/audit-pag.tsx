@@ -8,16 +8,18 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ShieldCheck, Plus, FileText, DollarSign, AlertTriangle, CheckCircle2,
-  XCircle, Clock, TrendingUp, TrendingDown, ArrowUpDown, Upload,
+  XCircle, Clock, TrendingUp, ArrowUpDown, Upload,
   Building2, User, MapPin, Calendar, CreditCard, FileBarChart, Eye,
-  Landmark, ArrowRight, RefreshCw,
+  Landmark, ArrowRight, RefreshCw, Bell, BellRing, Settings, FileCheck,
+  Copy, ToggleLeft, Info, AlertCircle, Shield, CreditCard as CardIcon,
 } from "lucide-react";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid,
@@ -78,6 +80,38 @@ const BANK_LABELS: Record<string, string> = {
   partial: "Parcial",
 };
 
+const ALERT_TYPE_LABELS: Record<string, string> = {
+  discrepancy: "Discrepância",
+  anomaly: "Anomalia",
+  policy_violation: "Violação de Política",
+  high_value: "Alto Valor",
+  bank_mismatch: "Divergência Bancária",
+};
+
+const SEVERITY_COLORS: Record<string, string> = {
+  low: "bg-blue-500/20 text-blue-400",
+  medium: "bg-amber-500/20 text-amber-400",
+  high: "bg-red-500/20 text-red-400",
+  critical: "bg-red-600/30 text-red-300 animate-pulse",
+};
+
+const CATEGORY_LABELS: Record<string, string> = {
+  approval_flow: "Fluxo de Aprovação",
+  booking_rules: "Regras de Reserva",
+  payment_limits: "Limites de Pagamento",
+  supplier_selection: "Seleção de Fornecedores",
+  expense_caps: "Tetos de Despesa",
+  documentation: "Documentação",
+  compliance: "Compliance",
+  sla: "SLA",
+};
+
+const FLAG_COLORS: Record<string, string> = {
+  info: "bg-blue-500/20 text-blue-400",
+  warning: "bg-amber-500/20 text-amber-400",
+  critical: "bg-red-500/20 text-red-400",
+};
+
 export default function AuditPag() {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -88,10 +122,13 @@ export default function AuditPag() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [findingOpen, setFindingOpen] = useState(false);
   const [bankMatchOpen, setBankMatchOpen] = useState(false);
+  const [alertConfigOpen, setAlertConfigOpen] = useState(false);
 
   const dashboardQuery = useQuery({ queryKey: ["/api/audit-pag/dashboard"] });
   const casesQuery = useQuery({ queryKey: ["/api/audit-pag/cases"] });
   const monitoringQuery = useQuery({ queryKey: ["/api/audit-pag/monitoring"] });
+  const alertsQuery = useQuery({ queryKey: ["/api/audit-pag/alerts"] });
+  const policiesQuery = useQuery({ queryKey: ["/api/audit-pag/policies"] });
 
   const createCaseMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -115,6 +152,7 @@ export default function AuditPag() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/cases"] });
       queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/alerts"] });
       toast({ title: "Status atualizado" });
     },
     onError: (err: any) => toast({ title: "Erro", description: err.message, variant: "destructive" }),
@@ -127,6 +165,7 @@ export default function AuditPag() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/cases"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/alerts"] });
       setSelectedCase(data);
       setFindingOpen(false);
       toast({ title: "Achado registrado" });
@@ -142,6 +181,7 @@ export default function AuditPag() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/cases"] });
       queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/alerts"] });
       setSelectedCase(data);
       setBankMatchOpen(false);
       toast({ title: "Conciliação bancária atualizada" });
@@ -149,11 +189,36 @@ export default function AuditPag() {
     onError: (err: any) => toast({ title: "Erro", description: err.message, variant: "destructive" }),
   });
 
+  const alertReadMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await apiRequest("PUT", `/api/audit-pag/alerts/${id}/read`);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/dashboard"] });
+    },
+  });
+
+  const alertDismissMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await apiRequest("PUT", `/api/audit-pag/alerts/${id}/dismiss`);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/alerts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/dashboard"] });
+    },
+  });
+
   const dashboard = dashboardQuery.data as any;
   const cases = (casesQuery.data as any[]) || [];
   const monitoring = (monitoringQuery.data as any[]) || [];
+  const alerts = (alertsQuery.data as any[]) || [];
+  const policies = (policiesQuery.data as any[]) || [];
 
   const filteredCases = statusFilter === "all" ? cases : cases.filter((c: any) => c.status === statusFilter);
+  const unreadAlertCount = alerts.filter((a: any) => a.status === "pending" || a.status === "sent").length;
 
   const formatBRL = (val: string | number | null | undefined) => {
     if (!val) return "R$ 0,00";
@@ -169,17 +234,42 @@ export default function AuditPag() {
             <h1 className="text-2xl font-bold" data-testid="text-page-title">AuditPag</h1>
             <p className="text-sm text-muted-foreground">Auditoria Pré-Aprovação de Pagamentos</p>
           </div>
+          {unreadAlertCount > 0 && (
+            <Badge variant="destructive" className="ml-2 animate-pulse" data-testid="badge-unread-alerts">
+              <BellRing className="w-3 h-3 mr-1" />
+              {unreadAlertCount} alerta{unreadAlertCount > 1 ? "s" : ""}
+            </Badge>
+          )}
         </div>
-        <Button onClick={() => setNewCaseOpen(true)} data-testid="button-new-case">
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Caso
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={() => setAlertConfigOpen(true)} data-testid="button-alert-config">
+            <Settings className="w-4 h-4 mr-2" />
+            Configurações
+          </Button>
+          <Button onClick={() => setNewCaseOpen(true)} data-testid="button-new-case">
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Caso
+          </Button>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList data-testid="tabs-audit-pag">
           <TabsTrigger value="dashboard" data-testid="tab-dashboard">Dashboard</TabsTrigger>
           <TabsTrigger value="cases" data-testid="tab-cases">Casos</TabsTrigger>
+          <TabsTrigger value="policies" data-testid="tab-policies">
+            <FileCheck className="w-4 h-4 mr-1" />
+            Políticas
+          </TabsTrigger>
+          <TabsTrigger value="alerts" data-testid="tab-alerts" className="relative">
+            <Bell className="w-4 h-4 mr-1" />
+            Alertas
+            {unreadAlertCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                {unreadAlertCount}
+              </span>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="monitoring" data-testid="tab-monitoring">Monitoramento</TabsTrigger>
         </TabsList>
 
@@ -357,6 +447,9 @@ export default function AuditPag() {
                             <Badge variant="outline" className={`text-[10px] ${STATUS_COLORS[c.status] || ""}`}>
                               {STATUS_LABELS[c.status] || c.status}
                             </Badge>
+                            <Badge variant="outline" className="text-[10px]">
+                              {c.profileType === "agency" ? "Agência" : "Corporativo"}
+                            </Badge>
                           </div>
                           <div className="flex items-center gap-4 text-xs text-muted-foreground">
                             {c.destination && (
@@ -398,6 +491,19 @@ export default function AuditPag() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        <TabsContent value="policies" className="space-y-4">
+          <PoliciesTab policies={policies} toast={toast} />
+        </TabsContent>
+
+        <TabsContent value="alerts" className="space-y-4">
+          <AlertsTab
+            alerts={alerts}
+            onRead={(id: string) => alertReadMutation.mutate(id)}
+            onDismiss={(id: string) => alertDismissMutation.mutate(id)}
+            formatBRL={formatBRL}
+          />
         </TabsContent>
 
         <TabsContent value="monitoring" className="space-y-4">
@@ -503,8 +609,476 @@ export default function AuditPag() {
         bankMatchOpen={bankMatchOpen}
         setBankMatchOpen={setBankMatchOpen}
         userRole={user?.role || ""}
+        formatBRL={formatBRL}
       />
+
+      <AlertConfigDialog open={alertConfigOpen} onOpenChange={setAlertConfigOpen} toast={toast} />
     </div>
+  );
+}
+
+function PoliciesTab({ policies, toast }: any) {
+  const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
+  const [itemsDialogOpen, setItemsDialogOpen] = useState(false);
+
+  const policyItemsQuery = useQuery({
+    queryKey: ["/api/audit-pag/policies", selectedPolicy?.id, "items"],
+    queryFn: async () => {
+      if (!selectedPolicy) return [];
+      const res = await fetch(`/api/audit-pag/policies/${selectedPolicy.id}/items`);
+      return res.json();
+    },
+    enabled: !!selectedPolicy,
+  });
+
+  const cloneMutation = useMutation({
+    mutationFn: async (templateId: string) => {
+      const res = await apiRequest("POST", "/api/audit-pag/policies", {
+        name: "Política Customizada — " + new Date().toLocaleDateString("pt-BR"),
+        policyType: "travel_purchase",
+        cloneFromTemplateId: templateId,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/policies"] });
+      toast({ title: "Política clonada com sucesso" });
+    },
+    onError: (err: any) => toast({ title: "Erro", description: err.message, variant: "destructive" }),
+  });
+
+  const toggleItemMutation = useMutation({
+    mutationFn: async ({ policyId, itemId, isEnabled }: { policyId: string; itemId: string; isEnabled: boolean }) => {
+      const res = await apiRequest("PUT", `/api/audit-pag/policies/${policyId}/items/${itemId}`, { isEnabled });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/policies", selectedPolicy?.id, "items"] });
+    },
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      const res = await fetch("/api/audit-pag/policies/upload", {
+        method: "POST",
+        body: formData,
+      });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/policies"] });
+      toast({ title: "Política carregada com sucesso" });
+    },
+    onError: (err: any) => toast({ title: "Erro ao enviar", description: err.message, variant: "destructive" }),
+  });
+
+  const items = (policyItemsQuery.data as any[]) || [];
+  const groupedItems = items.reduce((acc: Record<string, any[]>, item: any) => {
+    const cat = item.category || "other";
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
+    return acc;
+  }, {});
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          Políticas de compra, pagamento e compliance. Use modelos prontos ou envie sua própria política.
+        </p>
+        <label className="cursor-pointer" data-testid="button-upload-policy">
+          <input
+            type="file"
+            className="hidden"
+            accept=".pdf,.doc,.docx,.xlsx,.txt"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const fd = new FormData();
+                fd.append("file", file);
+                fd.append("name", file.name);
+                uploadMutation.mutate(fd);
+              }
+            }}
+          />
+          <Button variant="outline" size="sm" asChild>
+            <span><Upload className="w-4 h-4 mr-2" />Enviar Política</span>
+          </Button>
+        </label>
+      </div>
+
+      {policies.length === 0 ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+            <FileCheck className="w-12 h-12 mb-4 opacity-30" />
+            <p className="text-sm">Nenhuma política configurada</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {policies.map((p: any) => (
+            <Card key={p.id} className="hover:border-primary/30 transition-colors" data-testid={`policy-card-${p.id}`}>
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <FileCheck className="w-4 h-4 text-primary" />
+                      <span className="font-medium text-sm">{p.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline" className="text-[10px]">
+                        {p.isTemplate ? "Modelo" : "Customizada"}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px]">
+                        {p.policyType === "custom" ? "Upload" : p.policyType}
+                      </Badge>
+                      {p.uploadedFileName && (
+                        <Badge variant="outline" className="text-[10px] text-blue-400">
+                          {p.uploadedFileName}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-1">
+                    {p.isTemplate && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => cloneMutation.mutate(p.id)}
+                        disabled={cloneMutation.isPending}
+                        data-testid={`button-clone-${p.id}`}
+                      >
+                        <Copy className="w-3 h-3 mr-1" />
+                        Aplicar Modelo
+                      </Button>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => { setSelectedPolicy(p); setItemsDialogOpen(true); }}
+                      data-testid={`button-view-items-${p.id}`}
+                    >
+                      <Eye className="w-3 h-3 mr-1" />
+                      Itens
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Dialog open={itemsDialogOpen} onOpenChange={setItemsDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileCheck className="w-5 h-5" />
+              {selectedPolicy?.name || "Checklist da Política"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {policyItemsQuery.isLoading ? (
+            <div className="space-y-3">{[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12" />)}</div>
+          ) : items.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-8 text-center">Nenhum item de checklist</p>
+          ) : (
+            <div className="space-y-6">
+              {Object.entries(groupedItems).map(([category, catItems]: [string, any[]]) => (
+                <div key={category}>
+                  <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-primary" />
+                    {CATEGORY_LABELS[category] || category}
+                  </h3>
+                  <div className="space-y-2">
+                    {catItems.map((item: any) => (
+                      <div
+                        key={item.id}
+                        className={`flex items-center justify-between p-3 rounded-lg border ${item.isEnabled ? "bg-muted/20" : "bg-muted/5 opacity-60"}`}
+                        data-testid={`policy-item-${item.id}`}
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          <Switch
+                            checked={item.isEnabled}
+                            onCheckedChange={(checked) => {
+                              if (!selectedPolicy?.isTemplate) {
+                                toggleItemMutation.mutate({ policyId: selectedPolicy.id, itemId: item.id, isEnabled: checked });
+                              }
+                            }}
+                            disabled={selectedPolicy?.isTemplate}
+                            data-testid={`toggle-item-${item.id}`}
+                          />
+                          <div className="flex-1">
+                            <p className="text-sm">{item.description}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              {item.isMandatory && (
+                                <Badge variant="outline" className="text-[9px] bg-red-500/10 text-red-400">
+                                  Obrigatório
+                                </Badge>
+                              )}
+                              <Badge variant="outline" className={`text-[9px] ${FLAG_COLORS[item.flagLevel] || ""}`}>
+                                {item.flagLevel === "info" ? "Info" : item.flagLevel === "warning" ? "Alerta" : "Crítico"}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function AlertsTab({ alerts, onRead, onDismiss, formatBRL }: any) {
+  if (alerts.length === 0) {
+    return (
+      <Card>
+        <CardContent className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+          <Bell className="w-12 h-12 mb-4 opacity-30" />
+          <p className="text-sm">Nenhum alerta registrado</p>
+          <p className="text-xs mt-2">Alertas são gerados automaticamente quando discrepâncias ou anomalias são detectadas.</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {alerts.map((a: any) => (
+        <Card
+          key={a.id}
+          className={`transition-colors ${a.status === "pending" || a.status === "sent" ? "border-l-4 border-l-red-500" : "opacity-70"}`}
+          data-testid={`alert-card-${a.id}`}
+        >
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <Badge variant="outline" className={`text-[10px] ${SEVERITY_COLORS[a.severity] || ""}`}>
+                    {a.severity.toUpperCase()}
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px]">
+                    {ALERT_TYPE_LABELS[a.alertType] || a.alertType}
+                  </Badge>
+                  {a.status === "read" && (
+                    <Badge variant="outline" className="text-[10px] bg-slate-500/20 text-slate-400">Lido</Badge>
+                  )}
+                  {a.status === "dismissed" && (
+                    <Badge variant="outline" className="text-[10px] bg-slate-500/20 text-slate-400">Dispensado</Badge>
+                  )}
+                </div>
+                <h4 className="font-medium text-sm">{a.title}</h4>
+                <p className="text-xs text-muted-foreground mt-1">{a.description}</p>
+                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                  {a.financialAmount && (
+                    <span className="font-medium text-amber-400">{formatBRL(a.financialAmount)}</span>
+                  )}
+                  <span>{new Date(a.createdAt).toLocaleString("pt-BR")}</span>
+                  {a.channel !== "platform" && (
+                    <Badge variant="outline" className="text-[9px]">{a.channel}</Badge>
+                  )}
+                </div>
+              </div>
+              {(a.status === "pending" || a.status === "sent") && (
+                <div className="flex gap-1 ml-2">
+                  <Button variant="ghost" size="sm" onClick={() => onRead(a.id)} data-testid={`button-read-alert-${a.id}`}>
+                    <Eye className="w-3 h-3" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => onDismiss(a.id)} data-testid={`button-dismiss-alert-${a.id}`}>
+                    <XCircle className="w-3 h-3" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function AlertConfigDialog({ open, onOpenChange, toast }: any) {
+  const { user } = useAuth();
+  const configQuery = useQuery({ queryKey: ["/api/audit-pag/alert-config"] });
+  const config = configQuery.data as any;
+
+  const [form, setForm] = useState<any>({
+    enablePlatformAlerts: true,
+    enableEmailAlerts: true,
+    enableSmsAlerts: false,
+    emailRecipients: "",
+    smsRecipients: "",
+    highValueThreshold: "10000",
+    criticalValueThreshold: "50000",
+    alertOnDiscrepancy: true,
+    alertOnPolicyViolation: true,
+    alertOnBankMismatch: true,
+    dataSourcePreference: "both",
+  });
+
+  const loaded = config !== undefined;
+  if (loaded && config && !form._loaded) {
+    setForm({
+      enablePlatformAlerts: config.enablePlatformAlerts ?? true,
+      enableEmailAlerts: config.enableEmailAlerts ?? true,
+      enableSmsAlerts: config.enableSmsAlerts ?? false,
+      emailRecipients: config.emailRecipients || "",
+      smsRecipients: config.smsRecipients || "",
+      highValueThreshold: config.highValueThreshold || "10000",
+      criticalValueThreshold: config.criticalValueThreshold || "50000",
+      alertOnDiscrepancy: config.alertOnDiscrepancy ?? true,
+      alertOnPolicyViolation: config.alertOnPolicyViolation ?? true,
+      alertOnBankMismatch: config.alertOnBankMismatch ?? true,
+      dataSourcePreference: config.dataSourcePreference || "both",
+      _loaded: true,
+    });
+  }
+
+  const saveMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const res = await apiRequest("PUT", "/api/audit-pag/alert-config", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/audit-pag/alert-config"] });
+      toast({ title: "Configurações salvas" });
+      onOpenChange(false);
+    },
+    onError: (err: any) => toast({ title: "Erro", description: err.message, variant: "destructive" }),
+  });
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Settings className="w-5 h-5" />
+            Configurações de Alertas e Dados
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-sm font-semibold mb-3">Canais de Alerta</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">Alertas na Plataforma</Label>
+                <Switch checked={form.enablePlatformAlerts} onCheckedChange={(v) => setForm((p: any) => ({ ...p, enablePlatformAlerts: v }))} data-testid="toggle-platform-alerts" />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">Alertas por E-mail</Label>
+                <Switch checked={form.enableEmailAlerts} onCheckedChange={(v) => setForm((p: any) => ({ ...p, enableEmailAlerts: v }))} data-testid="toggle-email-alerts" />
+              </div>
+              {form.enableEmailAlerts && (
+                <div>
+                  <Label className="text-xs">Destinatários (separados por vírgula)</Label>
+                  <Input
+                    value={form.emailRecipients}
+                    onChange={(e) => setForm((p: any) => ({ ...p, emailRecipients: e.target.value }))}
+                    placeholder="email1@empresa.com, email2@empresa.com"
+                    data-testid="input-email-recipients"
+                  />
+                </div>
+              )}
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">Alertas por SMS/Celular</Label>
+                <Switch checked={form.enableSmsAlerts} onCheckedChange={(v) => setForm((p: any) => ({ ...p, enableSmsAlerts: v }))} data-testid="toggle-sms-alerts" />
+              </div>
+              {form.enableSmsAlerts && (
+                <div>
+                  <Label className="text-xs">Números (separados por vírgula)</Label>
+                  <Input
+                    value={form.smsRecipients}
+                    onChange={(e) => setForm((p: any) => ({ ...p, smsRecipients: e.target.value }))}
+                    placeholder="+55 11 99999-9999"
+                    data-testid="input-sms-recipients"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold mb-3">Limites Financeiros</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs">Valor Alto (R$)</Label>
+                <Input
+                  type="number"
+                  value={form.highValueThreshold}
+                  onChange={(e) => setForm((p: any) => ({ ...p, highValueThreshold: e.target.value }))}
+                  data-testid="input-high-threshold"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">Acima deste valor: alerta de severidade alta</p>
+              </div>
+              <div>
+                <Label className="text-xs">Valor Crítico (R$)</Label>
+                <Input
+                  type="number"
+                  value={form.criticalValueThreshold}
+                  onChange={(e) => setForm((p: any) => ({ ...p, criticalValueThreshold: e.target.value }))}
+                  data-testid="input-critical-threshold"
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">Acima deste valor: alerta crítico imediato</p>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold mb-3">Tipos de Alerta</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">Discrepâncias de valor</Label>
+                <Switch checked={form.alertOnDiscrepancy} onCheckedChange={(v) => setForm((p: any) => ({ ...p, alertOnDiscrepancy: v }))} data-testid="toggle-alert-discrepancy" />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">Violações de política</Label>
+                <Switch checked={form.alertOnPolicyViolation} onCheckedChange={(v) => setForm((p: any) => ({ ...p, alertOnPolicyViolation: v }))} data-testid="toggle-alert-policy" />
+              </div>
+              <div className="flex items-center justify-between">
+                <Label className="text-sm">Divergência bancária</Label>
+                <Switch checked={form.alertOnBankMismatch} onCheckedChange={(v) => setForm((p: any) => ({ ...p, alertOnBankMismatch: v }))} data-testid="toggle-alert-bank" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-semibold mb-3">Fonte de Dados — Extrato Bancário</h3>
+            <Select value={form.dataSourcePreference} onValueChange={(v) => setForm((p: any) => ({ ...p, dataSourcePreference: v }))}>
+              <SelectTrigger data-testid="select-data-source">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="api">Via API (automático)</SelectItem>
+                <SelectItem value="upload">Via Upload de Arquivo</SelectItem>
+                <SelectItem value="both">Ambos (API + Upload)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[10px] text-muted-foreground mt-1">
+              Configure como o extrato bancário será consumido: integração via API bancária, upload manual de arquivo, ou ambos.
+            </p>
+          </div>
+
+          <Button
+            className="w-full"
+            onClick={() => {
+              const { _loaded, ...data } = form;
+              saveMutation.mutate(data);
+            }}
+            disabled={saveMutation.isPending}
+            data-testid="button-save-config"
+          >
+            {saveMutation.isPending ? "Salvando..." : "Salvar Configurações"}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -584,6 +1158,12 @@ function NewCaseDialog({ open, onOpenChange, onSubmit, isPending }: any) {
                 <Label className="text-xs">Data Retorno</Label>
                 <Input type="date" onChange={(e) => updateField("returnDate", e.target.value)} data-testid="input-return-date" />
               </div>
+              {profileType === "corporate" && (
+                <div>
+                  <Label className="text-xs">Ref. Aprovação</Label>
+                  <Input placeholder="Nº da aprovação interna" onChange={(e) => updateField("approvalReference", e.target.value)} data-testid="input-approval-reference" />
+                </div>
+              )}
             </div>
           </div>
 
@@ -650,6 +1230,36 @@ function NewCaseDialog({ open, onOpenChange, onSubmit, isPending }: any) {
             </div>
           </div>
 
+          {profileType === "corporate" && (
+            <div className="space-y-4">
+              <h3 className="text-sm font-semibold flex items-center gap-2">
+                <CardIcon className="w-4 h-4" /> Fatura da Agência vs Extrato Cartão Corporativo
+              </h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs">Ref. Extrato Cartão</Label>
+                  <Input placeholder="Referência no extrato" onChange={(e) => updateField("cardStatementRef", e.target.value)} data-testid="input-card-statement-ref" />
+                </div>
+                <div>
+                  <Label className="text-xs">Últimos 4 dígitos do Cartão</Label>
+                  <Input placeholder="0000" maxLength={4} onChange={(e) => updateField("cardLastFour", e.target.value)} data-testid="input-card-last-four" />
+                </div>
+                <div className="col-span-2">
+                  <Label className="text-xs">Ref. NF da Agência</Label>
+                  <Input placeholder="Referência da nota fiscal da agência" onChange={(e) => updateField("agencyInvoiceRef", e.target.value)} data-testid="input-agency-invoice-ref-corp" />
+                </div>
+                <div className="col-span-2 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    onChange={(e) => updateField("hasCorporateAgreement", e.target.checked)}
+                    data-testid="checkbox-corporate-agreement"
+                  />
+                  <Label className="text-xs">Acordo Corporativo vigente</Label>
+                </div>
+              </div>
+            </div>
+          )}
+
           {profileType === "agency" && (
             <div className="space-y-4">
               <h3 className="text-sm font-semibold flex items-center gap-2">
@@ -715,7 +1325,7 @@ function NewCaseDialog({ open, onOpenChange, onSubmit, isPending }: any) {
 
 function CaseDetailDialog({
   open, onOpenChange, caseData, onStatusChange, onAddFinding, onBankMatch,
-  findingOpen, setFindingOpen, bankMatchOpen, setBankMatchOpen, userRole,
+  findingOpen, setFindingOpen, bankMatchOpen, setBankMatchOpen, userRole, formatBRL,
 }: any) {
   const [findingForm, setFindingForm] = useState({ type: "", description: "", severity: "medium" });
   const [bankForm, setBankForm] = useState({ bankStatementMatch: "", bankMatchAmount: "", bankMatchDate: "" });
@@ -788,13 +1398,15 @@ function CaseDetailDialog({
               <p className="font-medium">{caseData.reservationCode || "—"}</p>
             </div>
             <div>
-              <span className="text-xs text-muted-foreground">Confirmação Fornecedor</span>
-              <p className="font-medium">{caseData.supplierConfirmation || "—"}</p>
-            </div>
-            <div>
               <span className="text-xs text-muted-foreground">Meio de Pagamento</span>
               <p className="font-medium">{PAYMENT_LABELS[caseData.paymentMethod] || caseData.paymentMethod || "—"}</p>
             </div>
+            {caseData.profileType === "corporate" && caseData.approvalReference && (
+              <div>
+                <span className="text-xs text-muted-foreground">Ref. Aprovação</span>
+                <p className="font-medium">{caseData.approvalReference}</p>
+              </div>
+            )}
             <div>
               <span className="text-xs text-muted-foreground">Data Embarque</span>
               <p className="font-medium">{caseData.travelDate ? new Date(caseData.travelDate).toLocaleDateString("pt-BR") : "—"}</p>
@@ -821,6 +1433,32 @@ function CaseDetailDialog({
               </CardContent>
             </Card>
           </div>
+
+          {caseData.profileType === "corporate" && (caseData.cardStatementRef || caseData.cardLastFour) && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">Fatura Agência vs Extrato Cartão</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-xs text-muted-foreground">Ref. Extrato Cartão</span>
+                  <p>{caseData.cardStatementRef || "—"}</p>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground">Cartão (últimos 4)</span>
+                  <p>{caseData.cardLastFour ? `****${caseData.cardLastFour}` : "—"}</p>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground">Acordo Corporativo</span>
+                  <p>{caseData.hasCorporateAgreement ? "Sim" : "Não"}</p>
+                </div>
+                <div>
+                  <span className="text-xs text-muted-foreground">NF Agência</span>
+                  <p>{caseData.agencyInvoiceRef || "—"}</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {caseData.profileType === "agency" && (
             <Card>
@@ -991,14 +1629,14 @@ function CaseDetailDialog({
               </div>
               <div>
                 <Label className="text-xs">Valor (R$)</Label>
-                <Input type="number" step="0.01" onChange={(e) => setBankForm((prev) => ({ ...prev, bankMatchAmount: e.target.value }))} data-testid="input-bank-match-amount" />
+                <Input type="number" step="0.01" placeholder="0.00" onChange={(e) => setBankForm((prev) => ({ ...prev, bankMatchAmount: e.target.value }))} data-testid="input-bank-amount" />
               </div>
               <div>
                 <Label className="text-xs">Data</Label>
-                <Input type="date" onChange={(e) => setBankForm((prev) => ({ ...prev, bankMatchDate: e.target.value }))} data-testid="input-bank-match-date" />
+                <Input type="date" onChange={(e) => setBankForm((prev) => ({ ...prev, bankMatchDate: e.target.value }))} data-testid="input-bank-date" />
               </div>
               <Button className="w-full" onClick={() => onBankMatch(caseData.id, bankForm)} data-testid="button-submit-bank-match">
-                Salvar
+                Atualizar Conciliação
               </Button>
             </div>
           </DialogContent>
@@ -1006,9 +1644,4 @@ function CaseDetailDialog({
       </DialogContent>
     </Dialog>
   );
-}
-
-function formatBRL(val: string | number | null | undefined) {
-  if (!val) return "R$ 0,00";
-  return `R$ ${parseFloat(String(val)).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
 }

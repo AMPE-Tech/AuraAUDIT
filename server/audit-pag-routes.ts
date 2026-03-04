@@ -1,12 +1,16 @@
 import type { Express, Request, Response } from "express";
 import { requireAuth } from "./auth";
 import { db } from "./db";
-import { auditPagCases, auditPagDocuments, auditPagMonitoring, auditTrail } from "@shared/schema";
+import {
+  auditPagCases, auditPagDocuments, auditPagMonitoring, auditTrail,
+  auditPagPolicies, auditPagPolicyItems, auditPagAlerts, auditPagAlertConfig,
+} from "@shared/schema";
 import { eq, desc, and, gte, lte } from "drizzle-orm";
 import { createHash } from "crypto";
 import { z } from "zod";
 import multer from "multer";
 import fs from "fs";
+import { sendEmail } from "./email-service";
 
 const upload = multer({
   dest: "uploads/audit-pag/",
@@ -66,9 +70,151 @@ const createCaseSchema = z.object({
   hasRebate: z.boolean().optional(),
   rebateAmount: z.string().optional(),
   agencyInvoiceRef: z.string().optional(),
+  approvalReference: z.string().optional(),
+  cardStatementRef: z.string().optional(),
+  cardLastFour: z.string().optional(),
 });
 
+async function generateAlert(options: {
+  companyId: string | null;
+  caseId: string;
+  alertType: string;
+  severity: string;
+  title: string;
+  description: string;
+  financialAmount?: number;
+  userId?: string;
+}) {
+  try {
+    const amount = options.financialAmount || 0;
+    let config: any = null;
+    if (options.companyId) {
+      const [cfg] = await db.select().from(auditPagAlertConfig).where(eq(auditPagAlertConfig.companyId, options.companyId));
+      config = cfg;
+    }
+
+    let severity = options.severity;
+    if (config) {
+      const highThreshold = parseFloat(config.highValueThreshold || "10000");
+      const criticalThreshold = parseFloat(config.criticalValueThreshold || "50000");
+      if (amount >= criticalThreshold) severity = "critical";
+      else if (amount >= highThreshold && severity !== "critical") severity = "high";
+    }
+
+    const channels: string[] = [];
+    if (!config || config.enablePlatformAlerts) channels.push("platform");
+    if (config?.enableEmailAlerts) channels.push("email");
+    if (config?.enableSmsAlerts) channels.push("sms");
+    const channel = channels.length > 1 ? "all" : channels[0] || "platform";
+
+    const [alert] = await db.insert(auditPagAlerts).values({
+      companyId: options.companyId,
+      auditPagCaseId: options.caseId,
+      alertType: options.alertType,
+      severity,
+      title: options.title,
+      description: options.description,
+      financialAmount: amount > 0 ? amount.toFixed(2) : null,
+      channel,
+      status: "pending",
+      recipientUserId: options.userId || null,
+    }).returning();
+
+    if (config?.enableEmailAlerts && config.emailRecipients) {
+      const emails = config.emailRecipients.split(",").map((e: string) => e.trim()).filter(Boolean);
+      for (const email of emails) {
+        try {
+          await sendEmail({
+            to: email,
+            subject: `[AuditPag ${severity.toUpperCase()}] ${options.title}`,
+            html: generateAlertEmailHtml(options.title, options.description, severity, amount),
+          });
+          await db.update(auditPagAlerts).set({ status: "sent", sentAt: new Date(), recipientEmail: email }).where(eq(auditPagAlerts.id, alert.id));
+        } catch (emailErr: any) {
+          console.error("Alert email failed:", emailErr.message);
+        }
+      }
+    }
+
+    return alert;
+  } catch (err: any) {
+    console.error("generateAlert error:", err.message);
+  }
+}
+
+function generateAlertEmailHtml(title: string, description: string, severity: string, amount: number): string {
+  const severityColors: Record<string, string> = {
+    low: "#3b82f6", medium: "#f59e0b", high: "#ef4444", critical: "#dc2626",
+  };
+  const color = severityColors[severity] || "#f59e0b";
+  const amountStr = amount > 0 ? `R$ ${amount.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}` : "";
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1a1a2e;color:#fff;border-radius:8px;overflow:hidden;">
+      <div style="background:${color};padding:16px 24px;">
+        <h2 style="margin:0;font-size:18px;">AuditPag — Alerta ${severity.toUpperCase()}</h2>
+      </div>
+      <div style="padding:24px;">
+        <h3 style="margin:0 0 12px;font-size:16px;">${title}</h3>
+        <p style="color:#ccc;line-height:1.6;">${description}</p>
+        ${amountStr ? `<p style="margin-top:16px;font-size:20px;font-weight:bold;color:${color};">Valor: ${amountStr}</p>` : ""}
+        <hr style="border:none;border-top:1px solid #333;margin:24px 0;" />
+        <p style="color:#888;font-size:12px;">Este alerta foi gerado automaticamente pelo AuditPag — AuraAUDIT.</p>
+      </div>
+    </div>
+  `;
+}
+
+const TEMPLATE_POLICY_ITEMS = [
+  { category: "approval_flow", description: "Toda solicitação de viagem deve ter aprovação prévia do gestor direto", isMandatory: true, flagLevel: "critical", sortOrder: 1 },
+  { category: "approval_flow", description: "Viagens internacionais requerem aprovação de nível gerencial ou superior", isMandatory: true, flagLevel: "critical", sortOrder: 2 },
+  { category: "approval_flow", description: "Solicitações acima de R$ 5.000 requerem dupla aprovação (gestor + diretoria)", isMandatory: true, flagLevel: "critical", sortOrder: 3 },
+  { category: "booking_rules", description: "Reservas aéreas devem ser feitas com mínimo de 7 dias de antecedência", isMandatory: false, flagLevel: "warning", sortOrder: 4 },
+  { category: "booking_rules", description: "Classe executiva permitida apenas para voos acima de 4 horas", isMandatory: true, flagLevel: "warning", sortOrder: 5 },
+  { category: "booking_rules", description: "Hospedagem em hotéis credenciados/conveniados preferencialmente", isMandatory: false, flagLevel: "info", sortOrder: 6 },
+  { category: "booking_rules", description: "Locação de veículo: categoria econômica ou intermediária, salvo justificativa", isMandatory: false, flagLevel: "warning", sortOrder: 7 },
+  { category: "payment_limits", description: "Teto diário para refeições: R$ 150,00 por pessoa", isMandatory: true, flagLevel: "warning", sortOrder: 8 },
+  { category: "payment_limits", description: "Teto de diária de hotel: R$ 500,00 (capitais) / R$ 350,00 (interior)", isMandatory: true, flagLevel: "warning", sortOrder: 9 },
+  { category: "payment_limits", description: "Despesas acima de R$ 250 requerem nota fiscal", isMandatory: true, flagLevel: "critical", sortOrder: 10 },
+  { category: "supplier_selection", description: "Utilizar fornecedores homologados (lista atualizada semestralmente)", isMandatory: true, flagLevel: "warning", sortOrder: 11 },
+  { category: "supplier_selection", description: "Cotação mínima de 3 fornecedores para serviços acima de R$ 10.000", isMandatory: true, flagLevel: "critical", sortOrder: 12 },
+  { category: "expense_caps", description: "Reembolso de quilometragem: R$ 1,20/km com comprovante de trajeto", isMandatory: false, flagLevel: "info", sortOrder: 13 },
+  { category: "expense_caps", description: "Adiantamentos devem ser prestados em até 5 dias úteis após o retorno", isMandatory: true, flagLevel: "critical", sortOrder: 14 },
+  { category: "documentation", description: "Relatório de viagem obrigatório em até 48h após o retorno", isMandatory: true, flagLevel: "warning", sortOrder: 15 },
+  { category: "documentation", description: "Boarding passes e comprovantes de hospedagem devem ser anexados", isMandatory: true, flagLevel: "warning", sortOrder: 16 },
+  { category: "documentation", description: "NF/cupom fiscal obrigatório para todas as despesas reembolsáveis", isMandatory: true, flagLevel: "critical", sortOrder: 17 },
+  { category: "compliance", description: "Proibido uso de cartão corporativo para despesas pessoais", isMandatory: true, flagLevel: "critical", sortOrder: 18 },
+  { category: "compliance", description: "Despesas com entretenimento requerem justificativa de negócio", isMandatory: true, flagLevel: "warning", sortOrder: 19 },
+  { category: "compliance", description: "Viagens em finais de semana/feriados requerem aprovação especial", isMandatory: false, flagLevel: "info", sortOrder: 20 },
+  { category: "sla", description: "Agência deve emitir bilhete em até 24h após aprovação", isMandatory: true, flagLevel: "warning", sortOrder: 21 },
+  { category: "sla", description: "Prazo de resposta da agência: até 2h em horário comercial", isMandatory: false, flagLevel: "info", sortOrder: 22 },
+  { category: "sla", description: "Relatório mensal de gestão entregue até o 5º dia útil do mês seguinte", isMandatory: true, flagLevel: "warning", sortOrder: 23 },
+  { category: "sla", description: "Faturamento consolidado com cruzamento de NF e extrato bancário", isMandatory: true, flagLevel: "critical", sortOrder: 24 },
+];
+
+async function seedPolicyTemplates() {
+  const existing = await db.select().from(auditPagPolicies).where(eq(auditPagPolicies.isTemplate, true));
+  if (existing.length > 0) return;
+
+  const [policy] = await db.insert(auditPagPolicies).values({
+    companyId: null,
+    name: "Política Padrão de Viagens Corporativas (Modelo T&E)",
+    policyType: "travel_purchase",
+    isTemplate: true,
+    isActive: true,
+  }).returning();
+
+  for (const item of TEMPLATE_POLICY_ITEMS) {
+    await db.insert(auditPagPolicyItems).values({
+      policyId: policy.id,
+      ...item,
+    });
+  }
+  console.log(`Seeded policy template with ${TEMPLATE_POLICY_ITEMS.length} items`);
+}
+
 export function registerAuditPagRoutes(app: Express) {
+  seedPolicyTemplates().catch(err => console.error("Policy seed error:", err.message));
+
   app.get("/api/audit-pag/cases", requireAuth, async (req: Request, res: Response) => {
     try {
       const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
@@ -136,17 +282,23 @@ export function registerAuditPagRoutes(app: Express) {
         invoiceNumber: parsed.invoiceNumber || null,
         invoiceDueDate: parsed.invoiceDueDate ? new Date(parsed.invoiceDueDate) : null,
         hasCorporateAgreement: parsed.hasCorporateAgreement || false,
-        commissionPercent: parsed.commissionPercent || null,
-        commissionAmount: parsed.commissionAmount || null,
-        hasIncentive: parsed.hasIncentive || false,
-        incentiveAmount: parsed.incentiveAmount || null,
-        hasRebate: parsed.hasRebate || false,
-        rebateAmount: parsed.rebateAmount || null,
-        agencyInvoiceRef: parsed.agencyInvoiceRef || null,
+        approvalReference: parsed.approvalReference || null,
+        cardStatementRef: parsed.cardStatementRef || null,
+        cardLastFour: parsed.cardLastFour || null,
         bankStatementMatch: "pending",
         conformityStatus: "pending_review",
         findings: [],
       };
+
+      if (parsed.profileType === "agency") {
+        values.commissionPercent = parsed.commissionPercent || null;
+        values.commissionAmount = parsed.commissionAmount || null;
+        values.hasIncentive = parsed.hasIncentive || false;
+        values.incentiveAmount = parsed.incentiveAmount || null;
+        values.hasRebate = parsed.hasRebate || false;
+        values.rebateAmount = parsed.rebateAmount || null;
+        values.agencyInvoiceRef = parsed.agencyInvoiceRef || null;
+      }
 
       const [created] = await db.insert(auditPagCases).values(values).returning();
       await logAuditTrail(user.id, "create", "audit_pag_case", created.id, null, created, req.ip);
@@ -171,6 +323,7 @@ export function registerAuditPagRoutes(app: Express) {
         "invoiceNumber", "hasCorporateAgreement", "commissionPercent",
         "commissionAmount", "hasIncentive", "incentiveAmount", "hasRebate",
         "rebateAmount", "agencyInvoiceRef", "conformityNotes",
+        "approvalReference", "cardStatementRef", "cardLastFour",
       ];
 
       for (const field of allowedFields) {
@@ -213,6 +366,21 @@ export function registerAuditPagRoutes(app: Express) {
       }).where(eq(auditPagCases.id, req.params.id)).returning();
 
       await logAuditTrail(user.id, "status_change", "audit_pag_case", req.params.id, { status: existing.status }, { status: newStatus }, req.ip);
+
+      if (newStatus === "non_conformant") {
+        const amount = parseFloat(existing.requestedAmount || "0");
+        await generateAlert({
+          companyId: existing.companyId,
+          caseId: req.params.id,
+          alertType: "anomaly",
+          severity: "high",
+          title: "Caso marcado como Não Conforme",
+          description: `O caso de ${existing.requesterName || "solicitante"} para ${existing.destination || "destino"} foi marcado como não conforme. Valor: R$ ${amount.toFixed(2)}`,
+          financialAmount: amount,
+          userId: user.id,
+        });
+      }
+
       res.json(updated);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -238,6 +406,22 @@ export function registerAuditPagRoutes(app: Express) {
       }).where(eq(auditPagCases.id, req.params.id)).returning();
 
       await logAuditTrail(user.id, "add_finding", "audit_pag_case", req.params.id, null, newFinding, req.ip);
+
+      const amount = parseFloat(existing.requestedAmount || "0");
+      const findingSeverity = severity || "medium";
+      if (findingSeverity === "high" || amount >= 10000) {
+        await generateAlert({
+          companyId: existing.companyId,
+          caseId: req.params.id,
+          alertType: "discrepancy",
+          severity: findingSeverity,
+          title: `Achado: ${type}`,
+          description: `${description} — Caso: ${existing.requesterName || "N/A"}, Destino: ${existing.destination || "N/A"}`,
+          financialAmount: amount,
+          userId: user.id,
+        });
+      }
+
       res.json(updated);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -259,6 +443,21 @@ export function registerAuditPagRoutes(app: Express) {
 
       const [updated] = await db.update(auditPagCases).set(updateData).where(eq(auditPagCases.id, req.params.id)).returning();
       await logAuditTrail(user.id, "bank_match", "audit_pag_case", req.params.id, { bankStatementMatch: existing.bankStatementMatch }, updateData, req.ip);
+
+      if (bankStatementMatch === "unmatched" || bankStatementMatch === "partial") {
+        const amount = parseFloat(existing.requestedAmount || "0");
+        await generateAlert({
+          companyId: existing.companyId,
+          caseId: req.params.id,
+          alertType: "bank_mismatch",
+          severity: bankStatementMatch === "unmatched" ? "high" : "medium",
+          title: `Conciliação bancária: ${bankStatementMatch === "unmatched" ? "Divergente" : "Parcial"}`,
+          description: `Extrato bancário ${bankStatementMatch === "unmatched" ? "divergente" : "parcialmente conciliado"} para caso ${existing.requesterName || "N/A"}. Valor solicitado: R$ ${amount.toFixed(2)}`,
+          financialAmount: amount,
+          userId: user.id,
+        });
+      }
+
       res.json(updated);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
@@ -416,6 +615,13 @@ export function registerAuditPagRoutes(app: Express) {
         else conformityByPayment[pm].pending++;
       }
 
+      const alertConditions: any[] = [];
+      if (user.role === "client" && user.clientId) {
+        alertConditions.push(eq(auditPagAlerts.companyId, user.clientId));
+      }
+      alertConditions.push(eq(auditPagAlerts.status, "pending"));
+      const unreadAlerts = await db.select().from(auditPagAlerts).where(and(...alertConditions));
+
       res.json({
         total,
         conformant,
@@ -428,7 +634,288 @@ export function registerAuditPagRoutes(app: Express) {
         byPaymentMethod,
         byProfileType,
         conformityByPayment,
+        unreadAlertCount: unreadAlerts.length,
       });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/policies", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      let conditions: any[] = [];
+
+      if (user.role === "client" && user.clientId) {
+        const policies = await db.select().from(auditPagPolicies).where(
+          and(
+            eq(auditPagPolicies.isActive, true),
+          )
+        ).orderBy(desc(auditPagPolicies.createdAt));
+        const filtered = policies.filter(p => p.isTemplate || p.companyId === user.clientId);
+        return res.json(filtered);
+      }
+
+      const policies = await db.select().from(auditPagPolicies).orderBy(desc(auditPagPolicies.createdAt));
+      res.json(policies);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/policies/:id/items", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const [policy] = await db.select().from(auditPagPolicies).where(eq(auditPagPolicies.id, req.params.id));
+      if (!policy) return res.status(404).json({ error: "Policy not found" });
+      if (user.role === "client" && !policy.isTemplate && policy.companyId !== user.clientId) {
+        return res.status(403).json({ error: "Access denied" });
+      }
+      const items = await db.select().from(auditPagPolicyItems)
+        .where(eq(auditPagPolicyItems.policyId, req.params.id))
+        .orderBy(auditPagPolicyItems.sortOrder);
+      res.json(items);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/policies", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const { name, policyType, cloneFromTemplateId } = req.body;
+      if (!name) return res.status(400).json({ error: "name is required" });
+
+      const [policy] = await db.insert(auditPagPolicies).values({
+        companyId: user.clientId || null,
+        name,
+        policyType: policyType || "travel_purchase",
+        isTemplate: false,
+        isActive: true,
+      }).returning();
+
+      if (cloneFromTemplateId) {
+        const templateItems = await db.select().from(auditPagPolicyItems)
+          .where(eq(auditPagPolicyItems.policyId, cloneFromTemplateId));
+        for (const item of templateItems) {
+          await db.insert(auditPagPolicyItems).values({
+            policyId: policy.id,
+            category: item.category,
+            description: item.description,
+            isMandatory: item.isMandatory,
+            isEnabled: item.isEnabled,
+            flagLevel: item.flagLevel,
+            sortOrder: item.sortOrder,
+          });
+        }
+      }
+
+      await logAuditTrail(user.id, "create", "audit_pag_policy", policy.id, null, policy, req.ip);
+      res.status(201).json(policy);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/policies/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const [policy] = await db.select().from(auditPagPolicies).where(eq(auditPagPolicies.id, req.params.id));
+      if (!policy) return res.status(404).json({ error: "Policy not found" });
+      if (policy.isTemplate && user.role !== "admin") return res.status(403).json({ error: "Only admin can edit templates" });
+      if (user.role === "client" && policy.companyId !== user.clientId) return res.status(403).json({ error: "Access denied" });
+
+      const updateData: any = { updatedAt: new Date() };
+      if (req.body.name !== undefined) updateData.name = req.body.name;
+      if (req.body.isActive !== undefined) updateData.isActive = req.body.isActive;
+      if (req.body.policyType !== undefined) updateData.policyType = req.body.policyType;
+
+      const [updated] = await db.update(auditPagPolicies).set(updateData).where(eq(auditPagPolicies.id, req.params.id)).returning();
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/policies/:id/items", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const [policy] = await db.select().from(auditPagPolicies).where(eq(auditPagPolicies.id, req.params.id));
+      if (!policy) return res.status(404).json({ error: "Policy not found" });
+      if (policy.isTemplate && user.role !== "admin") return res.status(403).json({ error: "Cannot add items to templates" });
+      if (user.role === "client" && policy.companyId !== user.clientId) return res.status(403).json({ error: "Access denied" });
+
+      const { category, description, isMandatory, flagLevel, sortOrder } = req.body;
+      if (!category || !description) return res.status(400).json({ error: "category and description required" });
+
+      const [item] = await db.insert(auditPagPolicyItems).values({
+        policyId: req.params.id,
+        category,
+        description,
+        isMandatory: isMandatory ?? true,
+        isEnabled: true,
+        flagLevel: flagLevel || "warning",
+        sortOrder: sortOrder || 0,
+      }).returning();
+
+      res.status(201).json(item);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/policies/:id/items/:itemId", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const [policy] = await db.select().from(auditPagPolicies).where(eq(auditPagPolicies.id, req.params.id));
+      if (!policy) return res.status(404).json({ error: "Policy not found" });
+      if (policy.isTemplate && user.role !== "admin") return res.status(403).json({ error: "Cannot edit template items" });
+      if (user.role === "client" && policy.companyId !== user.clientId) return res.status(403).json({ error: "Access denied" });
+
+      const updateData: any = {};
+      if (req.body.isEnabled !== undefined) updateData.isEnabled = req.body.isEnabled;
+      if (req.body.description !== undefined) updateData.description = req.body.description;
+      if (req.body.flagLevel !== undefined) updateData.flagLevel = req.body.flagLevel;
+      if (req.body.isMandatory !== undefined) updateData.isMandatory = req.body.isMandatory;
+
+      const [updated] = await db.update(auditPagPolicyItems).set(updateData).where(eq(auditPagPolicyItems.id, req.params.itemId)).returning();
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/policies/upload", requireAuth, upload.single("file"), async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const file = req.file;
+      if (!file) return res.status(400).json({ error: "No file uploaded" });
+
+      const [policy] = await db.insert(auditPagPolicies).values({
+        companyId: user.clientId || null,
+        name: req.body.name || file.originalname,
+        policyType: "custom",
+        isTemplate: false,
+        isActive: true,
+        uploadedFileUrl: file.path,
+        uploadedFileName: file.originalname,
+      }).returning();
+
+      await logAuditTrail(user.id, "upload_policy", "audit_pag_policy", policy.id, null, { fileName: file.originalname }, req.ip);
+      res.status(201).json(policy);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/alerts", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      let conditions: any[] = [];
+
+      if (user.role === "client" && user.clientId) {
+        conditions.push(eq(auditPagAlerts.companyId, user.clientId));
+      }
+
+      const alerts = conditions.length > 0
+        ? await db.select().from(auditPagAlerts).where(and(...conditions)).orderBy(desc(auditPagAlerts.createdAt))
+        : await db.select().from(auditPagAlerts).orderBy(desc(auditPagAlerts.createdAt));
+
+      res.json(alerts);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/alerts/:id/read", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const [alert] = await db.select().from(auditPagAlerts).where(eq(auditPagAlerts.id, req.params.id));
+      if (!alert) return res.status(404).json({ error: "Alert not found" });
+      if (user.role === "client" && alert.companyId !== user.clientId) return res.status(403).json({ error: "Access denied" });
+
+      const [updated] = await db.update(auditPagAlerts).set({
+        status: "read",
+        readAt: new Date(),
+      }).where(eq(auditPagAlerts.id, req.params.id)).returning();
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/alerts/:id/dismiss", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const [alert] = await db.select().from(auditPagAlerts).where(eq(auditPagAlerts.id, req.params.id));
+      if (!alert) return res.status(404).json({ error: "Alert not found" });
+      if (user.role === "client" && alert.companyId !== user.clientId) return res.status(403).json({ error: "Access denied" });
+
+      const [updated] = await db.update(auditPagAlerts).set({
+        status: "dismissed",
+      }).where(eq(auditPagAlerts.id, req.params.id)).returning();
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/alert-config", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      let companyId: string | null = null;
+      if (user.role === "admin" && req.query.companyId) {
+        companyId = req.query.companyId as string;
+      } else {
+        companyId = user.clientId || null;
+      }
+      if (!companyId) return res.json(null);
+
+      const [config] = await db.select().from(auditPagAlertConfig).where(eq(auditPagAlertConfig.companyId, companyId));
+      res.json(config || null);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/alert-config", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      let companyId: string | null = null;
+      if (user.role === "admin" && req.body.companyId) {
+        companyId = req.body.companyId;
+      } else {
+        companyId = user.clientId || null;
+      }
+      if (!companyId) return res.status(400).json({ error: "companyId required" });
+
+      const [existing] = await db.select().from(auditPagAlertConfig).where(eq(auditPagAlertConfig.companyId, companyId));
+
+      const configData: any = {
+        enablePlatformAlerts: req.body.enablePlatformAlerts ?? true,
+        enableEmailAlerts: req.body.enableEmailAlerts ?? true,
+        enableSmsAlerts: req.body.enableSmsAlerts ?? false,
+        emailRecipients: req.body.emailRecipients || null,
+        smsRecipients: req.body.smsRecipients || null,
+        highValueThreshold: req.body.highValueThreshold || "10000",
+        criticalValueThreshold: req.body.criticalValueThreshold || "50000",
+        alertOnDiscrepancy: req.body.alertOnDiscrepancy ?? true,
+        alertOnPolicyViolation: req.body.alertOnPolicyViolation ?? true,
+        alertOnBankMismatch: req.body.alertOnBankMismatch ?? true,
+        dataSourcePreference: req.body.dataSourcePreference || "both",
+        updatedAt: new Date(),
+      };
+
+      if (existing) {
+        const [updated] = await db.update(auditPagAlertConfig).set(configData).where(eq(auditPagAlertConfig.id, existing.id)).returning();
+        return res.json(updated);
+      }
+
+      const [created] = await db.insert(auditPagAlertConfig).values({
+        companyId,
+        ...configData,
+      }).returning();
+      res.status(201).json(created);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

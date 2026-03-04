@@ -599,6 +599,9 @@ export const auditPagCases = pgTable("audit_pag_cases", {
   hasRebate: boolean("has_rebate").notNull().default(false),
   rebateAmount: decimal("rebate_amount", { precision: 14, scale: 2 }),
   agencyInvoiceRef: text("agency_invoice_ref"),
+  approvalReference: text("approval_reference"),
+  cardStatementRef: text("card_statement_ref"),
+  cardLastFour: text("card_last_four"),
   bankStatementMatch: text("bank_statement_match").notNull().default("pending"),
   bankMatchAmount: decimal("bank_match_amount", { precision: 14, scale: 2 }),
   bankMatchDate: timestamp("bank_match_date"),
@@ -637,12 +640,86 @@ export const auditPagMonitoring = pgTable("audit_pag_monitoring", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const auditPagPolicies = pgTable("audit_pag_policies", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  name: text("name").notNull(),
+  policyType: text("policy_type").notNull().default("travel_purchase"),
+  isTemplate: boolean("is_template").notNull().default(false),
+  isActive: boolean("is_active").notNull().default(true),
+  uploadedFileUrl: text("uploaded_file_url"),
+  uploadedFileName: text("uploaded_file_name"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auditPagPolicyItems = pgTable("audit_pag_policy_items", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  policyId: varchar("policy_id").notNull(),
+  category: text("category").notNull(),
+  description: text("description").notNull(),
+  isMandatory: boolean("is_mandatory").notNull().default(true),
+  isEnabled: boolean("is_enabled").notNull().default(true),
+  flagLevel: text("flag_level").notNull().default("warning"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const auditPagAlerts = pgTable("audit_pag_alerts", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  auditPagCaseId: varchar("audit_pag_case_id"),
+  alertType: text("alert_type").notNull(),
+  severity: text("severity").notNull().default("medium"),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  financialAmount: decimal("financial_amount", { precision: 14, scale: 2 }),
+  channel: text("channel").notNull().default("platform"),
+  status: text("status").notNull().default("pending"),
+  sentAt: timestamp("sent_at"),
+  readAt: timestamp("read_at"),
+  recipientUserId: varchar("recipient_user_id"),
+  recipientEmail: text("recipient_email"),
+  recipientPhone: text("recipient_phone"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const auditPagAlertConfig = pgTable("audit_pag_alert_config", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull(),
+  enablePlatformAlerts: boolean("enable_platform_alerts").notNull().default(true),
+  enableEmailAlerts: boolean("enable_email_alerts").notNull().default(true),
+  enableSmsAlerts: boolean("enable_sms_alerts").notNull().default(false),
+  emailRecipients: text("email_recipients"),
+  smsRecipients: text("sms_recipients"),
+  highValueThreshold: decimal("high_value_threshold", { precision: 14, scale: 2 }).notNull().default("10000"),
+  criticalValueThreshold: decimal("critical_value_threshold", { precision: 14, scale: 2 }).notNull().default("50000"),
+  alertOnDiscrepancy: boolean("alert_on_discrepancy").notNull().default(true),
+  alertOnPolicyViolation: boolean("alert_on_policy_violation").notNull().default(true),
+  alertOnBankMismatch: boolean("alert_on_bank_mismatch").notNull().default(true),
+  dataSourcePreference: text("data_source_preference").notNull().default("both"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const insertAuditPagCaseSchema = createInsertSchema(auditPagCases).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAuditPagDocumentSchema = createInsertSchema(auditPagDocuments).omit({ id: true, uploadedAt: true });
 export const insertAuditPagMonitoringSchema = createInsertSchema(auditPagMonitoring).omit({ id: true, createdAt: true });
+export const insertAuditPagPolicySchema = createInsertSchema(auditPagPolicies).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagPolicyItemSchema = createInsertSchema(auditPagPolicyItems).omit({ id: true, createdAt: true });
+export const insertAuditPagAlertSchema = createInsertSchema(auditPagAlerts).omit({ id: true, createdAt: true });
+export const insertAuditPagAlertConfigSchema = createInsertSchema(auditPagAlertConfig).omit({ id: true, createdAt: true, updatedAt: true });
 export type InsertAuditPagCase = z.infer<typeof insertAuditPagCaseSchema>;
 export type AuditPagCase = typeof auditPagCases.$inferSelect;
 export type InsertAuditPagDocument = z.infer<typeof insertAuditPagDocumentSchema>;
 export type AuditPagDocument = typeof auditPagDocuments.$inferSelect;
 export type InsertAuditPagMonitoring = z.infer<typeof insertAuditPagMonitoringSchema>;
 export type AuditPagMonitoring = typeof auditPagMonitoring.$inferSelect;
+export type InsertAuditPagPolicy = z.infer<typeof insertAuditPagPolicySchema>;
+export type AuditPagPolicy = typeof auditPagPolicies.$inferSelect;
+export type InsertAuditPagPolicyItem = z.infer<typeof insertAuditPagPolicyItemSchema>;
+export type AuditPagPolicyItem = typeof auditPagPolicyItems.$inferSelect;
+export type InsertAuditPagAlert = z.infer<typeof insertAuditPagAlertSchema>;
+export type AuditPagAlert = typeof auditPagAlerts.$inferSelect;
+export type InsertAuditPagAlertConfig = z.infer<typeof insertAuditPagAlertConfigSchema>;
+export type AuditPagAlertConfig = typeof auditPagAlertConfig.$inferSelect;
