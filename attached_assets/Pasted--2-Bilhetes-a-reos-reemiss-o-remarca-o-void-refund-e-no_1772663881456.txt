@@ -1,0 +1,52 @@
+
+### 2) Bilhetes aéreos: reemissão, remarcação, void/refund e “no-show”
+**Objetivo:** capturar perdas por má gestão de pós-venda.  
+Testes-chave:
+- bilhete **pago e não utilizado** (pendente de crédito/refund);
+- **refund parcial** (taxas devolvidas incorretamente);
+- **reissue** com diferença tarifária acima do justificável;
+- **void** emitido fora da janela e ainda assim cobrado.
+Evidência típica: histórico do ticket (BSP/ticket image) + comprovante de refund/ACM + lançamento financeiro.
+
+### 3) Taxas, fees e composição do preço
+**Objetivo:** validar se taxas cobradas estão **contratadas e calculadas corretamente**.  
+Verificar:
+- **service fee** por emissão/reemissão/cancelamento;
+- **markups** (quando existirem) e se estão previstos;
+- **taxas DU/RAV/incentivos/comissões** — se o modelo exigir transparência/repasse, auditar a aderência.
+Red flags: taxa “genérica” sem base contratual, fee em duplicidade, fee sobre transação que foi void/refund.
+
+### 4) Aplicação de acordos corporativos e “lowest logical airfare”
+**Objetivo:** detectar desconformidade de política e perda de savings.  
+Testes:
+- tarifa aplicada = **acordo corporativo** quando elegível (rota, classe, antecedência);
+- comparação “OBT vs emissão final” (troca manual, offline, ou alteração pós-aprovação);
+- exceções aprovadas vs não aprovadas.
+Red flags: emissão fora de acordo sem justificativa, downgrade/upgrade indevido, compra com baixa antecedência recorrente.
+
+### 5) Hotéis: no-show, diária acima do permitido e duplicidades
+**Objetivo:** capturar cobranças indevidas e não conformidades.  
+Testes:
+- no-show cobrado sem evidência de política/justificativa;
+- diária acima do limite/padrão (cidade/nível) sem aprovação;
+- duplicidade: hotel em datas sobrepostas com outra viagem ou com passagens incompatíveis.
+Evidência: folio/NF + reserva + comprovante de pagamento + política.
+
+### 6) Pagamentos: VCN/cartão corporativo vs faturado
+**Objetivo:** reduzir risco de pagamento em duplicidade e backlog.  
+Testes:
+- transações no cartão sem vínculo com PNR/TKT/fol io;
+- faturas faturadas que também aparecem no cartão;
+- “backlog” de cobranças retroativas.
+Red flags: mesmo bilhete em dois meios de pagamento; lançamentos sem comprovante fiscal.
+
+### 7) Controles de compliance: aprovações, segregação e exceções
+**Objetivo:** garantir trilha de aprovação e reduzir fraude/desvio.  
+Testes:
+- aprovação antes da emissão (principalmente exceções);
+- aprovador com alçada correta;
+- justificativa obrigatória para fora de política.
+Red flags: aprovador = solicitante, aprovações em massa sem análise, ausência de justificativa.
+
+### Próximo passo (1 pergunta para eu te entregar um checklist “cirúrgico”)
+Hoje suas viagens estão mais concentradas em **aéreo** ou em **hotel** — e vocês compram via **OBT** ou majoritariamente **offline pela TMC**?

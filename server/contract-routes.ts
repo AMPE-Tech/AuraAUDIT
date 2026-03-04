@@ -432,7 +432,7 @@ E18. Stripe integrado: checkout para wallet (topup) e subscription (AuraAudit Pa
 E19. Assinatura eletronica: Lei 14.063/2020 + MP 2.200-2/2001
 E20. LGPD: mascaramento de CPF, dados pessoais protegidos, finalidade contratual
 E21. Pagina publica: chat IA flutuante com trial gratuito e cadeia de custodia
-E22. Ecossistema de Integracoes: 124+ plataformas mapeadas em 12 segmentos (GDS, NDC, IATA/BSP, Hotelaria Global, Hotelaria Brasil/FOHB, Locadoras, Consolidadoras, Operadoras, Seguros, Pagamentos, TMC/OBT, Eventos)
+E22. Ecossistema de Integracoes: 149+ plataformas mapeadas em 15 segmentos (GDS, NDC Airlines, IATA/BSP, Hotelaria Global, Hotelaria Brasil/FOHB, Locadoras, Consolidadoras, Operadoras, Seguros, Pagamentos, TMC Globais, TMC Nacionais/ABRACORP, Agencias de Eventos/MICE, TravelTech, Plataformas de Eventos)
 
 ============================================================
 ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
@@ -467,8 +467,8 @@ Contratada + Cliente com rastreamento independente, CPF + SHA-256 + IP + user-ag
 M9. CONFIGURACAO DE FATURAMENTO (BILLING CONFIG)
 Limites por usuario/empresa, cap mensal, threshold de auto-aprovacao. Configuravel por empresa via admin. Status: IMPLEMENTADO.
 
-M10. ECOSSISTEMA DE INTEGRACOES (124+ PLATAFORMAS)
-Mapeamento completo do ecossistema de integracao com 124+ plataformas em 12 segmentos: GDS (Amadeus, Sabre, Travelport), NDC Airlines (LATAM, GOL, Azul, Lufthansa, Emirates, Qatar, British Airways, Iberia, Air France/KLM, American Airlines), IATA/BSP (BSPLink, Financial Gateway, EasyPay, ARC), Hotelaria Global (Marriott, Hilton, Accor, IHG, Hyatt, Wyndham, Omnibees, Hotelbeds, Booking, Expedia, SiteMinder), Hotelaria Brasil/FOHB (Atlantica, Bourbon, Blue Tree, Intercity, Slaviero, Taua, Wish, Vila Gale, Nobile, Transamerica, BHG, Othon, Bristol, Laghetto, Deville), Locadoras (Localiza, Movida, Unidas, Hertz, Avis, Budget, Enterprise, Sixt, Europcar), Consolidadoras (RexturAdvance, Ancoradouro, Flytour, BRT, Trend, Sakura, Confianca, New Age, Diversa), Operadoras (CVC, Visual, Agaxtur, Teresa Perez, Queensberry, Schultz, Orinter, Lusanova, Europamundo), Seguros (Assist Card, GTA, Coris, Allianz, Travel Ace, April, Intermac, Universal Assistance, Porto Seguro), Pagamentos (EBTA Bradesco, Itau, Santander, BB, Mastercard Corporate, Visa Corporate, AirPlus, Hotelcard, WEX, ETTC), TMC/OBT (SAP Concur, Argo, Lemontech, Reserve, Paytrack, Onfly, ExpenseOn, Wooba, TMS Travel, Egencia), Eventos/MICE (Sympla, Eventbrite, Cvent, Bizzabo, Even3, Ticket360). Metodos: API REST, XML, GDS, NDC, SFTP, CSV/XLSX, Portal. Pagina de ecossistema com busca e visualizacao por segmento. Status: IMPLEMENTADO.
+M10. ECOSSISTEMA DE INTEGRACOES (149+ PLATAFORMAS)
+Mapeamento completo do ecossistema de integracao com 149+ plataformas em 15 segmentos: GDS (Amadeus, Sabre, Travelport), NDC Airlines (LATAM, GOL, Azul, Lufthansa, Emirates, Qatar, British Airways, Iberia, Air France/KLM, American Airlines), IATA/BSP (BSPLink, Financial Gateway, EasyPay, ARC), Hotelaria Global (Marriott, Hilton, Accor, IHG, Hyatt, Wyndham, Omnibees, Hotelbeds, Booking, Expedia, SiteMinder), Hotelaria Brasil/FOHB (Atlantica, Bourbon, Blue Tree, Intercity, Slaviero, Taua, Wish, Vila Gale, Nobile, Transamerica, BHG, Othon, Bristol, Laghetto, Deville), Locadoras (Localiza, Movida, Unidas, Hertz, Avis, Budget, Enterprise, Sixt, Europcar), Consolidadoras (RexturAdvance, Ancoradouro, Flytour, BRT, Trend, Sakura, Confianca, New Age, Diversa), Operadoras (CVC, Visual, Agaxtur, Teresa Perez, Queensberry, Schultz, Orinter, Lusanova, Europamundo), Seguros (Assist Card, GTA, Coris, Allianz, Travel Ace, April, Intermac, Universal Assistance, Porto Seguro), Pagamentos (EBTA Bradesco, Itau, Santander, BB, Mastercard Corporate, Visa Corporate, AirPlus, Hotelcard, WEX, ETTC), TMC Globais (Amex GBT, BCD Travel, CWT, FCM Travel, CTM, Egencia), TMC Nacionais/ABRACORP (Flytour Business Travel, Avipam, Alatur JTB, Costa Brava, Kontik, Grupo Arbaitman, Reserve Travel, Hostway, Copastur, VoeTur, SAP Concur, ExpenseOn, TMS Travel), Agencias de Eventos/MICE (MCI Brasil, Alatur Eventos, Flytour Eventos, Sherpa42, TM1 Eventos, SRCOM, Banco de Eventos, Holding Clube, Agencia Samba, BFerraz), TravelTech (Onfly, Paytrack, Lemontech, Argo Solutions, Wooba, Reserve), Plataformas de Eventos (Sympla, Eventbrite, Cvent, Bizzabo, Even3, Ticket360). Metodos: API REST, XML, GDS, NDC, SFTP, CSV/XLSX, Portal. Pagina de ecossistema com busca e visualizacao por segmento. Status: IMPLEMENTADO.
 
 ============================================================
 ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
@@ -494,7 +494,7 @@ ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 [OK] CL18. Pagina publica: trial gratuito com cadeia de custodia
 [OK] CL19. Reconciliacao: cruzamento multi-via (OBT/Backoffice/fatura/cartao)
 [OK] CL20. Role-based access: admin, client, auditor com controle de acesso por rota
-[OK] CL21-ECO. Ecossistema de Integracoes: 124+ plataformas em 12 segmentos, busca, metodos de integracao
+[OK] CL21-ECO. Ecossistema de Integracoes: 149+ plataformas em 15 segmentos, busca, metodos de integracao, APIs privadas e publicas
 
 ITENS PENDENTES / EM OBSERVACAO:
 
