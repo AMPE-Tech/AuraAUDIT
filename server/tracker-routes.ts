@@ -7,6 +7,73 @@ import {
   insertTrackerProjectSchema, insertTrackerPhaseSchema, insertTrackerTimeEntrySchema,
 } from "@shared/schema";
 
+function isBusinessDay(date: Date): boolean {
+  const day = date.getDay();
+  return day !== 0 && day !== 6;
+}
+
+function nextBusinessDay(date: Date): Date {
+  const result = new Date(date);
+  do {
+    result.setDate(result.getDate() + 1);
+  } while (!isBusinessDay(result));
+  return result;
+}
+
+function addBusinessDays(start: Date, count: number): Date {
+  if (count <= 0) return new Date(start);
+  const result = new Date(start);
+  let added = 0;
+  while (added < count) {
+    result.setDate(result.getDate() + 1);
+    if (isBusinessDay(result)) added++;
+  }
+  return result;
+}
+
+function countBusinessDaysBetween(start: Date, end: Date): number {
+  let count = 0;
+  const current = new Date(start);
+  current.setHours(0, 0, 0, 0);
+  const endNorm = new Date(end);
+  endNorm.setHours(0, 0, 0, 0);
+  if (current > endNorm) return 0;
+  current.setDate(current.getDate() + 1);
+  while (current <= endNorm) {
+    if (isBusinessDay(current)) count++;
+    current.setDate(current.getDate() + 1);
+  }
+  return count;
+}
+
+function calcEffectiveWorkDays(businessDaysElapsed: number, daysPerWeek: number): number {
+  if (daysPerWeek >= 5) return businessDaysElapsed;
+  const fullWeeks = Math.floor(businessDaysElapsed / 5);
+  const remainderDays = businessDaysElapsed % 5;
+  const effectiveRemainder = Math.min(remainderDays, daysPerWeek);
+  return (fullWeeks * daysPerWeek) + effectiveRemainder;
+}
+
+function calcCalendarEndDate(start: Date, projectDays: number, daysPerWeek: number): Date {
+  if (daysPerWeek >= 5) return addBusinessDays(start, projectDays);
+  let workDaysPlaced = 0;
+  const result = new Date(start);
+  let weekDayCounter = 0;
+  while (workDaysPlaced < projectDays) {
+    result.setDate(result.getDate() + 1);
+    if (isBusinessDay(result)) {
+      weekDayCounter++;
+      if (weekDayCounter <= daysPerWeek) {
+        workDaysPlaced++;
+      }
+      if (weekDayCounter >= 5) {
+        weekDayCounter = 0;
+      }
+    }
+  }
+  return result;
+}
+
 async function getAuthorizedProject(req: Request, res: Response) {
   const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
   const [project] = await db.select().from(trackerProjects).where(eq(trackerProjects.id, req.params.id));
@@ -59,6 +126,7 @@ export function registerTrackerRoutes(app: Express) {
         clientId: req.body.clientId || user.clientId,
         startDate: req.body.startDate ? new Date(req.body.startDate) : null,
         estimatedEndDate: req.body.estimatedEndDate ? new Date(req.body.estimatedEndDate) : null,
+        contractSignedAt: req.body.contractSignedAt ? new Date(req.body.contractSignedAt) : null,
       });
       const [project] = await db.insert(trackerProjects).values(parsed).returning();
       res.json(project);
@@ -71,12 +139,13 @@ export function registerTrackerRoutes(app: Express) {
   app.put("/api/tracker/projects/:id", requireAdmin, async (req: Request, res: Response) => {
     try {
       const updateData: any = { updatedAt: new Date() };
-      const allowedFields = ["name", "description", "totalEstimatedDays", "status", "healthScore", "clientId"];
+      const allowedFields = ["name", "description", "totalEstimatedDays", "status", "healthScore", "clientId", "gracePeriodDays", "daysPerWeek"];
       for (const field of allowedFields) {
         if (req.body[field] !== undefined) updateData[field] = req.body[field];
       }
       if (req.body.startDate) updateData.startDate = new Date(req.body.startDate);
       if (req.body.estimatedEndDate) updateData.estimatedEndDate = new Date(req.body.estimatedEndDate);
+      if (req.body.contractSignedAt) updateData.contractSignedAt = new Date(req.body.contractSignedAt);
       const [updated] = await db.update(trackerProjects).set(updateData).where(eq(trackerProjects.id, req.params.id)).returning();
       if (!updated) return res.status(404).json({ error: "Projeto nao encontrado" });
       res.json(updated);
@@ -198,10 +267,21 @@ export function registerTrackerRoutes(app: Express) {
       const notStartedPhases = phases.filter(p => p.status === "not_started").length;
 
       const totalEstimatedDays = phases.reduce((sum, p) => sum + p.estimatedDays, 0);
+      const daysPerWeek = project.daysPerWeek || 5;
+      const gracePeriodDays = project.gracePeriodDays || 5;
+
+      const contractDate = project.contractSignedAt;
+      const effectiveStartDate = contractDate
+        ? addBusinessDays(contractDate, gracePeriodDays)
+        : (project.startDate || project.createdAt);
 
       const now = new Date();
-      const startDate = project.startDate || project.createdAt;
-      const daysConsumed = Math.max(0, Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)));
+      const businessDaysElapsed = now >= effectiveStartDate
+        ? countBusinessDaysBetween(effectiveStartDate, now)
+        : 0;
+      const effectiveWorkDaysConsumed = calcEffectiveWorkDays(businessDaysElapsed, daysPerWeek);
+
+      const projectedEndDate = calcCalendarEndDate(effectiveStartDate, totalEstimatedDays, daysPerWeek);
 
       const progressPercent = phases.length > 0
         ? Math.round((completedPhases / phases.length) * 100)
@@ -219,9 +299,9 @@ export function registerTrackerRoutes(app: Express) {
       const totalHours = clientHours + auditHours + systemHours;
 
       let healthScore: "on_track" | "attention" | "critical" = "on_track";
-      if (delayedPhases > 0 || (daysConsumed > totalEstimatedDays * 0.8 && progressPercent < 60)) {
+      if (delayedPhases > 0 || (effectiveWorkDaysConsumed > totalEstimatedDays * 0.8 && progressPercent < 60)) {
         healthScore = "critical";
-      } else if (daysConsumed > totalEstimatedDays * 0.5 && progressPercent < 40) {
+      } else if (effectiveWorkDaysConsumed > totalEstimatedDays * 0.5 && progressPercent < 40) {
         healthScore = "attention";
       }
 
@@ -231,9 +311,26 @@ export function registerTrackerRoutes(app: Express) {
           .where(eq(trackerProjects.id, req.params.id));
       }
 
+      const phaseSchedule = [];
+      let phaseStart = new Date(effectiveStartDate);
+      if (!isBusinessDay(phaseStart)) phaseStart = nextBusinessDay(phaseStart);
+      for (const phase of phases) {
+        const phaseEnd = calcCalendarEndDate(phaseStart, phase.estimatedDays, daysPerWeek);
+        phaseSchedule.push({
+          phaseId: phase.id,
+          name: phase.name,
+          calculatedStart: phaseStart.toISOString(),
+          calculatedEnd: phaseEnd.toISOString(),
+          estimatedDays: phase.estimatedDays,
+          calendarDays: countBusinessDaysBetween(phaseStart, phaseEnd),
+        });
+        phaseStart = nextBusinessDay(phaseEnd);
+      }
+
       res.json({
         project: { ...project, healthScore },
         phases,
+        phaseSchedule,
         summary: {
           totalPhases: phases.length,
           completedPhases,
@@ -241,7 +338,13 @@ export function registerTrackerRoutes(app: Express) {
           delayedPhases,
           notStartedPhases,
           totalEstimatedDays,
-          daysConsumed,
+          daysPerWeek,
+          gracePeriodDays,
+          contractSignedAt: contractDate?.toISOString() || null,
+          effectiveStartDate: effectiveStartDate.toISOString(),
+          projectedEndDate: projectedEndDate.toISOString(),
+          businessDaysElapsed,
+          effectiveWorkDaysConsumed,
           progressPercent,
           healthScore,
         },

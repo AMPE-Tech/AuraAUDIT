@@ -34,9 +34,19 @@ const healthConfig: Record<string, { label: string; color: string; badge: string
   critical: { label: "Critical", color: "text-red-600", badge: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400", icon: XCircle },
 };
 
+interface PhaseScheduleItem {
+  phaseId: string;
+  name: string;
+  calculatedStart: string;
+  calculatedEnd: string;
+  estimatedDays: number;
+  calendarDays: number;
+}
+
 interface DashboardData {
   project: TrackerProject;
   phases: TrackerPhase[];
+  phaseSchedule: PhaseScheduleItem[];
   summary: {
     totalPhases: number;
     completedPhases: number;
@@ -44,7 +54,13 @@ interface DashboardData {
     delayedPhases: number;
     notStartedPhases: number;
     totalEstimatedDays: number;
-    daysConsumed: number;
+    daysPerWeek: number;
+    gracePeriodDays: number;
+    contractSignedAt: string | null;
+    effectiveStartDate: string;
+    projectedEndDate: string;
+    businessDaysElapsed: number;
+    effectiveWorkDaysConsumed: number;
     progressPercent: number;
     healthScore: string;
   };
@@ -157,10 +173,25 @@ function ProjectSelector({
 }
 
 function TimelineView({ dashboard }: { dashboard: DashboardData }) {
-  const { phases, summary } = dashboard;
+  const { phases, summary, phaseSchedule } = dashboard;
+  const scheduleMap = new Map(phaseSchedule?.map(s => [s.phaseId, s]) || []);
 
   return (
     <div className="space-y-6">
+      {summary.contractSignedAt && (
+        <Card className="bg-muted/30 border-dashed">
+          <CardContent className="py-3 px-4">
+            <div className="flex items-center gap-6 text-xs text-muted-foreground flex-wrap">
+              <span>Contrato: <strong className="text-foreground">{new Date(summary.contractSignedAt).toLocaleDateString("pt-BR")}</strong></span>
+              <span>Grace: <strong className="text-foreground">{summary.gracePeriodDays}d uteis</strong></span>
+              <span>Inicio: <strong className="text-foreground">{new Date(summary.effectiveStartDate).toLocaleDateString("pt-BR")}</strong></span>
+              <span>Dedicacao: <strong className="text-foreground">{summary.daysPerWeek}d/semana</strong></span>
+              <span>Conclusao: <strong className="text-foreground">{new Date(summary.projectedEndDate).toLocaleDateString("pt-BR")}</strong></span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-4 pb-3 px-4">
@@ -175,9 +206,10 @@ function TimelineView({ dashboard }: { dashboard: DashboardData }) {
           <CardContent className="pt-4 pb-3 px-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
               <Timer className="w-4 h-4" />
-              <span>Tempo Consumido</span>
+              <span>Dias Efetivos ({summary.daysPerWeek}d/sem)</span>
             </div>
-            <p className="text-2xl font-bold" data-testid="text-consumed-days">{summary.daysConsumed} dias</p>
+            <p className="text-2xl font-bold" data-testid="text-consumed-days">{summary.effectiveWorkDaysConsumed} dias</p>
+            <p className="text-[10px] text-muted-foreground">{summary.businessDaysElapsed} dias uteis decorridos</p>
           </CardContent>
         </Card>
         <Card>
@@ -239,9 +271,14 @@ function TimelineView({ dashboard }: { dashboard: DashboardData }) {
                     <span className="font-medium text-sm">Fase {phase.orderIndex + 1} — {phase.name}</span>
                     <Badge variant="outline" className={`text-[10px] ${config.color}`}>{config.label}</Badge>
                   </div>
-                  <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground">
-                    <span>Duracao: {phase.estimatedDays} dias</span>
-                    {phase.startDate && <span>Inicio: {new Date(phase.startDate).toLocaleDateString("pt-BR")}</span>}
+                  <div className="flex items-center gap-4 mt-1 text-xs text-muted-foreground flex-wrap">
+                    <span>{phase.estimatedDays}d projeto{(() => { const s = scheduleMap.get(phase.id); return s ? ` (${s.calendarDays}d calendario)` : ""; })()}</span>
+                    {(() => {
+                      const s = scheduleMap.get(phase.id);
+                      if (s) return <span>{new Date(s.calculatedStart).toLocaleDateString("pt-BR")} <ArrowRight className="w-3 h-3 inline" /> {new Date(s.calculatedEnd).toLocaleDateString("pt-BR")}</span>;
+                      if (phase.startDate) return <span>Inicio: {new Date(phase.startDate).toLocaleDateString("pt-BR")}</span>;
+                      return null;
+                    })()}
                     {phase.actualEndDate && <span>Concluido: {new Date(phase.actualEndDate).toLocaleDateString("pt-BR")}</span>}
                   </div>
                   {phase.deliverables && (
@@ -356,20 +393,44 @@ function StatusDashboard({ dashboard }: { dashboard: DashboardData }) {
               <span className="text-muted-foreground">Projeto</span>
               <span className="font-medium">{project.name}</span>
             </div>
+            {summary.contractSignedAt && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Contrato assinado em</span>
+                <span className="font-medium">{new Date(summary.contractSignedAt).toLocaleDateString("pt-BR")}</span>
+              </div>
+            )}
+            {summary.contractSignedAt && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Grace period</span>
+                <span className="font-medium">{summary.gracePeriodDays} dias uteis apos assinatura</span>
+              </div>
+            )}
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Tempo total estimado</span>
-              <span className="font-medium">{summary.totalEstimatedDays} dias</span>
+              <span className="text-muted-foreground">Inicio efetivo do projeto</span>
+              <span className="font-medium">{new Date(summary.effectiveStartDate).toLocaleDateString("pt-BR")}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Tempo consumido</span>
-              <span className="font-medium">{summary.daysConsumed} dias</span>
+              <span className="text-muted-foreground">Dedicacao ao projeto</span>
+              <span className="font-medium">{summary.daysPerWeek} dias/semana</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Diferenca planejado vs executado</span>
-              <span className={`font-medium ${summary.daysConsumed > summary.totalEstimatedDays ? "text-red-500" : "text-emerald-500"}`}>
-                {summary.daysConsumed <= summary.totalEstimatedDays
-                  ? `${summary.totalEstimatedDays - summary.daysConsumed} dias restantes`
-                  : `${summary.daysConsumed - summary.totalEstimatedDays} dias excedidos`}
+              <span className="text-muted-foreground">Tempo estimado (projeto)</span>
+              <span className="font-medium">{summary.totalEstimatedDays} dias de trabalho</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Conclusao projetada</span>
+              <span className="font-medium">{new Date(summary.projectedEndDate).toLocaleDateString("pt-BR")}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Dias efetivos consumidos</span>
+              <span className="font-medium">{summary.effectiveWorkDaysConsumed} de {summary.totalEstimatedDays} dias</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Saldo</span>
+              <span className={`font-medium ${summary.effectiveWorkDaysConsumed > summary.totalEstimatedDays ? "text-red-500" : "text-emerald-500"}`}>
+                {summary.effectiveWorkDaysConsumed <= summary.totalEstimatedDays
+                  ? `${summary.totalEstimatedDays - summary.effectiveWorkDaysConsumed} dias restantes`
+                  : `${summary.effectiveWorkDaysConsumed - summary.totalEstimatedDays} dias excedidos`}
               </span>
             </div>
             <div className="flex justify-between">
