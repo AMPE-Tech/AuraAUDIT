@@ -1,0 +1,147 @@
+ok continue
+
+Marcos, vou estruturar a landing page da AuraTECH já alinhada com a arquitetura final da infraestrutura, respeitando suas preferências de minimalismo institucional (estilo Big Four) e sem repetir o nome do produto nas descrições.
+
+A lógica da página precisa seguir infraestrutura → confiança → aplicações.
+
+Estrutura recomendada da Landing Page — AuraTECH
+1️⃣ Hero Section (primeira dobra)
+
+AuraTECH
+
+Trust Infrastructure for Evidence-Based Verification
+
+Infraestrutura digital que organiza evidências, mantém cadeia de custódia verificável, monitora validade documental e calcula scores dinâmicos de conformidade para operações corporativas e ativos críticos.
+
+Botões:
+
+Explore the Platform
+
+Request Access
+
+2️⃣ Core Infrastructure
+A Plataforma
+
+A AuraTECH foi projetada como uma infraestrutura de confiança baseada em evidências verificáveis.
+
+Cada documento, evento ou dado operacional passa por:
+
+cadeia de custódia digital
+
+versionamento auditável
+
+monitoramento contínuo
+
+cálculo automático de conformidade
+
+Isso cria um Trust Layer operacional que pode ser aplicado a diferentes setores e ativos.
+
+3️⃣ Core Infrastructure Components
+AuraTRUST
+
+Evidence Tracking Infrastructure
+
+Camada central responsável por estruturar evidências, gerar cadeia de custódia digital, monitorar validade documental e calcular o Trust Index em tempo real para fornecedores, ativos e operações.
+
+AuraDATA
+
+Integrated Data Governance
+
+Hub de governança que organiza evidências, datasets e documentos operacionais em estruturas normalizadas, garantindo integridade, rastreabilidade e acesso auditável.
+
+4️⃣ Verification & Analysis Modules
+AuraDUE
+
+Digital Due Diligence
+
+Organiza e valida evidências documentais para análise de ativos, processos e estruturas jurídicas com rastreabilidade completa.
+
+AuraAUDIT
+
+Corporate Expense Review
+
+Monitora operações e despesas corporativas identificando inconsistências operacionais, desvios contratuais e oportunidades de eficiência.
+
+AuraRISK
+
+Compliance Score Analysis
+
+Aplica modelos analíticos para calcular níveis de risco e conformidade a partir de evidências documentais e dados operacionais.
+
+5️⃣ Specialized Validation Modules
+AuraCARBO
+
+Carbon Project Validation
+
+Valida evidências e dados operacionais de projetos ambientais e créditos de carbono com monitoramento contínuo.
+
+AuraLOA
+
+Precatory Research Validation
+
+Estrutura e valida dados orçamentários e judiciais para análise de precatórios e execução pública.
+
+AuraTAX
+
+Tax Credit Recovery
+
+Organiza evidências fiscais e contábeis para validação e recuperação estruturada de créditos tributários.
+
+AuraMARKET
+
+Verified Asset Exchange
+
+Ambiente estruturado para apresentação e negociação de ativos e fornecedores com evidências verificáveis e status de confiança.
+
+6️⃣ Trust Index
+Aura Trust Index™
+
+Modelo dinâmico que combina:
+
+evidências documentais
+
+integridade da cadeia de custódia
+
+monitoramento de validade
+
+histórico de atualização
+
+sinais de risco
+
+Gerando um status operacional claro:
+
+Verified
+
+Monitored
+
+Moderate Risk
+
+High Risk
+
+Non-Compliant
+
+7️⃣ Aplicação inicial de mercado
+
+A infraestrutura começa sendo aplicada ao setor de:
+
+Corporate Travel & Events
+
+onde buyers corporativos precisam validar fornecedores, contratos, evidências operacionais e conformidade de processos.
+
+A mesma infraestrutura pode ser aplicada a:
+
+ativos financeiros
+
+projetos ambientais
+
+estruturas jurídicas
+
+operações corporativas
+
+8️⃣ Encerramento
+
+AuraTECH
+
+Infrastructure for Evidence-Based Trust.
+
+Transformando evidências em confiança verificável.
