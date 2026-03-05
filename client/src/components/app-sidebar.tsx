@@ -42,7 +42,7 @@ const mainItems = [
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
   { title: "Anomalias", url: "/anomalies", icon: AlertTriangle },
   { title: "AuditPag", url: "/audit-pag", icon: ShieldCheck },
-  { title: "AuraTRACKER", url: "/tracker", icon: Activity },
+  { title: "AuraTRACK", url: "/tracker", icon: Activity },
 ];
 
 const servicosItems = [

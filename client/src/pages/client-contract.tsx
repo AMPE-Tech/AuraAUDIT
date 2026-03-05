@@ -97,7 +97,7 @@ const CONTRACT_DATA = {
       items: ["Ledger auditavel append-only", "Saldo verificado antes de cada job", "Orcamento obrigatorio pre-execucao"],
     },
     {
-      name: "AuraTRACKER",
+      name: "AuraTRACK",
       description: "Audit Timeline Engine — Transparencia operacional completa do projeto",
       items: ["Timeline linear com semaforo de fases", "Project Health Score auto-calculado", "Decomposicao de tempo operacional (cliente/auditoria/sistema)", "Audit Efficiency Score"],
     },
@@ -138,7 +138,7 @@ const CONTRACT_DATA = {
     "Ledger de creditos append-only com referencia cruzada",
     "Validacao matematica CNPJ/CPF impede dados cadastrais invalidos",
     "Termos versionados com SHA-256 — aceite vinculado a versao",
-    "AuraTRACKER: controle de acesso por tenant — cliente ve apenas projetos atribuidos",
+    "AuraTRACK: controle de acesso por tenant — cliente ve apenas projetos atribuidos",
   ],
   antiHallucination: [
     "Outputs de IA com envelope de auditoria SHA-256",
@@ -149,7 +149,7 @@ const CONTRACT_DATA = {
     "Modelo, versao e parametros registrados no envelope",
     "IA sugere, usuario decide — controle humano em todas as etapas",
     "Jobs cancelados ou com falha registrados com status e motivo",
-    "AuraTRACKER: Health Score calculado por algoritmo deterministico — sem inferencia de IA",
+    "AuraTRACK: Health Score calculado por algoritmo deterministico — sem inferencia de IA",
   ],
   evidence: [
     { id: "E1", description: "Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal" },
@@ -160,7 +160,7 @@ const CONTRACT_DATA = {
     { id: "E6", description: "Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos)" },
     { id: "E7", description: "Antiregressao: dataBefore/dataAfter, versionamento de contratos e termos" },
     { id: "E8", description: "Antialucinacao: cotacao previa, aprovacao humana, revisao opcional, SHA-256" },
-    { id: "E9", description: "AuraTRACKER: timeline operacional com decomposicao de tempo (cliente/auditoria/sistema), Health Score auto-calculado, transparencia total" },
+    { id: "E9", description: "AuraTRACK: timeline operacional com decomposicao de tempo (cliente/auditoria/sistema), Health Score auto-calculado, transparencia total" },
   ],
 };
 

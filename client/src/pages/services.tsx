@@ -187,7 +187,7 @@ const SERVICES: ServiceItem[] = [
   },
   {
     id: "aura-tracker",
-    title: "AuraTRACKER — Audit Timeline Engine",
+    title: "AuraTRACK — Audit Timeline Engine",
     icon: Clock,
     priority: "P0",
     priorityLabel: "Core AuraAudit",

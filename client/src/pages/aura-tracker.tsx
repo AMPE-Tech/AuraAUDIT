@@ -723,7 +723,7 @@ export default function AuraTracker() {
           <Activity className="w-5 h-5 text-primary-foreground" />
         </div>
         <div>
-          <h1 className="text-xl font-bold tracking-tight" data-testid="text-page-title">AuraTRACKER</h1>
+          <h1 className="text-xl font-bold tracking-tight" data-testid="text-page-title">AuraTRACK</h1>
           <p className="text-sm text-muted-foreground">Audit Timeline Engine — Transparencia Operacional</p>
         </div>
       </div>

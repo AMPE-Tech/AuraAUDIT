@@ -36,7 +36,7 @@ const projetoItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, enabled: true },
   { title: "Dashboard Studio", url: "/dashboard-studio", icon: LayoutDashboard, enabled: true },
   { title: "Painel do Projeto", url: "/project-panel", icon: BarChart3, enabled: true },
-  { title: "AuraTRACKER", url: "/tracker", icon: Activity, enabled: true },
+  { title: "AuraTRACK", url: "/tracker", icon: Activity, enabled: true },
   { title: "Meu Cadastro", url: "/my-profile", icon: Building2, enabled: false },
   { title: "Sistemas", url: "/systems", icon: Monitor, enabled: false },
   { title: "Meus Documentos", url: "/documents", icon: FolderOpen, enabled: true },

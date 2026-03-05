@@ -156,7 +156,7 @@ const PRODUCTS = [
   },
   {
     id: "aura_tracker",
-    name: "AuraTRACKER — Audit Timeline Engine",
+    name: "AuraTRACK — Audit Timeline Engine",
     description:
       "Transparencia operacional completa do projeto de auditoria com timeline, status dashboard e timesheet. Demonstra ao cliente o andamento real, tempo investido e eficiencia da equipe.",
     icon: Clock,
