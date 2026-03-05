@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "5.0.0";
+const CONTRACT_VERSION = "5.1.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
@@ -406,9 +406,34 @@ PARTE V — PLATAFORMA DIGITAL AURAAUDIT
 28.3. Aprovacao humana em todas as etapas (o usuario decide e aprova).
 28.4. Registro de modelo/versao/parametros em cada execucao.
 28.5. Fluxo completo: draft → quoted → pending_approval → approved → running → completed.
+28.6. Formatacao limpa obrigatoria: proibido uso de cabecalhos markdown, asteriscos, tabelas e listas numeradas extensas nos outputs da IA. Respostas devem seguir formato conversacional profissional.
+28.7. Dosagem progressiva de conteudo: IA entrega no maximo 30% do conteudo total na primeira interacao, qualifica o contexto do usuario com perguntas especificas, e aprofunda progressivamente conforme confirmacoes.
+28.8. Verificacao dupla obrigatoria: antes de apresentar qualquer dado numerico ou metrica, a IA confirma internamente se o dado tem origem verificavel (API, upload, contrato).
+
+29. SISTEMA DE ALERTAS v2 (AUDITPAG)
+
+29.1. Motor de alertas com auto-escalacao de severidade baseada em limites financeiros: R$ 10.000 (alto), R$ 50.000 (critico).
+29.2. Auto-escalacao funciona independentemente de configuracao por empresa — limites padrao sao aplicados quando nao ha config especifica.
+29.3. Alertas CRITICAL e HIGH forcam automaticamente o canal de email, independente da configuracao do cliente.
+29.4. Administrador da plataforma recebe copia automatica (CC) em todos os alertas CRITICAL e HIGH.
+29.5. Cada alerta gera hash SHA-256 de integridade persistido no registro do alerta e na trilha de auditoria.
+29.6. Log estruturado no console: severidade, tipo, valor financeiro e prefixo do hash para rastreabilidade.
+29.7. Canais: plataforma (notificacao interna), email (via Resend), SMS (preparado para integracao futura).
+29.8. Gatilhos: status nao-conforme, achados de alta severidade, conciliacao bancaria divergente/parcial, violacao de politica.
+
+30. PIPELINE CP-01 — HEALTH CHECK E AUTO-REMEDIACAO
+
+30.1. Pipeline de verificacao de integridade CP-01 executado automaticamente em cada inicializacao do servidor.
+30.2. Escaneia todas as tabelas de dados operacionais (expenses, anomalies, audit_cases, audit_trail) sem limites de amostragem.
+30.3. Detecta padroes de dados de seed/teste baseado em fornecedores, funcionarios e enderecos IP conhecidos.
+30.4. Auto-remediacao cirurgica: remove apenas registros identificados como dados de seed, preservando dados reais do cliente.
+30.5. Notificacao por email ao administrador quando remediacao e executada, com detalhamento das tabelas e registros afetados.
+30.6. Endpoints administrativos: GET /api/audit-pag/health-check (verificacao sob demanda), POST /api/audit-pag/remediate (remediacao manual com trilha de auditoria).
+30.7. Re-verificacao automatica apos remediacao para confirmar que a limpeza foi completa.
+30.8. Resultado da verificacao registrado em log estruturado com status PASSED/FAILED por tabela.
 
 ============================================================
-ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E21)
+ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E26)
 ============================================================
 
 E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal (BrasilAPI)
@@ -434,6 +459,9 @@ E20. LGPD: mascaramento de CPF, dados pessoais protegidos, finalidade contratual
 E21. Pagina publica: chat IA flutuante com trial gratuito e cadeia de custodia
 E22. Ecossistema de Integracoes: 149+ plataformas mapeadas em 15 segmentos (GDS, NDC Airlines, IATA/BSP, Hotelaria Global, Hotelaria Brasil/FOHB, Locadoras, Consolidadoras, Operadoras, Seguros, Pagamentos, TMC Globais, TMC Nacionais/ABRACORP, Agencias de Eventos/MICE, TravelTech, Plataformas de Eventos)
 E23. AuditPag: auditoria pre-pagamento com cruzamento solicitacao/reserva/financeiro/extrato bancario, perfis agencia e corporativo, monitoramento diario de entradas/saidas, achados tipificados, conformidade pre-aprovacao CFO
+E24. Alert Engine v2: auto-escalacao de severidade por valor financeiro, forcamento de canal email em alertas criticos/altos, CC automatico ao admin, hash SHA-256 persistido por alerta com trilha de auditoria
+E25. CP-01 Health Check Pipeline: verificacao automatica de integridade em cada boot, deteccao de padroes de dados de teste, auto-remediacao cirurgica com notificacao por email, endpoints admin para verificacao e remediacao sob demanda
+E26. AuraAI Formatacao v2: regras de formatacao limpa (sem markdown pesado), dosagem progressiva de conteudo (30% na primeira resposta), qualificacao de contexto antes de entrega, verificacao dupla de dados
 
 ============================================================
 ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
@@ -500,6 +528,9 @@ ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 [OK] CL20. Role-based access: admin, client, auditor com controle de acesso por rota
 [OK] CL21-ECO. Ecossistema de Integracoes: 149+ plataformas em 15 segmentos, busca, metodos de integracao, APIs privadas e publicas
 [OK] CL22-PAG. AuditPag: auditoria pre-pagamento com perfis agencia/corporativo, cruzamento solicitacao-reserva-financeiro-extrato, monitoramento diario, achados tipificados
+[OK] CL23-ALT. Alert Engine v2: auto-escalacao de severidade, forcamento de email em CRITICAL/HIGH, CC admin, hash SHA-256 por alerta
+[OK] CL24-HC. CP-01 Health Check: pipeline de verificacao automatica em boot, deteccao de padroes de seed, auto-remediacao cirurgica, notificacao email
+[OK] CL25-FMT. AuraAI Formatacao v2: formatacao limpa, dosagem progressiva 30%, qualificacao de contexto, verificacao dupla de dados
 
 ITENS PENDENTES / EM OBSERVACAO:
 
@@ -527,7 +558,7 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M11, com 23 evidencias tecnicas documentadas, 27 itens de checklist de conformidade (22 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M11, com 26 evidencias tecnicas documentadas, 30 itens de checklist de conformidade (25 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 
