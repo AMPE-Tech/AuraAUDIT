@@ -9,7 +9,7 @@ import path from "path";
 import fs from "fs";
 let pdfParse: any;
 let mammoth: any;
-let XLSX: any;
+let ExcelJS: any;
 
 async function loadExtractors() {
   if (!pdfParse) {
@@ -20,9 +20,9 @@ async function loadExtractors() {
     const mod = await import("mammoth");
     mammoth = mod.default || mod;
   }
-  if (!XLSX) {
-    const mod = await import("xlsx");
-    XLSX = mod.default || mod;
+  if (!ExcelJS) {
+    const mod = await import("exceljs");
+    ExcelJS = mod.default || mod;
   }
 }
 
@@ -96,13 +96,27 @@ async function extractText(filePath: string, ext: string): Promise<string> {
     }
 
     if (ext === ".xlsx" || ext === ".xls") {
-      const workbook = XLSX.readFile(filePath);
-      const sheets: string[] = [];
-      for (const sheetName of workbook.SheetNames) {
-        const sheet = workbook.Sheets[sheetName];
-        const csv = XLSX.utils.sheet_to_csv(sheet);
-        sheets.push(`[${sheetName}]\n${csv}`);
+      if (ext === ".xls") {
+        return "[Formato .xls legado nao suportado para extracao. Converta para .xlsx e reenvie.]";
       }
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filePath);
+      const sheets: string[] = [];
+      workbook.eachSheet((worksheet: any) => {
+        const rows: string[] = [];
+        worksheet.eachRow({ includeEmpty: true }, (row: any) => {
+          const values = (row.values as any[]).slice(1);
+          rows.push(
+            values.map((v: any) => {
+              if (v === null || v === undefined) return "";
+              if (typeof v === "object" && v.result !== undefined) return String(v.result);
+              if (typeof v === "object" && v.text !== undefined) return String(v.text);
+              return String(v);
+            }).join(",")
+          );
+        });
+        sheets.push(`[${worksheet.name}]\n${rows.join("\n")}`);
+      });
       return sheets.join("\n\n").slice(0, 100000);
     }
 
