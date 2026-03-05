@@ -12,8 +12,13 @@ import {
   Upload, FileText, Trash2, ArrowRight, ArrowDown, CheckCircle2,
   Loader2, AlertTriangle, Zap, Globe, Hash, Ban, BarChart3,
   Leaf, Scale, Receipt, TrendingUp, Network, Award, Building2,
-  Plane, Briefcase, ChevronRight, User, LogIn
+  Plane, Briefcase, ChevronRight, LogIn, Target
 } from "lucide-react";
+import {
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  RadarChart, PolarGrid, PolarAngleAxis, Radar,
+  XAxis, YAxis, CartesianGrid, ResponsiveContainer
+} from "recharts";
 
 interface FileDetail {
   originalName: string;
@@ -54,28 +59,63 @@ interface AnalysisResult {
   trialStatus?: TrialStatus;
 }
 
+const TRUST_AREA_DATA = [
+  { m: "Jan", v: 120, e: 118 },
+  { m: "Fev", v: 145, e: 142 },
+  { m: "Mar", v: 168, e: 165 },
+  { m: "Abr", v: 195, e: 190 },
+  { m: "Mai", v: 230, e: 225 },
+  { m: "Jun", v: 260, e: 258 },
+  { m: "Jul", v: 310, e: 305 },
+  { m: "Ago", v: 350, e: 348 },
+];
+
+const MODULE_BAR_DATA = [
+  { cat: "AuraAUDIT", val: 42 },
+  { cat: "AuraDUE", val: 28 },
+  { cat: "AuraRISK", val: 18 },
+  { cat: "AuraCARBO", val: 8 },
+  { cat: "AuraTAX", val: 4 },
+];
+
+const TRUST_PIE_DATA = [
+  { name: "AAA/AA", value: 62 },
+  { name: "A", value: 25 },
+  { name: "B/C", value: 13 },
+];
+const TRUST_PIE_COLORS = ["hsl(145, 65%, 42%)", "hsl(210, 85%, 50%)", "hsl(38, 92%, 50%)"];
+
+const TRUST_RADAR_DATA = [
+  { s: "Evidencia", v: 92 },
+  { s: "Custodia", v: 88 },
+  { s: "Compliance", v: 78 },
+  { s: "Integridade", v: 95 },
+  { s: "Cobertura", v: 72 },
+  { s: "Validacao", v: 85 },
+];
+
 const CORE_INFRASTRUCTURE = [
   {
     id: "trust",
     name: "AuraTRUST",
     tagline: "Certification & Validation Layer",
-    description: "Transversal layer that certifies, validates, and monitors every process across the ecosystem. SHA-256 chained custody, real-time seal monitoring, and automated certificate issuance.",
+    description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.",
     icon: ShieldCheck,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/10",
-    borderColor: "border-emerald-500/20",
-    features: ["Chain of custody (Lei 13.964/2019)", "Trust Seal with active monitoring", "Period certificates on revocation", "Public validation endpoint"],
+    color: "text-emerald-600 dark:text-emerald-400",
+    bgColor: "bg-emerald-100 dark:bg-emerald-900/50",
+    borderColor: "border-emerald-200 dark:border-emerald-900",
+    features: ["Cadeia de custodia (Lei 13.964/2019)", "Trust Seal com monitoramento ativo", "Certificados periodicos automaticos", "Endpoint publico de validacao"],
   },
   {
     id: "data",
     name: "AuraDATA",
     tagline: "Data Governance Hub",
-    description: "Centralized data ingestion, normalization, and cross-referencing engine. Multi-source reconciliation with cryptographic integrity at every stage.",
+    description: "Motor centralizado de ingestao, normalizacao e cruzamento de dados. Conciliacao multi-fonte com integridade criptografica em cada etapa.",
     icon: Database,
-    color: "text-blue-500",
-    bgColor: "bg-blue-500/10",
-    borderColor: "border-blue-500/20",
-    features: ["Multi-source data ingestion", "Schema normalization engine", "Cross-reference matching", "Cryptographic data integrity"],
+    color: "text-blue-600 dark:text-blue-400",
+    bgColor: "bg-blue-100 dark:bg-blue-900/50",
+    borderColor: "border-blue-200 dark:border-blue-900",
+    features: ["Ingestao multi-fonte de dados", "Motor de normalizacao de schema", "Matching por referencia cruzada", "Integridade criptografica dos dados"],
   },
 ];
 
@@ -84,31 +124,31 @@ const VERIFICATION_MODULES = [
     id: "due",
     name: "AuraDUE",
     tagline: "Digital Due Diligence",
-    description: "Automated evidence collection and verification for corporate transactions, partnerships, and regulatory submissions.",
+    description: "Coleta e verificacao automatizada de evidencias para transacoes corporativas, parcerias e submissoes regulatorias.",
     icon: Search,
-    color: "text-violet-500",
-    bgColor: "bg-violet-500/10",
-    borderColor: "border-violet-500/20",
+    color: "text-violet-600 dark:text-violet-400",
+    bgColor: "bg-violet-100 dark:bg-violet-900/50",
+    borderColor: "border-violet-200 dark:border-violet-900",
   },
   {
     id: "audit",
     name: "AuraAUDIT",
     tagline: "Corporate Expense Review",
-    description: "Forensic analysis of corporate travel and event expenses. Multi-system reconciliation, anomaly detection, and overcharge recovery.",
+    description: "Analise forense de despesas corporativas de viagens e eventos. Conciliacao multi-sistema, deteccao de anomalias e recuperacao de overcharge.",
     icon: Receipt,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/10",
-    borderColor: "border-amber-500/20",
+    color: "text-amber-600 dark:text-amber-400",
+    bgColor: "bg-amber-100 dark:bg-amber-900/50",
+    borderColor: "border-amber-200 dark:border-amber-900",
   },
   {
     id: "risk",
     name: "AuraRISK",
     tagline: "Compliance Score Analysis",
-    description: "Continuous compliance monitoring with dynamic risk scoring. Policy adherence tracking and automated alert escalation.",
+    description: "Monitoramento continuo de compliance com scoring dinamico de risco. Acompanhamento de aderencia a politicas e escalacao automatica de alertas.",
     icon: AlertTriangle,
-    color: "text-red-500",
-    bgColor: "bg-red-500/10",
-    borderColor: "border-red-500/20",
+    color: "text-red-600 dark:text-red-400",
+    bgColor: "bg-red-100 dark:bg-red-900/50",
+    borderColor: "border-red-200 dark:border-red-900",
   },
 ];
 
@@ -117,46 +157,54 @@ const SPECIALIZED_MODULES = [
     id: "carbo",
     name: "AuraCARBO",
     tagline: "Carbon Project Validation",
-    description: "Independent verification of carbon credit projects — additionality, permanence, and registry integrity.",
+    description: "Verificacao independente de projetos de credito de carbono — adicionalidade, permanencia e integridade de registro.",
     icon: Leaf,
-    color: "text-green-500",
-    bgColor: "bg-green-500/10",
+    color: "text-green-600 dark:text-green-400",
+    bgColor: "bg-green-100 dark:bg-green-900/50",
   },
   {
     id: "loa",
     name: "AuraLOA",
     tagline: "Precatory Research Validation",
-    description: "Automated due diligence for judicial precatories — origin verification, debtor analysis, and transfer chain validation.",
+    description: "Due diligence automatizada para precatorios judiciais — verificacao de origem, analise do devedor e cadeia de cessao.",
     icon: Scale,
-    color: "text-indigo-500",
-    bgColor: "bg-indigo-500/10",
+    color: "text-indigo-600 dark:text-indigo-400",
+    bgColor: "bg-indigo-100 dark:bg-indigo-900/50",
   },
   {
     id: "tax",
     name: "AuraTAX",
     tagline: "Tax Credit Recovery",
-    description: "Identification and validation of recoverable tax credits across complex corporate structures and jurisdictions.",
+    description: "Identificacao e validacao de creditos tributarios recuperaveis em estruturas corporativas e jurisdicoes complexas.",
     icon: Receipt,
-    color: "text-orange-500",
-    bgColor: "bg-orange-500/10",
+    color: "text-orange-600 dark:text-orange-400",
+    bgColor: "bg-orange-100 dark:bg-orange-900/50",
   },
   {
     id: "market",
     name: "AuraMARKET",
     tagline: "Verified Asset Exchange",
-    description: "Trust-scored marketplace for verified assets — certificates, credits, and validated instruments with full provenance.",
+    description: "Marketplace com trust score para ativos verificados — certificados, creditos e instrumentos validados com proveniencia completa.",
     icon: TrendingUp,
-    color: "text-cyan-500",
-    bgColor: "bg-cyan-500/10",
+    color: "text-cyan-600 dark:text-cyan-400",
+    bgColor: "bg-cyan-100 dark:bg-cyan-900/50",
   },
 ];
 
 const TRUST_INDEX_LEVELS = [
-  { level: "AAA", label: "Maximum Trust", range: "95–100", color: "bg-emerald-500", textColor: "text-emerald-500" },
-  { level: "AA", label: "High Trust", range: "80–94", color: "bg-green-500", textColor: "text-green-500" },
-  { level: "A", label: "Adequate Trust", range: "65–79", color: "bg-blue-500", textColor: "text-blue-500" },
-  { level: "B", label: "Under Review", range: "40–64", color: "bg-amber-500", textColor: "text-amber-500" },
-  { level: "C", label: "Insufficient", range: "0–39", color: "bg-red-500", textColor: "text-red-500" },
+  { level: "AAA", label: "Maximum Trust", range: "95–100", color: "bg-emerald-500/15 border-emerald-500/30", textColor: "text-emerald-400", barColor: "bg-emerald-500" },
+  { level: "AA", label: "High Trust", range: "80–94", color: "bg-green-500/15 border-green-500/30", textColor: "text-green-400", barColor: "bg-green-500" },
+  { level: "A", label: "Adequate Trust", range: "65–79", color: "bg-blue-500/15 border-blue-500/30", textColor: "text-blue-400", barColor: "bg-blue-500" },
+  { level: "B", label: "Under Review", range: "40–64", color: "bg-amber-500/15 border-amber-500/30", textColor: "text-amber-400", barColor: "bg-amber-500" },
+  { level: "C", label: "Insufficient", range: "0–39", color: "bg-red-500/15 border-red-500/30", textColor: "text-red-400", barColor: "bg-red-500" },
+];
+
+const CUSTODY_STEPS = [
+  { label: "Coleta", sub: "Raw data", color: "text-blue-400", bg: "bg-blue-500/15 border-blue-500/30" },
+  { label: "Registro", sub: "UUID + Hash", color: "text-amber-400", bg: "bg-amber-500/15 border-amber-500/30" },
+  { label: "Validacao", sub: "SHA-256", color: "text-purple-400", bg: "bg-purple-500/15 border-purple-500/30" },
+  { label: "Certificacao", sub: "Trust Seal", color: "text-cyan-400", bg: "bg-cyan-500/15 border-cyan-500/30" },
+  { label: "Monitoramento", sub: "Active Watch", color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/30" },
 ];
 
 export default function LandingPageTest() {
@@ -203,29 +251,19 @@ export default function LandingPageTest() {
       setError("Descreva o que deseja analisar (minimo 10 caracteres).");
       return;
     }
-
     setIsAnalyzing(true);
     setError("");
     setResult(null);
-
     try {
       const formData = new FormData();
       files.forEach((f) => formData.append("files", f));
       formData.append("description", description);
-
-      const response = await fetch("/api/trial/analyze", {
-        method: "POST",
-        body: formData,
-      });
-
+      const response = await fetch("/api/trial/analyze", { method: "POST", body: formData });
       if (!response.ok) {
         const errData = await response.json();
-        if (response.status === 429) {
-          refetchStatus();
-        }
+        if (response.status === 429) refetchStatus();
         throw new Error(errData.error || "Erro ao processar.");
       }
-
       const data = await response.json();
       setResult(data);
       refetchStatus();
@@ -247,422 +285,567 @@ export default function LandingPageTest() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <header className="sticky top-0 z-50 bg-zinc-950/95 backdrop-blur border-b border-zinc-800/50">
-        <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 py-3">
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="flex items-center justify-center w-8 h-8 rounded bg-emerald-600">
-              <Shield className="w-4 h-4 text-white" />
+            <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary">
+              <Shield className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <span className="text-sm font-semibold tracking-tight text-zinc-100">AuraTECH</span>
-              <span className="text-[10px] text-zinc-500 ml-2">Trust Infrastructure</span>
+              <h1 className="text-sm font-semibold tracking-tight">AuraTECH</h1>
+              <p className="text-[10px] text-muted-foreground">Trust Infrastructure</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-xs text-zinc-400 hover:text-zinc-100"
-              onClick={scrollToTrial}
-              data-testid="button-nav-trial"
-            >
-              Free Diagnostic
+          <div className="flex items-center gap-3">
+            <Button size="sm" variant="ghost" className="text-xs" onClick={scrollToTrial} data-testid="button-nav-trial">
+              Teste Gratuito
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="text-xs border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-              onClick={() => navigate("/login")}
-              data-testid="button-nav-login"
-            >
+            <Button size="sm" variant="outline" className="text-xs" onClick={() => navigate("/login")} data-testid="button-nav-login">
               <LogIn className="w-3 h-3 mr-1" />
-              Sign In
+              Entrar
             </Button>
           </div>
         </div>
       </header>
 
-      <section className="relative py-24 px-6" data-testid="section-hero">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <Badge variant="outline" className="border-emerald-700/50 text-emerald-400 text-[10px] tracking-wider uppercase px-3 py-1">
-            Trust Infrastructure
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-zinc-50 leading-tight" data-testid="text-hero-title">
-            Aura<span className="text-emerald-400">TECH</span>
-          </h1>
-          <p className="text-lg md:text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            Infrastructure for evidence-based verification.
-            <br />
-            <span className="text-zinc-500">Modular platform that certifies, validates, and scores trust across industries.</span>
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-            <Button
-              size="lg"
-              className="bg-emerald-600 hover:bg-emerald-700 text-white"
-              onClick={scrollToTrial}
-              data-testid="button-hero-explore"
-            >
-              Explore the Platform
-              <ArrowDown className="w-4 h-4 ml-2" />
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-zinc-700 text-zinc-300 hover:bg-zinc-800"
-              onClick={() => navigate("/login")}
-              data-testid="button-hero-signin"
-            >
-              Access Dashboard
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-        </div>
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.08)_0%,transparent_70%)]" />
-      </section>
+      <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
 
-      <Separator className="bg-zinc-800/50" />
-
-      <section className="py-20 px-6" data-testid="section-platform">
-        <div className="max-w-5xl mx-auto space-y-6">
-          <div className="text-center space-y-3">
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-medium">The Platform</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-100">
-              Modular trust architecture
-            </h2>
-            <p className="text-sm text-zinc-500 max-w-xl mx-auto">
-              A transversal certification layer connects specialized verification modules.
-              Each module operates independently but shares a common evidence standard.
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent" data-testid="section-hero">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-center gap-2">
+              <Target className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold">AuraTECH — Trust Infrastructure</h2>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
+              Uma <span className="font-medium text-foreground">infraestrutura modular de confianca</span> para{" "}
+              <span className="font-medium text-foreground">verificacao baseada em evidencias</span>. Plataforma que{" "}
+              <span className="font-medium text-foreground">certifica, valida e pontua</span> processos com{" "}
+              <span className="font-medium text-foreground">cadeia de custodia digital</span>,{" "}
+              <span className="font-medium text-foreground">rastreabilidade juridica</span> e{" "}
+              <span className="font-medium text-foreground">monitoramento continuo</span> — no padrao que Compliance exige.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 pt-8 items-center">
-            <div className="md:col-span-1 flex flex-col items-center text-center space-y-2">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                <ShieldCheck className="w-5 h-5 text-emerald-500" />
-              </div>
-              <p className="text-xs font-medium text-emerald-400">AuraTRUST</p>
-              <p className="text-[10px] text-zinc-600">Certification Layer</p>
+            <div className="flex flex-wrap gap-3 pt-1">
+              <Button variant="default" size="sm" className="text-xs" onClick={scrollToTrial} data-testid="button-hero-explore">
+                Explorar Plataforma
+                <ArrowDown className="w-3 h-3 ml-1" />
+              </Button>
+              <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/login")} data-testid="button-hero-signin">
+                Acessar Dashboard
+              </Button>
             </div>
-            <div className="md:col-span-1 flex items-center justify-center">
-              <Network className="w-5 h-5 text-zinc-700" />
-            </div>
-            <div className="md:col-span-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {[
-                { name: "AuraDUE", icon: Search, color: "text-violet-500" },
-                { name: "AuraAUDIT", icon: Receipt, color: "text-amber-500" },
-                { name: "AuraRISK", icon: AlertTriangle, color: "text-red-500" },
-                { name: "AuraCARBO", icon: Leaf, color: "text-green-500" },
-                { name: "AuraLOA", icon: Scale, color: "text-indigo-500" },
-                { name: "AuraTAX", icon: Receipt, color: "text-orange-500" },
-              ].map((mod) => (
-                <div key={mod.name} className="flex items-center gap-2 bg-zinc-900/50 rounded-lg px-3 py-2 border border-zinc-800/50">
-                  <mod.icon className={`w-3.5 h-3.5 ${mod.color}`} />
-                  <span className="text-xs text-zinc-400">{mod.name}</span>
-                </div>
-              ))}
-            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-4" data-testid="section-modules-catalog">
+          <div className="flex items-center gap-2">
+            <Layers className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Modulos do Ecossistema</h2>
           </div>
-        </div>
-      </section>
-
-      <Separator className="bg-zinc-800/50" />
-
-      <section className="py-20 px-6" data-testid="section-core">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-3">
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-medium">Core Infrastructure</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-100">
-              Foundation components
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {CORE_INFRASTRUCTURE.map((infra) => (
-              <Card key={infra.id} className={`bg-zinc-900/50 border ${infra.borderColor} hover:bg-zinc-900/80 transition-colors`}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start gap-3">
-                    <div className={`w-10 h-10 rounded-lg ${infra.bgColor} flex items-center justify-center shrink-0`}>
-                      <infra.icon className={`w-5 h-5 ${infra.color}`} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...VERIFICATION_MODULES, ...SPECIALIZED_MODULES].map((mod) => (
+              <Card key={mod.id} className={`cursor-pointer hover:shadow-md transition-shadow ${mod.id === "audit" ? "border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900/50" : ""}`} data-testid={`module-card-${mod.id}`}>
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${mod.bgColor}`}>
+                      <mod.icon className={`w-4 h-4 ${mod.color}`} />
                     </div>
-                    <div>
-                      <CardTitle className="text-base text-zinc-100">{infra.name}</CardTitle>
-                      <CardDescription className="text-xs text-zinc-500">{infra.tagline}</CardDescription>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xs font-semibold leading-tight">{mod.name}</h3>
+                      {mod.id === "audit" && <Badge className="text-[9px] mt-0.5 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-0">Ativo</Badge>}
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-zinc-400 leading-relaxed">{infra.description}</p>
-                  <div className="space-y-2">
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{mod.tagline}</p>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold" data-testid="text-performance-title">Performance da Infraestrutura</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="border-emerald-200 dark:border-emerald-900">
+              <CardContent className="p-6 text-center">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-2">
+                  <BarChart3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-verified">+2,8 BI</p>
+                <p className="text-xs text-muted-foreground mt-1">Verificados</p>
+                <p className="text-xs text-muted-foreground">em volume total processado</p>
+              </CardContent>
+            </Card>
+            <Card className="border-amber-200 dark:border-amber-900">
+              <CardContent className="p-6 text-center">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-2">
+                  <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                </div>
+                <p className="text-xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-certified">+350K</p>
+                <p className="text-xs text-muted-foreground mt-1">Evidencias Certificadas</p>
+                <p className="text-xs text-muted-foreground">com cadeia de custodia</p>
+              </CardContent>
+            </Card>
+            <Card className="border-blue-200 dark:border-blue-900">
+              <CardContent className="p-6 text-center">
+                <div className="flex items-center justify-center w-9 h-9 rounded-full bg-blue-100 dark:bg-blue-900/50 mx-auto mb-2">
+                  <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                </div>
+                <p className="text-xl font-bold text-blue-600 dark:text-blue-400" data-testid="stat-trust-score">92%</p>
+                <p className="text-xs text-muted-foreground mt-1">Trust Score Medio</p>
+                <p className="text-xs text-muted-foreground">Aura Trust Index™</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" data-testid="banner-dashboard-preview">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(16,185,129,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_left,_rgba(59,130,246,0.06),transparent_50%)]" />
+          <div className="relative p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-emerald-500/20">
+                  <Shield className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-100">Dashboard AuraTECH</p>
+                  <p className="text-[10px] text-slate-400">Visao executiva da infraestrutura de confianca</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">Live</Badge>
+                <Badge className="bg-slate-700/60 text-slate-300 border-slate-600/40 text-[10px]">Atualizado agora</Badge>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2">
+              <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Evidencias Ativas</p>
+                <p className="text-lg font-bold text-slate-100 mt-0.5">12.847</p>
+                <p className="text-[10px] text-emerald-400 flex items-center gap-0.5 mt-0.5"><TrendingUp className="w-3 h-3" /> +18% vs anterior</p>
+              </div>
+              <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Trust Seals</p>
+                <p className="text-lg font-bold text-emerald-400 mt-0.5">247</p>
+                <p className="text-[10px] text-emerald-400 flex items-center gap-0.5 mt-0.5"><ShieldCheck className="w-3 h-3" /> 98% ativos</p>
+              </div>
+              <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Anomalias</p>
+                <p className="text-lg font-bold text-amber-400 mt-0.5">23</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">5 criticas, 8 altas</p>
+              </div>
+              <div className="rounded-lg bg-slate-800/60 border border-slate-700/40 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider">Trust Index</p>
+                <p className="text-lg font-bold text-blue-400 mt-0.5">AA</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">Score 88/100</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-12 gap-3">
+              <div className="col-span-5 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-2">Evolucao — Verificacoes vs Certificacoes</p>
+                <ResponsiveContainer width="100%" height={140}>
+                  <AreaChart data={TRUST_AREA_DATA}>
+                    <defs>
+                      <linearGradient id="trustGradV" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                      </linearGradient>
+                      <linearGradient id="trustGradE" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.1)" />
+                    <XAxis dataKey="m" tick={{ fontSize: 9, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 9, fill: "#94a3b8" }} axisLine={false} tickLine={false} />
+                    <Area type="monotone" dataKey="v" stroke="#3b82f6" fill="url(#trustGradV)" strokeWidth={2} />
+                    <Area type="monotone" dataKey="e" stroke="#10b981" fill="url(#trustGradE)" strokeWidth={2} />
+                  </AreaChart>
+                </ResponsiveContainer>
+                <div className="flex gap-4 justify-center mt-1">
+                  <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-500" /><span className="text-[9px] text-slate-400">Verificacoes</span></div>
+                  <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500" /><span className="text-[9px] text-slate-400">Certificacoes</span></div>
+                </div>
+              </div>
+
+              <div className="col-span-3 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-2">Verificacoes por Modulo</p>
+                <ResponsiveContainer width="100%" height={140}>
+                  <BarChart data={MODULE_BAR_DATA} layout="vertical" barCategoryGap={4}>
+                    <XAxis type="number" hide />
+                    <YAxis type="category" dataKey="cat" tick={{ fontSize: 9, fill: "#94a3b8" }} axisLine={false} tickLine={false} width={65} />
+                    <Bar dataKey="val" radius={[0, 4, 4, 0]} barSize={14}>
+                      {MODULE_BAR_DATA.map((_, i) => (
+                        <Cell key={`bar-${i}`} fill={i === 0 ? "#f59e0b" : i === 1 ? "#8b5cf6" : i === 2 ? "#ef4444" : i === 3 ? "#22c55e" : "#f97316"} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+                <p className="text-[9px] text-slate-500 text-center mt-1">% do volume total</p>
+              </div>
+
+              <div className="col-span-2 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Trust Index</p>
+                <ResponsiveContainer width="100%" height={110}>
+                  <PieChart>
+                    <Pie data={TRUST_PIE_DATA} cx="50%" cy="50%" innerRadius={25} outerRadius={42} paddingAngle={3} dataKey="value" strokeWidth={0}>
+                      {TRUST_PIE_DATA.map((_, i) => (
+                        <Cell key={`pie-${i}`} fill={TRUST_PIE_COLORS[i]} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+                <div className="space-y-1 mt-1">
+                  {TRUST_PIE_DATA.map((item, i) => (
+                    <div key={item.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: TRUST_PIE_COLORS[i] }} /><span className="text-[9px] text-slate-400">{item.name}</span></div>
+                      <span className="text-[9px] text-slate-300 font-medium">{item.value}%</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="col-span-2 rounded-lg bg-slate-800/40 border border-slate-700/30 p-3">
+                <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Cobertura</p>
+                <ResponsiveContainer width="100%" height={120}>
+                  <RadarChart cx="50%" cy="50%" outerRadius="65%" data={TRUST_RADAR_DATA}>
+                    <PolarGrid stroke="rgba(148,163,184,0.15)" />
+                    <PolarAngleAxis dataKey="s" tick={{ fontSize: 7, fill: "#94a3b8" }} />
+                    <Radar dataKey="v" stroke="#10b981" fill="#10b981" fillOpacity={0.15} strokeWidth={1.5} />
+                  </RadarChart>
+                </ResponsiveContainer>
+                <p className="text-[9px] text-slate-500 text-center">Radar de cobertura</p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-1">
+              <p className="text-[10px] text-slate-500">Dados ilustrativos — dashboard personalizado por projeto</p>
+              <div className="flex items-center gap-1">
+                <Shield className="w-3 h-3 text-slate-500" />
+                <span className="text-[10px] text-slate-500">Cadeia de Custodia Digital</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-3 py-2">
+          <p className="text-xs text-muted-foreground">Infraestrutura com <strong className="text-foreground">cadeia de custodia</strong> e <strong className="text-foreground">rastreabilidade juridica</strong></p>
+          <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/subscription")} data-testid="button-cta-plan">
+            Ver plano
+            <ArrowRight className="w-3 h-3 ml-1" />
+          </Button>
+        </div>
+
+        <div className="relative overflow-hidden rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="section-trust-layer">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(16,185,129,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(59,130,246,0.04),transparent_50%)]" />
+          <div className="relative p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-emerald-500/20">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-100">AuraTRUST — Certification Layer</p>
+                  <p className="text-[10px] text-slate-400">Camada transversal que certifica todos os modulos AuraTECH</p>
+                </div>
+              </div>
+              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">Core</Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {CORE_INFRASTRUCTURE.map((infra) => (
+                <div key={infra.id} className="rounded-lg bg-slate-800/50 border border-slate-700/30 p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${infra.id === "trust" ? "bg-emerald-500/20" : "bg-blue-500/20"}`}>
+                      <infra.icon className={`w-4 h-4 ${infra.id === "trust" ? "text-emerald-400" : "text-blue-400"}`} />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-medium text-slate-200">{infra.name}</p>
+                      <p className="text-[9px] text-slate-500">{infra.tagline}</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">{infra.description}</p>
+                  <div className="space-y-1.5">
                     {infra.features.map((feat, i) => (
                       <div key={i} className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
-                        <span className="text-xs text-zinc-500">{feat}</span>
+                        <CheckCircle2 className={`w-3 h-3 ${infra.id === "trust" ? "text-emerald-500" : "text-blue-500"} shrink-0`} />
+                        <span className="text-[10px] text-slate-500">{feat}</span>
                       </div>
                     ))}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Separator className="bg-zinc-800/50" />
-
-      <section className="py-20 px-6" data-testid="section-verification">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-3">
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-medium">Verification & Analysis</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-100">
-              Primary modules
-            </h2>
-            <p className="text-sm text-zinc-500 max-w-lg mx-auto">
-              Evidence-based verification engines, each addressing a distinct compliance domain.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {VERIFICATION_MODULES.map((mod) => (
-              <Card key={mod.id} className={`bg-zinc-900/50 border ${mod.borderColor} hover:bg-zinc-900/80 transition-colors`}>
-                <CardHeader className="pb-3">
-                  <div className={`w-10 h-10 rounded-lg ${mod.bgColor} flex items-center justify-center mb-3`}>
-                    <mod.icon className={`w-5 h-5 ${mod.color}`} />
-                  </div>
-                  <CardTitle className="text-base text-zinc-100">{mod.name}</CardTitle>
-                  <CardDescription className="text-xs text-zinc-500">{mod.tagline}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-zinc-400 leading-relaxed">{mod.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Separator className="bg-zinc-800/50" />
-
-      <section className="py-20 px-6" data-testid="section-specialized">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-3">
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-medium">Specialized Validation</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-100">
-              Industry-specific modules
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {SPECIALIZED_MODULES.map((mod) => (
-              <div key={mod.id} className="bg-zinc-900/50 border border-zinc-800/50 rounded-lg p-5 hover:bg-zinc-900/80 transition-colors space-y-3">
-                <div className={`w-9 h-9 rounded-lg ${mod.bgColor} flex items-center justify-center`}>
-                  <mod.icon className={`w-4 h-4 ${mod.color}`} />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-zinc-200">{mod.name}</h3>
-                  <p className="text-[11px] text-zinc-500 mt-0.5">{mod.tagline}</p>
-                </div>
-                <p className="text-xs text-zinc-500 leading-relaxed">{mod.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Separator className="bg-zinc-800/50" />
-
-      <section className="py-20 px-6" data-testid="section-trust-index">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <div className="text-center space-y-3">
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-medium">Dynamic Trust Model</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-100">
-              Aura Trust Index™
-            </h2>
-            <p className="text-sm text-zinc-500 max-w-lg mx-auto">
-              Composite score derived from certification status, evidence completeness, compliance history, and anomaly patterns.
-            </p>
-          </div>
-
-          <div className="bg-zinc-900/50 border border-zinc-800/50 rounded-lg p-6 space-y-4">
-            <div className="grid grid-cols-5 gap-3">
-              {TRUST_INDEX_LEVELS.map((lvl) => (
-                <div key={lvl.level} className="text-center space-y-2">
-                  <div className={`w-full h-2 rounded-full ${lvl.color}`} />
-                  <p className={`text-lg font-bold ${lvl.textColor}`}>{lvl.level}</p>
-                  <p className="text-[10px] text-zinc-500">{lvl.label}</p>
-                  <p className="text-[10px] text-zinc-600">{lvl.range}</p>
                 </div>
               ))}
             </div>
-            <Separator className="bg-zinc-800/50" />
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-              <div className="space-y-1">
-                <Award className="w-4 h-4 text-zinc-600 mx-auto" />
-                <p className="text-xs text-zinc-400">Certification Status</p>
-                <p className="text-[10px] text-zinc-600">Active seals, valid certificates</p>
+
+            <div className="rounded-lg bg-slate-800/30 border border-slate-700/20 p-3">
+              <p className="text-[9px] text-slate-500 uppercase tracking-wider mb-3">Trilha de Custodia AuraTRUST</p>
+              <div className="flex items-center gap-0">
+                {CUSTODY_STEPS.map((step, i) => (
+                  <div key={step.label} className="flex items-center flex-1">
+                    <div className={`flex-1 rounded-md border ${step.bg} p-2 text-center`}>
+                      <p className={`text-[10px] font-medium ${step.color}`}>{step.label}</p>
+                      <p className="text-[8px] text-slate-500 mt-0.5">{step.sub}</p>
+                    </div>
+                    {i < CUSTODY_STEPS.length - 1 && <ArrowRight className="w-3 h-3 text-slate-600 mx-1 shrink-0" />}
+                  </div>
+                ))}
               </div>
-              <div className="space-y-1">
-                <Eye className="w-4 h-4 text-zinc-600 mx-auto" />
-                <p className="text-xs text-zinc-400">Evidence Completeness</p>
-                <p className="text-[10px] text-zinc-600">Data coverage, source diversity</p>
+            </div>
+
+            <p className="text-[10px] text-slate-500 text-center">Cada evidencia recebe identificacao unica, hash de integridade e registro imutavel — admissivel para Compliance, Juridico e Auditoria Interna</p>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-4" data-testid="section-verification">
+          <div className="flex items-center gap-2">
+            <Search className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Modulos de Verificacao & Analise</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Motores de verificacao baseados em evidencias, cada um cobrindo um dominio distinto de compliance.
+          </p>
+          <div className="space-y-3">
+            {VERIFICATION_MODULES.map((mod) => (
+              <Card key={mod.id} className={mod.borderColor} data-testid={`card-verification-${mod.id}`}>
+                <CardHeader className="pb-3">
+                  <div className="flex items-start gap-3">
+                    <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${mod.bgColor} shrink-0`}>
+                      <mod.icon className={`w-5 h-5 ${mod.color}`} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-sm">{mod.name}</CardTitle>
+                        <Badge variant="secondary" className="text-[10px]">{mod.tagline}</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{mod.description}</p>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="space-y-4" data-testid="section-specialized">
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Modulos Especializados de Validacao</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Verticais especificas por industria — a mesma infraestrutura de confianca aplicada onde verificacao baseada em evidencias e necessaria.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {SPECIALIZED_MODULES.map((mod) => (
+              <Card key={mod.id} data-testid={`card-specialized-${mod.id}`}>
+                <CardContent className="p-4 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${mod.bgColor}`}>
+                      <mod.icon className={`w-4 h-4 ${mod.color}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xs font-semibold">{mod.name}</h3>
+                      <p className="text-[10px] text-muted-foreground">{mod.tagline}</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <Separator />
+
+        <div className="relative overflow-hidden rounded-xl border border-blue-200 dark:border-blue-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="section-trust-index">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(59,130,246,0.06),transparent_50%)]" />
+          <div className="relative p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-blue-500/20">
+                  <Award className="w-4 h-4 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-100">Aura Trust Index™</p>
+                  <p className="text-[10px] text-slate-400">Score composto derivado de certificacao, evidencias, compliance e anomalias</p>
+                </div>
               </div>
-              <div className="space-y-1">
-                <Layers className="w-4 h-4 text-zinc-600 mx-auto" />
-                <p className="text-xs text-zinc-400">Compliance History</p>
-                <p className="text-[10px] text-zinc-600">Anomaly rate, resolution speed</p>
+              <Badge className="bg-blue-500/15 text-blue-400 border-blue-500/30 text-[10px]">Dynamic Model</Badge>
+            </div>
+
+            <div className="grid grid-cols-5 gap-2">
+              {TRUST_INDEX_LEVELS.map((lvl) => (
+                <div key={lvl.level} className={`rounded-md border ${lvl.color} p-3 text-center`}>
+                  <div className={`w-full h-1.5 rounded-full ${lvl.barColor} mb-2`} />
+                  <p className={`text-lg font-bold ${lvl.textColor}`}>{lvl.level}</p>
+                  <p className="text-[9px] text-slate-400 mt-0.5">{lvl.label}</p>
+                  <p className="text-[9px] text-slate-500">{lvl.range}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-lg bg-slate-800/40 border border-slate-700/30 p-3 text-center space-y-1">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 mx-auto" />
+                <p className="text-[10px] text-slate-300 font-medium">Certification Status</p>
+                <p className="text-[9px] text-slate-500">Selos ativos, certificados validos</p>
+              </div>
+              <div className="rounded-lg bg-slate-800/40 border border-slate-700/30 p-3 text-center space-y-1">
+                <Eye className="w-4 h-4 text-blue-400 mx-auto" />
+                <p className="text-[10px] text-slate-300 font-medium">Evidence Completeness</p>
+                <p className="text-[9px] text-slate-500">Cobertura de dados, diversidade de fontes</p>
+              </div>
+              <div className="rounded-lg bg-slate-800/40 border border-slate-700/30 p-3 text-center space-y-1">
+                <Layers className="w-4 h-4 text-amber-400 mx-auto" />
+                <p className="text-[10px] text-slate-300 font-medium">Compliance History</p>
+                <p className="text-[9px] text-slate-500">Taxa de anomalias, velocidade de resolucao</p>
               </div>
             </div>
           </div>
         </div>
-      </section>
 
-      <Separator className="bg-zinc-800/50" />
+        <Separator />
 
-      <section className="py-20 px-6" data-testid="section-market">
-        <div className="max-w-5xl mx-auto space-y-8">
-          <div className="text-center space-y-3">
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-medium">Market Application</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-100">
-              Initial deployment
-            </h2>
+        <div className="space-y-4" data-testid="section-market">
+          <div className="flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Aplicacao Inicial de Mercado</h2>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-zinc-900/50 border border-amber-500/20 hover:bg-zinc-900/80 transition-colors">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card className="border-amber-200 dark:border-amber-900/50">
               <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                    <Plane className="w-5 h-5 text-amber-500" />
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 shrink-0">
+                    <Plane className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                   </div>
                   <div>
-                    <CardTitle className="text-base text-zinc-100">Corporate Travel & Events</CardTitle>
-                    <Badge variant="outline" className="text-[10px] border-amber-500/30 text-amber-400 mt-1">Active</Badge>
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-sm">Corporate Travel & Events</CardTitle>
+                      <Badge className="text-[9px] bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-0">Ativo</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">R$ 51M+ em volume analisado. Conciliacao multi-sistema, analise forense e recuperacao de overcharge.</p>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-zinc-400 leading-relaxed">
-                  R$ 51M+ in analyzed volume. Multi-system reconciliation (OBT, GDS, BSP, VCN), forensic expense analysis, and overcharge recovery for corporate travel programs.
-                </p>
-                <div className="space-y-1.5">
-                  {[
-                    "4-way reconciliation pipeline",
-                    "Anomaly detection with AI",
-                    "Chain of custody (Lei 13.964/2019)",
-                    "Evidence-based overcharge recovery",
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <CheckCircle2 className="w-3 h-3 text-amber-500 shrink-0" />
-                      <span className="text-xs text-zinc-500">{item}</span>
-                    </div>
-                  ))}
-                </div>
+              <CardContent className="pt-0 space-y-1.5">
+                {[
+                  "Pipeline de conciliacao 4 vias",
+                  "Deteccao de anomalias com IA",
+                  "Cadeia de custodia (Lei 13.964/2019)",
+                  "Recuperacao de overcharge baseada em evidencias",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+                    <span className="text-xs text-muted-foreground">{item}</span>
+                  </div>
+                ))}
               </CardContent>
             </Card>
 
-            <Card className="bg-zinc-900/50 border border-zinc-800/50 hover:bg-zinc-900/80 transition-colors">
+            <Card>
               <CardHeader className="pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center">
-                    <Building2 className="w-5 h-5 text-zinc-500" />
+                <div className="flex items-start gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-muted shrink-0">
+                    <Network className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <CardTitle className="text-base text-zinc-100">Expanding Sectors</CardTitle>
-                    <Badge variant="outline" className="text-[10px] border-zinc-700 text-zinc-500 mt-1">Roadmap</Badge>
+                    <div className="flex items-center gap-2">
+                      <CardTitle className="text-sm">Setores em Expansao</CardTitle>
+                      <Badge variant="outline" className="text-[9px]">Roadmap</Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5">A mesma infraestrutura de confianca para qualquer dominio que exija verificacao baseada em evidencias.</p>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-zinc-400 leading-relaxed">
-                  The same trust infrastructure applies wherever evidence-based verification is required — from carbon markets to judicial assets.
-                </p>
-                <div className="space-y-1.5">
-                  {[
-                    "Carbon credit validation (AuraCARBO)",
-                    "Precatory due diligence (AuraLOA)",
-                    "Tax credit recovery (AuraTAX)",
-                    "Verified asset exchange (AuraMARKET)",
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <ChevronRight className="w-3 h-3 text-zinc-600 shrink-0" />
-                      <span className="text-xs text-zinc-500">{item}</span>
-                    </div>
-                  ))}
-                </div>
+              <CardContent className="pt-0 space-y-1.5">
+                {[
+                  "Validacao de creditos de carbono (AuraCARBO)",
+                  "Due diligence de precatorios (AuraLOA)",
+                  "Recuperacao de creditos tributarios (AuraTAX)",
+                  "Marketplace de ativos verificados (AuraMARKET)",
+                ].map((item) => (
+                  <div key={item} className="flex items-start gap-2">
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+                    <span className="text-xs text-muted-foreground">{item}</span>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           </div>
         </div>
-      </section>
 
-      <Separator className="bg-zinc-800/50" />
+        <Separator />
 
-      <section ref={trialRef} className="py-20 px-6" data-testid="section-trial">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <div className="text-center space-y-3">
-            <p className="text-xs text-emerald-500 tracking-widest uppercase font-medium">Free Diagnostic</p>
-            <h2 className="text-2xl md:text-3xl font-bold text-zinc-100">
-              Experience the platform
-            </h2>
-            <p className="text-sm text-zinc-500 max-w-lg mx-auto">
-              Upload up to 3 files and describe what you want analyzed. Our AI generates a diagnostic report with full chain of custody — SHA-256, timestamps, and complete traceability.
-            </p>
-            <div className="flex items-center justify-center gap-4 text-xs text-zinc-600">
-              <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Data not stored</span>
-              <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Chain of custody included</span>
-              <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> Results in seconds</span>
-            </div>
+        <div ref={trialRef} className="space-y-6" data-testid="section-trial">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Teste Gratuito — Diagnostico com Cadeia de Custodia</h2>
+          </div>
+          <p className="text-xs text-muted-foreground max-w-3xl">
+            Envie ate 3 arquivos e descreva o que deseja analisar. Nossa IA gera um relatorio de diagnostico com cadeia de custodia digital — SHA-256, timestamps e rastreabilidade completa.
+          </p>
+          <div className="flex items-center gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Dados nao armazenados</span>
+            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Cadeia de custodia inclusa</span>
+            <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> Resultado em segundos</span>
           </div>
 
           {isBlocked && !result ? (
             <div className="space-y-6">
               <div className="text-center space-y-3">
-                <Ban className="w-12 h-12 text-zinc-600 mx-auto" />
-                <h3 className="text-lg font-bold text-zinc-200" data-testid="text-trial-blocked">Free diagnostics exhausted</h3>
-                <p className="text-sm text-zinc-500 max-w-md mx-auto">
-                  You have used all {limit} free diagnostics available. Activate the full platform to continue.
+                <Ban className="w-12 h-12 text-muted-foreground mx-auto" />
+                <h3 className="text-base font-semibold" data-testid="text-trial-blocked">Seus testes gratuitos acabaram</h3>
+                <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                  Voce utilizou todos os {limit} diagnosticos gratuitos disponiveis. Ative a plataforma completa para continuar.
                 </p>
               </div>
-              <Card className="bg-emerald-950/20 border-emerald-500/20">
+              <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
                 <CardContent className="pt-6 space-y-4">
-                  <h3 className="text-base font-semibold text-center text-zinc-200">Continue with AuraTECH Platform</h3>
+                  <h3 className="text-sm font-semibold text-center">Continue com a Plataforma AuraTECH</h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex items-start gap-2">
-                      <Globe className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <Globe className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Real-Time API Integration</p>
-                        <p className="text-[10px] text-zinc-600">OBT, Backoffice, GDS, BSP, corporate cards</p>
+                        <p className="text-xs font-medium">Integracao API em Tempo Real</p>
+                        <p className="text-[10px] text-muted-foreground">OBT, Backoffice, GDS, BSP, cartoes corporativos</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <BarChart3 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <BarChart3 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Interactive Dashboard</p>
-                        <p className="text-[10px] text-zinc-600">KPIs, alerts, and real-time controls</p>
+                        <p className="text-xs font-medium">Dashboard Interativo</p>
+                        <p className="text-[10px] text-muted-foreground">KPIs, alertas e controles em tempo real</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Zap className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Multi-Way Reconciliation</p>
-                        <p className="text-[10px] text-zinc-600">PNR/TKT/EMD + invoice + card + expense</p>
+                        <p className="text-xs font-medium">Conciliacao Multi-vias</p>
+                        <p className="text-[10px] text-muted-foreground">PNR/TKT/EMD + fatura + cartao + expense</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Shield className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <Shield className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Certified Chain of Custody</p>
-                        <p className="text-[10px] text-zinc-600">SHA-256, Lei 13.964/2019</p>
+                        <p className="text-xs font-medium">Cadeia de Custodia Certificada</p>
+                        <p className="text-[10px] text-muted-foreground">SHA-256, Lei 13.964/2019</p>
                       </div>
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
-                    <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => navigate("/subscription")} data-testid="button-blocked-subscribe">
-                      Full Platform — US$ 99/month
+                    <Button onClick={() => navigate("/subscription")} data-testid="button-blocked-subscribe">
+                      Plataforma Completa — US$ 99/mes
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
-                    <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800" onClick={() => navigate("/login")} data-testid="button-blocked-login">
-                      Already have an account — Sign In
+                    <Button variant="outline" onClick={() => navigate("/login")} data-testid="button-blocked-login">
+                      Ja tenho conta — Entrar
                     </Button>
                   </div>
                 </CardContent>
@@ -671,45 +854,47 @@ export default function LandingPageTest() {
           ) : !result ? (
             <div className="space-y-4">
               {trialStatus && (
-                <div className={`rounded-lg px-4 py-3 ${remaining === 1 ? "bg-amber-950/20 border border-amber-500/20" : "bg-zinc-900/50 border border-zinc-800/50"}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-zinc-400" data-testid="text-trial-counter">
-                      {remaining === 1
-                        ? "Last free diagnostic available"
-                        : `${remaining} of ${limit} diagnostics remaining`}
-                    </span>
-                    <Badge variant={remaining === 1 ? "destructive" : "secondary"} className="text-[10px]">
-                      {used}/{limit} used
-                    </Badge>
-                  </div>
-                  <Progress value={(used / limit) * 100} className="h-1.5" />
-                  {remaining === 1 && (
-                    <p className="text-[10px] text-amber-500 mt-2">
-                      After this diagnostic, continue with the full AuraTECH platform.
-                    </p>
-                  )}
-                </div>
+                <Card className={remaining === 1 ? "border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20" : ""}>
+                  <CardContent className="pt-4 pb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium" data-testid="text-trial-counter">
+                        {remaining === 1
+                          ? "Ultimo teste gratuito disponivel"
+                          : `${remaining} de ${limit} testes restantes`}
+                      </span>
+                      <Badge variant={remaining === 1 ? "destructive" : "secondary"} className="text-[10px]">
+                        {used}/{limit} usados
+                      </Badge>
+                    </div>
+                    <Progress value={(used / limit) * 100} className="h-1.5" />
+                    {remaining === 1 && (
+                      <p className="text-[10px] text-amber-600 dark:text-amber-400 mt-2">
+                        Aproveite! Apos este teste, continue com a plataforma AuraTECH completa.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
               )}
 
-              <Card className="bg-zinc-900/50 border border-zinc-800/50">
+              <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2 text-zinc-200">
+                  <CardTitle className="text-base flex items-center gap-2">
                     <Upload className="w-4 h-4" />
-                    1. Upload your files
+                    1. Envie seus arquivos
                   </CardTitle>
-                  <CardDescription className="text-xs text-zinc-500">
-                    Up to 3 files (CSV, XLSX, PDF, TXT, JSON, XML) — max 10 MB each
+                  <CardDescription className="text-xs">
+                    Ate 3 arquivos (CSV, XLSX, PDF, TXT, JSON, XML) — max 10 MB cada
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div
-                    className="border-2 border-dashed border-zinc-700 rounded-lg p-6 text-center cursor-pointer hover:border-emerald-500/50 transition-colors"
+                    className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
                     onClick={() => fileInputRef.current?.click()}
                     data-testid="dropzone-files"
                   >
-                    <Upload className="w-8 h-8 mx-auto text-zinc-600 mb-2" />
-                    <p className="text-sm text-zinc-400">Click to select files</p>
-                    <p className="text-xs text-zinc-600 mt-1">or drag and drop here</p>
+                    <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground">Clique para selecionar arquivos</p>
+                    <p className="text-xs text-muted-foreground mt-1">ou arraste e solte aqui</p>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -724,55 +909,55 @@ export default function LandingPageTest() {
                   {files.length > 0 && (
                     <div className="space-y-2">
                       {files.map((f, i) => (
-                        <div key={i} className="flex items-center justify-between bg-zinc-800/50 rounded-md px-3 py-2">
+                        <div key={i} className="flex items-center justify-between bg-muted/50 rounded-md px-3 py-2">
                           <div className="flex items-center gap-2">
-                            <FileText className="w-4 h-4 text-emerald-500" />
-                            <span className="text-sm font-medium text-zinc-300" data-testid={`text-filename-${i}`}>{f.name}</span>
-                            <span className="text-xs text-zinc-600">({formatFileSize(f.size)})</span>
+                            <FileText className="w-4 h-4 text-primary" />
+                            <span className="text-sm font-medium" data-testid={`text-filename-${i}`}>{f.name}</span>
+                            <span className="text-xs text-muted-foreground">({formatFileSize(f.size)})</span>
                           </div>
-                          <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-zinc-300" onClick={() => removeFile(i)} data-testid={`button-remove-file-${i}`}>
+                          <Button variant="ghost" size="sm" onClick={() => removeFile(i)} data-testid={`button-remove-file-${i}`}>
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
                       ))}
-                      <p className="text-xs text-zinc-600">{files.length}/3 files selected</p>
+                      <p className="text-xs text-muted-foreground">{files.length}/3 arquivos selecionados</p>
                     </div>
                   )}
                 </CardContent>
               </Card>
 
-              <Card className="bg-zinc-900/50 border border-zinc-800/50">
+              <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2 text-zinc-200">
+                  <CardTitle className="text-base flex items-center gap-2">
                     <FileText className="w-4 h-4" />
-                    2. Describe your intent
+                    2. Descreva sua intencao
                   </CardTitle>
-                  <CardDescription className="text-xs text-zinc-500">
-                    Explain what you want to analyze, reconcile, or verify with these files
+                  <CardDescription className="text-xs">
+                    Explique o que voce quer analisar, conciliar ou verificar com esses arquivos
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Textarea
-                    placeholder="Ex: I want to reconcile airline tickets issued by the agency with corporate card invoices to identify value discrepancies and potential duplicate charges from October to December 2025..."
+                    placeholder="Ex: Quero conciliar os bilhetes aereos emitidos pela agencia com as faturas do cartao corporativo para identificar divergencias de valores e possiveis cobrancas duplicadas no periodo de outubro a dezembro de 2025..."
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={4}
-                    className="text-sm bg-zinc-900 border-zinc-700 text-zinc-300 placeholder:text-zinc-700"
+                    className="text-sm"
                     data-testid="input-description"
                   />
-                  <p className="text-xs text-zinc-600 mt-1">{description.length} characters</p>
+                  <p className="text-xs text-muted-foreground mt-1">{description.length} caracteres</p>
                 </CardContent>
               </Card>
 
               {error && (
-                <div className="flex items-center gap-2 text-sm text-red-400 bg-red-950/20 border border-red-500/20 rounded-md px-3 py-2" data-testid="text-error">
+                <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2" data-testid="text-error">
                   <AlertTriangle className="w-4 h-4" />
                   {error}
                 </div>
               )}
 
               <Button
-                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+                className="w-full"
                 size="lg"
                 onClick={handleAnalyze}
                 disabled={isAnalyzing || files.length === 0 || description.trim().length < 10}
@@ -781,12 +966,12 @@ export default function LandingPageTest() {
                 {isAnalyzing ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Analyzing with AI... please wait
+                    Analisando com IA... aguarde
                   </>
                 ) : (
                   <>
                     <Zap className="w-4 h-4 mr-2" />
-                    Generate Free Diagnostic
+                    Gerar Diagnostico Gratuito
                   </>
                 )}
               </Button>
@@ -794,86 +979,88 @@ export default function LandingPageTest() {
           ) : (
             <div className="space-y-6">
               {result.trialStatus && (
-                <div className={`rounded-lg px-4 py-3 ${result.trialStatus.remaining === 0 ? "bg-amber-950/20 border border-amber-500/20" : "bg-zinc-900/50 border border-zinc-800/50"}`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-medium text-zinc-400" data-testid="text-trial-result-counter">
-                      {result.trialStatus.remaining === 0
-                        ? "All free diagnostics used"
-                        : result.trialStatus.remaining === 1
-                          ? "1 free diagnostic remaining"
-                          : `${result.trialStatus.remaining} free diagnostics remaining`}
-                    </span>
-                    <Badge variant={result.trialStatus.remaining === 0 ? "destructive" : "secondary"} className="text-[10px]">
-                      {result.trialStatus.used}/{result.trialStatus.limit}
-                    </Badge>
-                  </div>
-                  <Progress value={(result.trialStatus.used / result.trialStatus.limit) * 100} className="h-1.5" />
-                </div>
+                <Card className={result.trialStatus.remaining === 0 ? "border-amber-500/50 bg-amber-50/50 dark:bg-amber-950/20" : ""}>
+                  <CardContent className="pt-4 pb-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-medium" data-testid="text-trial-result-counter">
+                        {result.trialStatus.remaining === 0
+                          ? "Voce utilizou todos os seus testes gratuitos"
+                          : result.trialStatus.remaining === 1
+                            ? "Voce ainda tem 1 teste gratuito restante"
+                            : `Voce ainda tem ${result.trialStatus.remaining} testes gratuitos restantes`}
+                      </span>
+                      <Badge variant={result.trialStatus.remaining === 0 ? "destructive" : "secondary"} className="text-[10px]">
+                        {result.trialStatus.used}/{result.trialStatus.limit}
+                      </Badge>
+                    </div>
+                    <Progress value={(result.trialStatus.used / result.trialStatus.limit) * 100} className="h-1.5" />
+                  </CardContent>
+                </Card>
               )}
 
-              <Card className="bg-zinc-900/50 border border-emerald-500/20">
+              <Card className="border-primary/30">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-base flex items-center gap-2 text-zinc-200">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-500" />
-                      Diagnostic Report
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-green-500" />
+                      Relatorio de Diagnostico
                     </CardTitle>
-                    <Badge variant="secondary" className="text-xs">Free Diagnostic</Badge>
+                    <Badge variant="secondary" className="text-xs">Teste Gratuito</Badge>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div
-                    className="prose prose-sm prose-invert max-w-none text-sm text-zinc-300"
+                    className="prose prose-sm dark:prose-invert max-w-none text-sm"
                     data-testid="text-report"
                     dangerouslySetInnerHTML={{ __html: formatMarkdown(result.report) }}
                   />
                 </CardContent>
               </Card>
 
-              <Card className="bg-zinc-900/50 border border-zinc-800/50">
+              <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm flex items-center gap-2 text-zinc-200">
+                  <CardTitle className="text-sm flex items-center gap-2">
                     <Lock className="w-4 h-4" />
-                    Digital Chain of Custody
+                    Cadeia de Custodia Digital
                   </CardTitle>
-                  <CardDescription className="text-xs text-zinc-500">
-                    Full traceability per Lei 13.964/2019 (Anti-Crime Package)
+                  <CardDescription className="text-xs">
+                    Rastreabilidade completa conforme Lei 13.964/2019 (Pacote Anticrime)
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="bg-zinc-800/50 rounded-md p-3 space-y-1">
-                      <p className="text-xs font-medium text-zinc-500">Envelope ID</p>
-                      <p className="text-xs font-mono text-zinc-400" data-testid="text-envelope-id">{result.envelope.envelopeId}</p>
+                    <div className="bg-muted/50 rounded-md p-3 space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">Envelope ID</p>
+                      <p className="text-xs font-mono" data-testid="text-envelope-id">{result.envelope.envelopeId}</p>
                     </div>
-                    <div className="bg-zinc-800/50 rounded-md p-3 space-y-1">
-                      <p className="text-xs font-medium text-zinc-500">AI Model</p>
-                      <p className="text-xs font-mono text-zinc-400">{result.envelope.processing.model}</p>
+                    <div className="bg-muted/50 rounded-md p-3 space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">Modelo IA</p>
+                      <p className="text-xs font-mono">{result.envelope.processing.model}</p>
                     </div>
-                    <div className="bg-zinc-800/50 rounded-md p-3 space-y-1">
-                      <p className="text-xs font-medium text-zinc-500">Started</p>
-                      <p className="text-xs font-mono text-zinc-400">{result.envelope.processing.startedAt}</p>
+                    <div className="bg-muted/50 rounded-md p-3 space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">Inicio</p>
+                      <p className="text-xs font-mono">{result.envelope.processing.startedAt}</p>
                     </div>
-                    <div className="bg-zinc-800/50 rounded-md p-3 space-y-1">
-                      <p className="text-xs font-medium text-zinc-500">Completed</p>
-                      <p className="text-xs font-mono text-zinc-400">{result.envelope.processing.completedAt}</p>
+                    <div className="bg-muted/50 rounded-md p-3 space-y-1">
+                      <p className="text-xs font-medium text-muted-foreground">Conclusao</p>
+                      <p className="text-xs font-mono">{result.envelope.processing.completedAt}</p>
                     </div>
                   </div>
 
-                  <Separator className="bg-zinc-800/50" />
+                  <Separator />
 
                   <div className="space-y-2">
-                    <p className="text-xs font-medium text-zinc-400">Analyzed files (SHA-256)</p>
+                    <p className="text-xs font-medium">Arquivos analisados (SHA-256)</p>
                     {result.files.map((f, i) => (
-                      <div key={i} className="bg-zinc-800/50 rounded-md p-2 space-y-1">
+                      <div key={i} className="bg-muted/50 rounded-md p-2 space-y-1">
                         <div className="flex items-center gap-2">
-                          <FileText className="w-3 h-3 text-emerald-500" />
-                          <span className="text-xs font-medium text-zinc-300">{f.originalName}</span>
-                          <Badge variant="outline" className="text-[10px] border-zinc-700 text-zinc-500">{f.format.toUpperCase()}</Badge>
+                          <FileText className="w-3 h-3 text-primary" />
+                          <span className="text-xs font-medium">{f.originalName}</span>
+                          <Badge variant="outline" className="text-[10px]">{f.format.toUpperCase()}</Badge>
                         </div>
                         <div className="flex items-center gap-1">
-                          <Hash className="w-3 h-3 text-zinc-600" />
-                          <code className="text-[10px] text-zinc-600 font-mono break-all" data-testid={`text-file-hash-${i}`}>
+                          <Hash className="w-3 h-3 text-muted-foreground" />
+                          <code className="text-[10px] text-muted-foreground font-mono break-all" data-testid={`text-file-hash-${i}`}>
                             {f.sha256}
                           </code>
                         </div>
@@ -881,18 +1068,18 @@ export default function LandingPageTest() {
                     ))}
                   </div>
 
-                  <Separator className="bg-zinc-800/50" />
+                  <Separator />
 
                   <div className="space-y-2">
-                    <div className="bg-zinc-800/50 rounded-md p-2 space-y-1">
-                      <p className="text-xs font-medium text-zinc-500">Report Hash (SHA-256)</p>
-                      <code className="text-[10px] text-zinc-600 font-mono break-all" data-testid="text-report-hash">
+                    <div className="bg-muted/50 rounded-md p-2 space-y-1">
+                      <p className="text-xs font-medium">Hash do Relatorio (SHA-256)</p>
+                      <code className="text-[10px] text-muted-foreground font-mono break-all" data-testid="text-report-hash">
                         {result.envelope.output.reportHash}
                       </code>
                     </div>
-                    <div className="bg-emerald-950/20 border border-emerald-500/20 rounded-md p-2 space-y-1">
-                      <p className="text-xs font-medium text-emerald-400">Envelope SHA-256</p>
-                      <code className="text-[10px] font-mono break-all text-emerald-300/70" data-testid="text-envelope-hash">
+                    <div className="bg-primary/5 border border-primary/20 rounded-md p-2 space-y-1">
+                      <p className="text-xs font-medium text-primary">Envelope SHA-256</p>
+                      <code className="text-[10px] font-mono break-all" data-testid="text-envelope-hash">
                         {result.envelope.envelopeSha256}
                       </code>
                     </div>
@@ -900,54 +1087,54 @@ export default function LandingPageTest() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-emerald-950/20 border-emerald-500/20">
+              <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent">
                 <CardContent className="pt-6 space-y-4">
-                  <h3 className="text-base font-semibold text-center text-zinc-200">
+                  <h3 className="text-sm font-semibold text-center">
                     {result.trialStatus?.remaining === 0
-                      ? "Free diagnostics exhausted — continue with full platform"
-                      : "Ready for more?"}
+                      ? "Seus testes gratuitos acabaram — continue com o plano completo"
+                      : "Quer ir alem do diagnostico?"}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="flex items-start gap-2">
-                      <Globe className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <Globe className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Real-Time API Integration</p>
-                        <p className="text-[10px] text-zinc-600">Connect OBT, Backoffice, GDS, BSP and corporate cards</p>
+                        <p className="text-xs font-medium">Integracao API em Tempo Real</p>
+                        <p className="text-[10px] text-muted-foreground">Conecte OBT, Backoffice, GDS, BSP e cartoes corporativos</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <BarChart3 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <BarChart3 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Interactive Dashboard</p>
-                        <p className="text-[10px] text-zinc-600">KPIs, alerts, audit timeline and real-time controls</p>
+                        <p className="text-xs font-medium">Dashboard Interativo</p>
+                        <p className="text-[10px] text-muted-foreground">KPIs, alertas, cronograma e controles em tempo real</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Zap className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <Zap className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Multi-Way Reconciliation</p>
-                        <p className="text-[10px] text-zinc-600">PNR/TKT/EMD + invoice + card/VCN + expense — AI automated</p>
+                        <p className="text-xs font-medium">Conciliacao Multi-vias</p>
+                        <p className="text-[10px] text-muted-foreground">PNR/TKT/EMD + fatura + cartao/VCN + expense — automatizado com IA</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Shield className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                      <Shield className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-medium text-zinc-300">Certified Chain of Custody</p>
-                        <p className="text-[10px] text-zinc-600">SHA-256, immutable trail, Lei 13.964/2019</p>
+                        <p className="text-xs font-medium">Cadeia de Custodia Certificada</p>
+                        <p className="text-[10px] text-muted-foreground">SHA-256, trilha imutavel, Lei 13.964/2019</p>
                       </div>
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
-                    <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => navigate("/subscription")} data-testid="button-trial-subscribe">
-                      Full Platform — US$ 99/month
+                    <Button onClick={() => navigate("/subscription")} data-testid="button-trial-subscribe">
+                      AuraTECH Pass — US$ 99/mes
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
-                    <Button variant="outline" className="border-zinc-700 text-zinc-300 hover:bg-zinc-800" onClick={() => navigate("/login")} data-testid="button-trial-login">
-                      Access Platform
+                    <Button variant="outline" onClick={() => navigate("/login")} data-testid="button-trial-login">
+                      Acessar Plataforma
                     </Button>
                     {result.trialStatus && result.trialStatus.remaining > 0 && (
-                      <Button variant="ghost" className="text-zinc-400 hover:text-zinc-200" onClick={() => { setResult(null); setFiles([]); setDescription(""); }} data-testid="button-trial-new">
-                        New Diagnostic ({result.trialStatus.remaining} remaining)
+                      <Button variant="ghost" onClick={() => { setResult(null); setFiles([]); setDescription(""); }} data-testid="button-trial-new">
+                        Novo Teste ({result.trialStatus.remaining} restante{result.trialStatus.remaining > 1 ? "s" : ""})
                       </Button>
                     )}
                   </div>
@@ -956,42 +1143,31 @@ export default function LandingPageTest() {
             </div>
           )}
         </div>
-      </section>
 
-      <Separator className="bg-zinc-800/50" />
+        <Separator />
 
-      <footer className="py-16 px-6" data-testid="section-footer">
-        <div className="max-w-4xl mx-auto text-center space-y-4">
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-8 h-8 rounded bg-emerald-600 flex items-center justify-center">
-              <Shield className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-semibold text-zinc-200">AuraTECH</span>
+        <div className="flex items-center justify-between text-xs text-muted-foreground pb-4" data-testid="section-footer">
+          <div className="flex items-center gap-2">
+            <Shield className="w-3 h-3" />
+            <span>Cadeia de Custodia Digital - Lei 13.964/2019</span>
           </div>
-          <p className="text-sm text-zinc-500">
-            Infrastructure for Evidence-Based Trust
-          </p>
-          <p className="text-[10px] text-zinc-700">
-            AuraTECH™ · AuraTRUST™ · AuraAUDIT™ · AuraDUE™ · AuraRISK™ · AuraCARBO™ · AuraLOA™ · AuraTAX™ · AuraMARKET™ · Aura Trust Index™
-          </p>
-          <p className="text-[10px] text-zinc-800">
-            © {new Date().getFullYear()} AuraTECH. All rights reserved.
-          </p>
+          <span>AuraTECH — Trust Infrastructure for Evidence-Based Verification</span>
         </div>
-      </footer>
+
+      </div>
     </div>
   );
 }
 
 function formatMarkdown(text: string): string {
   return text
-    .replace(/^### (.*$)/gm, '<h3 class="text-sm font-semibold mt-4 mb-2 text-zinc-200">$1</h3>')
-    .replace(/^## (.*$)/gm, '<h2 class="text-base font-semibold mt-5 mb-2 text-zinc-200">$1</h2>')
-    .replace(/^# (.*$)/gm, '<h1 class="text-lg font-bold mt-6 mb-3 text-zinc-100">$1</h1>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-zinc-200">$1</strong>')
+    .replace(/^### (.*$)/gm, '<h3 class="text-sm font-semibold mt-4 mb-2">$1</h3>')
+    .replace(/^## (.*$)/gm, '<h2 class="text-base font-semibold mt-5 mb-2">$1</h2>')
+    .replace(/^# (.*$)/gm, '<h1 class="text-lg font-bold mt-6 mb-3">$1</h1>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/^- (.*$)/gm, '<li class="ml-4 text-sm text-zinc-400">$1</li>')
-    .replace(/^(\d+)\. (.*$)/gm, '<li class="ml-4 text-sm text-zinc-400">$1. $2</li>')
+    .replace(/^- (.*$)/gm, '<li class="ml-4 text-sm">$1</li>')
+    .replace(/^(\d+)\. (.*$)/gm, '<li class="ml-4 text-sm">$1. $2</li>')
     .replace(/\n\n/g, '<br/><br/>')
     .replace(/\n/g, '<br/>');
 }
