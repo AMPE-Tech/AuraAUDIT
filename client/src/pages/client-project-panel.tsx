@@ -14,9 +14,6 @@ import {
   Target,
   Layers,
   FileSearch,
-  ArrowUpRight,
-  ArrowDownRight,
-  Minus,
   Zap,
   DollarSign,
   Building2,
@@ -50,41 +47,6 @@ const COLORS = {
   slate: "hsl(215, 20%, 65%)",
 };
 
-function MetricCard({ icon: Icon, label, value, subValue, trend, color }: {
-  icon: any;
-  label: string;
-  value: string;
-  subValue?: string;
-  trend?: "up" | "down" | "neutral";
-  color: string;
-}) {
-  return (
-    <Card data-testid={`metric-${label.toLowerCase().replace(/\s/g, '-')}`}>
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg" style={{ backgroundColor: `${color}15` }}>
-            <Icon className="w-5 h-5" style={{ color }} />
-          </div>
-          {trend && (
-            <div className={`flex items-center gap-0.5 text-xs font-medium ${
-              trend === "up" ? "text-green-600" : trend === "down" ? "text-red-500" : "text-muted-foreground"
-            }`}>
-              {trend === "up" ? <ArrowUpRight className="w-3.5 h-3.5" /> :
-               trend === "down" ? <ArrowDownRight className="w-3.5 h-3.5" /> :
-               <Minus className="w-3.5 h-3.5" />}
-            </div>
-          )}
-        </div>
-        <div className="mt-3">
-          <p className="text-2xl font-bold tracking-tight">{value}</p>
-          <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
-          {subValue && <p className="text-[11px] text-muted-foreground mt-0.5">{subValue}</p>}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
 function AwaitingDataCard({ title, icon: Icon, description, testId }: { title: string; icon: any; description: string; testId?: string }) {
   const id = testId || title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   return (
@@ -114,8 +76,56 @@ function AwaitingDataCard({ title, icon: Icon, description, testId }: { title: s
   );
 }
 
+function AwaitingMetricCard({ icon: Icon, label, color, testId }: { icon: any; label: string; color: string; testId?: string }) {
+  return (
+    <Card data-testid={testId || `metric-awaiting-${label.toLowerCase().replace(/\s/g, '-')}`}>
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg" style={{ backgroundColor: `${color}15` }}>
+            <Icon className="w-5 h-5" style={{ color }} />
+          </div>
+          <Lock className="w-3.5 h-3.5 text-muted-foreground" />
+        </div>
+        <div className="mt-3">
+          <p className="text-sm font-medium text-muted-foreground">Aguardando dados</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function MetricCard({ icon: Icon, label, value, subValue, color }: {
+  icon: any;
+  label: string;
+  value: string;
+  subValue?: string;
+  color: string;
+}) {
+  return (
+    <Card data-testid={`metric-${label.toLowerCase().replace(/\s/g, '-')}`}>
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg" style={{ backgroundColor: `${color}15` }}>
+            <Icon className="w-5 h-5" style={{ color }} />
+          </div>
+        </div>
+        <div className="mt-3">
+          <p className="text-2xl font-bold tracking-tight">{value}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{label}</p>
+          {subValue && <p className="text-[11px] text-muted-foreground mt-0.5">{subValue}</p>}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function ClientProjectPanel() {
   const { user } = useAuth();
+
+  const { data: projectOverview, isLoading: loadingOverview } = useQuery<any>({
+    queryKey: ["/api/client/project-overview"],
+  });
 
   const { data: expenses, isLoading: loadingExpenses } = useQuery<Expense[]>({
     queryKey: ["/api/expenses"],
@@ -129,19 +139,22 @@ export default function ClientProjectPanel() {
     queryKey: ["/api/anomalies"],
   });
 
-  const isLoading = loadingExpenses || loadingCases || loadingAnomalies;
+  const isLoading = loadingExpenses || loadingCases || loadingAnomalies || loadingOverview;
 
-  const totalExpenses = expenses?.reduce((sum, e) => sum + parseFloat(e.amount), 0) || 0;
-  const totalSavings = cases?.reduce((sum, c) => sum + parseFloat(c.savingsIdentified || "0"), 0) || 0;
+  const hasRealExpenseData = expenses && expenses.length > 0;
+  const hasRealAnomalyData = anomalies && anomalies.length > 0;
+  const hasRealCaseData = cases && cases.length > 0;
+  const hasAnyRealData = hasRealExpenseData || hasRealAnomalyData || hasRealCaseData;
+
+  const estimatedVolume = projectOverview?.volumes?.total || null;
+
+  const totalExpenses = hasRealExpenseData ? expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0) : 0;
+  const totalSavings = hasRealCaseData ? cases.reduce((sum, c) => sum + parseFloat(c.savingsIdentified || "0"), 0) : 0;
   const savingsPercent = totalExpenses > 0 ? ((totalSavings / totalExpenses) * 100).toFixed(1) : "0";
-  const unresolvedAnomalies = anomalies?.filter((a) => !a.resolved) || [];
-  const resolvedAnomalies = anomalies?.filter((a) => a.resolved) || [];
-  const totalItems = expenses?.length || 0;
+  const unresolvedAnomalies = hasRealAnomalyData ? anomalies.filter((a) => !a.resolved) : [];
+  const resolvedAnomalies = hasRealAnomalyData ? anomalies.filter((a) => a.resolved) : [];
 
-  const hasExpenseData = expenses && expenses.length > 0;
-  const hasAnomalyData = anomalies && anomalies.length > 0;
-
-  const categoryBreakdown = expenses
+  const categoryBreakdown = hasRealExpenseData
     ? Object.entries(
         expenses.reduce((acc, e) => {
           const cat = e.category === "airfare" ? "Aereo" : e.category === "hotel" ? "Hotel" : e.category === "meals" ? "Alimentacao" : e.category === "transport" ? "Transporte" : e.category === "event" ? "Eventos" : e.category;
@@ -151,7 +164,7 @@ export default function ClientProjectPanel() {
       ).map(([name, value]) => ({ name, value: Math.round(value) }))
     : [];
 
-  const statusBreakdown = expenses
+  const statusBreakdown = hasRealExpenseData
     ? Object.entries(
         expenses.reduce((acc, e) => {
           const label = e.status === "approved" ? "Aprovado" : e.status === "flagged" ? "Sinalizado" : e.status === "pending" ? "Pendente" : e.status;
@@ -163,7 +176,7 @@ export default function ClientProjectPanel() {
 
   const statusColors = ["hsl(145, 65%, 38%)", "hsl(0, 72%, 51%)", "hsl(38, 92%, 50%)"];
 
-  const severityData = anomalies
+  const severityData = hasRealAnomalyData
     ? Object.entries(
         anomalies.reduce((acc, a) => {
           const label = a.severity === "critical" ? "Critico" : a.severity === "high" ? "Alto" : a.severity === "medium" ? "Medio" : "Baixo";
@@ -206,57 +219,82 @@ export default function ClientProjectPanel() {
         </div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <MetricCard
-            icon={DollarSign}
-            label="Volume Analisado"
-            value={formatCurrency(totalExpenses)}
-            subValue={`${totalItems} transacoes`}
-            color={COLORS.primary}
-          />
-          <MetricCard
-            icon={TrendingDown}
-            label="Economia Identificada"
-            value={formatCurrency(totalSavings)}
-            subValue={`${savingsPercent}% do volume`}
-            trend="up"
-            color={COLORS.success}
-          />
-          <MetricCard
-            icon={AlertTriangle}
-            label="Anomalias Abertas"
-            value={`${unresolvedAnomalies.length}`}
-            subValue={`de ${anomalies?.length || 0} detectadas`}
-            trend={unresolvedAnomalies.length > 3 ? "down" : "up"}
-            color={COLORS.warning}
-          />
-          <MetricCard
-            icon={CheckCircle2}
-            label="Anomalias Resolvidas"
-            value={`${resolvedAnomalies.length}`}
-            subValue={`${anomalies?.length ? ((resolvedAnomalies.length / anomalies.length) * 100).toFixed(0) : 0}% resolucao`}
-            trend="up"
-            color={COLORS.success}
-          />
-          <MetricCard
-            icon={FileSearch}
-            label="Casos Ativos"
-            value={`${cases?.filter(c => c.status !== "closed").length || 0}`}
-            subValue={`de ${cases?.length || 0} casos`}
-            color={COLORS.violet}
-          />
-          <MetricCard
-            icon={Target}
-            label="Savings Rate"
-            value={`${savingsPercent}%`}
-            subValue="economia / volume"
-            trend="up"
-            color={COLORS.info}
-          />
+          {estimatedVolume ? (
+            <MetricCard
+              icon={DollarSign}
+              label="Volume Total Estimado"
+              value={estimatedVolume}
+              subValue={projectOverview?.period ? `Periodo: ${projectOverview.period}` : undefined}
+              color={COLORS.primary}
+            />
+          ) : (
+            <AwaitingMetricCard icon={DollarSign} label="Volume Total Estimado" color={COLORS.primary} testId="metric-volume-awaiting" />
+          )}
+
+          {hasRealExpenseData ? (
+            <MetricCard
+              icon={TrendingDown}
+              label="Economia Identificada"
+              value={formatCurrency(totalSavings)}
+              subValue={`${savingsPercent}% do volume`}
+              color={COLORS.success}
+            />
+          ) : (
+            <AwaitingMetricCard icon={TrendingDown} label="Economia Identificada" color={COLORS.success} testId="metric-economia-awaiting" />
+          )}
+
+          {hasRealAnomalyData ? (
+            <MetricCard
+              icon={AlertTriangle}
+              label="Anomalias Abertas"
+              value={`${unresolvedAnomalies.length}`}
+              subValue={`de ${anomalies.length} detectadas`}
+              color={COLORS.warning}
+            />
+          ) : (
+            <AwaitingMetricCard icon={AlertTriangle} label="Anomalias Abertas" color={COLORS.warning} testId="metric-anomalias-abertas-awaiting" />
+          )}
+
+          {hasRealAnomalyData ? (
+            <MetricCard
+              icon={CheckCircle2}
+              label="Anomalias Resolvidas"
+              value={`${resolvedAnomalies.length}`}
+              subValue={`${((resolvedAnomalies.length / anomalies.length) * 100).toFixed(0)}% resolucao`}
+              color={COLORS.success}
+            />
+          ) : (
+            <AwaitingMetricCard icon={CheckCircle2} label="Anomalias Resolvidas" color={COLORS.success} testId="metric-anomalias-resolvidas-awaiting" />
+          )}
+
+          {hasRealCaseData ? (
+            <MetricCard
+              icon={FileSearch}
+              label="Casos Ativos"
+              value={`${cases.filter(c => c.status !== "closed").length}`}
+              subValue={`de ${cases.length} casos`}
+              color={COLORS.violet}
+            />
+          ) : (
+            <AwaitingMetricCard icon={FileSearch} label="Casos Ativos" color={COLORS.violet} testId="metric-casos-awaiting" />
+          )}
+
+          {hasRealExpenseData ? (
+            <MetricCard
+              icon={Target}
+              label="Savings Rate"
+              value={`${savingsPercent}%`}
+              subValue="economia / volume"
+              color={COLORS.info}
+            />
+          ) : (
+            <AwaitingMetricCard icon={Target} label="Savings Rate" color={COLORS.info} testId="metric-savings-awaiting" />
+          )}
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {hasExpenseData ? (
+        {hasRealExpenseData && categoryBreakdown.length > 0 ? (
           <Card className="lg:col-span-2">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -265,65 +303,63 @@ export default function ClientProjectPanel() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {categoryBreakdown.length > 0 ? (
-                <ResponsiveContainer width="100%" height={280}>
-                  <BarChart data={categoryBreakdown} layout="vertical">
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
-                    <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
-                    <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} width={80} />
-                    <Tooltip formatter={(value: number) => [formatCurrency(value), "Valor"]} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                    <Bar dataKey="value" fill={COLORS.primary} radius={[0, 4, 4, 0]} barSize={20} />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-[280px] flex items-center justify-center text-sm text-muted-foreground">Sem dados</div>
-              )}
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={categoryBreakdown} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+                  <XAxis type="number" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}k`} />
+                  <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} width={80} />
+                  <Tooltip formatter={(value: number) => [formatCurrency(value), "Valor"]} contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                  <Bar dataKey="value" fill={COLORS.primary} radius={[0, 4, 4, 0]} barSize={20} />
+                </BarChart>
+              </ResponsiveContainer>
             </CardContent>
           </Card>
         ) : (
           <div className="lg:col-span-2">
             <AwaitingDataCard
-              title="Evolucao Mensal — Despesas vs. Economia"
+              title="Despesas por Categoria"
               icon={TrendingUp}
-              description="Os graficos de evolucao mensal serao exibidos apos o envio e processamento dos dados do cliente."
+              description="Os graficos de despesas por categoria serao exibidos apos o envio e processamento dos dados do cliente."
             />
           </div>
         )}
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              <PieChartIcon className="w-4 h-4 text-primary" />
-              Status das Despesas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {statusBreakdown.length > 0 ? (
-              <>
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie data={statusBreakdown} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value">
-                      {statusBreakdown.map((_, i) => (
-                        <Cell key={`cell-status-${i}`} fill={statusColors[i % statusColors.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
-                  </PieChart>
-                </ResponsiveContainer>
-                <div className="flex flex-wrap gap-3 justify-center">
-                  {statusBreakdown.map((item, i) => (
-                    <div key={item.name} className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusColors[i % statusColors.length] }} />
-                      <span className="text-xs text-muted-foreground">{item.name} ({item.value})</span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="h-[240px] flex items-center justify-center text-sm text-muted-foreground">Sem dados</div>
-            )}
-          </CardContent>
-        </Card>
+        {hasRealExpenseData && statusBreakdown.length > 0 ? (
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium flex items-center gap-2">
+                <PieChartIcon className="w-4 h-4 text-primary" />
+                Status das Despesas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={200}>
+                <PieChart>
+                  <Pie data={statusBreakdown} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value">
+                    {statusBreakdown.map((_, i) => (
+                      <Cell key={`cell-status-${i}`} fill={statusColors[i % statusColors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", fontSize: "12px" }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {statusBreakdown.map((item, i) => (
+                  <div key={item.name} className="flex items-center gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusColors[i % statusColors.length] }} />
+                    <span className="text-xs text-muted-foreground">{item.name} ({item.value})</span>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <AwaitingDataCard
+            title="Status das Despesas"
+            icon={PieChartIcon}
+            description="O grafico de status das despesas sera exibido apos o envio dos dados do cliente."
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -347,18 +383,18 @@ export default function ClientProjectPanel() {
           description="O progresso detalhado por area sera preenchido conforme a auditoria avanca com os dados reais do cliente."
         />
 
-        <Card>
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                Anomalias por Severidade
-              </CardTitle>
-              <Badge variant="secondary" className="text-[10px]">{anomalies?.length || 0} total</Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {severityData.length > 0 ? (
+        {hasRealAnomalyData && severityData.length > 0 ? (
+          <Card>
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                  Anomalias por Severidade
+                </CardTitle>
+                <Badge variant="secondary" className="text-[10px]">{anomalies.length} total</Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
               <div className="flex items-center gap-6">
                 <ResponsiveContainer width="50%" height={200}>
                   <PieChart>
@@ -382,11 +418,15 @@ export default function ClientProjectPanel() {
                   ))}
                 </div>
               </div>
-            ) : (
-              <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">Sem dados</div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          <AwaitingDataCard
+            title="Anomalias por Severidade"
+            icon={AlertTriangle}
+            description="O grafico de anomalias por severidade sera exibido apos a deteccao de anomalias nos dados do cliente."
+          />
+        )}
       </div>
 
       <AwaitingDataCard

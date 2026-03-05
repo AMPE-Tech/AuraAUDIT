@@ -99,9 +99,37 @@ async function ensureContractSignatures() {
   console.log("Contract signatures replicated to production");
 }
 
+async function cleanSeedData() {
+  try {
+    const expCount = await db.select({ id: expenses.id }).from(expenses).limit(1);
+    if (expCount.length > 0) {
+      await db.delete(expenses);
+      console.log("CP-01: Cleaned seed expenses data");
+    }
+    const anomCount = await db.select({ id: anomalies.id }).from(anomalies).limit(1);
+    if (anomCount.length > 0) {
+      await db.delete(anomalies);
+      console.log("CP-01: Cleaned seed anomalies data");
+    }
+    const caseCount = await db.select({ id: auditCases.id }).from(auditCases).limit(1);
+    if (caseCount.length > 0) {
+      await db.delete(auditCases);
+      console.log("CP-01: Cleaned seed audit_cases data");
+    }
+    const trailCount = await db.select({ id: auditTrail.id }).from(auditTrail).limit(1);
+    if (trailCount.length > 0) {
+      await db.delete(auditTrail);
+      console.log("CP-01: Cleaned seed audit_trail data");
+    }
+  } catch (err: any) {
+    console.error("Clean seed data error:", err.message);
+  }
+}
+
 export async function seedDatabase() {
   const existingClients = await db.select({ id: clients.id }).from(clients).limit(1);
   if (existingClients.length > 0) {
+    await cleanSeedData();
     await seedUsers({});
     await ensureContractSignatures();
     return;
