@@ -724,3 +724,54 @@ export type InsertAuditPagAlert = z.infer<typeof insertAuditPagAlertSchema>;
 export type AuditPagAlert = typeof auditPagAlerts.$inferSelect;
 export type InsertAuditPagAlertConfig = z.infer<typeof insertAuditPagAlertConfigSchema>;
 export type AuditPagAlertConfig = typeof auditPagAlertConfig.$inferSelect;
+
+export const trackerProjects = pgTable("tracker_projects", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id"),
+  name: text("name").notNull(),
+  description: text("description"),
+  totalEstimatedDays: integer("total_estimated_days").notNull().default(60),
+  startDate: timestamp("start_date"),
+  estimatedEndDate: timestamp("estimated_end_date"),
+  status: text("status").notNull().default("active"),
+  healthScore: text("health_score").notNull().default("on_track"),
+  createdByUserId: varchar("created_by_user_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const trackerPhases = pgTable("tracker_phases", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id").notNull(),
+  name: text("name").notNull(),
+  orderIndex: integer("order_index").notNull().default(0),
+  startDate: timestamp("start_date"),
+  estimatedEndDate: timestamp("estimated_end_date"),
+  actualEndDate: timestamp("actual_end_date"),
+  estimatedDays: integer("estimated_days").notNull().default(5),
+  status: text("status").notNull().default("not_started"),
+  deliverables: text("deliverables"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const trackerTimeEntries = pgTable("tracker_time_entries", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id").notNull(),
+  phaseId: varchar("phase_id"),
+  category: text("category").notNull(),
+  description: text("description"),
+  hours: decimal("hours", { precision: 8, scale: 2 }).notNull(),
+  date: timestamp("date").notNull().defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertTrackerProjectSchema = createInsertSchema(trackerProjects).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertTrackerPhaseSchema = createInsertSchema(trackerPhases).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertTrackerTimeEntrySchema = createInsertSchema(trackerTimeEntries).omit({ id: true, createdAt: true });
+export type InsertTrackerProject = z.infer<typeof insertTrackerProjectSchema>;
+export type TrackerProject = typeof trackerProjects.$inferSelect;
+export type InsertTrackerPhase = z.infer<typeof insertTrackerPhaseSchema>;
+export type TrackerPhase = typeof trackerPhases.$inferSelect;
+export type InsertTrackerTimeEntry = z.infer<typeof insertTrackerTimeEntrySchema>;
+export type TrackerTimeEntry = typeof trackerTimeEntries.$inferSelect;

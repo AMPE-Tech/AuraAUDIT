@@ -1,0 +1,253 @@
+Marcos, o que você quer é basicamente um **Project Timeline + Health Dashboard + Time Accounting**.
+A forma mais eficiente de pedir isso para uma IA é **estruturar o prompt com campos claros**, porque senão a IA só gera um cronograma simples.
+
+Vou te mostrar **o modelo de prompt correto** que gera exatamente o que você descreveu.
+
+---
+
+# Prompt ideal para gerar Timeline de Projeto com IA
+
+Copie e use algo assim:
+
+```
+Assuma a persona de um especialista em Project Management, PMO e Data Visualization.
+
+Preciso que você construa um Timeline visual de projeto com as seguintes características:
+
+1. O projeto possui 8 fases.
+2. Cada fase deve conter:
+   - Nome da fase
+   - Data de início
+   - Data estimada de término
+   - Tempo estimado em dias
+   - Entregáveis principais
+
+3. A linha do tempo deve apresentar:
+   - Cronograma completo do projeto
+   - Progresso atual
+   - O que já foi entregue
+   - O que está em andamento
+   - O que ainda não começou
+
+4. Cada fase deve possuir um indicador visual de status no modelo semáforo:
+
+🟢 Verde
+Entrega concluída dentro do prazo
+
+🟡 Amarelo
+Entrega ainda não concluída, mas dentro do ritmo planejado
+
+🔴 Vermelho
+Entrega atrasada ou com risco de atrasar as fases seguintes
+
+5. O timeline deve calcular automaticamente:
+
+- Tempo total estimado do projeto
+- Tempo já consumido
+- Percentual de progresso
+- Diferença entre planejado vs executado
+
+6. Quero também um sistema de relógio operacional que registre:
+
+Tempo de resposta do cliente
+Tempo de análise da auditoria
+Tempo de processamento do sistema AuraAUDIT
+
+Separar em:
+
+Client Response Time
+Audit Analysis Time
+System Processing Time
+
+7. Criar três visualizações:
+
+A. Timeline linear do projeto
+B. Dashboard de status das fases
+C. Painel de timesheet operacional
+
+8. Destacar visualmente:
+
+- fases entregues
+- fases em andamento
+- fases atrasadas
+
+9. No final apresentar um resumo executivo:
+
+Project Health Score
+On Track / Attention / Critical
+
+10. Organizar o resultado em formato visual simples que possa ser facilmente transformado em:
+
+- dashboard
+- slide
+- interface web
+- landing page de projeto
+```
+
+---
+
+# O que a IA vai gerar com esse prompt
+
+Ela normalmente cria 3 blocos:
+
+### 1️⃣ Timeline
+
+```
+Fase 1 — Kickoff
+🟢 Concluído
+Duração: 5 dias
+
+Fase 2 — Estruturação de Dados
+🟢 Concluído
+Duração: 7 dias
+
+Fase 3 — Motor de Auditoria
+🟡 Em andamento
+Duração estimada: 12 dias
+
+Fase 4 — Integração de APIs
+🟡 Em andamento
+Duração estimada: 8 dias
+
+Fase 5 — Motor de Score
+⚪ Não iniciado
+
+Fase 6 — Dashboard
+⚪ Não iniciado
+
+Fase 7 — Testes
+⚪ Não iniciado
+
+Fase 8 — Deploy
+⚪ Não iniciado
+```
+
+---
+
+### 2️⃣ Status geral
+
+Exemplo:
+
+```
+Tempo total estimado: 60 dias
+Tempo consumido: 24 dias
+
+Progresso: 40%
+
+Project Health:
+🟡 Attention
+```
+
+---
+
+### 3️⃣ Relógio operacional (isso é muito poderoso para o AuraAUDIT)
+
+Exemplo:
+
+```
+Operational Time Breakdown
+
+Client Response Time
+12h acumuladas
+
+Audit Analysis Time
+38h acumuladas
+
+System Processing Time
+6h
+
+Total Project Time
+56h
+```
+
+---
+
+# Como isso pode virar um **recurso dentro do AuraAUDIT**
+
+Isso vira um módulo chamado:
+
+### **Audit Project Tracker**
+
+Ele mede:
+
+• progresso da auditoria
+• dependência do cliente
+• tempo de análise
+• tempo do sistema
+
+e calcula:
+
+```
+Audit Efficiency Score
+```
+
+Exemplo:
+
+```
+Client Delay Impact
+18%
+
+System Processing
+7%
+
+Audit Team Time
+75%
+```
+
+---
+
+# Ideia MUITO poderosa para o AuraAUDIT
+
+Você pode mostrar isso para o cliente como:
+
+### **Audit Transparency Dashboard**
+
+Isso resolve um problema enorme de auditoria:
+
+Cliente sempre fala:
+
+> "A auditoria está demorando"
+
+Você mostra:
+
+```
+Tempo total: 20 dias
+
+Tempo cliente: 11 dias
+Tempo auditoria: 6 dias
+Tempo sistema: 3 dias
+```
+
+Transparência total.
+
+---
+
+# Melhor ferramenta visual para isso
+
+Se você quiser gerar automaticamente:
+
+### 1️⃣ Mermaid (para dev)
+
+Timeline automática.
+
+### 2️⃣ Notion / ClickUp style
+
+Visual tipo Gantt.
+
+### 3️⃣ Dashboard SaaS
+
+Perfeito para AuraAUDIT.
+
+---
+
+# Se quiser, eu posso te entregar também
+
+1️⃣ **Modelo visual ideal de timeline para o AuraAUDIT**
+2️⃣ **Prompt para o Replit gerar isso automaticamente no sistema**
+3️⃣ **Arquitetura do módulo "Audit Timeline Engine"**
+
+Esse módulo inclusive pode virar **um diferencial global do AuraTECH**.
+
+Porque **quase nenhuma auditoria mostra tempo operacional real**.
+
+E isso muda completamente a percepção do cliente. 🚀

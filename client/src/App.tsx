@@ -46,6 +46,7 @@ import DashboardStudio from "@/pages/dashboard-studio";
 import IaKnowledge from "@/pages/ia-knowledge";
 import EmailCampaigns from "@/pages/email-campaigns";
 import AuditPag from "@/pages/audit-pag";
+import AuraTracker from "@/pages/aura-tracker";
 import TesteAgora from "@/pages/teste-agora";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -77,6 +78,7 @@ function AdminRouter() {
       <Route path="/ia-knowledge" component={IaKnowledge} />
       <Route path="/email-campaigns" component={EmailCampaigns} />
       <Route path="/audit-pag" component={AuditPag} />
+      <Route path="/tracker" component={AuraTracker} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={NotFound} />
     </Switch>
@@ -102,6 +104,7 @@ function ClientRouter() {
       <Route path="/billing" component={BillingPage} />
       <Route path="/dashboard-studio" component={DashboardStudio} />
       <Route path="/audit-pag" component={AuditPag} />
+      <Route path="/tracker" component={AuraTracker} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={ClientDashboard} />
     </Switch>

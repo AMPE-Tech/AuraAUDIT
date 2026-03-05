@@ -17,6 +17,7 @@ import { registerArtifactsRoutes } from "./artifacts-routes";
 import { registerIaKnowledgeRoutes } from "./ia-knowledge-routes";
 import { registerEmailRoutes } from "./email-routes";
 import { registerAuditPagRoutes } from "./audit-pag-routes";
+import { registerTrackerRoutes } from "./tracker-routes";
 
 const app = express();
 app.set("trust proxy", true);
@@ -154,6 +155,7 @@ async function initStripe() {
   registerIaKnowledgeRoutes(app);
   registerEmailRoutes(app);
   registerAuditPagRoutes(app);
+  registerTrackerRoutes(app);
   await registerRoutes(httpServer, app);
 
   app.use((err: any, _req: Request, res: Response, next: NextFunction) => {
