@@ -41,7 +41,7 @@ const mainItems = [
   { title: "Reconciliacao", url: "/reconciliation", icon: ArrowRightLeft },
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
   { title: "Anomalias", url: "/anomalies", icon: AlertTriangle },
-  { title: "AuditPag", url: "/audit-pag", icon: ShieldCheck },
+  { title: "AuraTRUST", url: "/audit-pag", icon: ShieldCheck },
   { title: "AuraTRACK", url: "/tracker", icon: Activity },
 ];
 

@@ -233,8 +233,8 @@ export default function AuditPag() {
         <div className="flex items-center gap-3">
           <ShieldCheck className="w-6 h-6 text-primary" />
           <div>
-            <h1 className="text-2xl font-bold" data-testid="text-page-title">AuditPag</h1>
-            <p className="text-sm text-muted-foreground">Auditoria Pré-Aprovação de Pagamentos</p>
+            <h1 className="text-2xl font-bold" data-testid="text-page-title">AuraTRUST</h1>
+            <p className="text-sm text-muted-foreground">Monitoramento Contínuo Pré-Pagamento</p>
           </div>
           {unreadAlertCount > 0 && (
             <Badge variant="destructive" className="ml-2 animate-pulse" data-testid="badge-unread-alerts">
@@ -1122,7 +1122,7 @@ function NewCaseDialog({ open, onOpenChange, onSubmit, isPending }: any) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5" />
-            Novo Caso — AuditPag
+            Novo Caso — AuraTRUST
           </DialogTitle>
         </DialogHeader>
 

@@ -149,7 +149,7 @@ async function generateAlert(options: {
       try {
         await sendEmail({
           to: email,
-          subject: `[AuditPag ${severity.toUpperCase()}] ${options.title}`,
+          subject: `[AuraTRUST ${severity.toUpperCase()}] ${options.title}`,
           html: generateAlertEmailHtml(options.title, options.description, severity, amount),
         });
         await db.update(auditPagAlerts).set({ status: "sent", sentAt: new Date(), recipientEmail: email }).where(eq(auditPagAlerts.id, alert.id));
@@ -183,14 +183,14 @@ function generateAlertEmailHtml(title: string, description: string, severity: st
   return `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#1a1a2e;color:#fff;border-radius:8px;overflow:hidden;">
       <div style="background:${color};padding:16px 24px;">
-        <h2 style="margin:0;font-size:18px;">AuditPag — Alerta ${severity.toUpperCase()}</h2>
+        <h2 style="margin:0;font-size:18px;">AuraTRUST — Alerta ${severity.toUpperCase()}</h2>
       </div>
       <div style="padding:24px;">
         <h3 style="margin:0 0 12px;font-size:16px;">${title}</h3>
         <p style="color:#ccc;line-height:1.6;">${description}</p>
         ${amountStr ? `<p style="margin-top:16px;font-size:20px;font-weight:bold;color:${color};">Valor: ${amountStr}</p>` : ""}
         <hr style="border:none;border-top:1px solid #333;margin:24px 0;" />
-        <p style="color:#888;font-size:12px;">Este alerta foi gerado automaticamente pelo AuditPag — AuraAUDIT.</p>
+        <p style="color:#888;font-size:12px;">Este alerta foi gerado automaticamente pelo AuraTRUST — AuraAUDIT.</p>
       </div>
     </div>
   `;
@@ -1133,7 +1133,7 @@ export function registerAuditPagRoutes(app: Express) {
           const recipients = configs[0].emailRecipients.split(",").map((e: string) => e.trim());
           for (const email of recipients) {
             try {
-              await sendEmail(email, `[AuditPag CRITICAL] ${alertTitle}`, alertDesc);
+              await sendEmail(email, `[AuraTRUST CRITICAL] ${alertTitle}`, alertDesc);
             } catch { /* email best effort */ }
           }
         }

@@ -410,7 +410,7 @@ PARTE V — PLATAFORMA DIGITAL AURAAUDIT
 28.7. Dosagem progressiva de conteudo: IA entrega no maximo 30% do conteudo total na primeira interacao, qualifica o contexto do usuario com perguntas especificas, e aprofunda progressivamente conforme confirmacoes.
 28.8. Verificacao dupla obrigatoria: antes de apresentar qualquer dado numerico ou metrica, a IA confirma internamente se o dado tem origem verificavel (API, upload, contrato).
 
-29. SISTEMA DE ALERTAS v2 (AUDITPAG)
+29. SISTEMA DE ALERTAS v2 (AURATRUST)
 
 29.1. Motor de alertas com auto-escalacao de severidade baseada em limites financeiros: R$ 10.000 (alto), R$ 50.000 (critico).
 29.2. Auto-escalacao funciona independentemente de configuracao por empresa — limites padrao sao aplicados quando nao ha config especifica.
@@ -432,11 +432,11 @@ PARTE V — PLATAFORMA DIGITAL AURAAUDIT
 30.7. Re-verificacao automatica apos remediacao para confirmar que a limpeza foi completa.
 30.8. Resultado da verificacao registrado em log estruturado com status PASSED/FAILED por tabela.
 
-31. AUDITPAG — MODULO INDEPENDENTE DE MONITORAMENTO CONTINUO
+31. AURATRUST — MODULO INDEPENDENTE DE MONITORAMENTO CONTINUO
 
-31.1. O AuditPag opera como modulo independente e separado do projeto de auditoria forense pontual. Enquanto a auditoria forense (ex: Stabia) analisa dados historicos (passado), o AuditPag audita transacoes em tempo real (presente), funcionando como monitoramento continuo pre-pagamento.
+31.1. O AuraTRUST opera como modulo independente e separado do projeto de auditoria forense pontual. Enquanto a auditoria forense (ex: Stabia) analisa dados historicos (passado), o AuraTRUST audita transacoes em tempo real (presente), funcionando como monitoramento continuo pre-pagamento.
 31.2. Ativacao exclusiva para clientes que contratarem o servico de monitoramento continuo. O modulo nao pode ser acionado como parte de um projeto de auditoria pontual.
-31.3. Precificacao do AuditPag Monitoramento Continuo:
+31.3. Precificacao do AuraTRUST Monitoramento Continuo:
   (a) Mensalidade base: US$ 199,00/mes para clientes com faturamento mensal ate US$ 10.000,00 (dez mil dolares).
   (b) Para clientes com faturamento acima de US$ 10.000,00/mes, aplica-se a tabela progressiva de auditoria sobre volume (mesmas faixas do AuraAudit Pass sobre o excedente):
       - VAM ate US$ 100.000: 0,30%
@@ -451,7 +451,7 @@ PARTE V — PLATAFORMA DIGITAL AURAAUDIT
 31.5. Validacoes automaticas executadas pelo pipeline: (a) confirmacao de pagamento do cliente, (b) confirmacao de pagamento ao fornecedor com invariante fornecedor < cliente, (c) identificacao de comissoes e incentivos recebidos dos fornecedores, (d) reconciliacao de FEE (taxa de servico, fatura separada), (e) reconciliacao de documentos fiscais (Nota Fiscal, Recibo, Fatura).
 31.6. Auto-alertas com escalacao de severidade: fornecedor nao autorizado (CRITICAL), violacao de invariante fornecedor >= cliente (CRITICAL), divergencia de valores (HIGH), pagamento nao confirmado (HIGH), comissao/incentivo nao recebido (MEDIUM), FEE nao reconciliada (MEDIUM), divergencia documento fiscal (MEDIUM).
 31.7. Log imutavel de reconciliacao: cada passo do pipeline gera registro com hash SHA-256 de integridade, em conformidade com Lei 13.964/2019.
-31.8. O modulo AuditPag pode ser contratado independentemente do AuraAudit Pass ou de qualquer projeto de auditoria pontual.
+31.8. O modulo AuraTRUST pode ser contratado independentemente do AuraAudit Pass ou de qualquer projeto de auditoria pontual.
 
 ============================================================
 ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E28)
@@ -479,12 +479,12 @@ E19. Assinatura eletronica: Lei 14.063/2020 + MP 2.200-2/2001
 E20. LGPD: mascaramento de CPF, dados pessoais protegidos, finalidade contratual
 E21. Pagina publica: chat IA flutuante com trial gratuito e cadeia de custodia
 E22. Ecossistema de Integracoes: 149+ plataformas mapeadas em 15 segmentos (GDS, NDC Airlines, IATA/BSP, Hotelaria Global, Hotelaria Brasil/FOHB, Locadoras, Consolidadoras, Operadoras, Seguros, Pagamentos, TMC Globais, TMC Nacionais/ABRACORP, Agencias de Eventos/MICE, TravelTech, Plataformas de Eventos)
-E23. AuditPag: auditoria pre-pagamento com cruzamento solicitacao/reserva/financeiro/extrato bancario, perfis agencia e corporativo, monitoramento diario de entradas/saidas, achados tipificados, conformidade pre-aprovacao CFO
+E23. AuraTRUST: auditoria pre-pagamento com cruzamento solicitacao/reserva/financeiro/extrato bancario, perfis agencia e corporativo, monitoramento diario de entradas/saidas, achados tipificados, conformidade pre-aprovacao CFO
 E24. Alert Engine v2: auto-escalacao de severidade por valor financeiro, forcamento de canal email em alertas criticos/altos, CC automatico ao admin, hash SHA-256 persistido por alerta com trilha de auditoria
 E25. CP-01 Health Check Pipeline: verificacao automatica de integridade em cada boot, deteccao de padroes de dados de teste, auto-remediacao cirurgica com notificacao por email, endpoints admin para verificacao e remediacao sob demanda
 E26. AuraAI Formatacao v2: regras de formatacao limpa (sem markdown pesado), dosagem progressiva de conteudo (30% na primeira resposta), qualificacao de contexto antes de entrega, verificacao dupla de dados
 E27. AuraTRACK: timeline de projeto com 3 visualizacoes (timeline linear, status dashboard, timesheet operacional), auto-calculo de Project Health Score (on_track/attention/critical), decomposicao de tempo operacional (Client Response Time, Audit Analysis Time, System Processing Time), Audit Efficiency Score com percentuais, controle de acesso por tenant (client scoping), fases com semaforo de status (completed/in_progress/delayed/not_started), disponivel no painel admin e cliente
-E28. AuditPag Monitoramento Continuo (Bloco D): Pipeline de Reconciliacao Automatica com 3 Camadas (pedido x ERP x banco), cruzamento triplo com validacao de invariantes (fornecedor < cliente), reconciliacao de FEE/comissoes/incentivos/documentos fiscais (NF/Recibo/Fatura), log imutavel por step com SHA-256, auto-alertas em 8 cenarios (CRITICAL/HIGH/MEDIUM), modulo independente com precificacao propria (US$ 199/mes base + progressiva sobre volume)
+E28. AuraTRUST Monitoramento Continuo (Bloco D): Pipeline de Reconciliacao Automatica com 3 Camadas (pedido x ERP x banco), cruzamento triplo com validacao de invariantes (fornecedor < cliente), reconciliacao de FEE/comissoes/incentivos/documentos fiscais (NF/Recibo/Fatura), log imutavel por step com SHA-256, auto-alertas em 8 cenarios (CRITICAL/HIGH/MEDIUM), modulo independente com precificacao propria (US$ 199/mes base + progressiva sobre volume)
 
 ============================================================
 ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
@@ -522,7 +522,7 @@ Limites por usuario/empresa, cap mensal, threshold de auto-aprovacao. Configurav
 M10. ECOSSISTEMA DE INTEGRACOES (149+ PLATAFORMAS)
 Mapeamento completo do ecossistema de integracao com 149+ plataformas em 15 segmentos: GDS (Amadeus, Sabre, Travelport), NDC Airlines (LATAM, GOL, Azul, Lufthansa, Emirates, Qatar, British Airways, Iberia, Air France/KLM, American Airlines), IATA/BSP (BSPLink, Financial Gateway, EasyPay, ARC), Hotelaria Global (Marriott, Hilton, Accor, IHG, Hyatt, Wyndham, Omnibees, Hotelbeds, Booking, Expedia, SiteMinder), Hotelaria Brasil/FOHB (Atlantica, Bourbon, Blue Tree, Intercity, Slaviero, Taua, Wish, Vila Gale, Nobile, Transamerica, BHG, Othon, Bristol, Laghetto, Deville), Locadoras (Localiza, Movida, Unidas, Hertz, Avis, Budget, Enterprise, Sixt, Europcar), Consolidadoras (RexturAdvance, Ancoradouro, Flytour, BRT, Trend, Sakura, Confianca, New Age, Diversa), Operadoras (CVC, Visual, Agaxtur, Teresa Perez, Queensberry, Schultz, Orinter, Lusanova, Europamundo), Seguros (Assist Card, GTA, Coris, Allianz, Travel Ace, April, Intermac, Universal Assistance, Porto Seguro), Pagamentos (EBTA Bradesco, Itau, Santander, BB, Mastercard Corporate, Visa Corporate, AirPlus, Hotelcard, WEX, ETTC), TMC Globais (Amex GBT, BCD Travel, CWT, FCM Travel, CTM, Egencia), TMC Nacionais/ABRACORP (Flytour Business Travel, Avipam, Alatur JTB, Costa Brava, Kontik, Grupo Arbaitman, Reserve Travel, Hostway, Copastur, VoeTur, SAP Concur, ExpenseOn, TMS Travel), Agencias de Eventos/MICE (MCI Brasil, Alatur Eventos, Flytour Eventos, Sherpa42, TM1 Eventos, SRCOM, Banco de Eventos, Holding Clube, Agencia Samba, BFerraz), TravelTech (Onfly, Paytrack, Lemontech, Argo Solutions, Wooba, Reserve), Plataformas de Eventos (Sympla, Eventbrite, Cvent, Bizzabo, Even3, Ticket360). Metodos: API REST, XML, GDS, NDC, SFTP, CSV/XLSX, Portal. Pagina de ecossistema com busca e visualizacao por segmento. Status: IMPLEMENTADO.
 
-M11. AUDITPAG — MONITORAMENTO CONTINUO PRE-PAGAMENTO (MODULO INDEPENDENTE)
+M11. AURATRUST — MONITORAMENTO CONTINUO PRE-PAGAMENTO (MODULO INDEPENDENTE)
 Modulo independente de monitoramento continuo que audita transacoes em tempo real (presente), separado do projeto de auditoria forense pontual (que analisa o passado). Precificacao propria: US$ 199/mes (base ate US$ 10.000 de faturamento mensal), tabela progressiva sobre volume excedente (mesmas faixas AuraAudit Pass). Fluxo: Solicitacao (quem pediu, departamento, destino) → Reserva (codigo PNR, confirmacao fornecedor, datas) → Financeiro (meio de pagamento: faturado/Pix/cartao corporativo/cartao de credito/boleto, valores solicitado/faturado/fornecedor, NF, vencimento) → Acordos e Comissoes (acordo corporativo, comissao %, incentivos, rebates — perfil agencia) → Conciliacao Bancaria (extrato banco via API, match/unmatch/parcial) → Monitoramento Diario (entradas/saidas, conformidade/desconformidade). Pipeline de Reconciliacao Automatica com 3 Camadas: Camada 1 (pedido do cliente — OBT/GDS/email/approval), Camada 2 (ERP/fatura — cruzamento C1xC2), Camada 3 (extrato bancario — conta corrente/cartao credito/cartao virtual VCN — cruzamento triplo). Validacoes automaticas: pagamento cliente confirmado, invariante fornecedor < cliente, comissoes/incentivos recebidos, FEE reconciliada, documentos fiscais (NF/Recibo/Fatura). Auto-alertas em 8 cenarios com escalacao de severidade (CRITICAL/HIGH/MEDIUM). Log imutavel de reconciliacao com SHA-256. Dois perfis: Agencia (com comissao, incentivos, rebates, NF agencia) e Corporativo (sem comissao, foco em solicitacao vs fatura/extrato cartao). Dashboard com KPIs, summary de reconciliacao (matched/partial/divergent/blocked), volumes financeiros. Achados tipificados. Contratavel independentemente do AuraAudit Pass. Status: IMPLEMENTADO.
 
 M12. AURATRACK — AUDIT TIMELINE ENGINE
@@ -553,7 +553,7 @@ ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 [OK] CL19. Reconciliacao: cruzamento multi-via (OBT/Backoffice/fatura/cartao)
 [OK] CL20. Role-based access: admin, client, auditor com controle de acesso por rota
 [OK] CL21-ECO. Ecossistema de Integracoes: 149+ plataformas em 15 segmentos, busca, metodos de integracao, APIs privadas e publicas
-[OK] CL22-PAG. AuditPag: auditoria pre-pagamento com perfis agencia/corporativo, cruzamento solicitacao-reserva-financeiro-extrato, monitoramento diario, achados tipificados
+[OK] CL22-PAG. AuraTRUST: auditoria pre-pagamento com perfis agencia/corporativo, cruzamento solicitacao-reserva-financeiro-extrato, monitoramento diario, achados tipificados
 [OK] CL23-ALT. Alert Engine v2: auto-escalacao de severidade, forcamento de email em CRITICAL/HIGH, CC admin, hash SHA-256 por alerta
 [OK] CL24-HC. CP-01 Health Check: pipeline de verificacao automatica em boot, deteccao de padroes de seed, auto-remediacao cirurgica, notificacao email
 [OK] CL25-FMT. AuraAI Formatacao v2: formatacao limpa, dosagem progressiva 30%, qualificacao de contexto, verificacao dupla de dados
@@ -564,7 +564,7 @@ ITENS PENDENTES / EM OBSERVACAO:
 [!!] CL21. Extracao de texto PDF: funcional para PDFs com texto selecionavel; PDFs escaneados (imagens) requerem OCR nao implementado — campo de edicao manual disponivel como fallback.
 [!!] CL22. Backup e recuperacao: nao ha rotina automatizada de backup do banco PostgreSQL — depende da infraestrutura Replit. Recomendacao: configurar backup externo periodico.
 [!!] CL23. Testes automatizados: cobertura de testes unitarios/integracao nao implementada — validacao manual via e2e e curl. Recomendacao: implementar suite de testes.
-[OK] CL24-PAG-MC. AuditPag Monitoramento Continuo: modulo independente com precificacao propria (US$ 199/mes base), pipeline de reconciliacao 3 camadas, cruzamento triplo, auto-alertas, log imutavel SHA-256
+[OK] CL24-PAG-MC. AuraTRUST Monitoramento Continuo: modulo independente com precificacao propria (US$ 199/mes base), pipeline de reconciliacao 3 camadas, cruzamento triplo, auto-alertas, log imutavel SHA-256
 [!!] CL25. Rate limiting: nao ha rate limiting explicito nas APIs — depende da camada de infraestrutura. Recomendacao: adicionar middleware de rate limit.
 [!!] CL26. Multi-idioma: plataforma opera em portugues brasileiro; nao ha suporte a outros idiomas. Recomendacao: avaliar necessidade futura.
 
@@ -628,13 +628,13 @@ RESUMO DE PROGRESSO:
 Ultima atualizacao: 05/03/2026
 
 ============================================================
-ANEXO V — AUDITPAG MONITORAMENTO CONTINUO: TABELA DE PRECIFICACAO
+ANEXO V — AURATRUST MONITORAMENTO CONTINUO: TABELA DE PRECIFICACAO
 ============================================================
 
 NATUREZA DO SERVICO:
-O AuditPag e um modulo de monitoramento continuo (presente) separado da auditoria forense pontual (passado).
+O AuraTRUST e um modulo de monitoramento continuo (presente) separado da auditoria forense pontual (passado).
 A auditoria forense pontual analisa dados historicos (ex: projeto Stabia — exercicios 2024/2025).
-O AuditPag audita transacoes em tempo real, com reconciliacao automatica pre-pagamento.
+O AuraTRUST audita transacoes em tempo real, com reconciliacao automatica pre-pagamento.
 
 PRECIFICACAO:
 Mensalidade base: US$ 199,00/mes
@@ -660,7 +660,7 @@ EXEMPLOS DE CALCULO:
 - Cliente com VAM US$ 500.000/mes: US$ 199 + 0,26% x 490.000 = US$ 199 + US$ 1.274 = US$ 1.473,00/mes
 
 CONTRATACAO:
-O AuditPag Monitoramento Continuo pode ser contratado independentemente:
+O AuraTRUST Monitoramento Continuo pode ser contratado independentemente:
 - Sem necessidade de AuraAudit Pass (assinatura principal)
 - Sem necessidade de projeto de auditoria forense pontual
 - Ativacao mediante aceite digital com trilha SHA-256
@@ -694,7 +694,7 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 28 evidencias tecnicas documentadas, 32 itens de checklist de conformidade (27 conformes, 5 em observacao), 5 anexos detalhados (incluindo Registro de Progresso do Projeto e Tabela de Precificacao AuditPag) e 3 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 28 evidencias tecnicas documentadas, 32 itens de checklist de conformidade (27 conformes, 5 em observacao), 5 anexos detalhados (incluindo Registro de Progresso do Projeto e Tabela de Precificacao AuraTRUST) e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 

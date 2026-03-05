@@ -745,7 +745,7 @@ function FeeConfigTab({ toast }: { toast: any }) {
             </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            A taxa de serviço (FEE) é cobrada do cliente em fatura SEPARADA da fatura do serviço. O AuditPag inclui o FEE na reconciliação de recebimentos.
+            A taxa de serviço (FEE) é cobrada do cliente em fatura SEPARADA da fatura do serviço. O AuraTRUST inclui o FEE na reconciliação de recebimentos.
           </p>
         </CardHeader>
         <CardContent>
