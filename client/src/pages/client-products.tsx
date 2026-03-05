@@ -14,6 +14,7 @@ import {
   Shield,
   CheckCircle2,
   Star,
+  Clock,
 } from "lucide-react";
 
 const PRODUCTS = [
@@ -151,6 +152,23 @@ const PRODUCTS = [
       "Integracao continua com sistemas do cliente",
       "Relatorios periodicos automatizados",
       "Indicadores de risco e tendencias",
+    ],
+  },
+  {
+    id: "aura_tracker",
+    name: "AuraTRACKER — Audit Timeline Engine",
+    description:
+      "Transparencia operacional completa do projeto de auditoria com timeline, status dashboard e timesheet. Demonstra ao cliente o andamento real, tempo investido e eficiencia da equipe.",
+    icon: Clock,
+    color: "bg-sky-500",
+    pricing: "Incluso no projeto",
+    contracted: true,
+    features: [
+      "Timeline linear com semaforo de fases (verde/amarelo/vermelho/cinza)",
+      "Project Health Score auto-calculado (On Track / Attention / Critical)",
+      "Decomposicao de tempo operacional (Client Response / Audit Analysis / System Processing)",
+      "Audit Efficiency Score com percentuais por categoria",
+      "Timesheet operacional com registro detalhado de horas",
     ],
   },
 ];

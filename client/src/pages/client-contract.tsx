@@ -96,6 +96,11 @@ const CONTRACT_DATA = {
       description: "Carteira digital com recarga via Stripe (500, 1.500 ou 5.000 creditos)",
       items: ["Ledger auditavel append-only", "Saldo verificado antes de cada job", "Orcamento obrigatorio pre-execucao"],
     },
+    {
+      name: "AuraTRACKER",
+      description: "Audit Timeline Engine — Transparencia operacional completa do projeto",
+      items: ["Timeline linear com semaforo de fases", "Project Health Score auto-calculado", "Decomposicao de tempo operacional (cliente/auditoria/sistema)", "Audit Efficiency Score"],
+    },
   ],
   deliverables: [
     { name: "Relatorio Executivo de Auditoria", deadline: "A cada fase concluida", status: "pendente" },
@@ -133,6 +138,7 @@ const CONTRACT_DATA = {
     "Ledger de creditos append-only com referencia cruzada",
     "Validacao matematica CNPJ/CPF impede dados cadastrais invalidos",
     "Termos versionados com SHA-256 — aceite vinculado a versao",
+    "AuraTRACKER: controle de acesso por tenant — cliente ve apenas projetos atribuidos",
   ],
   antiHallucination: [
     "Outputs de IA com envelope de auditoria SHA-256",
@@ -143,6 +149,7 @@ const CONTRACT_DATA = {
     "Modelo, versao e parametros registrados no envelope",
     "IA sugere, usuario decide — controle humano em todas as etapas",
     "Jobs cancelados ou com falha registrados com status e motivo",
+    "AuraTRACKER: Health Score calculado por algoritmo deterministico — sem inferencia de IA",
   ],
   evidence: [
     { id: "E1", description: "Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal" },
@@ -153,6 +160,7 @@ const CONTRACT_DATA = {
     { id: "E6", description: "Wallet: ledger append-only com referencia cruzada (job_id, tipo, creditos)" },
     { id: "E7", description: "Antiregressao: dataBefore/dataAfter, versionamento de contratos e termos" },
     { id: "E8", description: "Antialucinacao: cotacao previa, aprovacao humana, revisao opcional, SHA-256" },
+    { id: "E9", description: "AuraTRACKER: timeline operacional com decomposicao de tempo (cliente/auditoria/sistema), Health Score auto-calculado, transparencia total" },
   ],
 };
 

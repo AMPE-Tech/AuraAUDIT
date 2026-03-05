@@ -17,6 +17,7 @@ import {
   ChevronRight,
   CheckCircle2,
   Star,
+  Clock,
 } from "lucide-react";
 
 interface ServiceItem {
@@ -182,6 +183,23 @@ const SERVICES: ServiceItem[] = [
       "Agendamento > cadastro > juridico/compliance > pre-evento > pos-evento > pagamento > fechamento > auditoria",
       "Gestao documental e contratos com conformidade (FMV/legislacao)",
       "Dossie para auditoria externa",
+    ],
+  },
+  {
+    id: "aura-tracker",
+    title: "AuraTRACKER — Audit Timeline Engine",
+    icon: Clock,
+    priority: "P0",
+    priorityLabel: "Core AuraAudit",
+    priorityColor: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20",
+    whyLabel: "Diferencial global: transparencia operacional real para o cliente.",
+    description: "Timeline de projeto com decomposicao de tempo operacional e eficiencia da equipe de auditoria.",
+    items: [
+      "Timeline linear com semaforo de fases (completed/in_progress/delayed/not_started)",
+      "Status Dashboard com Project Health Score auto-calculado",
+      "Timesheet operacional com categorias (Client Response / Audit Analysis / System Processing)",
+      "Audit Efficiency Score com decomposicao percentual",
+      "Controle de acesso por tenant (cliente ve apenas seus projetos)",
     ],
   },
 ];

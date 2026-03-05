@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "5.1.0";
+const CONTRACT_VERSION = "5.2.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
@@ -462,6 +462,7 @@ E23. AuditPag: auditoria pre-pagamento com cruzamento solicitacao/reserva/financ
 E24. Alert Engine v2: auto-escalacao de severidade por valor financeiro, forcamento de canal email em alertas criticos/altos, CC automatico ao admin, hash SHA-256 persistido por alerta com trilha de auditoria
 E25. CP-01 Health Check Pipeline: verificacao automatica de integridade em cada boot, deteccao de padroes de dados de teste, auto-remediacao cirurgica com notificacao por email, endpoints admin para verificacao e remediacao sob demanda
 E26. AuraAI Formatacao v2: regras de formatacao limpa (sem markdown pesado), dosagem progressiva de conteudo (30% na primeira resposta), qualificacao de contexto antes de entrega, verificacao dupla de dados
+E27. AuraTRACKER: timeline de projeto com 3 visualizacoes (timeline linear, status dashboard, timesheet operacional), auto-calculo de Project Health Score (on_track/attention/critical), decomposicao de tempo operacional (Client Response Time, Audit Analysis Time, System Processing Time), Audit Efficiency Score com percentuais, controle de acesso por tenant (client scoping), fases com semaforo de status (completed/in_progress/delayed/not_started), disponivel no painel admin e cliente
 
 ============================================================
 ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
@@ -502,6 +503,9 @@ Mapeamento completo do ecossistema de integracao com 149+ plataformas em 15 segm
 M11. AUDITPAG — AUDITORIA PRE-APROVACAO DE PAGAMENTOS
 Modulo de auditoria pontual que valida a cadeia completa de pagamento antes da aprovacao do CFO/Gerente Financeiro. Fluxo: Solicitacao (quem pediu, departamento, destino) → Reserva (codigo PNR, confirmacao fornecedor, datas) → Financeiro (meio de pagamento: faturado/Pix/cartao corporativo/cartao de credito/boleto, valores solicitado/faturado/fornecedor, NF, vencimento) → Acordos e Comissoes (acordo corporativo, comissao %, incentivos, rebates — perfil agencia) → Conciliacao Bancaria (extrato banco via API, match/unmatch/parcial) → Monitoramento Diario (entradas/saidas, conformidade/desconformidade). Dois perfis: Agencia (com comissao, incentivos, rebates, NF agencia) e Corporativo (sem comissao, foco em solicitacao vs fatura/extrato cartao). Dashboard com KPIs (conformes %, nao conformes %, pendentes, total auditado R$), charts por meio de pagamento e status. Achados tipificados (valor divergente, documento ausente, reserva incompativel, pagamento duplicado, comissao irregular, sem aprovacao, fora da politica). Estrutura modular replicavel para outros segmentos do AuraAUDIT. Status: IMPLEMENTADO.
 
+M12. AURATRACKER — AUDIT TIMELINE ENGINE
+Modulo de transparencia operacional que demonstra ao cliente o andamento real do projeto de auditoria. Tres visualizacoes integradas: (A) Timeline Linear — cronograma fase a fase com indicadores de semaforo (verde/concluido, amarelo/em andamento, vermelho/atrasado, cinza/nao iniciado), datas de inicio/fim, entregaveis por fase; (B) Status Dashboard — Project Health Score auto-calculado (On Track/Attention/Critical) baseado em atraso de fases e proporcao tempo vs progresso, contadores de fases por status, Audit Efficiency Score com decomposicao percentual (Client Delay Impact, Audit Team Time, System Processing), resumo executivo com diferenca planejado vs executado; (C) Timesheet Operacional — relogio de tempo por categoria (Client Response Time, Audit Analysis Time, System Processing Time), registro de horas com descricao, barras de progresso proporcionais. Modulo standalone, utilizavel individualmente ou integrado ao AuraAUDIT e AuraDUE. Disponivel no painel admin (gestao completa) e painel cliente (visualizacao com transparencia total). Controle de acesso: admin cria projetos, gerencia fases e registra tempo; cliente visualiza apenas projetos atribuidos ao seu clientId. DB: tracker_projects, tracker_phases, tracker_time_entries. Diferencial global: quase nenhuma auditoria mostra tempo operacional real ao cliente. Status: IMPLEMENTADO.
+
 ============================================================
 ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 ============================================================
@@ -531,6 +535,7 @@ ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 [OK] CL23-ALT. Alert Engine v2: auto-escalacao de severidade, forcamento de email em CRITICAL/HIGH, CC admin, hash SHA-256 por alerta
 [OK] CL24-HC. CP-01 Health Check: pipeline de verificacao automatica em boot, deteccao de padroes de seed, auto-remediacao cirurgica, notificacao email
 [OK] CL25-FMT. AuraAI Formatacao v2: formatacao limpa, dosagem progressiva 30%, qualificacao de contexto, verificacao dupla de dados
+[OK] CL26-TRK. AuraTRACKER: timeline de projeto, 3 visualizacoes, Project Health Score, Audit Efficiency Score, decomposicao de tempo operacional, controle de acesso por tenant, modulo standalone replicavel
 
 ITENS PENDENTES / EM OBSERVACAO:
 
@@ -558,7 +563,7 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M11, com 26 evidencias tecnicas documentadas, 30 itens de checklist de conformidade (25 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 27 evidencias tecnicas documentadas, 31 itens de checklist de conformidade (26 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 
@@ -566,7 +571,7 @@ Certos de que nossa experiencia nos qualifica para atender plenamente o projeto,
 
 ${auditorName}
 Contrato de Auditoria e Consultoria — Versao ${CONTRACT_VERSION}
-Total de clausulas: 28 | Evidencias: 23 | Anexos: 3 | Modulos: 11
+Total de clausulas: 28 | Evidencias: 27 | Anexos: 3 | Modulos: 12
 ${auditorAddress}${auditorCity ? `, ${auditorCity}` : ""}${auditorState ? ` - ${auditorState}` : ""}
 ${auditorContactName} | Telefone: ${auditorPhone} | Email: ${auditorEmail}`;
 }
