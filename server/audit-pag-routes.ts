@@ -4,6 +4,8 @@ import { db } from "./db";
 import {
   auditPagCases, auditPagDocuments, auditPagMonitoring, auditTrail,
   auditPagPolicies, auditPagPolicyItems, auditPagAlerts, auditPagAlertConfig,
+  auditPagSuppliers, auditPagDataSources, auditPagServiceTypes,
+  auditPagSupplierServices, auditPagFeeConfig, auditPagPaymentMethods,
 } from "@shared/schema";
 import { eq, desc, and, gte, lte } from "drizzle-orm";
 import { createHash } from "crypto";
@@ -981,6 +983,498 @@ export function registerAuditPagRoutes(app: Express) {
       );
 
       res.json({ remediation, healthCheck });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================================
+  // BLOCO A — FORNECEDORES PRE-AUTORIZADOS
+  // ============================================================
+
+  app.get("/api/audit-pag/suppliers", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const conditions: any[] = [];
+      if (req.session.role !== "admin" && req.session.clientId) {
+        conditions.push(eq(auditPagSuppliers.companyId, req.session.clientId));
+      }
+      const suppliers = conditions.length > 0
+        ? await db.select().from(auditPagSuppliers).where(and(...conditions)).orderBy(desc(auditPagSuppliers.createdAt))
+        : await db.select().from(auditPagSuppliers).orderBy(desc(auditPagSuppliers.createdAt));
+      res.json(suppliers);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/suppliers", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const schema = z.object({
+        cnpj: z.string().min(11),
+        razaoSocial: z.string().min(1),
+        nomeFantasia: z.string().optional(),
+        segment: z.string().optional(),
+        companyId: z.string().optional(),
+        paysCommission: z.boolean().optional(),
+        commissionType: z.string().optional(),
+        commissionPercent: z.string().optional(),
+        hasIncentive: z.boolean().optional(),
+        incentiveType: z.string().optional(),
+        incentiveValue: z.string().optional(),
+        hasRebate: z.boolean().optional(),
+        rebatePercent: z.string().optional(),
+        contactName: z.string().optional(),
+        contactEmail: z.string().optional(),
+        contactPhone: z.string().optional(),
+        notes: z.string().optional(),
+      });
+      const data = schema.parse(req.body);
+
+      const cnpjClean = data.cnpj.replace(/\D/g, "");
+      const existing = await db.select().from(auditPagSuppliers).where(eq(auditPagSuppliers.cnpj, data.cnpj));
+      if (existing.length > 0) return res.status(409).json({ error: "CNPJ already registered" });
+
+      let rfValidation = { checked: false, found: false, razaoSocial: "" };
+      if (cnpjClean.length === 14) {
+        try {
+          const resp = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpjClean}`);
+          if (resp.ok) {
+            const rfData = await resp.json() as any;
+            rfValidation = { checked: true, found: true, razaoSocial: rfData.razao_social || "" };
+            if (!data.razaoSocial || data.razaoSocial.trim() === "") {
+              data.razaoSocial = rfData.razao_social || data.razaoSocial;
+            }
+            if (!data.nomeFantasia) {
+              data.nomeFantasia = rfData.nome_fantasia || undefined;
+            }
+          } else {
+            rfValidation = { checked: true, found: false, razaoSocial: "" };
+          }
+        } catch {
+          rfValidation = { checked: false, found: false, razaoSocial: "" };
+        }
+      }
+
+      const [supplier] = await db.insert(auditPagSuppliers).values(data as any).returning();
+
+      await logAuditTrail(req.session.userId!, "supplier_created", "audit_pag_supplier", supplier.id, null, supplier, req.ip);
+      res.status(201).json(supplier);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/suppliers/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [existing] = await db.select().from(auditPagSuppliers).where(eq(auditPagSuppliers.id, req.params.id));
+      if (!existing) return res.status(404).json({ error: "Supplier not found" });
+
+      const [updated] = await db.update(auditPagSuppliers)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(auditPagSuppliers.id, req.params.id))
+        .returning();
+
+      await logAuditTrail(req.session.userId!, "supplier_updated", "audit_pag_supplier", req.params.id, existing, updated, req.ip);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/audit-pag/suppliers/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [existing] = await db.select().from(auditPagSuppliers).where(eq(auditPagSuppliers.id, req.params.id));
+      if (!existing) return res.status(404).json({ error: "Supplier not found" });
+
+      const [deactivated] = await db.update(auditPagSuppliers)
+        .set({ status: "blocked", updatedAt: new Date() })
+        .where(eq(auditPagSuppliers.id, req.params.id))
+        .returning();
+
+      await logAuditTrail(req.session.userId!, "supplier_blocked", "audit_pag_supplier", req.params.id, existing, deactivated, req.ip);
+      res.json(deactivated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/suppliers/validate-cnpj", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { cnpj } = req.body;
+      if (!cnpj) return res.status(400).json({ error: "CNPJ required" });
+
+      const cnpjClean = cnpj.replace(/\D/g, "");
+      const suppliers = await db.select().from(auditPagSuppliers);
+      const match = suppliers.find(s => s.cnpj.replace(/\D/g, "") === cnpjClean);
+
+      if (!match) {
+        const alertTitle = `Fornecedor NAO AUTORIZADO: CNPJ ${cnpj}`;
+        const alertDesc = `Tentativa de transacao com fornecedor nao cadastrado na lista de pre-aprovados. CNPJ: ${cnpj}. Pagamento BLOQUEADO automaticamente.`;
+        const timestamp = new Date().toISOString();
+        const integrityHash = generateIntegrityHash({ alertType: "unauthorized_supplier", cnpj, severity: "critical" }, timestamp);
+
+        await db.insert(auditPagAlerts).values({
+          companyId: req.session.clientId || "system",
+          alertType: "unauthorized_supplier",
+          severity: "critical",
+          title: alertTitle,
+          description: alertDesc,
+          channel: "platform",
+          status: "pending",
+          integrityHash,
+        });
+
+        const configs = await db.select().from(auditPagAlertConfig);
+        if (configs.length > 0 && configs[0].enableEmailAlerts && configs[0].emailRecipients) {
+          const recipients = configs[0].emailRecipients.split(",").map((e: string) => e.trim());
+          for (const email of recipients) {
+            try {
+              await sendEmail(email, `[AuditPag CRITICAL] ${alertTitle}`, alertDesc);
+            } catch { /* email best effort */ }
+          }
+        }
+
+        return res.json({
+          authorized: false,
+          blocked: true,
+          message: "Fornecedor NAO encontrado na lista de pre-aprovados. Pagamento BLOQUEADO.",
+          cnpj,
+        });
+      }
+
+      if (match.status === "blocked") {
+        return res.json({
+          authorized: false,
+          blocked: true,
+          message: "Fornecedor BLOQUEADO. Pagamento NAO autorizado.",
+          supplier: { id: match.id, razaoSocial: match.razaoSocial, status: match.status },
+        });
+      }
+
+      res.json({
+        authorized: true,
+        blocked: false,
+        message: "Fornecedor pre-autorizado.",
+        supplier: {
+          id: match.id,
+          razaoSocial: match.razaoSocial,
+          nomeFantasia: match.nomeFantasia,
+          segment: match.segment,
+          paysCommission: match.paysCommission,
+          hasIncentive: match.hasIncentive,
+          hasRebate: match.hasRebate,
+        },
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================================
+  // BLOCO B — FONTES DE DADOS PRE-APROVADAS
+  // ============================================================
+
+  app.get("/api/audit-pag/data-sources", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const conditions: any[] = [];
+      if (req.session.role !== "admin" && req.session.clientId) {
+        conditions.push(eq(auditPagDataSources.companyId, req.session.clientId));
+      }
+      const sources = conditions.length > 0
+        ? await db.select().from(auditPagDataSources).where(and(...conditions)).orderBy(desc(auditPagDataSources.createdAt))
+        : await db.select().from(auditPagDataSources).orderBy(desc(auditPagDataSources.createdAt));
+      res.json(sources);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/data-sources", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const schema = z.object({
+        name: z.string().min(1),
+        sourceType: z.enum(["obt", "gds", "erp", "email", "whatsapp", "bank", "approval_system", "other"]),
+        connectionMethod: z.enum(["api", "sftp", "imap", "webhook", "ofx", "cnab", "manual_upload"]),
+        endpointUrl: z.string().optional(),
+        sftpHost: z.string().optional(),
+        sftpPort: z.number().optional(),
+        sftpDirectory: z.string().optional(),
+        authType: z.string().optional(),
+        credentialsRef: z.string().optional(),
+        schedule: z.string().optional(),
+        isTrusted: z.boolean().optional(),
+        companyId: z.string().optional(),
+        notes: z.string().optional(),
+      });
+      const data = schema.parse(req.body);
+      const [source] = await db.insert(auditPagDataSources).values(data as any).returning();
+      await logAuditTrail(req.session.userId!, "data_source_created", "audit_pag_data_source", source.id, null, source, req.ip);
+      res.status(201).json(source);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/data-sources/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [existing] = await db.select().from(auditPagDataSources).where(eq(auditPagDataSources.id, req.params.id));
+      if (!existing) return res.status(404).json({ error: "Data source not found" });
+
+      const [updated] = await db.update(auditPagDataSources)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(auditPagDataSources.id, req.params.id))
+        .returning();
+
+      await logAuditTrail(req.session.userId!, "data_source_updated", "audit_pag_data_source", req.params.id, existing, updated, req.ip);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/audit-pag/data-sources/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [existing] = await db.select().from(auditPagDataSources).where(eq(auditPagDataSources.id, req.params.id));
+      if (!existing) return res.status(404).json({ error: "Data source not found" });
+
+      const [deactivated] = await db.update(auditPagDataSources)
+        .set({ status: "inactive", updatedAt: new Date() })
+        .where(eq(auditPagDataSources.id, req.params.id))
+        .returning();
+
+      await logAuditTrail(req.session.userId!, "data_source_deactivated", "audit_pag_data_source", req.params.id, existing, deactivated, req.ip);
+      res.json(deactivated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================================
+  // BLOCO C — TIPOS DE SERVICO, TAXAS (FEE) E MEIOS DE PAGAMENTO
+  // ============================================================
+
+  app.get("/api/audit-pag/service-types", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const conditions: any[] = [];
+      if (req.session.role !== "admin" && req.session.clientId) {
+        conditions.push(eq(auditPagServiceTypes.companyId, req.session.clientId));
+      }
+      const types = conditions.length > 0
+        ? await db.select().from(auditPagServiceTypes).where(and(...conditions)).orderBy(auditPagServiceTypes.name)
+        : await db.select().from(auditPagServiceTypes).orderBy(auditPagServiceTypes.name);
+      res.json(types);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/service-types", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const schema = z.object({
+        name: z.string().min(1),
+        category: z.string().min(1),
+        description: z.string().optional(),
+        requiresCommissionCheck: z.boolean().optional(),
+        requiresIncentiveCheck: z.boolean().optional(),
+        companyId: z.string().optional(),
+      });
+      const data = schema.parse(req.body);
+      const [serviceType] = await db.insert(auditPagServiceTypes).values(data as any).returning();
+      await logAuditTrail(req.session.userId!, "service_type_created", "audit_pag_service_type", serviceType.id, null, serviceType, req.ip);
+      res.status(201).json(serviceType);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/service-types/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [existing] = await db.select().from(auditPagServiceTypes).where(eq(auditPagServiceTypes.id, req.params.id));
+      if (!existing) return res.status(404).json({ error: "Service type not found" });
+
+      const [updated] = await db.update(auditPagServiceTypes)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(auditPagServiceTypes.id, req.params.id))
+        .returning();
+
+      await logAuditTrail(req.session.userId!, "service_type_updated", "audit_pag_service_type", req.params.id, existing, updated, req.ip);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/audit-pag/service-types/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [updated] = await db.update(auditPagServiceTypes)
+        .set({ isActive: false, updatedAt: new Date() })
+        .where(eq(auditPagServiceTypes.id, req.params.id))
+        .returning();
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/supplier-services/:supplierId", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const links = await db.select().from(auditPagSupplierServices).where(eq(auditPagSupplierServices.supplierId, req.params.supplierId));
+      res.json(links);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/supplier-services", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const { supplierId, serviceTypeId } = req.body;
+      const [link] = await db.insert(auditPagSupplierServices).values({ supplierId, serviceTypeId }).returning();
+      res.status(201).json(link);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/audit-pag/supplier-services/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      await db.delete(auditPagSupplierServices).where(eq(auditPagSupplierServices.id, req.params.id));
+      res.json({ deleted: true });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/fee-config", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const conditions: any[] = [];
+      if (req.session.role !== "admin" && req.session.clientId) {
+        conditions.push(eq(auditPagFeeConfig.companyId, req.session.clientId));
+      }
+      const configs = conditions.length > 0
+        ? await db.select().from(auditPagFeeConfig).where(and(...conditions)).orderBy(auditPagFeeConfig.feeName)
+        : await db.select().from(auditPagFeeConfig).orderBy(auditPagFeeConfig.feeName);
+      res.json(configs);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/fee-config", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const schema = z.object({
+        feeName: z.string().min(1),
+        feeType: z.enum(["fixed", "percent"]),
+        feeValue: z.string(),
+        separateInvoice: z.boolean().optional(),
+        billingDescription: z.string().optional(),
+        appliesTo: z.string().optional(),
+        companyId: z.string().optional(),
+      });
+      const data = schema.parse(req.body);
+      const [config] = await db.insert(auditPagFeeConfig).values(data as any).returning();
+      await logAuditTrail(req.session.userId!, "fee_config_created", "audit_pag_fee_config", config.id, null, config, req.ip);
+      res.status(201).json(config);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/fee-config/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [existing] = await db.select().from(auditPagFeeConfig).where(eq(auditPagFeeConfig.id, req.params.id));
+      if (!existing) return res.status(404).json({ error: "Fee config not found" });
+
+      const [updated] = await db.update(auditPagFeeConfig)
+        .set({ ...req.body, updatedAt: new Date() })
+        .where(eq(auditPagFeeConfig.id, req.params.id))
+        .returning();
+
+      await logAuditTrail(req.session.userId!, "fee_config_updated", "audit_pag_fee_config", req.params.id, existing, updated, req.ip);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/audit-pag/fee-config/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [updated] = await db.update(auditPagFeeConfig)
+        .set({ isActive: false, updatedAt: new Date() })
+        .where(eq(auditPagFeeConfig.id, req.params.id))
+        .returning();
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/payment-methods", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const conditions: any[] = [];
+      if (req.session.role !== "admin" && req.session.clientId) {
+        conditions.push(eq(auditPagPaymentMethods.companyId, req.session.clientId));
+      }
+      const methods = conditions.length > 0
+        ? await db.select().from(auditPagPaymentMethods).where(and(...conditions)).orderBy(auditPagPaymentMethods.name)
+        : await db.select().from(auditPagPaymentMethods).orderBy(auditPagPaymentMethods.name);
+      res.json(methods);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/payment-methods", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const schema = z.object({
+        name: z.string().min(1),
+        methodType: z.enum(["faturado", "pix", "deposito", "cartao", "boleto", "ted", "other"]),
+        requiresBankReconciliation: z.boolean().optional(),
+        companyId: z.string().optional(),
+      });
+      const data = schema.parse(req.body);
+      const [method] = await db.insert(auditPagPaymentMethods).values(data as any).returning();
+      res.status(201).json(method);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/audit-pag/payment-methods/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [updated] = await db.update(auditPagPaymentMethods)
+        .set({ ...req.body })
+        .where(eq(auditPagPaymentMethods.id, req.params.id))
+        .returning();
+      res.json(updated);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/audit-pag/payment-methods/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+      const [updated] = await db.update(auditPagPaymentMethods)
+        .set({ isActive: false })
+        .where(eq(auditPagPaymentMethods.id, req.params.id))
+        .returning();
+      res.json(updated);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

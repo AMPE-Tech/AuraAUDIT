@@ -703,6 +703,96 @@ export const auditPagAlertConfig = pgTable("audit_pag_alert_config", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const auditPagSuppliers = pgTable("audit_pag_suppliers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  cnpj: varchar("cnpj", { length: 18 }).notNull(),
+  razaoSocial: text("razao_social").notNull(),
+  nomeFantasia: text("nome_fantasia"),
+  segment: text("segment"),
+  status: text("status").notNull().default("active"),
+  paysCommission: boolean("pays_commission").notNull().default(false),
+  commissionType: text("commission_type"),
+  commissionPercent: decimal("commission_percent", { precision: 5, scale: 2 }),
+  hasIncentive: boolean("has_incentive").notNull().default(false),
+  incentiveType: text("incentive_type"),
+  incentiveValue: decimal("incentive_value", { precision: 14, scale: 2 }),
+  hasRebate: boolean("has_rebate").notNull().default(false),
+  rebatePercent: decimal("rebate_percent", { precision: 5, scale: 2 }),
+  contactName: text("contact_name"),
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auditPagDataSources = pgTable("audit_pag_data_sources", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  name: text("name").notNull(),
+  sourceType: text("source_type").notNull(),
+  connectionMethod: text("connection_method").notNull(),
+  endpointUrl: text("endpoint_url"),
+  sftpHost: text("sftp_host"),
+  sftpPort: integer("sftp_port"),
+  sftpDirectory: text("sftp_directory"),
+  authType: text("auth_type"),
+  credentialsRef: text("credentials_ref"),
+  schedule: text("schedule"),
+  isTrusted: boolean("is_trusted").notNull().default(true),
+  status: text("status").notNull().default("active"),
+  lastSyncAt: timestamp("last_sync_at"),
+  lastSyncStatus: text("last_sync_status"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auditPagServiceTypes = pgTable("audit_pag_service_types", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  description: text("description"),
+  requiresCommissionCheck: boolean("requires_commission_check").notNull().default(false),
+  requiresIncentiveCheck: boolean("requires_incentive_check").notNull().default(false),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auditPagSupplierServices = pgTable("audit_pag_supplier_services", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  supplierId: varchar("supplier_id").notNull(),
+  serviceTypeId: varchar("service_type_id").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const auditPagFeeConfig = pgTable("audit_pag_fee_config", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  feeName: text("fee_name").notNull(),
+  feeType: text("fee_type").notNull().default("fixed"),
+  feeValue: decimal("fee_value", { precision: 14, scale: 2 }).notNull().default("0"),
+  separateInvoice: boolean("separate_invoice").notNull().default(true),
+  billingDescription: text("billing_description"),
+  appliesTo: text("applies_to"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auditPagPaymentMethods = pgTable("audit_pag_payment_methods", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  name: text("name").notNull(),
+  methodType: text("method_type").notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  requiresBankReconciliation: boolean("requires_bank_reconciliation").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const insertAuditPagCaseSchema = createInsertSchema(auditPagCases).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAuditPagDocumentSchema = createInsertSchema(auditPagDocuments).omit({ id: true, uploadedAt: true });
 export const insertAuditPagMonitoringSchema = createInsertSchema(auditPagMonitoring).omit({ id: true, createdAt: true });
@@ -710,6 +800,12 @@ export const insertAuditPagPolicySchema = createInsertSchema(auditPagPolicies).o
 export const insertAuditPagPolicyItemSchema = createInsertSchema(auditPagPolicyItems).omit({ id: true, createdAt: true });
 export const insertAuditPagAlertSchema = createInsertSchema(auditPagAlerts).omit({ id: true, createdAt: true });
 export const insertAuditPagAlertConfigSchema = createInsertSchema(auditPagAlertConfig).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagSupplierSchema = createInsertSchema(auditPagSuppliers).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagDataSourceSchema = createInsertSchema(auditPagDataSources).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagServiceTypeSchema = createInsertSchema(auditPagServiceTypes).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagSupplierServiceSchema = createInsertSchema(auditPagSupplierServices).omit({ id: true, createdAt: true });
+export const insertAuditPagFeeConfigSchema = createInsertSchema(auditPagFeeConfig).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagPaymentMethodSchema = createInsertSchema(auditPagPaymentMethods).omit({ id: true, createdAt: true });
 export type InsertAuditPagCase = z.infer<typeof insertAuditPagCaseSchema>;
 export type AuditPagCase = typeof auditPagCases.$inferSelect;
 export type InsertAuditPagDocument = z.infer<typeof insertAuditPagDocumentSchema>;
@@ -724,6 +820,18 @@ export type InsertAuditPagAlert = z.infer<typeof insertAuditPagAlertSchema>;
 export type AuditPagAlert = typeof auditPagAlerts.$inferSelect;
 export type InsertAuditPagAlertConfig = z.infer<typeof insertAuditPagAlertConfigSchema>;
 export type AuditPagAlertConfig = typeof auditPagAlertConfig.$inferSelect;
+export type InsertAuditPagSupplier = z.infer<typeof insertAuditPagSupplierSchema>;
+export type AuditPagSupplier = typeof auditPagSuppliers.$inferSelect;
+export type InsertAuditPagDataSource = z.infer<typeof insertAuditPagDataSourceSchema>;
+export type AuditPagDataSource = typeof auditPagDataSources.$inferSelect;
+export type InsertAuditPagServiceType = z.infer<typeof insertAuditPagServiceTypeSchema>;
+export type AuditPagServiceType = typeof auditPagServiceTypes.$inferSelect;
+export type InsertAuditPagSupplierService = z.infer<typeof insertAuditPagSupplierServiceSchema>;
+export type AuditPagSupplierService = typeof auditPagSupplierServices.$inferSelect;
+export type InsertAuditPagFeeConfig = z.infer<typeof insertAuditPagFeeConfigSchema>;
+export type AuditPagFeeConfig = typeof auditPagFeeConfig.$inferSelect;
+export type InsertAuditPagPaymentMethod = z.infer<typeof insertAuditPagPaymentMethodSchema>;
+export type AuditPagPaymentMethod = typeof auditPagPaymentMethods.$inferSelect;
 
 export const trackerProjects = pgTable("tracker_projects", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

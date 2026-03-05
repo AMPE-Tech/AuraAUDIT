@@ -19,8 +19,9 @@ import {
   XCircle, Clock, TrendingUp, ArrowUpDown, Upload,
   Building2, User, MapPin, Calendar, CreditCard, FileBarChart, Eye,
   Landmark, ArrowRight, RefreshCw, Bell, BellRing, Settings, FileCheck,
-  Copy, ToggleLeft, Info, AlertCircle, Shield, CreditCard as CardIcon,
+  Copy, ToggleLeft, Info, AlertCircle, Shield, CreditCard as CardIcon, Wrench,
 } from "lucide-react";
+import AuditPagConfigPanel from "./audit-pag-config";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, AreaChart, Area, Legend,
@@ -271,6 +272,10 @@ export default function AuditPag() {
             )}
           </TabsTrigger>
           <TabsTrigger value="monitoring" data-testid="tab-monitoring">Monitoramento</TabsTrigger>
+          <TabsTrigger value="config" data-testid="tab-config">
+            <Wrench className="w-4 h-4 mr-1" />
+            Integrações
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-6">
@@ -592,6 +597,10 @@ export default function AuditPag() {
               </div>
             </>
           )}
+        </TabsContent>
+
+        <TabsContent value="config" className="space-y-4">
+          <AuditPagConfigPanel toast={toast} />
         </TabsContent>
       </Tabs>
 
