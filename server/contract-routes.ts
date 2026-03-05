@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "5.3.0";
+const CONTRACT_VERSION = "5.4.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
@@ -432,8 +432,29 @@ PARTE V — PLATAFORMA DIGITAL AURAAUDIT
 30.7. Re-verificacao automatica apos remediacao para confirmar que a limpeza foi completa.
 30.8. Resultado da verificacao registrado em log estruturado com status PASSED/FAILED por tabela.
 
+31. AUDITPAG — MODULO INDEPENDENTE DE MONITORAMENTO CONTINUO
+
+31.1. O AuditPag opera como modulo independente e separado do projeto de auditoria forense pontual. Enquanto a auditoria forense (ex: Stabia) analisa dados historicos (passado), o AuditPag audita transacoes em tempo real (presente), funcionando como monitoramento continuo pre-pagamento.
+31.2. Ativacao exclusiva para clientes que contratarem o servico de monitoramento continuo. O modulo nao pode ser acionado como parte de um projeto de auditoria pontual.
+31.3. Precificacao do AuditPag Monitoramento Continuo:
+  (a) Mensalidade base: US$ 199,00/mes para clientes com faturamento mensal ate US$ 10.000,00 (dez mil dolares).
+  (b) Para clientes com faturamento acima de US$ 10.000,00/mes, aplica-se a tabela progressiva de auditoria sobre volume (mesmas faixas do AuraAudit Pass sobre o excedente):
+      - VAM ate US$ 100.000: 0,30%
+      - VAM ate US$ 300.000: 0,28%
+      - VAM ate US$ 600.000: 0,26%
+      - VAM ate US$ 800.000: 0,24%
+      - VAM ate US$ 1.000.000: 0,22%
+      - VAM acima de US$ 1.000.000: 0,20%
+  (c) Formula: min(CAP, 199 + rate(VAM) x max(0, VAM - 10.000))
+  (d) CAP mensal configuravel pelo contratante (padrao US$ 5.000/mes).
+31.4. Escopo do monitoramento continuo: Pipeline de Reconciliacao Automatica com 3 Camadas — Camada 1 (ingestao do pedido do cliente via OBT/GDS/email/workflow de aprovacao), Camada 2 (ingestao ERP/fatura com cruzamento automatico C1xC2), Camada 3 (ingestao bancaria — extrato conta corrente, extrato cartao de credito, extrato cartao virtual VCN — com cruzamento triplo pedido x ERP x banco).
+31.5. Validacoes automaticas executadas pelo pipeline: (a) confirmacao de pagamento do cliente, (b) confirmacao de pagamento ao fornecedor com invariante fornecedor < cliente, (c) identificacao de comissoes e incentivos recebidos dos fornecedores, (d) reconciliacao de FEE (taxa de servico, fatura separada), (e) reconciliacao de documentos fiscais (Nota Fiscal, Recibo, Fatura).
+31.6. Auto-alertas com escalacao de severidade: fornecedor nao autorizado (CRITICAL), violacao de invariante fornecedor >= cliente (CRITICAL), divergencia de valores (HIGH), pagamento nao confirmado (HIGH), comissao/incentivo nao recebido (MEDIUM), FEE nao reconciliada (MEDIUM), divergencia documento fiscal (MEDIUM).
+31.7. Log imutavel de reconciliacao: cada passo do pipeline gera registro com hash SHA-256 de integridade, em conformidade com Lei 13.964/2019.
+31.8. O modulo AuditPag pode ser contratado independentemente do AuraAudit Pass ou de qualquer projeto de auditoria pontual.
+
 ============================================================
-ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E26)
+ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E28)
 ============================================================
 
 E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal (BrasilAPI)
@@ -463,6 +484,7 @@ E24. Alert Engine v2: auto-escalacao de severidade por valor financeiro, forcame
 E25. CP-01 Health Check Pipeline: verificacao automatica de integridade em cada boot, deteccao de padroes de dados de teste, auto-remediacao cirurgica com notificacao por email, endpoints admin para verificacao e remediacao sob demanda
 E26. AuraAI Formatacao v2: regras de formatacao limpa (sem markdown pesado), dosagem progressiva de conteudo (30% na primeira resposta), qualificacao de contexto antes de entrega, verificacao dupla de dados
 E27. AuraTRACK: timeline de projeto com 3 visualizacoes (timeline linear, status dashboard, timesheet operacional), auto-calculo de Project Health Score (on_track/attention/critical), decomposicao de tempo operacional (Client Response Time, Audit Analysis Time, System Processing Time), Audit Efficiency Score com percentuais, controle de acesso por tenant (client scoping), fases com semaforo de status (completed/in_progress/delayed/not_started), disponivel no painel admin e cliente
+E28. AuditPag Monitoramento Continuo (Bloco D): Pipeline de Reconciliacao Automatica com 3 Camadas (pedido x ERP x banco), cruzamento triplo com validacao de invariantes (fornecedor < cliente), reconciliacao de FEE/comissoes/incentivos/documentos fiscais (NF/Recibo/Fatura), log imutavel por step com SHA-256, auto-alertas em 8 cenarios (CRITICAL/HIGH/MEDIUM), modulo independente com precificacao propria (US$ 199/mes base + progressiva sobre volume)
 
 ============================================================
 ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
@@ -500,8 +522,8 @@ Limites por usuario/empresa, cap mensal, threshold de auto-aprovacao. Configurav
 M10. ECOSSISTEMA DE INTEGRACOES (149+ PLATAFORMAS)
 Mapeamento completo do ecossistema de integracao com 149+ plataformas em 15 segmentos: GDS (Amadeus, Sabre, Travelport), NDC Airlines (LATAM, GOL, Azul, Lufthansa, Emirates, Qatar, British Airways, Iberia, Air France/KLM, American Airlines), IATA/BSP (BSPLink, Financial Gateway, EasyPay, ARC), Hotelaria Global (Marriott, Hilton, Accor, IHG, Hyatt, Wyndham, Omnibees, Hotelbeds, Booking, Expedia, SiteMinder), Hotelaria Brasil/FOHB (Atlantica, Bourbon, Blue Tree, Intercity, Slaviero, Taua, Wish, Vila Gale, Nobile, Transamerica, BHG, Othon, Bristol, Laghetto, Deville), Locadoras (Localiza, Movida, Unidas, Hertz, Avis, Budget, Enterprise, Sixt, Europcar), Consolidadoras (RexturAdvance, Ancoradouro, Flytour, BRT, Trend, Sakura, Confianca, New Age, Diversa), Operadoras (CVC, Visual, Agaxtur, Teresa Perez, Queensberry, Schultz, Orinter, Lusanova, Europamundo), Seguros (Assist Card, GTA, Coris, Allianz, Travel Ace, April, Intermac, Universal Assistance, Porto Seguro), Pagamentos (EBTA Bradesco, Itau, Santander, BB, Mastercard Corporate, Visa Corporate, AirPlus, Hotelcard, WEX, ETTC), TMC Globais (Amex GBT, BCD Travel, CWT, FCM Travel, CTM, Egencia), TMC Nacionais/ABRACORP (Flytour Business Travel, Avipam, Alatur JTB, Costa Brava, Kontik, Grupo Arbaitman, Reserve Travel, Hostway, Copastur, VoeTur, SAP Concur, ExpenseOn, TMS Travel), Agencias de Eventos/MICE (MCI Brasil, Alatur Eventos, Flytour Eventos, Sherpa42, TM1 Eventos, SRCOM, Banco de Eventos, Holding Clube, Agencia Samba, BFerraz), TravelTech (Onfly, Paytrack, Lemontech, Argo Solutions, Wooba, Reserve), Plataformas de Eventos (Sympla, Eventbrite, Cvent, Bizzabo, Even3, Ticket360). Metodos: API REST, XML, GDS, NDC, SFTP, CSV/XLSX, Portal. Pagina de ecossistema com busca e visualizacao por segmento. Status: IMPLEMENTADO.
 
-M11. AUDITPAG — AUDITORIA PRE-APROVACAO DE PAGAMENTOS
-Modulo de auditoria pontual que valida a cadeia completa de pagamento antes da aprovacao do CFO/Gerente Financeiro. Fluxo: Solicitacao (quem pediu, departamento, destino) → Reserva (codigo PNR, confirmacao fornecedor, datas) → Financeiro (meio de pagamento: faturado/Pix/cartao corporativo/cartao de credito/boleto, valores solicitado/faturado/fornecedor, NF, vencimento) → Acordos e Comissoes (acordo corporativo, comissao %, incentivos, rebates — perfil agencia) → Conciliacao Bancaria (extrato banco via API, match/unmatch/parcial) → Monitoramento Diario (entradas/saidas, conformidade/desconformidade). Dois perfis: Agencia (com comissao, incentivos, rebates, NF agencia) e Corporativo (sem comissao, foco em solicitacao vs fatura/extrato cartao). Dashboard com KPIs (conformes %, nao conformes %, pendentes, total auditado R$), charts por meio de pagamento e status. Achados tipificados (valor divergente, documento ausente, reserva incompativel, pagamento duplicado, comissao irregular, sem aprovacao, fora da politica). Estrutura modular replicavel para outros segmentos do AuraAUDIT. Status: IMPLEMENTADO.
+M11. AUDITPAG — MONITORAMENTO CONTINUO PRE-PAGAMENTO (MODULO INDEPENDENTE)
+Modulo independente de monitoramento continuo que audita transacoes em tempo real (presente), separado do projeto de auditoria forense pontual (que analisa o passado). Precificacao propria: US$ 199/mes (base ate US$ 10.000 de faturamento mensal), tabela progressiva sobre volume excedente (mesmas faixas AuraAudit Pass). Fluxo: Solicitacao (quem pediu, departamento, destino) → Reserva (codigo PNR, confirmacao fornecedor, datas) → Financeiro (meio de pagamento: faturado/Pix/cartao corporativo/cartao de credito/boleto, valores solicitado/faturado/fornecedor, NF, vencimento) → Acordos e Comissoes (acordo corporativo, comissao %, incentivos, rebates — perfil agencia) → Conciliacao Bancaria (extrato banco via API, match/unmatch/parcial) → Monitoramento Diario (entradas/saidas, conformidade/desconformidade). Pipeline de Reconciliacao Automatica com 3 Camadas: Camada 1 (pedido do cliente — OBT/GDS/email/approval), Camada 2 (ERP/fatura — cruzamento C1xC2), Camada 3 (extrato bancario — conta corrente/cartao credito/cartao virtual VCN — cruzamento triplo). Validacoes automaticas: pagamento cliente confirmado, invariante fornecedor < cliente, comissoes/incentivos recebidos, FEE reconciliada, documentos fiscais (NF/Recibo/Fatura). Auto-alertas em 8 cenarios com escalacao de severidade (CRITICAL/HIGH/MEDIUM). Log imutavel de reconciliacao com SHA-256. Dois perfis: Agencia (com comissao, incentivos, rebates, NF agencia) e Corporativo (sem comissao, foco em solicitacao vs fatura/extrato cartao). Dashboard com KPIs, summary de reconciliacao (matched/partial/divergent/blocked), volumes financeiros. Achados tipificados. Contratavel independentemente do AuraAudit Pass. Status: IMPLEMENTADO.
 
 M12. AURATRACK — AUDIT TIMELINE ENGINE
 Modulo de transparencia operacional que demonstra ao cliente o andamento real do projeto de auditoria. Tres visualizacoes integradas: (A) Timeline Linear — cronograma fase a fase com indicadores de semaforo (verde/concluido, amarelo/em andamento, vermelho/atrasado, cinza/nao iniciado), datas de inicio/fim, entregaveis por fase; (B) Status Dashboard — Project Health Score auto-calculado (On Track/Attention/Critical) baseado em atraso de fases e proporcao tempo vs progresso, contadores de fases por status, Audit Efficiency Score com decomposicao percentual (Client Delay Impact, Audit Team Time, System Processing), resumo executivo com diferenca planejado vs executado; (C) Timesheet Operacional — relogio de tempo por categoria (Client Response Time, Audit Analysis Time, System Processing Time), registro de horas com descricao, barras de progresso proporcionais. Modulo standalone, utilizavel individualmente ou integrado ao AuraAUDIT e AuraDUE. Disponivel no painel admin (gestao completa) e painel cliente (visualizacao com transparencia total). Controle de acesso: admin cria projetos, gerencia fases e registra tempo; cliente visualiza apenas projetos atribuidos ao seu clientId. DB: tracker_projects, tracker_phases, tracker_time_entries. Diferencial global: quase nenhuma auditoria mostra tempo operacional real ao cliente. Status: IMPLEMENTADO.
@@ -542,8 +564,9 @@ ITENS PENDENTES / EM OBSERVACAO:
 [!!] CL21. Extracao de texto PDF: funcional para PDFs com texto selecionavel; PDFs escaneados (imagens) requerem OCR nao implementado — campo de edicao manual disponivel como fallback.
 [!!] CL22. Backup e recuperacao: nao ha rotina automatizada de backup do banco PostgreSQL — depende da infraestrutura Replit. Recomendacao: configurar backup externo periodico.
 [!!] CL23. Testes automatizados: cobertura de testes unitarios/integracao nao implementada — validacao manual via e2e e curl. Recomendacao: implementar suite de testes.
-[!!] CL24. Rate limiting: nao ha rate limiting explicito nas APIs — depende da camada de infraestrutura. Recomendacao: adicionar middleware de rate limit.
-[!!] CL25. Multi-idioma: plataforma opera em portugues brasileiro; nao ha suporte a outros idiomas. Recomendacao: avaliar necessidade futura.
+[OK] CL24-PAG-MC. AuditPag Monitoramento Continuo: modulo independente com precificacao propria (US$ 199/mes base), pipeline de reconciliacao 3 camadas, cruzamento triplo, auto-alertas, log imutavel SHA-256
+[!!] CL25. Rate limiting: nao ha rate limiting explicito nas APIs — depende da camada de infraestrutura. Recomendacao: adicionar middleware de rate limit.
+[!!] CL26. Multi-idioma: plataforma opera em portugues brasileiro; nao ha suporte a outros idiomas. Recomendacao: avaliar necessidade futura.
 
 ============================================================
 ANEXO IV — REGISTRO DE PROGRESSO DO PROJETO
@@ -605,6 +628,55 @@ RESUMO DE PROGRESSO:
 Ultima atualizacao: 05/03/2026
 
 ============================================================
+ANEXO V — AUDITPAG MONITORAMENTO CONTINUO: TABELA DE PRECIFICACAO
+============================================================
+
+NATUREZA DO SERVICO:
+O AuditPag e um modulo de monitoramento continuo (presente) separado da auditoria forense pontual (passado).
+A auditoria forense pontual analisa dados historicos (ex: projeto Stabia — exercicios 2024/2025).
+O AuditPag audita transacoes em tempo real, com reconciliacao automatica pre-pagamento.
+
+PRECIFICACAO:
+Mensalidade base: US$ 199,00/mes
+Franquia: ate US$ 10.000,00 de faturamento mensal sem variavel
+Variavel progressiva (sobre excedente = max(0, VAM - 10.000)):
+
+  Faixa de VAM               | Aliquota
+  ----------------------------|---------
+  Ate US$ 100.000             | 0,30%
+  Ate US$ 300.000             | 0,28%
+  Ate US$ 600.000             | 0,26%
+  Ate US$ 800.000             | 0,24%
+  Ate US$ 1.000.000           | 0,22%
+  Acima de US$ 1.000.000      | 0,20%
+
+Formula: min(CAP, 199 + rate(VAM) x max(0, VAM - 10.000))
+CAP mensal: configuravel pelo contratante (padrao US$ 5.000/mes)
+
+EXEMPLOS DE CALCULO:
+- Cliente com VAM US$ 5.000/mes: US$ 199,00 (apenas base, dentro da franquia)
+- Cliente com VAM US$ 50.000/mes: US$ 199 + 0,30% x 40.000 = US$ 199 + US$ 120 = US$ 319,00/mes
+- Cliente com VAM US$ 200.000/mes: US$ 199 + 0,28% x 190.000 = US$ 199 + US$ 532 = US$ 731,00/mes
+- Cliente com VAM US$ 500.000/mes: US$ 199 + 0,26% x 490.000 = US$ 199 + US$ 1.274 = US$ 1.473,00/mes
+
+CONTRATACAO:
+O AuditPag Monitoramento Continuo pode ser contratado independentemente:
+- Sem necessidade de AuraAudit Pass (assinatura principal)
+- Sem necessidade de projeto de auditoria forense pontual
+- Ativacao mediante aceite digital com trilha SHA-256
+
+ESCOPO INCLUIDO:
+- Pipeline de Reconciliacao Automatica (3 Camadas)
+- Cruzamento triplo: pedido x ERP x banco
+- Validacao de fornecedores autorizados (CNPJ whitelist)
+- Invariante: valor fornecedor < valor cliente (sempre)
+- Reconciliacao de FEE, comissoes e incentivos
+- Reconciliacao de documentos fiscais (NF/Recibo/Fatura)
+- Auto-alertas com escalacao de severidade
+- Log imutavel com SHA-256 por step
+- Dashboard de reconciliacao com volumes financeiros
+
+============================================================
 CLAUSULAS PETREAS (REGRAS VINCULANTES IMUTAVEIS)
 ============================================================
 
@@ -622,7 +694,7 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 27 evidencias tecnicas documentadas, 31 itens de checklist de conformidade (26 conformes, 5 em observacao), 4 anexos detalhados (incluindo Registro de Progresso do Projeto) e 3 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 28 evidencias tecnicas documentadas, 32 itens de checklist de conformidade (27 conformes, 5 em observacao), 5 anexos detalhados (incluindo Registro de Progresso do Projeto e Tabela de Precificacao AuditPag) e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 
@@ -630,7 +702,7 @@ Certos de que nossa experiencia nos qualifica para atender plenamente o projeto,
 
 ${auditorName}
 Contrato de Auditoria e Consultoria — Versao ${CONTRACT_VERSION}
-Total de clausulas: 28 | Evidencias: 27 | Anexos: 4 | Modulos: 12
+Total de clausulas: 29 | Evidencias: 28 | Anexos: 5 | Modulos: 12
 ${auditorAddress}${auditorCity ? `, ${auditorCity}` : ""}${auditorState ? ` - ${auditorState}` : ""}
 ${auditorContactName} | Telefone: ${auditorPhone} | Email: ${auditorEmail}`;
 }
