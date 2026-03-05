@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 import { seedDatabase } from "./seed";
+import { runFullCP01Pipeline } from "./cp01-health-check";
 import { setupAuth } from "./auth";
 import { WebhookHandlers } from "./webhookHandlers";
 import { registerStripeRoutes } from "./stripe-routes";
@@ -139,6 +140,7 @@ async function initStripe() {
 
 (async () => {
   await seedDatabase().catch((err) => console.error("Seed error:", err));
+  await runFullCP01Pipeline().catch((err) => console.error("CP-01 health check error:", err));
   await initStripe();
 
   registerStripeRoutes(app);

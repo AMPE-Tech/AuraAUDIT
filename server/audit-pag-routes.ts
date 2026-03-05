@@ -75,6 +75,8 @@ const createCaseSchema = z.object({
   cardLastFour: z.string().optional(),
 });
 
+const ADMIN_ALERT_EMAIL = "nml.costa@gmail.com";
+
 async function generateAlert(options: {
   companyId: string | null;
   caseId: string;
@@ -99,13 +101,22 @@ async function generateAlert(options: {
       const criticalThreshold = parseFloat(config.criticalValueThreshold || "50000");
       if (amount >= criticalThreshold) severity = "critical";
       else if (amount >= highThreshold && severity !== "critical") severity = "high";
+    } else {
+      if (amount >= 50000) severity = "critical";
+      else if (amount >= 10000 && severity !== "critical") severity = "high";
     }
 
     const channels: string[] = [];
     if (!config || config.enablePlatformAlerts) channels.push("platform");
     if (config?.enableEmailAlerts) channels.push("email");
     if (config?.enableSmsAlerts) channels.push("sms");
+    if (severity === "critical" || severity === "high") {
+      if (!channels.includes("email")) channels.push("email");
+    }
     const channel = channels.length > 1 ? "all" : channels[0] || "platform";
+
+    const integrityTs = new Date().toISOString();
+    const alertHash = generateIntegrityHash({ ...options, severity, channel, integrityTs }, integrityTs);
 
     const [alert] = await db.insert(auditPagAlerts).values({
       companyId: options.companyId,
@@ -118,23 +129,41 @@ async function generateAlert(options: {
       channel,
       status: "pending",
       recipientUserId: options.userId || null,
+      integrityHash: alertHash,
     }).returning();
 
+    console.log(`ALERT [${severity.toUpperCase()}] ${options.alertType}: ${options.title} — R$ ${amount.toFixed(2)} — Hash: ${alertHash.substring(0, 16)}`);
+
+    const emailRecipients: string[] = [];
     if (config?.enableEmailAlerts && config.emailRecipients) {
-      const emails = config.emailRecipients.split(",").map((e: string) => e.trim()).filter(Boolean);
-      for (const email of emails) {
-        try {
-          await sendEmail({
-            to: email,
-            subject: `[AuditPag ${severity.toUpperCase()}] ${options.title}`,
-            html: generateAlertEmailHtml(options.title, options.description, severity, amount),
-          });
-          await db.update(auditPagAlerts).set({ status: "sent", sentAt: new Date(), recipientEmail: email }).where(eq(auditPagAlerts.id, alert.id));
-        } catch (emailErr: any) {
-          console.error("Alert email failed:", emailErr.message);
-        }
+      emailRecipients.push(...config.emailRecipients.split(",").map((e: string) => e.trim()).filter(Boolean));
+    }
+    if ((severity === "critical" || severity === "high") && !emailRecipients.includes(ADMIN_ALERT_EMAIL)) {
+      emailRecipients.push(ADMIN_ALERT_EMAIL);
+    }
+
+    for (const email of emailRecipients) {
+      try {
+        await sendEmail({
+          to: email,
+          subject: `[AuditPag ${severity.toUpperCase()}] ${options.title}`,
+          html: generateAlertEmailHtml(options.title, options.description, severity, amount),
+        });
+        await db.update(auditPagAlerts).set({ status: "sent", sentAt: new Date(), recipientEmail: email }).where(eq(auditPagAlerts.id, alert.id));
+      } catch (emailErr: any) {
+        console.error("Alert email failed:", emailErr.message);
       }
     }
+
+    await logAuditTrail(
+      options.userId || "system",
+      "alert_generated",
+      "audit_pag_alert",
+      alert.id,
+      null,
+      { alertType: options.alertType, severity, amount, channel, hash: alertHash },
+      "system"
+    );
 
     return alert;
   } catch (err: any) {
@@ -916,6 +945,42 @@ export function registerAuditPagRoutes(app: Express) {
         ...configData,
       }).returning();
       res.status(201).json(created);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/health-check", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+
+      const { runCP01HealthCheck } = await import("./cp01-health-check");
+      const result = await runCP01HealthCheck();
+      res.json(result);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/remediate", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") return res.status(403).json({ error: "Admin only" });
+
+      const { autoRemediateSeedData, runCP01HealthCheck } = await import("./cp01-health-check");
+      const remediation = await autoRemediateSeedData();
+      const healthCheck = await runCP01HealthCheck();
+
+      await logAuditTrail(
+        req.session.userId!,
+        "cp01_remediation",
+        "system",
+        "manual",
+        null,
+        { remediation, healthCheck: { passed: healthCheck.passed, violations: healthCheck.violations } },
+        req.ip
+      );
+
+      res.json({ remediation, healthCheck });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

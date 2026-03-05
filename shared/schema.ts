@@ -681,6 +681,7 @@ export const auditPagAlerts = pgTable("audit_pag_alerts", {
   recipientUserId: varchar("recipient_user_id"),
   recipientEmail: text("recipient_email"),
   recipientPhone: text("recipient_phone"),
+  integrityHash: text("integrity_hash"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
