@@ -1,0 +1,73 @@
+preciso de uma modelo de SLA pode me ajudar a montar um?
+Boa noite! Posso sim. Antes de montar, preciso só confirmar o contexto: esse SLA é para **viagens corporativas (T&E)** (agenciamento/TMC/OBT) ou para **eventos corporativos (MICE)** (produção/gestão de eventos, venues, A&B etc.)?
+
+Enquanto você confirma, segue um **modelo base de SLA (estrutura pronta para copiar/colar)** que eu ajusto depois ao seu caso:
+
+## Modelo de SLA (template)
+
+### 1) Partes, objeto e escopo
+- **Contratante:** [Empresa do cliente]  
+- **Contratada:** [Fornecedor]  
+- **Objeto:** prestação de [serviço] para [T&E ou MICE].  
+- **Escopo incluso:** [itens]  
+- **Fora de escopo:** [itens]  
+- **Canais oficiais:** e-mail / portal / telefone / chat / ferramenta (ex.: OBT, ITSM).  
+
+### 2) Definições e horário de atendimento
+- **Horário de operação:** [ex.: 24x7 / 8x18 dias úteis]  
+- **Severidades (exemplo):**
+  - **P1 Crítico:** serviço indisponível / impacto alto / risco operacional
+  - **P2 Alto:** degradação relevante / risco de perda financeira
+  - **P3 Médio:** falha parcial / workaround
+  - **P4 Baixo:** dúvidas / solicitações padrão
+
+### 3) SLAs operacionais (KPIs obrigatórios)
+**3.1 Tempo de resposta e de solução**
+| Severidade | Tempo de resposta | Tempo de solução/contorno | Atualização ao cliente |
+|---|---:|---:|---|
+| P1 | [ ] min | [ ] h | a cada [ ] min |
+| P2 | [ ] min | [ ] h | a cada [ ] h |
+| P3 | [ ] h | [ ] dias | diário |
+| P4 | [ ] h | [ ] dias | semanal |
+
+**3.2 Qualidade / conformidade**
+- **Taxa de assertividade de emissão/serviço:** ≥ [ ]% (sem erro de tarifa, nomes, datas, centros de custo, regras).
+- **Reemissões por erro da contratada:** ≤ [ ]% (com custo arcado pela contratada quando aplicável).
+- **Conformidade com política (quando a contratada opera o processo):** ≥ [ ]%.
+
+**3.3 Financeiro e evidências**
+- **Prazo de envio de fatura e detalhamento:** até [ ] dia útil do mês.
+- **Padrão mínimo de evidência:** fatura + detalhamento por transação + comprovantes (quando aplicável) + IDs (PNR/TKT/EMD ou equivalente).
+- **Prazo de correção de cobrança divergente:** até [ ] dias úteis.
+- **Créditos/refunds:** reporte em [ ] dias + acompanhamento até liquidação.
+
+### 4) Governança e ritos
+- **Reunião operacional:** [semanal/quinzenal] com pauta fixa (backlog, incidentes, divergências, savings).
+- **Reunião executiva (QBR):** [trimestral] com KPIs e plano de ação.
+- **RACI (responsáveis):** quem abre chamado, quem aprova, quem resolve, quem valida.
+
+### 5) Penalidades, créditos e incentivo (mecanismo)
+- **Janela de medição:** mensal.
+- **Tolerância/“franquia”:** [ex.: 1 ocorrência P1 sem penalidade] (se aplicável).
+- **Crédito de serviço por não cumprimento:** [regra] (ex.: % do fee mensal por KPI quebrado).
+- **Recorrência:** se repetir por [ ] meses, gatilho para plano corretivo e/ou rescisão por performance.
+> Observação: as fórmulas e percentuais precisam refletir seu contrato—eu não vou inventar números; você define e eu estruturo.
+
+### 6) Auditoria, compliance e proteção de dados
+- **Direito de auditoria:** acesso a relatórios, logs, evidências e trilhas.
+- **Retenção de documentos:** [prazo].
+- **LGPD:** base legal, operadores/suboperadores, segurança, notificação de incidente em [ ] horas.
+- **Anticorrupção e conflitos:** aderência ao código de conduta; vedação a rebates não declarados (se aplicável).
+
+### 7) Relatórios (mínimo)
+- Painel mensal de KPIs + lista de incidentes + divergências financeiras + plano de ação.
+- Base detalhada (CSV/XLSX) para conciliação.
+
+---
+
+Para eu **montar o SLA já preenchido e com KPIs certos**, me responda só estas 5 perguntas:
+1) É **T&E** ou **MICE**?  
+2) Quem é o fornecedor: **TMC/agência**, **OBT**, **midoffice/backoffice**, **pagamentos/cartão**, ou **produtora/venue**?  
+3) Qual o **horário de atendimento** desejado (8x18, 24x7 etc.)?  
+4) Quais são os **3 maiores problemas** hoje (ex.: atraso de suporte, erro de cobrança, falta de evidência, no-show, reembolso etc.)?  
+5) Você quer SLA com **penalidade/bonificação** ou só metas e governança?
