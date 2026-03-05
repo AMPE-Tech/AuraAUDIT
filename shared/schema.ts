@@ -793,6 +793,63 @@ export const auditPagPaymentMethods = pgTable("audit_pag_payment_methods", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const auditPagTransactions = pgTable("audit_pag_transactions", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id"),
+  referenceCode: text("reference_code"),
+  status: text("status").notNull().default("pending"),
+  supplierId: varchar("supplier_id"),
+  supplierCnpj: text("supplier_cnpj"),
+  supplierName: text("supplier_name"),
+  serviceTypeId: varchar("service_type_id"),
+  serviceTypeName: text("service_type_name"),
+  feeConfigId: varchar("fee_config_id"),
+  paymentMethodId: varchar("payment_method_id"),
+  clientRequestData: jsonb("client_request_data"),
+  erpEntryData: jsonb("erp_entry_data"),
+  bankStatementData: jsonb("bank_statement_data"),
+  requestedAmount: decimal("requested_amount", { precision: 14, scale: 2 }),
+  invoicedAmount: decimal("invoiced_amount", { precision: 14, scale: 2 }),
+  supplierPaidAmount: decimal("supplier_paid_amount", { precision: 14, scale: 2 }),
+  clientPaidAmount: decimal("client_paid_amount", { precision: 14, scale: 2 }),
+  bankConfirmedAmount: decimal("bank_confirmed_amount", { precision: 14, scale: 2 }),
+  feeAmount: decimal("fee_amount", { precision: 14, scale: 2 }),
+  feeReconciled: boolean("fee_reconciled").notNull().default(false),
+  commissionExpected: decimal("commission_expected", { precision: 14, scale: 2 }),
+  commissionReceived: decimal("commission_received", { precision: 14, scale: 2 }),
+  incentiveExpected: decimal("incentive_expected", { precision: 14, scale: 2 }),
+  incentiveReceived: decimal("incentive_received", { precision: 14, scale: 2 }),
+  fiscalDocType: text("fiscal_doc_type"),
+  fiscalDocNumber: text("fiscal_doc_number"),
+  fiscalDocAmount: decimal("fiscal_doc_amount", { precision: 14, scale: 2 }),
+  layer1Source: text("layer1_source"),
+  layer1SourceId: varchar("layer1_source_id"),
+  layer1At: timestamp("layer1_at"),
+  layer2Source: text("layer2_source"),
+  layer2SourceId: varchar("layer2_source_id"),
+  layer2At: timestamp("layer2_at"),
+  layer3Source: text("layer3_source"),
+  layer3SourceId: varchar("layer3_source_id"),
+  layer3Type: text("layer3_type"),
+  layer3At: timestamp("layer3_at"),
+  reconciliationStatus: text("reconciliation_status").notNull().default("pending"),
+  reconciliationNotes: text("reconciliation_notes"),
+  reconciliationAt: timestamp("reconciliation_at"),
+  createdByUserId: varchar("created_by_user_id"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auditPagReconciliationLog = pgTable("audit_pag_reconciliation_log", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  transactionId: varchar("transaction_id").notNull(),
+  step: text("step").notNull(),
+  result: text("result").notNull(),
+  details: jsonb("details"),
+  integrityHash: text("integrity_hash"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const insertAuditPagCaseSchema = createInsertSchema(auditPagCases).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAuditPagDocumentSchema = createInsertSchema(auditPagDocuments).omit({ id: true, uploadedAt: true });
 export const insertAuditPagMonitoringSchema = createInsertSchema(auditPagMonitoring).omit({ id: true, createdAt: true });
@@ -806,6 +863,8 @@ export const insertAuditPagServiceTypeSchema = createInsertSchema(auditPagServic
 export const insertAuditPagSupplierServiceSchema = createInsertSchema(auditPagSupplierServices).omit({ id: true, createdAt: true });
 export const insertAuditPagFeeConfigSchema = createInsertSchema(auditPagFeeConfig).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAuditPagPaymentMethodSchema = createInsertSchema(auditPagPaymentMethods).omit({ id: true, createdAt: true });
+export const insertAuditPagTransactionSchema = createInsertSchema(auditPagTransactions).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditPagReconciliationLogSchema = createInsertSchema(auditPagReconciliationLog).omit({ id: true, createdAt: true });
 export type InsertAuditPagCase = z.infer<typeof insertAuditPagCaseSchema>;
 export type AuditPagCase = typeof auditPagCases.$inferSelect;
 export type InsertAuditPagDocument = z.infer<typeof insertAuditPagDocumentSchema>;
@@ -832,6 +891,10 @@ export type InsertAuditPagFeeConfig = z.infer<typeof insertAuditPagFeeConfigSche
 export type AuditPagFeeConfig = typeof auditPagFeeConfig.$inferSelect;
 export type InsertAuditPagPaymentMethod = z.infer<typeof insertAuditPagPaymentMethodSchema>;
 export type AuditPagPaymentMethod = typeof auditPagPaymentMethods.$inferSelect;
+export type InsertAuditPagTransaction = z.infer<typeof insertAuditPagTransactionSchema>;
+export type AuditPagTransaction = typeof auditPagTransactions.$inferSelect;
+export type InsertAuditPagReconciliationLog = z.infer<typeof insertAuditPagReconciliationLogSchema>;
+export type AuditPagReconciliationLog = typeof auditPagReconciliationLog.$inferSelect;
 
 export const trackerProjects = pgTable("tracker_projects", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),

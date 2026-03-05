@@ -6,8 +6,9 @@ import {
   auditPagPolicies, auditPagPolicyItems, auditPagAlerts, auditPagAlertConfig,
   auditPagSuppliers, auditPagDataSources, auditPagServiceTypes,
   auditPagSupplierServices, auditPagFeeConfig, auditPagPaymentMethods,
+  auditPagTransactions, auditPagReconciliationLog,
 } from "@shared/schema";
-import { eq, desc, and, gte, lte } from "drizzle-orm";
+import { sql, eq, desc, and, gte, lte } from "drizzle-orm";
 import { createHash } from "crypto";
 import { z } from "zod";
 import multer from "multer";
@@ -1475,6 +1476,633 @@ export function registerAuditPagRoutes(app: Express) {
         .where(eq(auditPagPaymentMethods.id, req.params.id))
         .returning();
       res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ═══════════════════════════════════════════════════════════════════
+  // BLOCO D — Pipeline de Reconciliação Automática (3 Camadas)
+  // ═══════════════════════════════════════════════════════════════════
+
+  const createTransactionSchema = z.object({
+    referenceCode: z.string().min(1),
+    supplierId: z.string().optional(),
+    supplierCnpj: z.string().optional(),
+    supplierName: z.string().optional(),
+    serviceTypeId: z.string().optional(),
+    serviceTypeName: z.string().optional(),
+    feeConfigId: z.string().optional(),
+    paymentMethodId: z.string().optional(),
+    requestedAmount: z.string().optional(),
+  });
+
+  const layer1Schema = z.object({
+    source: z.string().min(1),
+    sourceId: z.string().optional(),
+    requesterName: z.string().optional(),
+    requesterDepartment: z.string().optional(),
+    destination: z.string().optional(),
+    travelDate: z.string().optional(),
+    returnDate: z.string().optional(),
+    reservationCode: z.string().optional(),
+    supplierConfirmation: z.string().optional(),
+    approvalReference: z.string().optional(),
+    requestedAmount: z.string().optional(),
+    paymentMethod: z.string().optional(),
+    supplierCnpj: z.string().optional(),
+    supplierName: z.string().optional(),
+    additionalData: z.record(z.any()).optional(),
+  });
+
+  const layer2Schema = z.object({
+    source: z.string().min(1),
+    sourceId: z.string().optional(),
+    invoiceNumber: z.string().optional(),
+    invoiceDate: z.string().optional(),
+    invoiceDueDate: z.string().optional(),
+    invoicedAmount: z.string().optional(),
+    supplierPaidAmount: z.string().optional(),
+    clientPaidAmount: z.string().optional(),
+    fiscalDocType: z.enum(["nf", "recibo", "fatura"]).optional(),
+    fiscalDocNumber: z.string().optional(),
+    fiscalDocAmount: z.string().optional(),
+    feeAmount: z.string().optional(),
+    commissionExpected: z.string().optional(),
+    incentiveExpected: z.string().optional(),
+    paymentMethodErp: z.string().optional(),
+    additionalData: z.record(z.any()).optional(),
+  });
+
+  const layer3Schema = z.object({
+    source: z.string().min(1),
+    sourceId: z.string().optional(),
+    type: z.enum(["conta_corrente", "cartao_credito", "cartao_virtual"]),
+    bankConfirmedAmount: z.string().optional(),
+    transactionDate: z.string().optional(),
+    cardLastFour: z.string().optional(),
+    bankReference: z.string().optional(),
+    supplierPaidConfirmed: z.string().optional(),
+    clientPaidConfirmed: z.string().optional(),
+    commissionReceived: z.string().optional(),
+    incentiveReceived: z.string().optional(),
+    feeReceived: z.string().optional(),
+    additionalData: z.record(z.any()).optional(),
+  });
+
+  async function logReconciliationStep(transactionId: string, step: string, result: string, details: any) {
+    const timestamp = new Date().toISOString();
+    const integrityHash = generateIntegrityHash({ transactionId, step, result, details }, timestamp);
+    await db.insert(auditPagReconciliationLog).values({
+      transactionId,
+      step,
+      result,
+      details,
+      integrityHash,
+    });
+  }
+
+  async function generateTransactionAlert(companyId: string | null, transactionId: string, alertType: string, severity: string, title: string, description: string, financialAmount: number, userId: string) {
+    await generateAlert({
+      companyId,
+      caseId: transactionId,
+      alertType,
+      severity,
+      title,
+      description,
+      financialAmount,
+      userId,
+    });
+  }
+
+  app.post("/api/audit-pag/transactions", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const parsed = createTransactionSchema.parse(req.body);
+
+      let supplierBlocked = false;
+      if (parsed.supplierCnpj && user.clientId) {
+        const suppliers = await db.select().from(auditPagSuppliers).where(
+          and(eq(auditPagSuppliers.companyId, user.clientId), eq(auditPagSuppliers.cnpj, parsed.supplierCnpj))
+        );
+        if (suppliers.length === 0) {
+          supplierBlocked = true;
+        } else if (!suppliers[0].isActive || suppliers[0].status === "blocked") {
+          supplierBlocked = true;
+        }
+      }
+
+      const [created] = await db.insert(auditPagTransactions).values({
+        companyId: user.clientId || null,
+        referenceCode: parsed.referenceCode,
+        status: supplierBlocked ? "blocked" : "pending",
+        supplierId: parsed.supplierId || null,
+        supplierCnpj: parsed.supplierCnpj || null,
+        supplierName: parsed.supplierName || null,
+        serviceTypeId: parsed.serviceTypeId || null,
+        serviceTypeName: parsed.serviceTypeName || null,
+        feeConfigId: parsed.feeConfigId || null,
+        paymentMethodId: parsed.paymentMethodId || null,
+        requestedAmount: parsed.requestedAmount || null,
+        createdByUserId: user.id,
+      }).returning();
+
+      await logAuditTrail(user.id, "create", "audit_pag_transaction", created.id, null, created, req.ip);
+
+      if (supplierBlocked) {
+        await generateTransactionAlert(user.clientId || null, created.id, "supplier_not_authorized", "critical",
+          "Fornecedor não autorizado na transação",
+          `Transação ${parsed.referenceCode}: fornecedor CNPJ ${parsed.supplierCnpj} não está autorizado. Pagamento BLOQUEADO.`,
+          parseFloat(parsed.requestedAmount || "0"), user.id);
+        await logReconciliationStep(created.id, "supplier_validation", "blocked", { reason: "supplier_not_authorized", cnpj: parsed.supplierCnpj });
+      }
+
+      res.status(201).json(created);
+    } catch (error: any) {
+      if (error.name === "ZodError") return res.status(400).json({ error: error.errors });
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/transactions", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const { status, reconciliationStatus, limit: limitParam } = req.query;
+      const conditions: any[] = [];
+      if (user.role !== "admin" && user.clientId) {
+        conditions.push(eq(auditPagTransactions.companyId, user.clientId));
+      }
+      if (status) conditions.push(eq(auditPagTransactions.status, status as string));
+      if (reconciliationStatus) conditions.push(eq(auditPagTransactions.reconciliationStatus, reconciliationStatus as string));
+
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+      const rows = await db.select().from(auditPagTransactions)
+        .where(whereClause)
+        .orderBy(desc(auditPagTransactions.createdAt))
+        .limit(parseInt(limitParam as string) || 100);
+      res.json(rows);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/transactions/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const [tx] = await db.select().from(auditPagTransactions).where(eq(auditPagTransactions.id, req.params.id));
+      if (!tx) return res.status(404).json({ error: "Transaction not found" });
+      const logs = await db.select().from(auditPagReconciliationLog)
+        .where(eq(auditPagReconciliationLog.transactionId, req.params.id))
+        .orderBy(desc(auditPagReconciliationLog.createdAt));
+      res.json({ ...tx, reconciliationLog: logs });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Camada 1: Ingestão do pedido do cliente (OBT/GDS/email/approval)
+  app.post("/api/audit-pag/transactions/:id/layer1", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const parsed = layer1Schema.parse(req.body);
+      const [tx] = await db.select().from(auditPagTransactions).where(eq(auditPagTransactions.id, req.params.id));
+      if (!tx) return res.status(404).json({ error: "Transaction not found" });
+
+      let supplierBlocked = false;
+      const cnpj = parsed.supplierCnpj || tx.supplierCnpj;
+      if (cnpj && (user.clientId || tx.companyId)) {
+        const compId = user.clientId || tx.companyId;
+        const suppliers = await db.select().from(auditPagSuppliers).where(
+          and(eq(auditPagSuppliers.companyId, compId!), eq(auditPagSuppliers.cnpj, cnpj))
+        );
+        if (suppliers.length === 0 || !suppliers[0].isActive || suppliers[0].status === "blocked") {
+          supplierBlocked = true;
+        }
+      }
+
+      const clientRequestData = {
+        source: parsed.source,
+        sourceId: parsed.sourceId,
+        requesterName: parsed.requesterName,
+        requesterDepartment: parsed.requesterDepartment,
+        destination: parsed.destination,
+        travelDate: parsed.travelDate,
+        returnDate: parsed.returnDate,
+        reservationCode: parsed.reservationCode,
+        supplierConfirmation: parsed.supplierConfirmation,
+        approvalReference: parsed.approvalReference,
+        paymentMethod: parsed.paymentMethod,
+        ...parsed.additionalData,
+      };
+
+      const updateData: any = {
+        clientRequestData,
+        layer1Source: parsed.source,
+        layer1SourceId: parsed.sourceId || null,
+        layer1At: new Date(),
+        status: supplierBlocked ? "blocked" : "layer1",
+        updatedAt: new Date(),
+      };
+      if (parsed.requestedAmount) updateData.requestedAmount = parsed.requestedAmount;
+      if (parsed.supplierCnpj) updateData.supplierCnpj = parsed.supplierCnpj;
+      if (parsed.supplierName) updateData.supplierName = parsed.supplierName;
+
+      const [updated] = await db.update(auditPagTransactions).set(updateData)
+        .where(eq(auditPagTransactions.id, req.params.id)).returning();
+
+      await logAuditTrail(user.id, "layer1_ingestion", "audit_pag_transaction", req.params.id, { status: tx.status }, updateData, req.ip);
+      await logReconciliationStep(req.params.id, "layer1_ingestion", supplierBlocked ? "blocked" : "match", {
+        source: parsed.source,
+        requestedAmount: parsed.requestedAmount,
+        supplierCnpj: cnpj,
+        supplierBlocked,
+      });
+
+      if (supplierBlocked) {
+        await generateTransactionAlert(tx.companyId, req.params.id, "supplier_not_authorized", "critical",
+          "Fornecedor não autorizado — Camada 1",
+          `Camada 1: CNPJ ${cnpj} não autorizado. Transação ${tx.referenceCode} BLOQUEADA.`,
+          parseFloat(parsed.requestedAmount || tx.requestedAmount || "0"), user.id);
+      }
+
+      res.json(updated);
+    } catch (error: any) {
+      if (error.name === "ZodError") return res.status(400).json({ error: error.errors });
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Camada 2: Ingestão ERP (fatura/NF) + cruzamento com Camada 1
+  app.post("/api/audit-pag/transactions/:id/layer2", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const parsed = layer2Schema.parse(req.body);
+      const [tx] = await db.select().from(auditPagTransactions).where(eq(auditPagTransactions.id, req.params.id));
+      if (!tx) return res.status(404).json({ error: "Transaction not found" });
+
+      const erpEntryData = {
+        source: parsed.source,
+        sourceId: parsed.sourceId,
+        invoiceNumber: parsed.invoiceNumber,
+        invoiceDate: parsed.invoiceDate,
+        invoiceDueDate: parsed.invoiceDueDate,
+        paymentMethodErp: parsed.paymentMethodErp,
+        ...parsed.additionalData,
+      };
+
+      const updateData: any = {
+        erpEntryData,
+        layer2Source: parsed.source,
+        layer2SourceId: parsed.sourceId || null,
+        layer2At: new Date(),
+        status: "layer2",
+        updatedAt: new Date(),
+      };
+      if (parsed.invoicedAmount) updateData.invoicedAmount = parsed.invoicedAmount;
+      if (parsed.supplierPaidAmount) updateData.supplierPaidAmount = parsed.supplierPaidAmount;
+      if (parsed.clientPaidAmount) updateData.clientPaidAmount = parsed.clientPaidAmount;
+      if (parsed.fiscalDocType) updateData.fiscalDocType = parsed.fiscalDocType;
+      if (parsed.fiscalDocNumber) updateData.fiscalDocNumber = parsed.fiscalDocNumber;
+      if (parsed.fiscalDocAmount) updateData.fiscalDocAmount = parsed.fiscalDocAmount;
+      if (parsed.feeAmount) updateData.feeAmount = parsed.feeAmount;
+      if (parsed.commissionExpected) updateData.commissionExpected = parsed.commissionExpected;
+      if (parsed.incentiveExpected) updateData.incentiveExpected = parsed.incentiveExpected;
+
+      const [updated] = await db.update(auditPagTransactions).set(updateData)
+        .where(eq(auditPagTransactions.id, req.params.id)).returning();
+
+      await logAuditTrail(user.id, "layer2_ingestion", "audit_pag_transaction", req.params.id, { status: tx.status }, updateData, req.ip);
+
+      // Cross-match Layer 1 × Layer 2
+      const crossMatchDetails: any = { source: parsed.source };
+      let crossResult = "match";
+
+      const reqAmt = parseFloat(tx.requestedAmount || "0");
+      const invAmt = parseFloat(parsed.invoicedAmount || "0");
+      if (reqAmt > 0 && invAmt > 0) {
+        const diff = Math.abs(reqAmt - invAmt);
+        const pctDiff = (diff / reqAmt) * 100;
+        crossMatchDetails.requestedAmount = reqAmt;
+        crossMatchDetails.invoicedAmount = invAmt;
+        crossMatchDetails.difference = diff;
+        crossMatchDetails.percentDiff = pctDiff.toFixed(2);
+        if (pctDiff > 5) {
+          crossResult = "divergent";
+          await generateTransactionAlert(tx.companyId, req.params.id, "value_mismatch_l1_l2", "high",
+            "Divergência Camada 1×2: valor solicitado ≠ faturado",
+            `Transação ${tx.referenceCode}: solicitado R$ ${reqAmt.toFixed(2)}, faturado R$ ${invAmt.toFixed(2)} (${pctDiff.toFixed(1)}% diferença).`,
+            diff, user.id);
+        } else if (pctDiff > 1) {
+          crossResult = "partial";
+        }
+      }
+
+      const suppAmt = parseFloat(parsed.supplierPaidAmount || "0");
+      const cliAmt = parseFloat(parsed.clientPaidAmount || invAmt.toString());
+      if (suppAmt > 0 && cliAmt > 0 && suppAmt >= cliAmt) {
+        crossMatchDetails.supplierPaidAmount = suppAmt;
+        crossMatchDetails.clientPaidAmount = cliAmt;
+        crossMatchDetails.invariantViolation = "supplier_paid >= client_paid";
+        crossResult = "divergent";
+        await generateTransactionAlert(tx.companyId, req.params.id, "invariant_violation", "critical",
+          "Violação: valor fornecedor ≥ valor cliente",
+          `Transação ${tx.referenceCode}: fornecedor R$ ${suppAmt.toFixed(2)} ≥ cliente R$ ${cliAmt.toFixed(2)}. Invariante violada (fornecedor deve ser < cliente).`,
+          suppAmt, user.id);
+      }
+
+      await logReconciliationStep(req.params.id, "cross_match_1_2", crossResult, crossMatchDetails);
+
+      res.json(updated);
+    } catch (error: any) {
+      if (error.name === "ZodError") return res.status(400).json({ error: error.errors });
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Camada 3: Ingestão bancária (conta corrente/cartão crédito/cartão virtual) + cruzamento triplo
+  app.post("/api/audit-pag/transactions/:id/layer3", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const parsed = layer3Schema.parse(req.body);
+      const [tx] = await db.select().from(auditPagTransactions).where(eq(auditPagTransactions.id, req.params.id));
+      if (!tx) return res.status(404).json({ error: "Transaction not found" });
+
+      const bankStatementData = {
+        source: parsed.source,
+        sourceId: parsed.sourceId,
+        type: parsed.type,
+        transactionDate: parsed.transactionDate,
+        cardLastFour: parsed.cardLastFour,
+        bankReference: parsed.bankReference,
+        ...parsed.additionalData,
+      };
+
+      const updateData: any = {
+        bankStatementData,
+        layer3Source: parsed.source,
+        layer3SourceId: parsed.sourceId || null,
+        layer3Type: parsed.type,
+        layer3At: new Date(),
+        status: "layer3",
+        updatedAt: new Date(),
+      };
+      if (parsed.bankConfirmedAmount) updateData.bankConfirmedAmount = parsed.bankConfirmedAmount;
+      if (parsed.commissionReceived) updateData.commissionReceived = parsed.commissionReceived;
+      if (parsed.incentiveReceived) updateData.incentiveReceived = parsed.incentiveReceived;
+      if (parsed.supplierPaidConfirmed) updateData.supplierPaidAmount = parsed.supplierPaidConfirmed;
+      if (parsed.clientPaidConfirmed) updateData.clientPaidAmount = parsed.clientPaidConfirmed;
+
+      if (parsed.feeReceived) {
+        const feeExpected = parseFloat(tx.feeAmount || "0");
+        const feeActual = parseFloat(parsed.feeReceived);
+        updateData.feeReconciled = Math.abs(feeExpected - feeActual) < 0.01;
+      }
+
+      const [updated] = await db.update(auditPagTransactions).set(updateData)
+        .where(eq(auditPagTransactions.id, req.params.id)).returning();
+
+      await logAuditTrail(user.id, "layer3_ingestion", "audit_pag_transaction", req.params.id, { status: tx.status }, updateData, req.ip);
+
+      // Cross-match triplo: pedido × ERP × banco
+      const tripleMatchDetails: any = { source: parsed.source, type: parsed.type };
+      let tripleResult = "match";
+
+      // 1. Confirma pagamento do cliente
+      const clientPaid = parseFloat(parsed.clientPaidConfirmed || updated.clientPaidAmount || "0");
+      const bankConfirmed = parseFloat(parsed.bankConfirmedAmount || "0");
+      const invoiced = parseFloat(updated.invoicedAmount || "0");
+
+      if (bankConfirmed > 0 && invoiced > 0) {
+        const diff = Math.abs(bankConfirmed - invoiced);
+        tripleMatchDetails.clientPaymentCheck = { bankConfirmed, invoiced, difference: diff };
+        if (diff > 0.01) {
+          tripleResult = "partial";
+          if (diff / invoiced > 0.05) {
+            tripleResult = "divergent";
+            await generateTransactionAlert(tx.companyId, req.params.id, "payment_not_confirmed", "high",
+              "Pagamento cliente não confirmado no banco",
+              `Transação ${tx.referenceCode}: banco R$ ${bankConfirmed.toFixed(2)} ≠ fatura R$ ${invoiced.toFixed(2)}.`,
+              diff, user.id);
+          }
+        }
+      }
+
+      // 2. Confirma pagamento ao fornecedor (fornecedor < cliente, invariante)
+      const suppPaid = parseFloat(parsed.supplierPaidConfirmed || updated.supplierPaidAmount || "0");
+      if (suppPaid > 0 && clientPaid > 0) {
+        tripleMatchDetails.supplierPaymentCheck = { supplierPaid: suppPaid, clientPaid };
+        if (suppPaid >= clientPaid) {
+          tripleResult = "divergent";
+          tripleMatchDetails.supplierPaymentCheck.invariantViolation = true;
+          await generateTransactionAlert(tx.companyId, req.params.id, "invariant_violation_bank", "critical",
+            "Violação bancária: fornecedor ≥ cliente",
+            `Transação ${tx.referenceCode}: pagamento fornecedor R$ ${suppPaid.toFixed(2)} ≥ cliente R$ ${clientPaid.toFixed(2)}.`,
+            suppPaid, user.id);
+        }
+      }
+
+      // 3. Identifica comissões/incentivos recebidos
+      const commExpected = parseFloat(updated.commissionExpected || "0");
+      const commReceived = parseFloat(parsed.commissionReceived || "0");
+      if (commExpected > 0) {
+        tripleMatchDetails.commissionCheck = { expected: commExpected, received: commReceived };
+        if (commReceived < commExpected * 0.95) {
+          if (tripleResult !== "divergent") tripleResult = "partial";
+          await generateTransactionAlert(tx.companyId, req.params.id, "commission_not_received", "medium",
+            "Comissão não recebida integralmente",
+            `Transação ${tx.referenceCode}: comissão esperada R$ ${commExpected.toFixed(2)}, recebida R$ ${commReceived.toFixed(2)}.`,
+            commExpected - commReceived, user.id);
+        }
+      }
+
+      const incExpected = parseFloat(updated.incentiveExpected || "0");
+      const incReceived = parseFloat(parsed.incentiveReceived || "0");
+      if (incExpected > 0) {
+        tripleMatchDetails.incentiveCheck = { expected: incExpected, received: incReceived };
+        if (incReceived < incExpected * 0.95) {
+          if (tripleResult !== "divergent") tripleResult = "partial";
+          await generateTransactionAlert(tx.companyId, req.params.id, "incentive_not_received", "medium",
+            "Incentivo não recebido integralmente",
+            `Transação ${tx.referenceCode}: incentivo esperado R$ ${incExpected.toFixed(2)}, recebido R$ ${incReceived.toFixed(2)}.`,
+            incExpected - incReceived, user.id);
+        }
+      }
+
+      // 4. Reconcilia FEE
+      const feeExpected = parseFloat(updated.feeAmount || "0");
+      const feeReceived = parseFloat(parsed.feeReceived || "0");
+      if (feeExpected > 0) {
+        tripleMatchDetails.feeCheck = { expected: feeExpected, received: feeReceived, reconciled: updated.feeReconciled };
+        if (!updated.feeReconciled) {
+          if (tripleResult !== "divergent") tripleResult = "partial";
+          await generateTransactionAlert(tx.companyId, req.params.id, "fee_not_reconciled", "medium",
+            "FEE não reconciliada",
+            `Transação ${tx.referenceCode}: FEE esperada R$ ${feeExpected.toFixed(2)}, recebida R$ ${feeReceived.toFixed(2)}.`,
+            Math.abs(feeExpected - feeReceived), user.id);
+        }
+      }
+
+      // 5. Reconcilia documentos fiscais (NF/Recibo/Fatura)
+      const fiscalAmt = parseFloat(updated.fiscalDocAmount || "0");
+      if (fiscalAmt > 0 && bankConfirmed > 0) {
+        const fiscalDiff = Math.abs(fiscalAmt - bankConfirmed);
+        tripleMatchDetails.fiscalDocCheck = { docType: updated.fiscalDocType, docNumber: updated.fiscalDocNumber, docAmount: fiscalAmt, bankAmount: bankConfirmed, difference: fiscalDiff };
+        if (fiscalDiff / fiscalAmt > 0.01) {
+          if (tripleResult !== "divergent") tripleResult = "partial";
+          await generateTransactionAlert(tx.companyId, req.params.id, "fiscal_doc_mismatch", "medium",
+            `Divergência documento fiscal (${updated.fiscalDocType || "N/A"})`,
+            `Transação ${tx.referenceCode}: ${updated.fiscalDocType} ${updated.fiscalDocNumber} R$ ${fiscalAmt.toFixed(2)} ≠ banco R$ ${bankConfirmed.toFixed(2)}.`,
+            fiscalDiff, user.id);
+        }
+      }
+
+      await logReconciliationStep(req.params.id, "cross_match_1_2_3", tripleResult, tripleMatchDetails);
+
+      res.json(updated);
+    } catch (error: any) {
+      if (error.name === "ZodError") return res.status(400).json({ error: error.errors });
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Reconciliação completa — executa todos os checks em sequência
+  app.post("/api/audit-pag/transactions/:id/reconcile", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const [tx] = await db.select().from(auditPagTransactions).where(eq(auditPagTransactions.id, req.params.id));
+      if (!tx) return res.status(404).json({ error: "Transaction not found" });
+      if (tx.status === "blocked") return res.status(400).json({ error: "Transação bloqueada — fornecedor não autorizado" });
+
+      const findings: string[] = [];
+      let finalStatus = "matched";
+
+      // Check 1: 3 camadas presentes
+      if (!tx.layer1At) { findings.push("Camada 1 (pedido) não ingerida"); finalStatus = "divergent"; }
+      if (!tx.layer2At) { findings.push("Camada 2 (ERP/fatura) não ingerida"); finalStatus = "divergent"; }
+      if (!tx.layer3At) { findings.push("Camada 3 (banco) não ingerida"); finalStatus = "divergent"; }
+
+      // Check 2: Valores cruzados
+      const reqAmt = parseFloat(tx.requestedAmount || "0");
+      const invAmt = parseFloat(tx.invoicedAmount || "0");
+      const bankAmt = parseFloat(tx.bankConfirmedAmount || "0");
+      const suppAmt = parseFloat(tx.supplierPaidAmount || "0");
+      const cliAmt = parseFloat(tx.clientPaidAmount || "0");
+
+      if (reqAmt > 0 && invAmt > 0 && Math.abs(reqAmt - invAmt) / reqAmt > 0.05) {
+        findings.push(`Valor solicitado (R$ ${reqAmt.toFixed(2)}) diverge do faturado (R$ ${invAmt.toFixed(2)})`);
+        finalStatus = "divergent";
+      }
+      if (invAmt > 0 && bankAmt > 0 && Math.abs(invAmt - bankAmt) / invAmt > 0.05) {
+        findings.push(`Valor faturado (R$ ${invAmt.toFixed(2)}) diverge do banco (R$ ${bankAmt.toFixed(2)})`);
+        finalStatus = "divergent";
+      }
+      if (suppAmt > 0 && cliAmt > 0 && suppAmt >= cliAmt) {
+        findings.push(`INVARIANTE: fornecedor (R$ ${suppAmt.toFixed(2)}) ≥ cliente (R$ ${cliAmt.toFixed(2)})`);
+        finalStatus = "divergent";
+      }
+
+      // Check 3: FEE
+      const feeAmt = parseFloat(tx.feeAmount || "0");
+      if (feeAmt > 0 && !tx.feeReconciled) {
+        findings.push(`FEE R$ ${feeAmt.toFixed(2)} não reconciliada`);
+        if (finalStatus === "matched") finalStatus = "partial";
+      }
+
+      // Check 4: Comissão
+      const commExp = parseFloat(tx.commissionExpected || "0");
+      const commRec = parseFloat(tx.commissionReceived || "0");
+      if (commExp > 0 && commRec < commExp * 0.95) {
+        findings.push(`Comissão: esperada R$ ${commExp.toFixed(2)}, recebida R$ ${commRec.toFixed(2)}`);
+        if (finalStatus === "matched") finalStatus = "partial";
+      }
+
+      // Check 5: Incentivo
+      const incExp = parseFloat(tx.incentiveExpected || "0");
+      const incRec = parseFloat(tx.incentiveReceived || "0");
+      if (incExp > 0 && incRec < incExp * 0.95) {
+        findings.push(`Incentivo: esperado R$ ${incExp.toFixed(2)}, recebido R$ ${incRec.toFixed(2)}`);
+        if (finalStatus === "matched") finalStatus = "partial";
+      }
+
+      // Check 6: Documento fiscal
+      const fiscalAmt = parseFloat(tx.fiscalDocAmount || "0");
+      if (fiscalAmt > 0 && bankAmt > 0 && Math.abs(fiscalAmt - bankAmt) / fiscalAmt > 0.01) {
+        findings.push(`Doc fiscal (R$ ${fiscalAmt.toFixed(2)}) ≠ banco (R$ ${bankAmt.toFixed(2)})`);
+        if (finalStatus === "matched") finalStatus = "partial";
+      }
+
+      const reconciliationNotes = findings.length > 0 ? findings.join(" | ") : "Todas as camadas reconciliadas com sucesso.";
+
+      const [updated] = await db.update(auditPagTransactions).set({
+        status: "reconciled",
+        reconciliationStatus: finalStatus,
+        reconciliationNotes,
+        reconciliationAt: new Date(),
+        updatedAt: new Date(),
+      }).where(eq(auditPagTransactions.id, req.params.id)).returning();
+
+      await logAuditTrail(user.id, "reconcile", "audit_pag_transaction", req.params.id, { status: tx.status }, { reconciliationStatus: finalStatus, reconciliationNotes }, req.ip);
+      await logReconciliationStep(req.params.id, "full_reconciliation", finalStatus, { findings, checks: 6 });
+
+      if (finalStatus === "divergent") {
+        await generateTransactionAlert(tx.companyId, req.params.id, "reconciliation_divergent", "high",
+          "Reconciliação divergente",
+          `Transação ${tx.referenceCode}: ${findings.length} divergência(s) encontrada(s). ${reconciliationNotes}`,
+          Math.max(reqAmt, invAmt, bankAmt), user.id);
+      }
+
+      res.json(updated);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/transactions/:id/log", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const logs = await db.select().from(auditPagReconciliationLog)
+        .where(eq(auditPagReconciliationLog.transactionId, req.params.id))
+        .orderBy(desc(auditPagReconciliationLog.createdAt));
+      res.json(logs);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/reconciliation/summary", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const user = { id: req.session.userId!, role: req.session.role, clientId: req.session.clientId };
+      const conditions: any[] = [];
+      if (user.role !== "admin" && user.clientId) {
+        conditions.push(eq(auditPagTransactions.companyId, user.clientId));
+      }
+      const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+      const allTx = await db.select().from(auditPagTransactions).where(whereClause);
+
+      const summary = {
+        total: allTx.length,
+        pending: allTx.filter(t => t.reconciliationStatus === "pending").length,
+        matched: allTx.filter(t => t.reconciliationStatus === "matched").length,
+        partial: allTx.filter(t => t.reconciliationStatus === "partial").length,
+        divergent: allTx.filter(t => t.reconciliationStatus === "divergent").length,
+        blocked: allTx.filter(t => t.status === "blocked").length,
+        byStatus: {
+          pending: allTx.filter(t => t.status === "pending").length,
+          layer1: allTx.filter(t => t.status === "layer1").length,
+          layer2: allTx.filter(t => t.status === "layer2").length,
+          layer3: allTx.filter(t => t.status === "layer3").length,
+          reconciled: allTx.filter(t => t.status === "reconciled").length,
+          blocked: allTx.filter(t => t.status === "blocked").length,
+        },
+        totalRequestedAmount: allTx.reduce((s, t) => s + parseFloat(t.requestedAmount || "0"), 0),
+        totalInvoicedAmount: allTx.reduce((s, t) => s + parseFloat(t.invoicedAmount || "0"), 0),
+        totalBankConfirmedAmount: allTx.reduce((s, t) => s + parseFloat(t.bankConfirmedAmount || "0"), 0),
+        totalFeeAmount: allTx.reduce((s, t) => s + parseFloat(t.feeAmount || "0"), 0),
+        feeReconciledCount: allTx.filter(t => t.feeReconciled).length,
+        totalCommissionExpected: allTx.reduce((s, t) => s + parseFloat(t.commissionExpected || "0"), 0),
+        totalCommissionReceived: allTx.reduce((s, t) => s + parseFloat(t.commissionReceived || "0"), 0),
+        totalIncentiveExpected: allTx.reduce((s, t) => s + parseFloat(t.incentiveExpected || "0"), 0),
+        totalIncentiveReceived: allTx.reduce((s, t) => s + parseFloat(t.incentiveReceived || "0"), 0),
+      };
+      res.json(summary);
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

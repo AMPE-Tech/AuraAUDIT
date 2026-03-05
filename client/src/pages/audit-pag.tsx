@@ -22,6 +22,7 @@ import {
   Copy, ToggleLeft, Info, AlertCircle, Shield, CreditCard as CardIcon, Wrench,
 } from "lucide-react";
 import AuditPagConfigPanel from "./audit-pag-config";
+import ReconciliationPanel from "./audit-pag-reconciliation";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, AreaChart, Area, Legend,
@@ -272,6 +273,10 @@ export default function AuditPag() {
             )}
           </TabsTrigger>
           <TabsTrigger value="monitoring" data-testid="tab-monitoring">Monitoramento</TabsTrigger>
+          <TabsTrigger value="reconciliation" data-testid="tab-reconciliation">
+            <Landmark className="w-4 h-4 mr-1" />
+            Reconciliação
+          </TabsTrigger>
           <TabsTrigger value="config" data-testid="tab-config">
             <Wrench className="w-4 h-4 mr-1" />
             Integrações
@@ -597,6 +602,10 @@ export default function AuditPag() {
               </div>
             </>
           )}
+        </TabsContent>
+
+        <TabsContent value="reconciliation" className="space-y-4">
+          <ReconciliationPanel toast={toast} />
         </TabsContent>
 
         <TabsContent value="config" className="space-y-4">
