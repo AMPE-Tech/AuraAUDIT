@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "5.2.0";
+const CONTRACT_VERSION = "5.3.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
@@ -546,6 +546,65 @@ ITENS PENDENTES / EM OBSERVACAO:
 [!!] CL25. Multi-idioma: plataforma opera em portugues brasileiro; nao ha suporte a outros idiomas. Recomendacao: avaliar necessidade futura.
 
 ============================================================
+ANEXO IV — REGISTRO DE PROGRESSO DO PROJETO
+============================================================
+
+Projeto: Auditoria Forense — Grupo Stabia (Exercicios 2024/2025)
+Volume financeiro auditado: R$ 51.327.894,23 (2024) + R$ 39.639.788,66 (2025)
+Sistemas: Reserve, Argo (OBT), Wintour (2024), Stur (2025)
+
+PARAMETROS DO CRONOGRAMA (AuraTRACK Schedule Engine):
+- Contrato assinado em: 27/02/2026 (assinatura digital com SHA-256)
+- Grace period: 5 dias uteis apos assinatura
+- Inicio efetivo calculado: 06/03/2026
+- Dedicacao ao projeto: 2 dias/semana
+- Cronograma base: 15 dias de trabalho (proposta comercial aceita)
+- Conclusao projetada: 27/04/2026
+- Calculo: apenas dias uteis (seg-sex), sem finais de semana
+
+CRONOGRAMA DE FASES (calculado pelo Schedule Engine com 2d/semana):
+
+Fase 01 — Revisao de Escopo (2d projeto)
+  Periodo calculado: 06/03/2026 a 10/03/2026
+  Status: CONCLUIDA em 27/02/2026 (antecipada — concluida antes do inicio efetivo)
+  Entregaveis: Revisao final do escopo, alinhamento de objetivos, validacao de premissas, definicao de criterios de auditoria, confirmacao de acessos (OBT Reserve/Argo, Backoffice Wintour/Stur, BSPLink, portais hoteleiros, acordos corporativos)
+  Observacao: Fase antecipada — assinatura do contrato e revisao de escopo ocorreram simultaneamente em 27/02/2026
+
+Fase 02 — Coleta de Dados (3d projeto)
+  Periodo calculado: 11/03/2026 a 19/03/2026
+  Status: EM ANDAMENTO (sistema liberado para upload de arquivos em 27/02/2026)
+  Entregaveis: Coleta estruturada das bases de dados, extracoes dos sistemas (OBT Reserve/Argo, Backoffice Wintour 2024 + Stur 2025, relatorios financeiros/operacionais, extratos de cartoes, faturas de hospedagem, controle de reembolso/creditos, FEE/Rebate/Comissoes)
+
+Fase 03 — Reconciliacao (5d projeto)
+  Periodo calculado: 20/03/2026 a 06/04/2026
+  Status: NAO INICIADA
+  Entregaveis: Cruzamento e reconciliacao multi-via, identificacao de inconsistencias, falhas operacionais, vulnerabilidades financeiras, oportunidades de recuperacao/economia, conciliacao 4 vias (PNR/TKT/EMD + fatura + cartao/VCN + expense)
+
+Fase 04 — Apresentacao dos Resultados (2d projeto)
+  Periodo calculado: 07/04/2026 a 09/04/2026
+  Status: NAO INICIADA
+  Entregaveis: Consolidacao dos achados, validacao preliminar, material executivo com valores, riscos e oportunidades identificadas
+
+Fase 05 — Ajustes e Validacoes (2d projeto)
+  Periodo calculado: 10/04/2026 a 14/04/2026
+  Status: NAO INICIADA
+  Entregaveis: Ajustes finais com base em validacoes junto as areas envolvidas, refinamento das analises, consolidacao das recomendacoes
+
+Fase 06 — Entrega Final (1d projeto)
+  Periodo calculado: 15/04/2026 a 16/04/2026
+  Status: NAO INICIADA
+  Entregaveis: Relatorio executivo consolidado, relatorio tecnico detalhado com achados/evidencias/analises, mapeamento de riscos e vulnerabilidades, recomendacoes praticas, plano de acao priorizado por impacto e risco
+
+RESUMO DE PROGRESSO:
+- Progresso geral: 17% (1 de 6 fases concluidas)
+- Health Score: ON TRACK
+- Horas operacionais registradas: 9.0h (Audit Analysis 5.5h / 61%, Client Response 1.5h / 17%, System Processing 2.0h / 22%)
+- Fase 01 antecipada: concluida antes do inicio efetivo do projeto (ganho de tempo)
+- Fase 02 iniciada antecipadamente: sistema de upload liberado em 27/02/2026
+
+Ultima atualizacao: 05/03/2026
+
+============================================================
 CLAUSULAS PETREAS (REGRAS VINCULANTES IMUTAVEIS)
 ============================================================
 
@@ -563,7 +622,7 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 27 evidencias tecnicas documentadas, 31 itens de checklist de conformidade (26 conformes, 5 em observacao), 3 anexos detalhados e 3 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 27 evidencias tecnicas documentadas, 31 itens de checklist de conformidade (26 conformes, 5 em observacao), 4 anexos detalhados (incluindo Registro de Progresso do Projeto) e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 
@@ -571,7 +630,7 @@ Certos de que nossa experiencia nos qualifica para atender plenamente o projeto,
 
 ${auditorName}
 Contrato de Auditoria e Consultoria — Versao ${CONTRACT_VERSION}
-Total de clausulas: 28 | Evidencias: 27 | Anexos: 3 | Modulos: 12
+Total de clausulas: 28 | Evidencias: 27 | Anexos: 4 | Modulos: 12
 ${auditorAddress}${auditorCity ? `, ${auditorCity}` : ""}${auditorState ? ` - ${auditorState}` : ""}
 ${auditorContactName} | Telefone: ${auditorPhone} | Email: ${auditorEmail}`;
 }
