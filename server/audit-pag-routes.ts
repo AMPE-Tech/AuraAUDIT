@@ -7,6 +7,7 @@ import {
   auditPagSuppliers, auditPagDataSources, auditPagServiceTypes,
   auditPagSupplierServices, auditPagFeeConfig, auditPagPaymentMethods,
   auditPagTransactions, auditPagReconciliationLog,
+  auraTrustCertificates, auraTrustMetering,
 } from "@shared/schema";
 import { sql, eq, desc, and, gte, lte } from "drizzle-orm";
 import { createHash } from "crypto";
@@ -2103,6 +2104,324 @@ export function registerAuditPagRoutes(app: Express) {
         totalIncentiveReceived: allTx.reduce((s, t) => s + parseFloat(t.incentiveReceived || "0"), 0),
       };
       res.json(summary);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  const TRUST_PRICING_TIERS = [
+    { from: 0, to: 500, rate: 0, label: "Incluído na mensalidade" },
+    { from: 501, to: 2000, rate: 0.99, label: "US$ 0,99/tx" },
+    { from: 2001, to: 5000, rate: 0.79, label: "US$ 0,79/tx" },
+    { from: 5001, to: 10000, rate: 0.59, label: "US$ 0,59/tx" },
+    { from: 10001, to: 25000, rate: 0.39, label: "US$ 0,39/tx" },
+    { from: 25001, to: 50000, rate: 0.29, label: "US$ 0,29/tx" },
+    { from: 50001, to: Infinity, rate: 0.19, label: "US$ 0,19/tx" },
+  ];
+  const TRUST_BASE_FEE = 149.00;
+  const TRUST_INCLUDED_TX = 500;
+
+  function calculateTrustBilling(totalTx: number): { baseFee: number; excessFee: number; totalFee: number; excessTx: number; tierBreakdown: any[] } {
+    const excessTx = Math.max(0, totalTx - TRUST_INCLUDED_TX);
+    if (excessTx === 0) return { baseFee: TRUST_BASE_FEE, excessFee: 0, totalFee: TRUST_BASE_FEE, excessTx: 0, tierBreakdown: [] };
+    let remaining = excessTx;
+    let excessFee = 0;
+    const tierBreakdown: any[] = [];
+    for (const tier of TRUST_PRICING_TIERS) {
+      if (tier.rate === 0) continue;
+      const tierSize = tier.to === Infinity ? remaining : Math.min(remaining, tier.to - tier.from + 1);
+      if (tierSize <= 0) break;
+      const tierCost = tierSize * tier.rate;
+      excessFee += tierCost;
+      tierBreakdown.push({ tier: `${tier.from}-${tier.to === Infinity ? "∞" : tier.to}`, qty: tierSize, rate: tier.rate, cost: Math.round(tierCost * 100) / 100 });
+      remaining -= tierSize;
+      if (remaining <= 0) break;
+    }
+    excessFee = Math.round(excessFee * 100) / 100;
+    return { baseFee: TRUST_BASE_FEE, excessFee, totalFee: Math.round((TRUST_BASE_FEE + excessFee) * 100) / 100, excessTx, tierBreakdown };
+  }
+
+  function generateSealCode(companyId: string, type: string): string {
+    const ts = Date.now().toString(36).toUpperCase();
+    const rnd = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const prefix = type === "active_monitoring" ? "ATM" : "ATP";
+    return `${prefix}-${ts}-${rnd}`;
+  }
+
+  app.get("/api/audit-pag/trust/pricing", requireAuth, async (_req: Request, res: Response) => {
+    res.json({
+      baseFee: TRUST_BASE_FEE,
+      includedTransactions: TRUST_INCLUDED_TX,
+      currency: "USD",
+      tiers: TRUST_PRICING_TIERS.map(t => ({ from: t.from, to: t.to === Infinity ? null : t.to, rate: t.rate, label: t.label })),
+      transactionDefinition: "1 transação = 1 linha conciliada por 2 ou 3 fontes (pedido × ERP × banco). Cruzamento de 2 ou 3 fontes para a mesma operação = 1 transação.",
+    });
+  });
+
+  app.post("/api/audit-pag/trust/simulate-billing", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { totalTransactions } = req.body;
+      if (!totalTransactions || totalTransactions < 0) return res.status(400).json({ error: "totalTransactions required" });
+      const billing = calculateTrustBilling(totalTransactions);
+      res.json(billing);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/trust/certificates", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const companyId = req.query.companyId as string | undefined;
+      const certs = companyId
+        ? await db.select().from(auraTrustCertificates).where(eq(auraTrustCertificates.companyId, companyId)).orderBy(desc(auraTrustCertificates.issuedAt))
+        : await db.select().from(auraTrustCertificates).orderBy(desc(auraTrustCertificates.issuedAt));
+      res.json(certs);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/trust/certificates/:id", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const [cert] = await db.select().from(auraTrustCertificates).where(eq(auraTrustCertificates.id, req.params.id));
+      if (!cert) return res.status(404).json({ error: "Certificate not found" });
+      res.json(cert);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/trust/certificates", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { companyId, companyName, type } = req.body;
+      if (!companyId || !companyName || !type) return res.status(400).json({ error: "companyId, companyName, type required" });
+      if (!["active_monitoring", "period_validated"].includes(type)) return res.status(400).json({ error: "type must be active_monitoring or period_validated" });
+
+      if (type === "active_monitoring") {
+        const existingActive = await db.select().from(auraTrustCertificates).where(and(eq(auraTrustCertificates.companyId, companyId), eq(auraTrustCertificates.status, "active")));
+        if (existingActive.length > 0) return res.status(400).json({ error: "Já existe um selo ativo para esta empresa. Revogue o selo atual antes de emitir um novo." });
+      }
+
+      const allTx = await db.select().from(auditPagTransactions).where(eq(auditPagTransactions.companyId, companyId));
+      const reconciledTx = allTx.filter(t => t.reconciliationStatus === "matched");
+      const divergentTx = allTx.filter(t => t.reconciliationStatus === "divergent");
+      const totalVolume = allTx.reduce((s, t) => s + parseFloat(t.requestedAmount || "0"), 0);
+      const alerts = await db.select().from(auditPagAlerts).where(eq(auditPagAlerts.companyId, companyId));
+      const reconciliationRate = allTx.length > 0 ? Math.round((reconciledTx.length / allTx.length) * 10000) / 100 : 0;
+      const complianceScore = allTx.length > 0 ? Math.round(((allTx.length - divergentTx.length) / allTx.length) * 10000) / 100 : 100;
+
+      const previousCerts = await db.select().from(auraTrustCertificates).where(eq(auraTrustCertificates.companyId, companyId)).orderBy(desc(auraTrustCertificates.issuedAt)).limit(1);
+      const previousHash = previousCerts.length > 0 ? previousCerts[0].integrityHash : null;
+
+      const sealCode = generateSealCode(companyId, type);
+      const now = new Date();
+      const certData = {
+        companyId,
+        companyName,
+        type,
+        status: type === "active_monitoring" ? "active" : "issued",
+        sealCode,
+        periodStart: type === "period_validated" ? (allTx.length > 0 ? new Date(Math.min(...allTx.map(t => new Date(t.createdAt).getTime()))) : now) : now,
+        periodEnd: type === "period_validated" ? now : null,
+        totalTransactionsMonitored: allTx.length,
+        totalVolumeMonitored: totalVolume.toFixed(2),
+        totalAlertsGenerated: alerts.length,
+        totalDivergencesFound: divergentTx.length,
+        complianceScore: complianceScore.toFixed(2),
+        reconciliationRate: reconciliationRate.toFixed(2),
+        methodologyVersion: "1.0",
+        issuedAt: now,
+        previousCertificateHash: previousHash,
+        integrityHash: "",
+        metadata: {
+          reconciledCount: reconciledTx.length,
+          partialCount: allTx.filter(t => t.reconciliationStatus === "partial").length,
+          blockedCount: allTx.filter(t => t.status === "blocked").length,
+          criticalAlerts: alerts.filter(a => a.severity === "critical").length,
+          highAlerts: alerts.filter(a => a.severity === "high").length,
+        },
+      };
+
+      const integrityHash = generateIntegrityHash(certData, now.toISOString());
+      certData.integrityHash = integrityHash;
+
+      const [cert] = await db.insert(auraTrustCertificates).values(certData).returning();
+
+      await logAuditTrail((req as any).user?.id || "system", "trust_certificate_issued", "aura_trust_certificate", cert.id, null, { type, sealCode, companyName });
+
+      res.json(cert);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.patch("/api/audit-pag/trust/certificates/:id/revoke", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { reason } = req.body;
+      const [cert] = await db.select().from(auraTrustCertificates).where(eq(auraTrustCertificates.id, req.params.id));
+      if (!cert) return res.status(404).json({ error: "Certificate not found" });
+      if (cert.status === "revoked") return res.status(400).json({ error: "Already revoked" });
+      const now = new Date();
+      const [updated] = await db.update(auraTrustCertificates).set({ status: "revoked", revokedAt: now, revocationReason: reason || "Monitoramento encerrado", updatedAt: now }).where(eq(auraTrustCertificates.id, req.params.id)).returning();
+      await logAuditTrail((req as any).user?.id || "system", "trust_certificate_revoked", "aura_trust_certificate", cert.id, { status: cert.status }, { status: "revoked", reason });
+
+      if (cert.type === "active_monitoring") {
+        const allTx = await db.select().from(auditPagTransactions).where(eq(auditPagTransactions.companyId, cert.companyId));
+        const reconciledTx = allTx.filter(t => t.reconciliationStatus === "matched");
+        const divergentTx = allTx.filter(t => t.reconciliationStatus === "divergent");
+        const totalVolume = allTx.reduce((s, t) => s + parseFloat(t.requestedAmount || "0"), 0);
+        const alerts = await db.select().from(auditPagAlerts).where(eq(auditPagAlerts.companyId, cert.companyId));
+        const reconciliationRate = allTx.length > 0 ? Math.round((reconciledTx.length / allTx.length) * 10000) / 100 : 0;
+        const complianceScore = allTx.length > 0 ? Math.round(((allTx.length - divergentTx.length) / allTx.length) * 10000) / 100 : 100;
+        const periodSealCode = generateSealCode(cert.companyId, "period_validated");
+        const periodCertData = {
+          companyId: cert.companyId,
+          companyName: cert.companyName,
+          type: "period_validated" as const,
+          status: "issued",
+          sealCode: periodSealCode,
+          periodStart: cert.periodStart,
+          periodEnd: now,
+          totalTransactionsMonitored: allTx.length,
+          totalVolumeMonitored: totalVolume.toFixed(2),
+          totalAlertsGenerated: alerts.length,
+          totalDivergencesFound: divergentTx.length,
+          complianceScore: complianceScore.toFixed(2),
+          reconciliationRate: reconciliationRate.toFixed(2),
+          methodologyVersion: "1.0",
+          issuedAt: now,
+          previousCertificateHash: cert.integrityHash,
+          integrityHash: "",
+          metadata: { autoIssued: true, revokedSealCode: cert.sealCode, reconciledCount: reconciledTx.length },
+        };
+        periodCertData.integrityHash = generateIntegrityHash(periodCertData, now.toISOString());
+        const [periodCert] = await db.insert(auraTrustCertificates).values(periodCertData).returning();
+        await logAuditTrail((req as any).user?.id || "system", "trust_period_certificate_auto_issued", "aura_trust_certificate", periodCert.id, null, { autoIssued: true, revokedSealId: cert.id });
+        return res.json({ revoked: updated, periodCertificate: periodCert });
+      }
+
+      res.json({ revoked: updated });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/trust/seal/:sealCode", async (req: Request, res: Response) => {
+    try {
+      const [cert] = await db.select().from(auraTrustCertificates).where(eq(auraTrustCertificates.sealCode, req.params.sealCode));
+      if (!cert) return res.status(404).json({ error: "Seal not found", valid: false });
+      const issuedAtStr = cert.issuedAt instanceof Date ? cert.issuedAt.toISOString() : new Date(cert.issuedAt).toISOString();
+      const hashCheck = generateIntegrityHash({ ...cert, integrityHash: "" }, issuedAtStr);
+      res.json({
+        valid: cert.status !== "revoked",
+        sealCode: cert.sealCode,
+        companyName: cert.companyName,
+        type: cert.type,
+        status: cert.status,
+        periodStart: cert.periodStart,
+        periodEnd: cert.periodEnd,
+        issuedAt: cert.issuedAt,
+        complianceScore: cert.complianceScore,
+        reconciliationRate: cert.reconciliationRate,
+        totalTransactionsMonitored: cert.totalTransactionsMonitored,
+        integrityVerified: hashCheck === cert.integrityHash,
+      });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/trust/metering", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const companyId = req.query.companyId as string | undefined;
+      const records = companyId
+        ? await db.select().from(auraTrustMetering).where(eq(auraTrustMetering.companyId, companyId)).orderBy(desc(auraTrustMetering.billingPeriodStart))
+        : await db.select().from(auraTrustMetering).orderBy(desc(auraTrustMetering.billingPeriodStart));
+      res.json(records);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/audit-pag/trust/metering/calculate", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const { companyId, periodStart, periodEnd } = req.body;
+      if (!companyId || !periodStart || !periodEnd) return res.status(400).json({ error: "companyId, periodStart, periodEnd required" });
+
+      const start = new Date(periodStart);
+      const end = new Date(periodEnd);
+
+      const txInPeriod = await db.select().from(auditPagTransactions).where(
+        and(
+          eq(auditPagTransactions.companyId, companyId),
+          gte(auditPagTransactions.createdAt, start),
+          lte(auditPagTransactions.createdAt, end)
+        )
+      );
+
+      const reconciledTx = txInPeriod.filter(t => ["matched", "partial"].includes(t.reconciliationStatus || ""));
+      const totalTx = reconciledTx.length;
+
+      const billing = calculateTrustBilling(totalTx);
+      const now = new Date();
+      const meteringData = {
+        companyId,
+        billingPeriodStart: start,
+        billingPeriodEnd: end,
+        totalTransactions: totalTx,
+        includedTransactions: TRUST_INCLUDED_TX,
+        excessTransactions: billing.excessTx,
+        baseFee: billing.baseFee.toFixed(2),
+        excessFee: billing.excessFee.toFixed(2),
+        totalFee: billing.totalFee.toFixed(2),
+        tierBreakdown: billing.tierBreakdown,
+        status: "calculated",
+        integrityHash: "",
+      };
+      meteringData.integrityHash = generateIntegrityHash(meteringData, now.toISOString());
+
+      const [record] = await db.insert(auraTrustMetering).values(meteringData).returning();
+      await logAuditTrail((req as any).user?.id || "system", "trust_metering_calculated", "aura_trust_metering", record.id, null, { totalTx, totalFee: billing.totalFee });
+
+      res.json(record);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/audit-pag/trust/summary", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const companyId = req.query.companyId as string | undefined;
+
+      const allCerts = companyId
+        ? await db.select().from(auraTrustCertificates).where(eq(auraTrustCertificates.companyId, companyId)).orderBy(desc(auraTrustCertificates.issuedAt))
+        : await db.select().from(auraTrustCertificates).orderBy(desc(auraTrustCertificates.issuedAt));
+
+      const activeCerts = allCerts.filter(c => c.status === "active");
+      const issuedCerts = allCerts.filter(c => c.status === "issued");
+      const revokedCerts = allCerts.filter(c => c.status === "revoked");
+
+      const allMetering = companyId
+        ? await db.select().from(auraTrustMetering).where(eq(auraTrustMetering.companyId, companyId)).orderBy(desc(auraTrustMetering.billingPeriodStart))
+        : await db.select().from(auraTrustMetering).orderBy(desc(auraTrustMetering.billingPeriodStart));
+
+      const totalBilled = allMetering.reduce((s, m) => s + parseFloat(m.totalFee || "0"), 0);
+
+      res.json({
+        totalCertificates: allCerts.length,
+        activeSealCount: activeCerts.length,
+        issuedCertificateCount: issuedCerts.length,
+        revokedCount: revokedCerts.length,
+        currentActiveSeal: activeCerts.length > 0 ? activeCerts[0] : null,
+        latestCertificate: allCerts.length > 0 ? allCerts[0] : null,
+        meteringRecords: allMetering.length,
+        totalBilled: Math.round(totalBilled * 100) / 100,
+        pricing: {
+          baseFee: TRUST_BASE_FEE,
+          includedTransactions: TRUST_INCLUDED_TX,
+          tiers: TRUST_PRICING_TIERS.map(t => ({ from: t.from, to: t.to === Infinity ? null : t.to, rate: t.rate, label: t.label })),
+        },
+      });
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

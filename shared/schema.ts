@@ -896,6 +896,57 @@ export type AuditPagTransaction = typeof auditPagTransactions.$inferSelect;
 export type InsertAuditPagReconciliationLog = z.infer<typeof insertAuditPagReconciliationLogSchema>;
 export type AuditPagReconciliationLog = typeof auditPagReconciliationLog.$inferSelect;
 
+export const auraTrustCertificates = pgTable("aura_trust_certificates", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull(),
+  companyName: text("company_name").notNull(),
+  type: text("type").notNull(),
+  status: text("status").notNull().default("active"),
+  sealCode: text("seal_code").notNull(),
+  periodStart: timestamp("period_start").notNull(),
+  periodEnd: timestamp("period_end"),
+  totalTransactionsMonitored: integer("total_transactions_monitored").notNull().default(0),
+  totalVolumeMonitored: decimal("total_volume_monitored", { precision: 18, scale: 2 }).notNull().default("0"),
+  totalAlertsGenerated: integer("total_alerts_generated").notNull().default(0),
+  totalDivergencesFound: integer("total_divergences_found").notNull().default(0),
+  complianceScore: decimal("compliance_score", { precision: 5, scale: 2 }),
+  reconciliationRate: decimal("reconciliation_rate", { precision: 5, scale: 2 }),
+  methodologyVersion: text("methodology_version").notNull().default("1.0"),
+  issuedAt: timestamp("issued_at").notNull().defaultNow(),
+  revokedAt: timestamp("revoked_at"),
+  revocationReason: text("revocation_reason"),
+  integrityHash: text("integrity_hash").notNull(),
+  previousCertificateHash: text("previous_certificate_hash"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const auraTrustMetering = pgTable("aura_trust_metering", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  companyId: varchar("company_id").notNull(),
+  billingPeriodStart: timestamp("billing_period_start").notNull(),
+  billingPeriodEnd: timestamp("billing_period_end").notNull(),
+  totalTransactions: integer("total_transactions").notNull().default(0),
+  includedTransactions: integer("included_transactions").notNull().default(500),
+  excessTransactions: integer("excess_transactions").notNull().default(0),
+  baseFee: decimal("base_fee", { precision: 10, scale: 2 }).notNull().default("149.00"),
+  excessFee: decimal("excess_fee", { precision: 10, scale: 2 }).notNull().default("0"),
+  totalFee: decimal("total_fee", { precision: 10, scale: 2 }).notNull().default("149.00"),
+  tierBreakdown: jsonb("tier_breakdown"),
+  status: text("status").notNull().default("open"),
+  integrityHash: text("integrity_hash").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertAuraTrustCertificateSchema = createInsertSchema(auraTrustCertificates).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuraTrustMeteringSchema = createInsertSchema(auraTrustMetering).omit({ id: true, createdAt: true, updatedAt: true });
+export type InsertAuraTrustCertificate = z.infer<typeof insertAuraTrustCertificateSchema>;
+export type AuraTrustCertificate = typeof auraTrustCertificates.$inferSelect;
+export type InsertAuraTrustMetering = z.infer<typeof insertAuraTrustMeteringSchema>;
+export type AuraTrustMetering = typeof auraTrustMetering.$inferSelect;
+
 export const trackerProjects = pgTable("tracker_projects", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   clientId: varchar("client_id"),

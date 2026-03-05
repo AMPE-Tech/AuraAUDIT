@@ -19,7 +19,7 @@ const profileUpdateSchema = z.object({
   notes: z.string().optional().nullable(),
 });
 
-const CONTRACT_VERSION = "5.4.0";
+const CONTRACT_VERSION = "5.5.0";
 
 function generateContractText(auditorData: any, clientData: any): string {
   const auditorName = auditorData?.name || "CTS Brasil - Consultoria em Viagens Corporativas";
@@ -453,8 +453,31 @@ PARTE V — PLATAFORMA DIGITAL AURAAUDIT
 31.7. Log imutavel de reconciliacao: cada passo do pipeline gera registro com hash SHA-256 de integridade, em conformidade com Lei 13.964/2019.
 31.8. O modulo AuraTRUST pode ser contratado independentemente do AuraAudit Pass ou de qualquer projeto de auditoria pontual.
 
+32. AURATRUST — EVIDENCE TRACKING INFRASTRUCTURE (CERTIFICACAO E SELO DE CONFIANCA)
+
+32.1. O modulo Evidence Tracking Infrastructure finaliza o processo de monitoramento continuo. Nao analisa transacoes — apenas formaliza o resultado, emitindo certificados e selos de confianca com cadeia de custodia SHA-256.
+32.2. Tipos de certificacao:
+  (a) Selo de Confianca (active_monitoring): ativo enquanto o monitoramento em tempo real estiver contratado. Valido continuamente durante a vigencia da assinatura mensal.
+  (b) Certificado de Periodo (period_validated): emitido ao encerrar o monitoramento. Formaliza que o processo foi avaliado e validado ate a data, exclusivamente para o periodo e transacoes monitoradas.
+32.3. Precificacao do AuraTRUST Evidence Tracking:
+  (a) Assinatura basica mensal: US$ 149,00/mes (minimo para manter selo ativo).
+  (b) Franquia inclusa: ate 500 transacoes conciliadas por mes.
+  (c) Definicao de transacao: 1 linha conciliada por 2 ou 3 fontes (pedido x ERP x banco). Cruzamento de 2 ou 3 fontes para a mesma operacao = 1 transacao.
+  (d) Acima de 500 transacoes, tabela progressiva por volume:
+      - 501 a 2.000: US$ 0,99/transacao
+      - 2.001 a 5.000: US$ 0,79/transacao
+      - 5.001 a 10.000: US$ 0,59/transacao
+      - 10.001 a 25.000: US$ 0,39/transacao
+      - 25.001 a 50.000: US$ 0,29/transacao
+      - 50.001+: US$ 0,19/transacao
+32.4. Metering automatico: contagem de transacoes conciliadas por periodo, calculo progressivo por faixa, registro com hash SHA-256 de integridade.
+32.5. Validacao publica de selo: endpoint /api/audit-pag/trust/seal/:sealCode permite verificacao externa da validade do selo sem autenticacao.
+32.6. Cadeia de custodia encadeada: cada certificado referencia o hash do certificado anterior, formando corrente de integridade verificavel.
+32.7. Revogacao: ao encerrar monitoramento, o selo ativo e revogado com motivo registrado e Certificado de Periodo e emitido automaticamente.
+32.8. Simulador de faturamento: permite calcular custo estimado para qualquer volume de transacoes antes da contratacao.
+
 ============================================================
-ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E28)
+ANEXO I — EVIDENCIAS TECNICAS DO PROJETO (E1-E29)
 ============================================================
 
 E1. Cadastro padronizado: CNPJ/CPF com validacao matematica + consulta Receita Federal (BrasilAPI)
@@ -485,6 +508,7 @@ E25. CP-01 Health Check Pipeline: verificacao automatica de integridade em cada 
 E26. AuraAI Formatacao v2: regras de formatacao limpa (sem markdown pesado), dosagem progressiva de conteudo (30% na primeira resposta), qualificacao de contexto antes de entrega, verificacao dupla de dados
 E27. AuraTRACK: timeline de projeto com 3 visualizacoes (timeline linear, status dashboard, timesheet operacional), auto-calculo de Project Health Score (on_track/attention/critical), decomposicao de tempo operacional (Client Response Time, Audit Analysis Time, System Processing Time), Audit Efficiency Score com percentuais, controle de acesso por tenant (client scoping), fases com semaforo de status (completed/in_progress/delayed/not_started), disponivel no painel admin e cliente
 E28. AuraTRUST Monitoramento Continuo (Bloco D): Pipeline de Reconciliacao Automatica com 3 Camadas (pedido x ERP x banco), cruzamento triplo com validacao de invariantes (fornecedor < cliente), reconciliacao de FEE/comissoes/incentivos/documentos fiscais (NF/Recibo/Fatura), log imutavel por step com SHA-256, auto-alertas em 8 cenarios (CRITICAL/HIGH/MEDIUM), modulo independente com precificacao propria (US$ 199/mes base + progressiva sobre volume)
+E29. AuraTRUST Evidence Tracking Infrastructure: emissao de certificados e selos de confianca com cadeia de custodia SHA-256 encadeada. Selo de Confianca (ativo durante monitoramento tempo real) e Certificado de Periodo (valido para periodo monitorado apos encerramento). Precificacao propria: US$ 149/mes base + 500 transacoes inclusas + tabela progressiva (US$ 0,99 a US$ 0,19/tx conforme volume). Metering automatico por transacao conciliada (2 ou 3 fontes = 1 tx). Validacao publica de selo via endpoint. Simulador de faturamento integrado.
 
 ============================================================
 ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
@@ -528,6 +552,9 @@ Modulo independente de monitoramento continuo que audita transacoes em tempo rea
 M12. AURATRACK — AUDIT TIMELINE ENGINE
 Modulo de transparencia operacional que demonstra ao cliente o andamento real do projeto de auditoria. Tres visualizacoes integradas: (A) Timeline Linear — cronograma fase a fase com indicadores de semaforo (verde/concluido, amarelo/em andamento, vermelho/atrasado, cinza/nao iniciado), datas de inicio/fim, entregaveis por fase; (B) Status Dashboard — Project Health Score auto-calculado (On Track/Attention/Critical) baseado em atraso de fases e proporcao tempo vs progresso, contadores de fases por status, Audit Efficiency Score com decomposicao percentual (Client Delay Impact, Audit Team Time, System Processing), resumo executivo com diferenca planejado vs executado; (C) Timesheet Operacional — relogio de tempo por categoria (Client Response Time, Audit Analysis Time, System Processing Time), registro de horas com descricao, barras de progresso proporcionais. Modulo standalone, utilizavel individualmente ou integrado ao AuraAUDIT e AuraDUE. Disponivel no painel admin (gestao completa) e painel cliente (visualizacao com transparencia total). Controle de acesso: admin cria projetos, gerencia fases e registra tempo; cliente visualiza apenas projetos atribuidos ao seu clientId. DB: tracker_projects, tracker_phases, tracker_time_entries. Diferencial global: quase nenhuma auditoria mostra tempo operacional real ao cliente. Status: IMPLEMENTADO.
 
+M13. AURATRUST — EVIDENCE TRACKING INFRASTRUCTURE (CERTIFICACAO E SELO DE CONFIANCA)
+Modulo que finaliza o processo de monitoramento continuo, formalizando o resultado sem realizar analises adicionais. Emite dois tipos de certificacao: (A) Selo de Confianca — ativo enquanto monitoramento em tempo real estiver contratado (assinatura mensal minima US$ 149/mes), valido continuamente; (B) Certificado de Periodo — emitido ao encerrar monitoramento, formaliza que o processo foi avaliado e validado ate a data, exclusivamente para o periodo e transacoes monitoradas. Precificacao por transacao: franquia de 500 tx inclusas na mensalidade de US$ 149; acima: tabela progressiva de US$ 0,99 (501-2000) ate US$ 0,19 (50001+). Transacao = 1 linha conciliada por 2 ou 3 fontes (pedido x ERP x banco). Cadeia de custodia SHA-256 encadeada: cada certificado referencia hash do anterior. Metering automatico com calculo progressivo por faixa. Validacao publica de selo via endpoint sem autenticacao. Simulador de faturamento integrado. DB: aura_trust_certificates, aura_trust_metering. Status: IMPLEMENTADO.
+
 ============================================================
 ANEXO III — CHECKLIST DE CONFORMIDADE (AUDITORIA INTERNA)
 ============================================================
@@ -565,7 +592,8 @@ ITENS PENDENTES / EM OBSERVACAO:
 [!!] CL22. Backup e recuperacao: nao ha rotina automatizada de backup do banco PostgreSQL — depende da infraestrutura Replit. Recomendacao: configurar backup externo periodico.
 [!!] CL23. Testes automatizados: cobertura de testes unitarios/integracao nao implementada — validacao manual via e2e e curl. Recomendacao: implementar suite de testes.
 [OK] CL24-PAG-MC. AuraTRUST Monitoramento Continuo: modulo independente com precificacao propria (US$ 199/mes base), pipeline de reconciliacao 3 camadas, cruzamento triplo, auto-alertas, log imutavel SHA-256
-[!!] CL25. Rate limiting: nao ha rate limiting explicito nas APIs — depende da camada de infraestrutura. Recomendacao: adicionar middleware de rate limit.
+[OK] CL25-ETI. AuraTRUST Evidence Tracking Infrastructure: certificacao e selo de confianca com cadeia de custodia SHA-256, metering por transacao (US$ 149/mes + 500 tx inclusas + progressiva), validacao publica de selo, simulador de faturamento
+[!!] CL26. Rate limiting: nao ha rate limiting explicito nas APIs — depende da camada de infraestrutura. Recomendacao: adicionar middleware de rate limit.
 [!!] CL26. Multi-idioma: plataforma opera em portugues brasileiro; nao ha suporte a outros idiomas. Recomendacao: avaliar necessidade futura.
 
 ============================================================
@@ -694,7 +722,7 @@ CONSIDERACOES FINAIS
 
 Esta proposta foi estruturada para apoiar o ${clientName} na elevacao do nivel de controle, governanca e eficiencia de sua gestao de viagens corporativas, fornecendo uma visao clara, tecnica e acionavel sobre o cenario atual e seus pontos de melhoria.
 
-A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M12, com 28 evidencias tecnicas documentadas, 32 itens de checklist de conformidade (27 conformes, 5 em observacao), 5 anexos detalhados (incluindo Registro de Progresso do Projeto e Tabela de Precificacao AuraTRUST) e 3 clausulas petreas vinculantes.
+A versao ${CONTRACT_VERSION} deste contrato reflete a implementacao completa dos modulos M1 a M13, com 29 evidencias tecnicas documentadas, 33 itens de checklist de conformidade (28 conformes, 5 em observacao), 5 anexos detalhados (incluindo Registro de Progresso do Projeto e Tabela de Precificacao AuraTRUST) e 3 clausulas petreas vinculantes.
 
 Certos de que nossa experiencia nos qualifica para atender plenamente o projeto, colocamo-nos a disposicao para quaisquer esclarecimentos.
 

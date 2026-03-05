@@ -19,10 +19,11 @@ import {
   XCircle, Clock, TrendingUp, ArrowUpDown, Upload,
   Building2, User, MapPin, Calendar, CreditCard, FileBarChart, Eye,
   Landmark, ArrowRight, RefreshCw, Bell, BellRing, Settings, FileCheck,
-  Copy, ToggleLeft, Info, AlertCircle, Shield, CreditCard as CardIcon, Wrench,
+  Copy, ToggleLeft, Info, AlertCircle, Shield, CreditCard as CardIcon, Wrench, Award,
 } from "lucide-react";
 import AuditPagConfigPanel from "./audit-pag-config";
 import ReconciliationPanel from "./audit-pag-reconciliation";
+import TrustPanel from "./audit-pag-trust";
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, AreaChart, Area, Legend,
@@ -276,6 +277,10 @@ export default function AuditPag() {
           <TabsTrigger value="reconciliation" data-testid="tab-reconciliation">
             <Landmark className="w-4 h-4 mr-1" />
             Reconciliação
+          </TabsTrigger>
+          <TabsTrigger value="trust" data-testid="tab-trust">
+            <Award className="w-4 h-4 mr-1" />
+            Certificação
           </TabsTrigger>
           <TabsTrigger value="config" data-testid="tab-config">
             <Wrench className="w-4 h-4 mr-1" />
@@ -606,6 +611,10 @@ export default function AuditPag() {
 
         <TabsContent value="reconciliation" className="space-y-4">
           <ReconciliationPanel toast={toast} />
+        </TabsContent>
+
+        <TabsContent value="trust" className="space-y-4">
+          <TrustPanel toast={toast} />
         </TabsContent>
 
         <TabsContent value="config" className="space-y-4">
