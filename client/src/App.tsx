@@ -48,6 +48,7 @@ import EmailCampaigns from "@/pages/email-campaigns";
 import AuditPag from "@/pages/audit-pag";
 import AuraTracker from "@/pages/aura-tracker";
 import LandingPageTest from "@/pages/landingpage-test";
+import AuraCarboHome from "@/pages/auracarbo-home";
 import TrialPage from "@/pages/trial";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -253,6 +254,10 @@ function AppContent() {
         <FloatingAiChat />
       </div>
     );
+  }
+
+  if (location === "/auracarbo") {
+    return <AuraCarboHome />;
   }
 
   if (location === "/trial") {
