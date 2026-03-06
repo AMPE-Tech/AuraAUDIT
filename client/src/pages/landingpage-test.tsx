@@ -345,14 +345,24 @@ export default function LandingPageTest() {
               <Target className="w-4 h-4 text-primary" />
               <h2 className="text-sm font-semibold">O que fazemos</h2>
             </div>
-            <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
-              A plataforma <span className="font-medium text-foreground">estrutura evidencias</span>, preserva{" "}
-              <span className="font-medium text-foreground">cadeia de custodia digital</span>, garante{" "}
-              <span className="font-medium text-foreground">rastreabilidade juridica</span> e aplica{" "}
-              <span className="font-medium text-foreground">monitoramento continuo</span> para calcular{" "}
-              <span className="font-medium text-foreground">scores de conformidade</span> e{" "}
-              <span className="font-medium text-foreground">status verificaveis em tempo real</span>.
-            </p>
+            <div className="text-xs text-muted-foreground leading-relaxed max-w-4xl space-y-2">
+              <p>
+                A plataforma <span className="font-medium text-foreground">estrutura evidencias</span>, mantem{" "}
+                <span className="font-medium text-foreground">cadeia de custodia digital verificavel</span> e aplica{" "}
+                <span className="font-medium text-foreground">monitoramento continuo</span> para gerar{" "}
+                <span className="font-medium text-foreground">scores dinamicos de conformidade</span>.
+              </p>
+              <p>
+                Cada organizacao pode configurar <span className="font-medium text-foreground">frameworks de verificacao personalizados</span>, definindo exatamente quais processos, documentos ou operacoes devem ser auditados.
+              </p>
+              <p>Independentemente da configuracao escolhida, a infraestrutura garante:</p>
+              <ul className="list-disc list-inside space-y-0.5 pl-1">
+                <li>preservacao intacta das evidencias de origem</li>
+                <li>rastreabilidade juridica completa</li>
+                <li>registro imutavel das operacoes</li>
+                <li>integridade verificavel entre entrada, processamento e saida de dados</li>
+              </ul>
+            </div>
             <div className="flex flex-wrap gap-3 pt-1">
               <Button variant="default" size="sm" className="text-xs" onClick={scrollToTrial} data-testid="button-hero-explore">
                 Teste Agora
