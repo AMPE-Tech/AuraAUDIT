@@ -534,6 +534,26 @@ A AuraTECH e a infraestrutura institucional (Trust Infrastructure Platform) que 
 
 Todos os modulos operam sob a camada AuraTRUST, que garante rastreabilidade juridica, cadeia de custodia digital e conformidade com a Lei 13.964/2019.
 
+MODULOS CONECTADOS NA LANDING PAGE AURATECH
+
+A landing page institucional AuraTECH (/landingpage-test e /teste-agora) exibe 12 modulos do ecossistema em cards com status e acesso direto:
+
+MODULOS ATIVOS (com botao "Entrar" habilitado):
+- AuraAUDIT: acesso interno via /login (este app)
+- AuraTRUST: acesso interno via /login (este app)
+- AuraTRACK: acesso interno via /login (este app)
+- AuraDUE: acesso externo via https://auradue.replit.app
+- AuraCARBO: acesso externo via https://auracarbo.replit.app
+- AuraLOA: acesso externo via https://auraloa.replit.app
+- AuraRISK: acesso externo via https://aurarisk.replit.app
+- AuraMARKET: acesso externo via https://auradue.replit.app (integrado ao AuraDUE)
+
+MODULOS EM DESENVOLVIMENTO (botao "Entrar" desabilitado):
+- AuraBID: Procurement & RFP Analysis
+- AuraDATA: Data Governance Hub
+- AuraLEGAL: Legal & Regulatory Compliance
+- AuraTAX: Tax Credit Recovery
+
 MODULOS IMPLEMENTADOS
 
 A plataforma AuraTECH oferece os seguintes modulos digitais, todos implementados e operacionais:
