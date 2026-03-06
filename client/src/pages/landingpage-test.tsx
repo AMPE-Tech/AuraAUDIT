@@ -740,17 +740,20 @@ export default function LandingPageTest() {
         <Separator />
 
         <div ref={trialRef} className="space-y-6" data-testid="section-trial">
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-primary" />
-            <h2 className="text-sm font-semibold">Teste Gratuito — Diagnostico com Cadeia de Custodia</h2>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <Zap className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold">Teste Gratuito</h2>
+            </div>
+            <p className="text-xs text-muted-foreground">Diagnostico com Cadeia de Custodia</p>
           </div>
           <p className="text-xs text-muted-foreground max-w-3xl">
             Envie ate 3 arquivos e descreva o que deseja analisar. Nossa IA gera um relatorio de diagnostico com cadeia de custodia digital — SHA-256, timestamps e rastreabilidade completa.
           </p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><Lock className="w-3 h-3" /> Dados nao armazenados</span>
-            <span className="flex items-center gap-1"><Shield className="w-3 h-3" /> Cadeia de custodia inclusa</span>
-            <span className="flex items-center gap-1"><Zap className="w-3 h-3" /> Resultado em segundos</span>
+          <div className="flex items-center gap-4 text-xs">
+            <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400"><Lock className="w-3 h-3" /> Dados nao armazenados</span>
+            <span className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400"><Shield className="w-3 h-3" /> Cadeia de custodia inclusa</span>
+            <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400"><Zap className="w-3 h-3" /> Resultado em segundos</span>
           </div>
 
           {isBlocked && !result ? (
@@ -832,10 +835,10 @@ export default function LandingPageTest() {
                 </Card>
               )}
 
-              <Card>
+              <Card className="border-primary/20">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <Upload className="w-4 h-4" />
+                    <Upload className="w-4 h-4 text-primary" />
                     1. Envie seus arquivos
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -844,12 +847,12 @@ export default function LandingPageTest() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div
-                    className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
+                    className="border-2 border-dashed border-primary/30 rounded-lg p-6 text-center cursor-pointer hover:border-primary/60 hover:bg-primary/5 transition-all"
                     onClick={() => fileInputRef.current?.click()}
                     data-testid="dropzone-files"
                   >
-                    <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-                    <p className="text-sm text-muted-foreground">Clique para selecionar arquivos</p>
+                    <Upload className="w-8 h-8 mx-auto text-primary/60 mb-2" />
+                    <p className="text-sm text-foreground font-medium">Clique para selecionar arquivos</p>
                     <p className="text-xs text-muted-foreground mt-1">ou arraste e solte aqui</p>
                     <input
                       ref={fileInputRef}
@@ -882,10 +885,10 @@ export default function LandingPageTest() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="border-primary/20">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <FileText className="w-4 h-4" />
+                    <FileText className="w-4 h-4 text-primary" />
                     2. Descreva sua intencao
                   </CardTitle>
                   <CardDescription className="text-xs">
