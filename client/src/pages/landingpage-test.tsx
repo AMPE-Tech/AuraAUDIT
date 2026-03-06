@@ -343,7 +343,7 @@ export default function LandingPageTest() {
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-primary" />
-              <h2 className="text-sm font-semibold">AuraTECH — Trust Infrastructure Platform</h2>
+              <h2 className="text-sm font-semibold">O que fazemos</h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
               Uma <span className="font-medium text-foreground">infraestrutura modular de confianca</span> para{" "}
