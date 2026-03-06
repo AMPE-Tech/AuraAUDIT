@@ -353,15 +353,12 @@ export default function LandingPageTest() {
                 <span className="font-medium text-foreground">scores dinamicos de conformidade</span>.
               </p>
               <p>
-                Cada organizacao pode configurar <span className="font-medium text-foreground">frameworks de verificacao personalizados</span>, definindo exatamente quais processos, documentos ou operacoes devem ser auditados.
+                Cada organizacao pode configurar <span className="font-medium text-foreground">frameworks de verificacao personalizados</span>, definindo exatamente quais processos, documentos ou operacoes devem ser auditados e a Plataforma garante a{" "}
+                <span className="font-medium text-foreground">preservacao intacta das evidencias de origem</span>, com{" "}
+                <span className="font-medium text-foreground">rastreabilidade juridica</span>,{" "}
+                <span className="font-medium text-foreground">registro imutavel</span> e{" "}
+                <span className="font-medium text-foreground">integridade dos dados</span>.
               </p>
-              <p>Independentemente da configuracao escolhida, a infraestrutura garante:</p>
-              <ul className="list-disc list-inside space-y-0.5 pl-1">
-                <li>preservacao intacta das evidencias de origem</li>
-                <li>rastreabilidade juridica completa</li>
-                <li>registro imutavel das operacoes</li>
-                <li>integridade verificavel entre entrada, processamento e saida de dados</li>
-              </ul>
             </div>
             <div className="flex flex-wrap gap-3 pt-1">
               <Button variant="default" size="sm" className="text-xs" onClick={scrollToTrial} data-testid="button-hero-explore">
