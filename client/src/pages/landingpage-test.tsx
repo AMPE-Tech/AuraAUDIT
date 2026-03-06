@@ -185,8 +185,7 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
   const isExternal = mod.url?.startsWith("http");
   return (
     <Card
-      className={`cursor-pointer hover:shadow-md transition-shadow ${isAudit ? "border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900/50" : ""}`}
-      onClick={() => setExpanded(!expanded)}
+      className={`hover:shadow-md transition-shadow ${isAudit ? "border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900/50" : ""}`}
       data-testid={`module-card-${mod.id}`}
     >
       <CardContent className="p-3 space-y-2">
@@ -207,14 +206,13 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
           <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{mod.description}</p>
         )}
         {expanded && (
-          <div className="space-y-2">
+          <div className="space-y-3">
             <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
             {isActive && mod.url && (
               <a
                 href={mod.url}
                 target={isExternal ? "_blank" : "_self"}
                 rel={isExternal ? "noopener noreferrer" : undefined}
-                onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                 data-testid={`module-access-${mod.id}`}
               >
@@ -222,18 +220,21 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
                 {isExternal ? "Acessar Plataforma" : "Entrar"}
               </a>
             )}
+            {!isActive && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                Em desenvolvimento
+              </span>
+            )}
           </div>
         )}
-        <div className="flex items-center gap-1">
-          <button
-            className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
-            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
-            data-testid={`module-expand-${mod.id}`}
-          >
-            {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-            {expanded ? "Recolher" : "Saiba mais"}
-          </button>
-        </div>
+        <button
+          className="flex items-center gap-1 text-xs text-primary font-medium hover:underline cursor-pointer"
+          onClick={() => setExpanded(!expanded)}
+          data-testid={`module-expand-${mod.id}`}
+        >
+          {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+          {expanded ? "Recolher" : "Saiba mais"}
+        </button>
       </CardContent>
     </Card>
   );
