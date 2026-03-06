@@ -511,10 +511,32 @@ E28. AuraTRUST Monitoramento Continuo (Bloco D): Pipeline de Reconciliacao Autom
 E29. AuraTRUST Evidence Tracking Infrastructure: emissao de certificados e selos de confianca com cadeia de custodia SHA-256 encadeada. Selo de Confianca (ativo durante monitoramento tempo real) e Certificado de Periodo (valido para periodo monitorado apos encerramento). Precificacao propria: US$ 149/mes base + 500 transacoes inclusas + tabela progressiva (US$ 0,99 a US$ 0,19/tx conforme volume). Metering automatico por transacao conciliada (2 ou 3 fontes = 1 tx). Validacao publica de selo via endpoint. Simulador de faturamento integrado.
 
 ============================================================
-ANEXO II — PLATAFORMA AURAAUDIT: MODULOS IMPLEMENTADOS
+ANEXO II — PLATAFORMA AURATECH: ECOSSISTEMA E MODULOS IMPLEMENTADOS
 ============================================================
 
-A plataforma AuraAUDIT oferece os seguintes modulos digitais, todos implementados e operacionais:
+ARQUITETURA AURATECH
+
+A AuraTECH e a infraestrutura institucional (Trust Infrastructure Platform) que abriga todos os modulos de verificacao, validacao e certificacao baseados em evidencias. O ecossistema e composto por:
+
+- AuraTRUST: Camada transversal de certificacao e validacao (Evidence Tracking Infrastructure) que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256 encadeada, monitoramento ativo de selos e emissao automatica de certificados.
+- AuraDATA: Hub centralizado de governanca de dados. Motor de ingestao, normalizacao e cruzamento de dados com integridade criptografica em cada etapa.
+- AuraAUDIT: Corporate Expense Review — auditoria forense de despesas corporativas.
+- AuraDUE: Digital Due Diligence — analise de risco e conformidade.
+- AuraRISK: Compliance Score Analysis — pontuacao de risco e conformidade.
+- AuraCARBO: Carbon Project Validation — validacao de projetos de credito de carbono.
+- AuraLOA: Precatory Research Validation — validacao de pesquisa de precatorios.
+- AuraTAX: Tax Credit Recovery — recuperacao de creditos tributarios.
+- AuraMARKET: Verified Asset Exchange — marketplace de ativos verificados.
+- AuraTRACK: Audit Timeline Engine — motor de timeline de auditoria e transparencia operacional.
+- AuraLEGAL: Legal & Regulatory Compliance — gestao de conformidade juridica e regulatoria.
+- AuraBID: Procurement & RFP Analysis — analise automatizada de editais e licitacoes.
+- Aura Trust Index™: Modelo dinamico de pontuacao de confianca com 5 niveis (Excellent/Good/Fair/Review/Critical).
+
+Todos os modulos operam sob a camada AuraTRUST, que garante rastreabilidade juridica, cadeia de custodia digital e conformidade com a Lei 13.964/2019.
+
+MODULOS IMPLEMENTADOS
+
+A plataforma AuraTECH oferece os seguintes modulos digitais, todos implementados e operacionais:
 
 M1. AURAAUDIT PASS (Assinatura Mensal)
 Plano de assinatura mensal que oferece auditoria continua com dashboard interativo, trilha de auditoria, cadeia de custodia digital e relatorios automatizados. Integrado com Stripe para checkout e faturamento automatico. Status: IMPLEMENTADO.

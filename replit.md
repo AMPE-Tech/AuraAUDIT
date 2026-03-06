@@ -1,7 +1,24 @@
-# Aura Audit - Auditoria Forense
+# AuraTECH — Trust Infrastructure Platform
 
 ## Overview
-Aura Audit is a forensic audit platform for corporate travel and event expense analysis, designed to handle significant financial volumes (e.g., R$ 51.3M in 2024, R$ 39.6M in 2025). It ensures compliance with Brazilian Law 13.964/2019 (Digital Chain of Custody) and focuses on expense management, data reconciliation, anomaly detection, and structured reporting to identify optimization opportunities within the LATAM corporate travel ecosystem. The platform aims to provide robust tools for comprehensive audits.
+AuraTECH is the institutional trust infrastructure platform that houses all evidence-based verification, validation and certification modules. The ecosystem evolves from AuraAUDIT (forensic audit for corporate travel) into a modular platform serving multiple sectors. It handles significant financial volumes (e.g., R$ 51.3M in 2024, R$ 39.6M in 2025), ensures compliance with Brazilian Law 13.964/2019 (Digital Chain of Custody), and provides robust tools for comprehensive audits, data governance, legal compliance, and asset verification.
+
+## AuraTECH Ecosystem Architecture
+- **AuraTRUST**: Transversal certification & validation layer (Evidence Tracking Infrastructure) — certifies, validates and monitors every process. SHA-256 chained chain of custody, active seal monitoring, automatic certificate issuance.
+- **AuraDATA**: Data Governance Hub — centralized ingestion, normalization and data cross-referencing with cryptographic integrity.
+- **AuraAUDIT**: Corporate Expense Review — forensic audit of corporate expenses (travel & events). Currently active module.
+- **AuraDUE**: Digital Due Diligence — risk and compliance analysis.
+- **AuraRISK**: Compliance Score Analysis — risk scoring and compliance assessment.
+- **AuraCARBO**: Carbon Project Validation — carbon credit project validation.
+- **AuraLOA**: Precatory Research Validation — precatory research validation.
+- **AuraTAX**: Tax Credit Recovery — tax credit recovery analysis.
+- **AuraMARKET**: Verified Asset Exchange — marketplace for verified assets.
+- **AuraTRACK**: Audit Timeline Engine — audit timeline with operational transparency.
+- **AuraLEGAL**: Legal & Regulatory Compliance — legal obligations and regulatory adequacy monitoring.
+- **AuraBID**: Procurement & RFP Analysis — automated analysis of procurement, bids and RFPs.
+- **Aura Trust Index™**: Dynamic trust score model with 5 levels (Excellent/Good/Fair/Review/Critical).
+
+All modules operate under the AuraTRUST layer, ensuring legal traceability, digital chain of custody, and compliance with Law 13.964/2019.
 
 ## User Preferences
 I prefer clear and concise communication. For any proposed changes, please provide a high-level overview first, explaining the rationale and potential impact. I value iterative development, with regular updates on progress and opportunities for feedback. When implementing features, prioritize maintainability and scalability. I prefer detailed explanations for complex technical decisions. Do not make changes to files related to billing and subscription logic without explicit approval.
@@ -14,6 +31,7 @@ Aura Audit uses a modern full-stack architecture.
 **AI Integration:** OpenAI via Replit AI Integrations (gpt-5.2) for advanced analytics.
 
 **Key Features:**
+- **AuraTECH Landing Page:** Institutional landing page (`/landingpage-test` and `/teste-agora`) with 8 sections: Hero, Module Catalog (12 modules with expandable "Saiba mais"), Performance Stats, Dashboard Banner (4 recharts), AuraTRUST Certification Layer, Trust Index™ (5 levels), Market Application, Free Diagnostic Trial. Visual DNA matches AuraAUDIT home.tsx (slate-950/900 dark banners, Open Sans, recharts). File: `client/src/pages/landingpage-test.tsx`.
 - **Modular Dashboard:** Home page with 8 audit categories, performance metrics, and methodology stages. Detailed dashboard with KPIs, system overviews, financial volumes, and audit scope. Client Project Panel displays real data with "Aguardando dados" placeholders for pending information, enforcing CP-01.
 - **Client Management:** Registration and management of travel agencies and corporate entities, including `contractedServices` tracking.
 - **Contract & Proposal PDF Export:** Admin and client endpoints for generating professional A4 PDFs of contracts and proposals with SHA-256 hashes and metadata.
