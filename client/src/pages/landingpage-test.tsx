@@ -184,9 +184,18 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground mt-0.5">{mod.tagline}</p>
-        <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+        {!expanded && (
+          <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{mod.description}</p>
+        )}
+        {expanded && (
+          <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+        )}
         <div className="flex items-center gap-1">
-          <button className="flex items-center gap-1 text-xs text-primary font-medium hover:underline" data-testid={`module-expand-${mod.id}`}>
+          <button
+            className="flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
+            data-testid={`module-expand-${mod.id}`}
+          >
             {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
             {expanded ? "Recolher" : "Saiba mais"}
           </button>
