@@ -370,6 +370,7 @@ export default function LandingPageTest() {
             <h2 className="text-sm font-semibold">Modulos do Ecossistema</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <ModuleCard mod={{ id: "trust", name: "AuraTRUST", tagline: "Evidence Tracking Infrastructure", description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.", icon: ShieldCheck, color: "text-emerald-600 dark:text-emerald-400", bgColor: "bg-emerald-100 dark:bg-emerald-900/50", borderColor: "border-emerald-200 dark:border-emerald-900" }} />
             {[...VERIFICATION_MODULES, ...SPECIALIZED_MODULES].map((mod) => (
               <ModuleCard key={mod.id} mod={mod} />
             ))}
