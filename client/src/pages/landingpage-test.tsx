@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Shield, ShieldCheck, Search, Database, Lock, Layers, Eye,
-  CheckCircle2, AlertTriangle, Zap, BarChart3, ArrowRight,
+  CheckCircle2, AlertTriangle, Zap, BarChart3, ArrowRight, Globe,
   Leaf, Scale, Receipt, TrendingUp, Award,
   Briefcase, ChevronRight, ChevronDown, LogIn, Target
 } from "lucide-react";
