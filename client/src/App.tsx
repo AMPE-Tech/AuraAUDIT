@@ -48,6 +48,7 @@ import EmailCampaigns from "@/pages/email-campaigns";
 import AuditPag from "@/pages/audit-pag";
 import AuraTracker from "@/pages/aura-tracker";
 import LandingPageTest from "@/pages/landingpage-test";
+import TrialPage from "@/pages/trial";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -249,6 +250,15 @@ function AppContent() {
     return (
       <div className="min-h-screen bg-background">
         <LandingPageTest />
+        <FloatingAiChat />
+      </div>
+    );
+  }
+
+  if (location === "/trial") {
+    return (
+      <div className="min-h-screen bg-background">
+        <TrialPage />
         <FloatingAiChat />
       </div>
     );
