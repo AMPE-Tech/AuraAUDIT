@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
   Shield, ShieldCheck, Search, Database, Lock, Layers, Eye,
-  CheckCircle2, AlertTriangle, Zap, BarChart3, ArrowRight, Globe,
+  CheckCircle2, AlertTriangle, Zap, BarChart3, ArrowRight, Globe, ExternalLink,
   Leaf, Scale, Receipt, TrendingUp, Award,
   Briefcase, ChevronRight, ChevronDown, LogIn, Target
 } from "lucide-react";
@@ -86,6 +86,8 @@ const VERIFICATION_MODULES = [
     color: "text-violet-600 dark:text-violet-400",
     bgColor: "bg-violet-100 dark:bg-violet-900/50",
     borderColor: "border-violet-200 dark:border-violet-900",
+    status: "active" as const,
+    url: "https://auradue.replit.app",
   },
   {
     id: "audit",
@@ -96,6 +98,8 @@ const VERIFICATION_MODULES = [
     color: "text-amber-600 dark:text-amber-400",
     bgColor: "bg-amber-100 dark:bg-amber-900/50",
     borderColor: "border-amber-200 dark:border-amber-900",
+    status: "active" as const,
+    url: "/login",
   },
   {
     id: "risk",
@@ -106,6 +110,8 @@ const VERIFICATION_MODULES = [
     color: "text-red-600 dark:text-red-400",
     bgColor: "bg-red-100 dark:bg-red-900/50",
     borderColor: "border-red-200 dark:border-red-900",
+    status: "active" as const,
+    url: "https://aurarisk.replit.app",
   },
 ];
 
@@ -118,6 +124,8 @@ const SPECIALIZED_MODULES = [
     icon: Leaf,
     color: "text-green-600 dark:text-green-400",
     bgColor: "bg-green-100 dark:bg-green-900/50",
+    status: "active" as const,
+    url: "https://auracarbo.replit.app",
   },
   {
     id: "loa",
@@ -127,6 +135,8 @@ const SPECIALIZED_MODULES = [
     icon: Scale,
     color: "text-indigo-600 dark:text-indigo-400",
     bgColor: "bg-indigo-100 dark:bg-indigo-900/50",
+    status: "active" as const,
+    url: "https://auraloa.replit.app",
   },
   {
     id: "tax",
@@ -136,6 +146,8 @@ const SPECIALIZED_MODULES = [
     icon: Receipt,
     color: "text-orange-600 dark:text-orange-400",
     bgColor: "bg-orange-100 dark:bg-orange-900/50",
+    status: "coming_soon" as const,
+    url: null,
   },
   {
     id: "market",
@@ -145,6 +157,8 @@ const SPECIALIZED_MODULES = [
     icon: TrendingUp,
     color: "text-cyan-600 dark:text-cyan-400",
     bgColor: "bg-cyan-100 dark:bg-cyan-900/50",
+    status: "active" as const,
+    url: "https://auradue.replit.app",
   },
 ];
 
@@ -167,6 +181,8 @@ const CUSTODY_STEPS = [
 function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
   const [expanded, setExpanded] = useState(false);
   const isAudit = mod.id === "audit";
+  const isActive = mod.status === "active";
+  const isExternal = mod.url?.startsWith("http");
   return (
     <Card
       className={`cursor-pointer hover:shadow-md transition-shadow ${isAudit ? "border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900/50" : ""}`}
@@ -179,8 +195,11 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
             <mod.icon className={`w-4 h-4 ${mod.color}`} />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-xs font-semibold leading-tight">{mod.name}</h3>
-            {isAudit && <Badge className="text-[9px] mt-0.5 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-0">Ativo</Badge>}
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-xs font-semibold leading-tight">{mod.name}</h3>
+              {isActive && <Badge className="text-[8px] px-1 py-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0">Ativo</Badge>}
+              {!isActive && <Badge className="text-[8px] px-1 py-0 bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-0">Em breve</Badge>}
+            </div>
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground mt-0.5">{mod.tagline}</p>
@@ -188,7 +207,22 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
           <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{mod.description}</p>
         )}
         {expanded && (
-          <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+          <div className="space-y-2">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+            {isActive && mod.url && (
+              <a
+                href={mod.url}
+                target={isExternal ? "_blank" : "_self"}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                data-testid={`module-access-${mod.id}`}
+              >
+                {isExternal ? <ExternalLink className="w-3 h-3" /> : <LogIn className="w-3 h-3" />}
+                {isExternal ? "Acessar Plataforma" : "Entrar"}
+              </a>
+            )}
+          </div>
         )}
         <div className="flex items-center gap-1">
           <button
@@ -270,11 +304,11 @@ export default function LandingPageTest() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...VERIFICATION_MODULES, ...SPECIALIZED_MODULES,
-              { id: "bid", name: "AuraBID", tagline: "Procurement & RFP Analysis", description: "Analise automatizada de editais, licitacoes e processos de compras. Validacao de conformidade documental, comparativo de propostas e deteccao de irregularidades.", icon: Briefcase, color: "text-teal-600 dark:text-teal-400", bgColor: "bg-teal-100 dark:bg-teal-900/50", borderColor: "border-teal-200 dark:border-teal-900" },
-              { id: "data", name: "AuraDATA", tagline: "Data Governance Hub", description: "Motor centralizado de ingestao, normalizacao e cruzamento de dados. Conciliacao multi-fonte com integridade criptografica em cada etapa.", icon: Database, color: "text-blue-600 dark:text-blue-400", bgColor: "bg-blue-100 dark:bg-blue-900/50", borderColor: "border-blue-200 dark:border-blue-900" },
-              { id: "legal", name: "AuraLEGAL", tagline: "Legal & Regulatory Compliance", description: "Gestao de conformidade juridica e regulatoria. Monitoramento de obrigacoes legais, prazos processuais e adequacao normativa com rastreabilidade completa.", icon: Scale, color: "text-rose-600 dark:text-rose-400", bgColor: "bg-rose-100 dark:bg-rose-900/50", borderColor: "border-rose-200 dark:border-rose-900" },
-              { id: "track", name: "AuraTRACK", tagline: "Audit Timeline Engine", description: "Motor de timeline de auditoria com rastreamento completo de fases, entregas e prazos. Visao cronologica de cada projeto com alertas automaticos e controle de SLA.", icon: Eye, color: "text-sky-600 dark:text-sky-400", bgColor: "bg-sky-100 dark:bg-sky-900/50", borderColor: "border-sky-200 dark:border-sky-900" },
-              { id: "trust", name: "AuraTRUST", tagline: "Evidence Tracking Infrastructure", description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.", icon: ShieldCheck, color: "text-emerald-600 dark:text-emerald-400", bgColor: "bg-emerald-100 dark:bg-emerald-900/50", borderColor: "border-emerald-200 dark:border-emerald-900" },
+              { id: "bid", name: "AuraBID", tagline: "Procurement & RFP Analysis", description: "Analise automatizada de editais, licitacoes e processos de compras. Validacao de conformidade documental, comparativo de propostas e deteccao de irregularidades.", icon: Briefcase, color: "text-teal-600 dark:text-teal-400", bgColor: "bg-teal-100 dark:bg-teal-900/50", borderColor: "border-teal-200 dark:border-teal-900", status: "coming_soon" as const, url: null },
+              { id: "data", name: "AuraDATA", tagline: "Data Governance Hub", description: "Motor centralizado de ingestao, normalizacao e cruzamento de dados. Conciliacao multi-fonte com integridade criptografica em cada etapa.", icon: Database, color: "text-blue-600 dark:text-blue-400", bgColor: "bg-blue-100 dark:bg-blue-900/50", borderColor: "border-blue-200 dark:border-blue-900", status: "coming_soon" as const, url: null },
+              { id: "legal", name: "AuraLEGAL", tagline: "Legal & Regulatory Compliance", description: "Gestao de conformidade juridica e regulatoria. Monitoramento de obrigacoes legais, prazos processuais e adequacao normativa com rastreabilidade completa.", icon: Scale, color: "text-rose-600 dark:text-rose-400", bgColor: "bg-rose-100 dark:bg-rose-900/50", borderColor: "border-rose-200 dark:border-rose-900", status: "coming_soon" as const, url: null },
+              { id: "track", name: "AuraTRACK", tagline: "Audit Timeline Engine", description: "Motor de timeline de auditoria com rastreamento completo de fases, entregas e prazos. Visao cronologica de cada projeto com alertas automaticos e controle de SLA.", icon: Eye, color: "text-sky-600 dark:text-sky-400", bgColor: "bg-sky-100 dark:bg-sky-900/50", borderColor: "border-sky-200 dark:border-sky-900", status: "active" as const, url: "/login" },
+              { id: "trust", name: "AuraTRUST", tagline: "Evidence Tracking Infrastructure", description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.", icon: ShieldCheck, color: "text-emerald-600 dark:text-emerald-400", bgColor: "bg-emerald-100 dark:bg-emerald-900/50", borderColor: "border-emerald-200 dark:border-emerald-900", status: "active" as const, url: "/login" },
             ].sort((a, b) => a.name.localeCompare(b.name)).map((mod) => (
               <ModuleCard key={mod.id} mod={mod} />
             ))}
