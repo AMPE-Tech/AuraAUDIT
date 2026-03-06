@@ -346,12 +346,12 @@ export default function LandingPageTest() {
               <h2 className="text-sm font-semibold">O que fazemos</h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
-              Uma <span className="font-medium text-foreground">infraestrutura modular de confianca</span> para{" "}
-              <span className="font-medium text-foreground">verificacao baseada em evidencias</span>. Plataforma que{" "}
-              <span className="font-medium text-foreground">certifica, valida e pontua</span> processos com{" "}
-              <span className="font-medium text-foreground">cadeia de custodia digital</span>,{" "}
-              <span className="font-medium text-foreground">rastreabilidade juridica</span> e{" "}
-              <span className="font-medium text-foreground">monitoramento continuo</span> — no padrao que Compliance exige.
+              A plataforma <span className="font-medium text-foreground">estrutura evidencias</span>, preserva{" "}
+              <span className="font-medium text-foreground">cadeia de custodia digital</span>, garante{" "}
+              <span className="font-medium text-foreground">rastreabilidade juridica</span> e aplica{" "}
+              <span className="font-medium text-foreground">monitoramento continuo</span> para calcular{" "}
+              <span className="font-medium text-foreground">scores de conformidade</span> e{" "}
+              <span className="font-medium text-foreground">status verificaveis em tempo real</span>.
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
               <Button variant="default" size="sm" className="text-xs" onClick={scrollToTrial} data-testid="button-hero-explore">
