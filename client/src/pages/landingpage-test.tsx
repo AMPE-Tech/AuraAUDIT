@@ -12,7 +12,7 @@ import {
   Upload, FileText, Trash2, ArrowRight, ArrowDown, CheckCircle2,
   Loader2, AlertTriangle, Zap, Globe, Hash, Ban, BarChart3,
   Leaf, Scale, Receipt, TrendingUp, Network, Award, Building2,
-  Plane, Briefcase, ChevronRight, LogIn, Target
+  Plane, Briefcase, ChevronRight, ChevronDown, LogIn, Target
 } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -98,7 +98,7 @@ const CORE_INFRASTRUCTURE = [
   {
     id: "trust",
     name: "AuraTRUST",
-    tagline: "Certification & Validation Layer",
+    tagline: "Evidence Tracking Infrastructure",
     description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.",
     icon: ShieldCheck,
     color: "text-emerald-600 dark:text-emerald-400",
@@ -207,6 +207,38 @@ const CUSTODY_STEPS = [
   { label: "Monitoramento", sub: "Active Watch", color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/30" },
 ];
 
+function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
+  const [expanded, setExpanded] = useState(false);
+  const isAudit = mod.id === "audit";
+  return (
+    <Card
+      className={`cursor-pointer hover:shadow-md transition-shadow ${isAudit ? "border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900/50" : ""}`}
+      onClick={() => setExpanded(!expanded)}
+      data-testid={`module-card-${mod.id}`}
+    >
+      <CardContent className="p-3 space-y-2">
+        <div className="flex items-center gap-2">
+          <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${mod.bgColor}`}>
+            <mod.icon className={`w-4 h-4 ${mod.color}`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-xs font-semibold leading-tight">{mod.name}</h3>
+            {isAudit && <Badge className="text-[9px] mt-0.5 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-0">Ativo</Badge>}
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-0.5">{mod.tagline}</p>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+        <div className="flex items-center gap-1">
+          <button className="flex items-center gap-1 text-xs text-primary font-medium hover:underline" data-testid={`module-expand-${mod.id}`}>
+            {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            {expanded ? "Recolher" : "Saiba mais"}
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function LandingPageTest() {
   const [, navigate] = useLocation();
   const [files, setFiles] = useState<File[]>([]);
@@ -294,16 +326,12 @@ export default function LandingPageTest() {
             </div>
             <div>
               <h1 className="text-sm font-semibold tracking-tight">AuraTECH</h1>
-              <p className="text-[10px] text-muted-foreground">Trust Infrastructure</p>
+              <p className="text-[10px] text-muted-foreground">Trust Infrastructure Platform</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button size="sm" variant="ghost" className="text-xs" onClick={scrollToTrial} data-testid="button-nav-trial">
-              Teste Gratuito
-            </Button>
-            <Button size="sm" variant="outline" className="text-xs" onClick={() => navigate("/login")} data-testid="button-nav-login">
-              <LogIn className="w-3 h-3 mr-1" />
-              Entrar
+            <Button size="sm" onClick={() => navigate("/login")} data-testid="button-nav-login">
+              Acessar Plataforma
             </Button>
           </div>
         </div>
@@ -315,7 +343,7 @@ export default function LandingPageTest() {
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-primary" />
-              <h2 className="text-sm font-semibold">AuraTECH — Trust Infrastructure</h2>
+              <h2 className="text-sm font-semibold">AuraTECH — Trust Infrastructure Platform</h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
               Uma <span className="font-medium text-foreground">infraestrutura modular de confianca</span> para{" "}
@@ -327,11 +355,10 @@ export default function LandingPageTest() {
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
               <Button variant="default" size="sm" className="text-xs" onClick={scrollToTrial} data-testid="button-hero-explore">
-                Explorar Plataforma
-                <ArrowDown className="w-3 h-3 ml-1" />
+                Teste Agora
               </Button>
-              <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/login")} data-testid="button-hero-signin">
-                Acessar Dashboard
+              <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/subscription")} data-testid="button-hero-plans">
+                Conhecer Planos
               </Button>
             </div>
           </CardContent>
@@ -344,21 +371,7 @@ export default function LandingPageTest() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...VERIFICATION_MODULES, ...SPECIALIZED_MODULES].map((mod) => (
-              <Card key={mod.id} className={`cursor-pointer hover:shadow-md transition-shadow ${mod.id === "audit" ? "border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900/50" : ""}`} data-testid={`module-card-${mod.id}`}>
-                <CardContent className="p-3 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${mod.bgColor}`}>
-                      <mod.icon className={`w-4 h-4 ${mod.color}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xs font-semibold leading-tight">{mod.name}</h3>
-                      {mod.id === "audit" && <Badge className="text-[9px] mt-0.5 bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 border-0">Ativo</Badge>}
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{mod.tagline}</p>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
-                </CardContent>
-              </Card>
+              <ModuleCard key={mod.id} mod={mod} />
             ))}
           </div>
         </div>
@@ -549,8 +562,8 @@ export default function LandingPageTest() {
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-100">AuraTRUST — Certification Layer</p>
-                  <p className="text-[10px] text-slate-400">Camada transversal que certifica todos os modulos AuraTECH</p>
+                  <p className="text-sm font-semibold text-slate-100">AuraTRUST Evidence Tracking Infrastructure</p>
+                  <p className="text-[10px] text-slate-400">Camada transversal que certifica, valida e monitora todos os modulos AuraTECH</p>
                 </div>
               </div>
               <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">Core</Badge>
@@ -1151,7 +1164,7 @@ export default function LandingPageTest() {
             <Shield className="w-3 h-3" />
             <span>Cadeia de Custodia Digital - Lei 13.964/2019</span>
           </div>
-          <span>AuraTECH — Trust Infrastructure for Evidence-Based Verification</span>
+          <span>AuraTECH — Trust Infrastructure Platform</span>
         </div>
 
       </div>
