@@ -196,7 +196,6 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
             <div className="flex items-center gap-1.5">
               <h3 className="text-xs font-semibold leading-tight">{mod.name}</h3>
               {isActive && <Badge className="text-[8px] px-1 py-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0">Ativo</Badge>}
-              {!isActive && <Badge className="text-[8px] px-1 py-0 bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400 border-0">Em breve</Badge>}
             </div>
           </div>
         </div>
@@ -215,8 +214,9 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
           </a>
         )}
         {!isActive && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-            Em desenvolvimento
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 opacity-50 cursor-not-allowed">
+            <LogIn className="w-3 h-3" />
+            Entrar
           </span>
         )}
       </CardContent>
