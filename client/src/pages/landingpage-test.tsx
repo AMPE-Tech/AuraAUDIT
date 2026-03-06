@@ -179,7 +179,6 @@ const CUSTODY_STEPS = [
 ];
 
 function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
-  const [expanded, setExpanded] = useState(false);
   const isAudit = mod.id === "audit";
   const isActive = mod.status === "active";
   const isExternal = mod.url?.startsWith("http");
@@ -202,39 +201,24 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
           </div>
         </div>
         <p className="text-[10px] text-muted-foreground mt-0.5">{mod.tagline}</p>
-        {!expanded && (
-          <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">{mod.description}</p>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
+        {isActive && mod.url && (
+          <a
+            href={mod.url}
+            target={isExternal ? "_blank" : "_self"}
+            rel={isExternal ? "noopener noreferrer" : undefined}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            data-testid={`module-access-${mod.id}`}
+          >
+            <LogIn className="w-3 h-3" />
+            Entrar
+          </a>
         )}
-        {expanded && (
-          <div className="space-y-3">
-            <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
-            {isActive && mod.url && (
-              <a
-                href={mod.url}
-                target={isExternal ? "_blank" : "_self"}
-                rel={isExternal ? "noopener noreferrer" : undefined}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-                data-testid={`module-access-${mod.id}`}
-              >
-                {isExternal ? <ExternalLink className="w-3 h-3" /> : <LogIn className="w-3 h-3" />}
-                {isExternal ? "Acessar Plataforma" : "Entrar"}
-              </a>
-            )}
-            {!isActive && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
-                Em desenvolvimento
-              </span>
-            )}
-          </div>
+        {!isActive && (
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+            Em desenvolvimento
+          </span>
         )}
-        <button
-          className="flex items-center gap-1 text-xs text-primary font-medium hover:underline cursor-pointer"
-          onClick={() => setExpanded(!expanded)}
-          data-testid={`module-expand-${mod.id}`}
-        >
-          {expanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-          {expanded ? "Recolher" : "Saiba mais"}
-        </button>
       </CardContent>
     </Card>
   );
