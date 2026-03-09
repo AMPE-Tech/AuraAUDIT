@@ -110,6 +110,7 @@ function ClientRouter() {
       <Route path="/dashboard-studio" component={DashboardStudio} />
       <Route path="/audit-pag" component={AuditPag} />
       <Route path="/tracker" component={AuraTracker} />
+      <Route path="/conciliar-contas" component={ConciliarContas} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={ClientDashboard} />
     </Switch>
