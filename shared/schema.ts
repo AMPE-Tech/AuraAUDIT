@@ -1000,3 +1000,90 @@ export type InsertTrackerPhase = z.infer<typeof insertTrackerPhaseSchema>;
 export type TrackerPhase = typeof trackerPhases.$inferSelect;
 export type InsertTrackerTimeEntry = z.infer<typeof insertTrackerTimeEntrySchema>;
 export type TrackerTimeEntry = typeof trackerTimeEntries.$inferSelect;
+
+export const conciliacaoNfse = pgTable("conciliacao_nfse", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id"),
+  userId: text("user_id").notNull(),
+  tipo: text("tipo").notNull().default("emitida"),
+  pasta: text("pasta").notNull().default("pagar"),
+  numeroNota: text("numero_nota"),
+  dataEmissao: timestamp("data_emissao"),
+  cnpjTomador: text("cnpj_tomador"),
+  cnpjPrestador: text("cnpj_prestador"),
+  razaoSocialTomador: text("razao_social_tomador"),
+  razaoSocialPrestador: text("razao_social_prestador"),
+  valorServico: decimal("valor_servico", { precision: 14, scale: 2 }),
+  valorIss: decimal("valor_iss", { precision: 14, scale: 2 }),
+  aliquotaIss: decimal("aliquota_iss", { precision: 5, scale: 2 }),
+  codigoServico: text("codigo_servico"),
+  descricaoServico: text("descricao_servico"),
+  statusNota: text("status_nota").default("ativa"),
+  municipio: text("municipio").default("Curitiba"),
+  xmlOriginal: text("xml_original"),
+  sha256: text("sha256"),
+  importedAt: timestamp("imported_at").notNull().defaultNow(),
+});
+
+export const conciliacaoErp = pgTable("conciliacao_erp", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id"),
+  userId: text("user_id").notNull(),
+  pasta: text("pasta").notNull().default("pagar"),
+  numeroNf: text("numero_nf"),
+  fornecedor: text("fornecedor"),
+  cnpjFornecedor: text("cnpj_fornecedor"),
+  valorBruto: decimal("valor_bruto", { precision: 14, scale: 2 }),
+  valorLiquido: decimal("valor_liquido", { precision: 14, scale: 2 }),
+  dataPagamento: timestamp("data_pagamento"),
+  dataVencimento: timestamp("data_vencimento"),
+  centroCusto: text("centro_custo"),
+  contrato: text("contrato"),
+  formaPagamento: text("forma_pagamento"),
+  sistemaOrigem: text("sistema_origem").default("STUR"),
+  descricao: text("descricao"),
+  importedAt: timestamp("imported_at").notNull().defaultNow(),
+});
+
+export const conciliacaoBanco = pgTable("conciliacao_banco", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id"),
+  userId: text("user_id").notNull(),
+  pasta: text("pasta").notNull().default("pagar"),
+  dataTransacao: timestamp("data_transacao"),
+  descricao: text("descricao"),
+  valor: decimal("valor", { precision: 14, scale: 2 }),
+  tipo: text("tipo").default("debito"),
+  saldo: decimal("saldo", { precision: 14, scale: 2 }),
+  banco: text("banco"),
+  agencia: text("agencia"),
+  conta: text("conta"),
+  documentoRef: text("documento_ref"),
+  importedAt: timestamp("imported_at").notNull().defaultNow(),
+});
+
+export const conciliacaoResultado = pgTable("conciliacao_resultado", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  clientId: varchar("client_id"),
+  userId: text("user_id").notNull(),
+  pasta: text("pasta").notNull().default("pagar"),
+  nfseId: varchar("nfse_id"),
+  erpId: varchar("erp_id"),
+  bancoId: varchar("banco_id"),
+  statusConciliacao: text("status_conciliacao").notNull().default("pendente"),
+  valorNota: decimal("valor_nota", { precision: 14, scale: 2 }),
+  valorPago: decimal("valor_pago", { precision: 14, scale: 2 }),
+  valorBanco: decimal("valor_banco", { precision: 14, scale: 2 }),
+  diferenca: decimal("diferenca", { precision: 14, scale: 2 }),
+  observacao: text("observacao"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertConciliacaoNfseSchema = createInsertSchema(conciliacaoNfse).omit({ id: true, importedAt: true });
+export const insertConciliacaoErpSchema = createInsertSchema(conciliacaoErp).omit({ id: true, importedAt: true });
+export const insertConciliacaoBancoSchema = createInsertSchema(conciliacaoBanco).omit({ id: true, importedAt: true });
+export const insertConciliacaoResultadoSchema = createInsertSchema(conciliacaoResultado).omit({ id: true, createdAt: true });
+export type ConciliacaoNfse = typeof conciliacaoNfse.$inferSelect;
+export type ConciliacaoErp = typeof conciliacaoErp.$inferSelect;
+export type ConciliacaoBanco = typeof conciliacaoBanco.$inferSelect;
+export type ConciliacaoResultado = typeof conciliacaoResultado.$inferSelect;

@@ -1,0 +1,176 @@
+Para **conciliar notas fiscais de serviço da Prefeitura de Curitiba**, o processo normalmente envolve extrair as **NFS-e emitidas/recebidas** no sistema municipal e cruzar com **financeiro, contratos e impostos (ISS)**. O sistema usado é o **Prefeitura de Curitiba** através do portal **Nota Fiscal de Serviços Eletrônica (NFS-e)**.
+
+Abaixo está o fluxo prático usado por auditorias e áreas financeiras.
+
+---
+
+# 1️⃣ Acessar o portal de NFS-e
+
+Entre no sistema de emissão/consulta de notas da prefeitura:
+
+➡ Portal NFS-e da **Prefeitura de Curitiba**
+
+Login pode ser feito por:
+
+* CNPJ + senha
+* certificado digital
+* contador autorizado
+
+---
+
+# 2️⃣ Exportar as notas fiscais
+
+No portal procure:
+
+**Consultas → NFS-e → Emitidas ou Recebidas**
+
+Filtros normalmente usados:
+
+* período (mês)
+* CNPJ do tomador/prestador
+* status da nota
+
+Depois exporte em:
+
+* **Excel**
+* **CSV**
+* **XML**
+
+Campos principais:
+
+* número da nota
+* data de emissão
+* CNPJ do tomador
+* valor do serviço
+* valor do ISS
+* código do serviço
+* status (cancelada ou ativa)
+
+---
+
+# 3️⃣ Extrair dados do financeiro
+
+Agora extraia do ERP ou financeiro:
+
+Campos necessários:
+
+* número da NF
+* fornecedor
+* valor pago
+* data pagamento
+* centro de custo
+* contrato
+
+Fontes comuns:
+
+* ERP
+* contas a pagar
+* extrato bancário
+* cartão corporativo
+
+---
+
+# 4️⃣ Conciliação das notas
+
+Agora faça o cruzamento:
+
+| Campo           | Origem     |
+| --------------- | ---------- |
+| Número da NFS-e | prefeitura |
+| CNPJ fornecedor | prefeitura |
+| valor da nota   | prefeitura |
+| valor pago      | financeiro |
+| data emissão    | prefeitura |
+| data pagamento  | banco/ERP  |
+
+Verificações principais:
+
+✔ nota emitida sem pagamento
+✔ pagamento sem nota
+✔ diferença de valor
+✔ nota cancelada mas paga
+✔ ISS retido incorretamente
+
+---
+
+# 5️⃣ Verificar retenções de ISS
+
+Em Curitiba algumas operações exigem:
+
+* **ISS retido pelo tomador**
+* ou **ISS recolhido pelo prestador**
+
+Conferir:
+
+* base de cálculo
+* alíquota
+* valor retido
+
+---
+
+# 6️⃣ Conferência com guias de ISS
+
+Depois compare com as guias de recolhimento:
+
+* DAM
+* guia municipal
+* declaração mensal
+
+Isso evita divergência fiscal.
+
+---
+
+# 7️⃣ Relatório final de conciliação
+
+Normalmente o relatório apresenta:
+
+| indicador            | resultado |
+| -------------------- | --------- |
+| total notas emitidas | R$        |
+| total notas pagas    | R$        |
+| divergências         | nº        |
+| notas sem pagamento  | nº        |
+| pagamentos sem nota  | nº        |
+
+---
+
+# 💡 Como automatizar (muito útil no AuraAUDIT)
+
+Você pode automatizar:
+
+1️⃣ download das notas NFS-e
+2️⃣ parsing do XML
+3️⃣ cruzamento com financeiro
+
+Pipeline típico:
+
+```
+NFS-e Curitiba
+       ↓
+XML Parser
+       ↓
+Base estruturada
+       ↓
+Cross-check ERP
+       ↓
+Relatório de divergências
+```
+
+---
+
+# ⚠️ Problema comum em Curitiba
+
+Muitas empresas conciliam **apenas notas emitidas**, mas esquecem:
+
+* **notas recebidas**
+* **serviços tomados fora do município**
+* **retenções de ISS**
+
+Isso gera inconsistências.
+
+---
+
+💡 **Se quiser**, posso também te mostrar:
+
+* **como baixar TODAS as NFS-e automaticamente da prefeitura de Curitiba**
+* ou montar **um modelo de planilha de conciliação profissional (usada por auditorias)**.
