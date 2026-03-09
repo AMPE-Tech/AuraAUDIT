@@ -53,18 +53,18 @@ const DELIVERABLES = [
 ];
 
 const EXPECTED_DOCUMENTS = [
-  { key: "contratos-prestadores", name: "7.1 Contratos com prestadores e clientes", responsible: "Cliente", formats: ".pdf, .doc, .docx" },
-  { key: "backoffice-agencia", name: "7.2 Back office da agencia", responsible: "Cliente", formats: ".csv, .xlsx" },
-  { key: "admin-bsplink-cias", name: "7.3 Administracao BSPLink e cias aereas integradas", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "portais-hoteleiros", name: "7.4 Portais administrativos de redes hoteleiras, operadores e consolidadores", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "acordos-corporativos", name: "7.5 Todos os acordos corporativos (cias aereas, hotelaria, banco, etc.)", responsible: "Cliente", formats: ".pdf, .doc, .docx" },
-  { key: "obt-gds", name: "7.6 Sistema de OBTs e GDSs", responsible: "Cliente", formats: ".csv, .xlsx" },
-  { key: "reembolso-credito", name: "7.7 Controle de reembolso e credito conciliados", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "pgtos-realizados", name: "7.8 Relatorios gerenciais de pagamentos realizados e pendentes", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "receitas-recebidas", name: "7.9 Relatorios gerenciais de receitas recebidas e pendentes", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "extratos-cartoes", name: "7.10 Extratos originais dos cartoes de credito utilizados", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "reservas-hospedagem", name: "7.11 Reservas originais e faturas de hospedagens pagas", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
-  { key: "fee-rebate-comissoes", name: "7.12 Relatorio de cobranca de FEE, Rebate, Comissoes e Incentivos", responsible: "Cliente", formats: ".csv, .xlsx, .pdf" },
+  { key: "contratos-prestadores", name: "7.1 Contratos com prestadores e clientes", responsible: "Cliente", formats: ".pdf, .doc, .docx, .zip" },
+  { key: "backoffice-agencia", name: "7.2 Back office da agencia", responsible: "Cliente", formats: ".csv, .xlsx, .zip" },
+  { key: "admin-bsplink-cias", name: "7.3 Administracao BSPLink e cias aereas integradas", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
+  { key: "portais-hoteleiros", name: "7.4 Portais administrativos de redes hoteleiras, operadores e consolidadores", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
+  { key: "acordos-corporativos", name: "7.5 Todos os acordos corporativos (cias aereas, hotelaria, banco, etc.)", responsible: "Cliente", formats: ".pdf, .doc, .docx, .zip" },
+  { key: "obt-gds", name: "7.6 Sistema de OBTs e GDSs", responsible: "Cliente", formats: ".csv, .xlsx, .zip" },
+  { key: "reembolso-credito", name: "7.7 Controle de reembolso e credito conciliados", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
+  { key: "pgtos-realizados", name: "7.8 Relatorios gerenciais de pagamentos realizados e pendentes", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
+  { key: "receitas-recebidas", name: "7.9 Relatorios gerenciais de receitas recebidas e pendentes", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
+  { key: "extratos-cartoes", name: "7.10 Extratos originais dos cartoes de credito utilizados", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
+  { key: "reservas-hospedagem", name: "7.11 Reservas originais e faturas de hospedagens pagas", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
+  { key: "fee-rebate-comissoes", name: "7.12 Relatorio de cobranca de FEE, Rebate, Comissoes e Incentivos", responsible: "Cliente", formats: ".csv, .xlsx, .pdf, .zip" },
 ];
 
 function formatFileSize(bytes: number) {
