@@ -1,14 +1,13 @@
-import { useState } from "react";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
-  Shield, ShieldCheck, Search, Database, Lock, Layers, Eye,
-  CheckCircle2, AlertTriangle, Zap, BarChart3, ArrowRight, Globe, ExternalLink,
+  Shield, ShieldCheck, Search, Database, Layers, Eye,
+  CheckCircle2, AlertTriangle, BarChart3, ArrowRight, Globe,
   Leaf, Scale, Receipt, TrendingUp, Award,
-  Briefcase, ChevronRight, ChevronDown, LogIn, Target
+  Briefcase, LogIn, Target, FileText, Activity
 } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -51,17 +50,45 @@ const TRUST_RADAR_DATA = [
   { s: "Validacao", v: 85 },
 ];
 
-const CORE_INFRASTRUCTURE = [
+const ALL_MODULES = [
   {
-    id: "trust",
-    name: "AuraTRUST",
-    tagline: "Evidence Tracking Infrastructure",
-    description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.",
-    icon: ShieldCheck,
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-100 dark:bg-emerald-900/50",
-    borderColor: "border-emerald-200 dark:border-emerald-900",
-    features: ["Cadeia de custodia (Lei 13.964/2019)", "Trust Seal com monitoramento ativo", "Certificados periodicos automaticos", "Endpoint publico de validacao"],
+    id: "audit",
+    name: "AuraAUDIT",
+    tagline: "Corporate Expense Review",
+    description: "Analise forense de despesas corporativas de viagens e eventos. Conciliacao multi-sistema, deteccao de anomalias e recuperacao de overcharge.",
+    icon: Receipt,
+    color: "text-amber-500",
+    bgColor: "bg-amber-500/15",
+    borderColor: "border-amber-500/30",
+    status: "active" as const,
+    url: "/login",
+    category: "verification",
+  },
+  {
+    id: "bid",
+    name: "AuraBID",
+    tagline: "Procurement & RFP Analysis",
+    description: "Analise automatizada de editais, licitacoes e processos de compras. Validacao de conformidade documental, comparativo de propostas e deteccao de irregularidades.",
+    icon: Briefcase,
+    color: "text-teal-500",
+    bgColor: "bg-teal-500/15",
+    borderColor: "border-teal-500/30",
+    status: "coming_soon" as const,
+    url: null,
+    category: "specialized",
+  },
+  {
+    id: "carbo",
+    name: "AuraCARBO",
+    tagline: "Carbon Project Validation",
+    description: "Verificacao independente de projetos de credito de carbono — adicionalidade, permanencia e integridade de registro.",
+    icon: Leaf,
+    color: "text-green-500",
+    bgColor: "bg-green-500/15",
+    borderColor: "border-green-500/30",
+    status: "active" as const,
+    url: "https://auracarbo.replit.app",
+    category: "specialized",
   },
   {
     id: "data",
@@ -69,85 +96,51 @@ const CORE_INFRASTRUCTURE = [
     tagline: "Data Governance Hub",
     description: "Motor centralizado de ingestao, normalizacao e cruzamento de dados. Conciliacao multi-fonte com integridade criptografica em cada etapa.",
     icon: Database,
-    color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-100 dark:bg-blue-900/50",
-    borderColor: "border-blue-200 dark:border-blue-900",
-    features: ["Ingestao multi-fonte de dados", "Motor de normalizacao de schema", "Matching por referencia cruzada", "Integridade criptografica dos dados"],
+    color: "text-blue-500",
+    bgColor: "bg-blue-500/15",
+    borderColor: "border-blue-500/30",
+    status: "coming_soon" as const,
+    url: null,
+    category: "infrastructure",
   },
-];
-
-const VERIFICATION_MODULES = [
   {
     id: "due",
     name: "AuraDUE",
     tagline: "Digital Due Diligence",
     description: "Coleta e verificacao automatizada de evidencias para transacoes corporativas, parcerias e submissoes regulatorias.",
     icon: Search,
-    color: "text-violet-600 dark:text-violet-400",
-    bgColor: "bg-violet-100 dark:bg-violet-900/50",
-    borderColor: "border-violet-200 dark:border-violet-900",
+    color: "text-violet-500",
+    bgColor: "bg-violet-500/15",
+    borderColor: "border-violet-500/30",
     status: "active" as const,
     url: "https://auradue.replit.app",
+    category: "verification",
   },
   {
-    id: "audit",
-    name: "AuraAUDIT",
-    tagline: "Corporate Expense Review",
-    description: "Analise forense de despesas corporativas de viagens e eventos. Conciliacao multi-sistema, deteccao de anomalias e recuperacao de overcharge.",
-    icon: Receipt,
-    color: "text-amber-600 dark:text-amber-400",
-    bgColor: "bg-amber-100 dark:bg-amber-900/50",
-    borderColor: "border-amber-200 dark:border-amber-900",
-    status: "active" as const,
-    url: "/login",
-  },
-  {
-    id: "risk",
-    name: "AuraRISK",
-    tagline: "Compliance Score Analysis",
-    description: "Monitoramento continuo de compliance com scoring dinamico de risco. Acompanhamento de aderencia a politicas e escalacao automatica de alertas.",
-    icon: AlertTriangle,
-    color: "text-red-600 dark:text-red-400",
-    bgColor: "bg-red-100 dark:bg-red-900/50",
-    borderColor: "border-red-200 dark:border-red-900",
-    status: "active" as const,
-    url: "https://aurarisk.replit.app",
-  },
-];
-
-const SPECIALIZED_MODULES = [
-  {
-    id: "carbo",
-    name: "AuraCARBO",
-    tagline: "Carbon Project Validation",
-    description: "Verificacao independente de projetos de credito de carbono — adicionalidade, permanencia e integridade de registro.",
-    icon: Leaf,
-    color: "text-green-600 dark:text-green-400",
-    bgColor: "bg-green-100 dark:bg-green-900/50",
-    status: "active" as const,
-    url: "https://auracarbo.replit.app",
+    id: "legal",
+    name: "AuraLEGAL",
+    tagline: "Legal & Regulatory Compliance",
+    description: "Gestao de conformidade juridica e regulatoria. Monitoramento de obrigacoes legais, prazos processuais e adequacao normativa com rastreabilidade completa.",
+    icon: Scale,
+    color: "text-rose-500",
+    bgColor: "bg-rose-500/15",
+    borderColor: "border-rose-500/30",
+    status: "coming_soon" as const,
+    url: null,
+    category: "specialized",
   },
   {
     id: "loa",
     name: "AuraLOA",
     tagline: "Precatory Research Validation",
     description: "Due diligence automatizada para precatorios judiciais — verificacao de origem, analise do devedor e cadeia de cessao.",
-    icon: Scale,
-    color: "text-indigo-600 dark:text-indigo-400",
-    bgColor: "bg-indigo-100 dark:bg-indigo-900/50",
+    icon: FileText,
+    color: "text-indigo-500",
+    bgColor: "bg-indigo-500/15",
+    borderColor: "border-indigo-500/30",
     status: "active" as const,
     url: "https://auraloa.replit.app",
-  },
-  {
-    id: "tax",
-    name: "AuraTAX",
-    tagline: "Tax Credit Recovery",
-    description: "Identificacao e validacao de creditos tributarios recuperaveis em estruturas corporativas e jurisdicoes complexas.",
-    icon: Receipt,
-    color: "text-orange-600 dark:text-orange-400",
-    bgColor: "bg-orange-100 dark:bg-orange-900/50",
-    status: "coming_soon" as const,
-    url: null,
+    category: "specialized",
   },
   {
     id: "market",
@@ -155,10 +148,64 @@ const SPECIALIZED_MODULES = [
     tagline: "Verified Asset Exchange",
     description: "Marketplace com trust score para ativos verificados — certificados, creditos e instrumentos validados com proveniencia completa.",
     icon: TrendingUp,
-    color: "text-cyan-600 dark:text-cyan-400",
-    bgColor: "bg-cyan-100 dark:bg-cyan-900/50",
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-500/15",
+    borderColor: "border-cyan-500/30",
     status: "active" as const,
     url: "https://auradue.replit.app",
+    category: "specialized",
+  },
+  {
+    id: "risk",
+    name: "AuraRISK",
+    tagline: "Compliance Score Analysis",
+    description: "Monitoramento continuo de compliance com scoring dinamico de risco. Acompanhamento de aderencia a politicas e escalacao automatica de alertas.",
+    icon: AlertTriangle,
+    color: "text-red-500",
+    bgColor: "bg-red-500/15",
+    borderColor: "border-red-500/30",
+    status: "active" as const,
+    url: "https://aurarisk.replit.app",
+    category: "verification",
+  },
+  {
+    id: "tax",
+    name: "AuraTAX",
+    tagline: "Tax Credit Recovery",
+    description: "Identificacao e validacao de creditos tributarios recuperaveis em estruturas corporativas e jurisdicoes complexas.",
+    icon: Receipt,
+    color: "text-orange-500",
+    bgColor: "bg-orange-500/15",
+    borderColor: "border-orange-500/30",
+    status: "coming_soon" as const,
+    url: null,
+    category: "specialized",
+  },
+  {
+    id: "track",
+    name: "AuraTRACK",
+    tagline: "Audit Timeline Engine",
+    description: "Motor de timeline de auditoria com rastreamento completo de fases, entregas e prazos. Visao cronologica de cada projeto com alertas automaticos e controle de SLA.",
+    icon: Activity,
+    color: "text-sky-500",
+    bgColor: "bg-sky-500/15",
+    borderColor: "border-sky-500/30",
+    status: "active" as const,
+    url: "/login",
+    category: "verification",
+  },
+  {
+    id: "trust",
+    name: "AuraTRUST",
+    tagline: "Evidence Tracking Infrastructure",
+    description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.",
+    icon: ShieldCheck,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/15",
+    borderColor: "border-emerald-500/30",
+    status: "active" as const,
+    url: "/login",
+    category: "infrastructure",
   },
 ];
 
@@ -178,13 +225,44 @@ const CUSTODY_STEPS = [
   { label: "Monitoramento", sub: "Active Watch", color: "text-emerald-400", bg: "bg-emerald-500/15 border-emerald-500/30" },
 ];
 
-function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
-  const isAudit = mod.id === "audit";
+const INFRASTRUCTURE_FEATURES = [
+  {
+    id: "trust",
+    name: "AuraTRUST",
+    tagline: "Evidence Tracking Infrastructure",
+    description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.",
+    icon: ShieldCheck,
+    color: "text-emerald-400",
+    bgIcon: "bg-emerald-500/20",
+    features: ["Cadeia de custodia (Lei 13.964/2019)", "Trust Seal com monitoramento ativo", "Certificados periodicos automaticos", "Endpoint publico de validacao"],
+  },
+  {
+    id: "data",
+    name: "AuraDATA",
+    tagline: "Data Governance Hub",
+    description: "Motor centralizado de ingestao, normalizacao e cruzamento de dados. Conciliacao multi-fonte com integridade criptografica em cada etapa.",
+    icon: Database,
+    color: "text-blue-400",
+    bgIcon: "bg-blue-500/20",
+    features: ["Ingestao multi-fonte de dados", "Motor de normalizacao de schema", "Matching por referencia cruzada", "Integridade criptografica dos dados"],
+  },
+];
+
+const MARKET_SECTORS = [
+  { name: "Corporate Travel & Events", desc: "Auditoria forense de despesas, conciliacao multi-sistema, deteccao de anomalias.", status: "Ativo" },
+  { name: "Creditos de Carbono", desc: "Verificacao independente de projetos REDD+ e creditos voluntarios.", status: "Ativo" },
+  { name: "Precatorios Judiciais", desc: "Due diligence automatizada para cessao e validacao de precatorios.", status: "Ativo" },
+  { name: "Due Diligence Corporativa", desc: "Coleta e verificacao de evidencias para transacoes e parcerias.", status: "Ativo" },
+  { name: "Compliance & Risco", desc: "Scoring dinamico e monitoramento continuo de conformidade.", status: "Ativo" },
+  { name: "Marketplace de Ativos", desc: "Certificacao e trust score para ativos verificados.", status: "Ativo" },
+];
+
+function ModuleCard({ mod }: { mod: typeof ALL_MODULES[0] }) {
   const isActive = mod.status === "active";
   const isExternal = mod.url?.startsWith("http");
   return (
     <Card
-      className={`hover:shadow-md transition-shadow ${isAudit ? "border-amber-300 dark:border-amber-800 ring-1 ring-amber-200 dark:ring-amber-900/50" : ""}`}
+      className={`hover:shadow-md transition-shadow border ${mod.borderColor}`}
       data-testid={`module-card-${mod.id}`}
     >
       <CardContent className="p-3 space-y-2">
@@ -195,11 +273,11 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
               <h3 className="text-xs font-semibold leading-tight">{mod.name}</h3>
-              {isActive && <Badge className="text-[8px] px-1 py-0 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-0">Ativo</Badge>}
+              {isActive && <Badge className="text-[8px] px-1 py-0 bg-emerald-500/15 text-emerald-400 border-emerald-500/30">Ativo</Badge>}
             </div>
           </div>
         </div>
-        <p className="text-[10px] text-muted-foreground mt-0.5">{mod.tagline}</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">{mod.tagline}</p>
         <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
         {isActive && mod.url && (
           <a
@@ -214,7 +292,7 @@ function ModuleCard({ mod }: { mod: typeof VERIFICATION_MODULES[0] }) {
           </a>
         )}
         {!isActive && (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 opacity-50 cursor-not-allowed">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-muted text-muted-foreground opacity-50 cursor-not-allowed">
             <LogIn className="w-3 h-3" />
             Entrar
           </span>
@@ -231,7 +309,7 @@ export default function LandingPageTest() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 py-3">
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")}>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate("/")} data-testid="logo-auratech">
             <div className="flex items-center justify-center w-9 h-9 rounded-md bg-primary">
               <Shield className="w-5 h-5 text-primary-foreground" />
             </div>
@@ -250,11 +328,12 @@ export default function LandingPageTest() {
 
       <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
 
+        {/* SECTION 1: Hero */}
         <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent" data-testid="section-hero">
           <CardContent className="p-6 space-y-4">
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-primary" />
-              <h2 className="text-sm font-semibold">O que fazemos</h2>
+              <h2 className="text-sm font-semibold">Trust Infrastructure for Evidence-Based Verification</h2>
             </div>
             <div className="text-xs text-muted-foreground leading-relaxed max-w-4xl space-y-2">
               <p>
@@ -282,24 +361,82 @@ export default function LandingPageTest() {
           </CardContent>
         </Card>
 
+        {/* SECTION 2: Core Infrastructure — AuraTRUST + AuraDATA */}
+        <div className="relative overflow-hidden rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="section-core-infrastructure">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(16,185,129,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(59,130,246,0.04),transparent_50%)]" />
+          <div className="relative p-5 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-emerald-500/20">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-100">Infraestrutura Central</p>
+                  <p className="text-[10px] text-slate-400">Camada transversal que certifica, valida e monitora todos os modulos AuraTECH</p>
+                </div>
+              </div>
+              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">Core</Badge>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {INFRASTRUCTURE_FEATURES.map((infra) => (
+                <div key={infra.id} className="rounded-lg bg-slate-800/50 border border-slate-700/30 p-4 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${infra.bgIcon}`}>
+                      <infra.icon className={`w-4 h-4 ${infra.color}`} />
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-medium text-slate-200">{infra.name}</p>
+                      <p className="text-[9px] text-slate-500">{infra.tagline}</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-slate-400 leading-relaxed">{infra.description}</p>
+                  <div className="space-y-1.5">
+                    {infra.features.map((feat, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <CheckCircle2 className={`w-3 h-3 ${infra.color} shrink-0`} />
+                        <span className="text-[10px] text-slate-500">{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-lg bg-slate-800/30 border border-slate-700/20 p-3">
+              <p className="text-[9px] text-slate-500 uppercase tracking-wider mb-3">Trilha de Custodia AuraTRUST</p>
+              <div className="flex items-center gap-0">
+                {CUSTODY_STEPS.map((step, i) => (
+                  <div key={step.label} className="flex items-center flex-1">
+                    <div className={`flex-1 rounded-md border ${step.bg} p-2 text-center`}>
+                      <p className={`text-[10px] font-medium ${step.color}`}>{step.label}</p>
+                      <p className="text-[8px] text-slate-500 mt-0.5">{step.sub}</p>
+                    </div>
+                    {i < CUSTODY_STEPS.length - 1 && <ArrowRight className="w-3 h-3 text-slate-600 mx-1 shrink-0" />}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <p className="text-[10px] text-slate-500 text-center">Cada evidencia recebe identificacao unica, hash de integridade e registro imutavel — admissivel para Compliance, Juridico e Auditoria Interna</p>
+          </div>
+        </div>
+
+        {/* SECTION 3: All 12 Modules */}
         <div className="space-y-4" data-testid="section-modules-catalog">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-primary" />
             <h2 className="text-sm font-semibold">Modulos do Ecossistema</h2>
+            <Badge variant="secondary" className="text-[10px]">12 modulos</Badge>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...VERIFICATION_MODULES, ...SPECIALIZED_MODULES,
-              { id: "bid", name: "AuraBID", tagline: "Procurement & RFP Analysis", description: "Analise automatizada de editais, licitacoes e processos de compras. Validacao de conformidade documental, comparativo de propostas e deteccao de irregularidades.", icon: Briefcase, color: "text-teal-600 dark:text-teal-400", bgColor: "bg-teal-100 dark:bg-teal-900/50", borderColor: "border-teal-200 dark:border-teal-900", status: "coming_soon" as const, url: null },
-              { id: "data", name: "AuraDATA", tagline: "Data Governance Hub", description: "Motor centralizado de ingestao, normalizacao e cruzamento de dados. Conciliacao multi-fonte com integridade criptografica em cada etapa.", icon: Database, color: "text-blue-600 dark:text-blue-400", bgColor: "bg-blue-100 dark:bg-blue-900/50", borderColor: "border-blue-200 dark:border-blue-900", status: "coming_soon" as const, url: null },
-              { id: "legal", name: "AuraLEGAL", tagline: "Legal & Regulatory Compliance", description: "Gestao de conformidade juridica e regulatoria. Monitoramento de obrigacoes legais, prazos processuais e adequacao normativa com rastreabilidade completa.", icon: Scale, color: "text-rose-600 dark:text-rose-400", bgColor: "bg-rose-100 dark:bg-rose-900/50", borderColor: "border-rose-200 dark:border-rose-900", status: "coming_soon" as const, url: null },
-              { id: "track", name: "AuraTRACK", tagline: "Audit Timeline Engine", description: "Motor de timeline de auditoria com rastreamento completo de fases, entregas e prazos. Visao cronologica de cada projeto com alertas automaticos e controle de SLA.", icon: Eye, color: "text-sky-600 dark:text-sky-400", bgColor: "bg-sky-100 dark:bg-sky-900/50", borderColor: "border-sky-200 dark:border-sky-900", status: "active" as const, url: "/login" },
-              { id: "trust", name: "AuraTRUST", tagline: "Evidence Tracking Infrastructure", description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.", icon: ShieldCheck, color: "text-emerald-600 dark:text-emerald-400", bgColor: "bg-emerald-100 dark:bg-emerald-900/50", borderColor: "border-emerald-200 dark:border-emerald-900", status: "active" as const, url: "/login" },
-            ].sort((a, b) => a.name.localeCompare(b.name)).map((mod) => (
+            {ALL_MODULES.sort((a, b) => a.name.localeCompare(b.name)).map((mod) => (
               <ModuleCard key={mod.id} mod={mod} />
             ))}
           </div>
         </div>
 
+        {/* SECTION 4: Performance Dashboard */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" />
@@ -339,6 +476,7 @@ export default function LandingPageTest() {
           </div>
         </div>
 
+        {/* SECTION 5: Dashboard Preview with Charts */}
         <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950" data-testid="banner-dashboard-preview">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(16,185,129,0.08),transparent_50%),radial-gradient(ellipse_at_bottom_left,_rgba(59,130,246,0.06),transparent_50%)]" />
           <div className="relative p-5 space-y-4">
@@ -469,138 +607,7 @@ export default function LandingPageTest() {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-3 py-2">
-          <p className="text-xs text-muted-foreground">Infraestrutura com <strong className="text-foreground">cadeia de custodia</strong> e <strong className="text-foreground">rastreabilidade juridica</strong></p>
-          <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/subscription")} data-testid="button-cta-plan">
-            Ver plano
-            <ArrowRight className="w-3 h-3 ml-1" />
-          </Button>
-        </div>
-
-        <div className="relative overflow-hidden rounded-xl border border-emerald-200 dark:border-emerald-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="section-trust-layer">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(16,185,129,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_right,_rgba(59,130,246,0.04),transparent_50%)]" />
-          <div className="relative p-5 space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-emerald-500/20">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-100">AuraTRUST Evidence Tracking Infrastructure</p>
-                  <p className="text-[10px] text-slate-400">Camada transversal que certifica, valida e monitora todos os modulos AuraTECH</p>
-                </div>
-              </div>
-              <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">Core</Badge>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {CORE_INFRASTRUCTURE.map((infra) => (
-                <div key={infra.id} className="rounded-lg bg-slate-800/50 border border-slate-700/30 p-4 space-y-3">
-                  <div className="flex items-center gap-2">
-                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${infra.id === "trust" ? "bg-emerald-500/20" : "bg-blue-500/20"}`}>
-                      <infra.icon className={`w-4 h-4 ${infra.id === "trust" ? "text-emerald-400" : "text-blue-400"}`} />
-                    </div>
-                    <div>
-                      <p className="text-[11px] font-medium text-slate-200">{infra.name}</p>
-                      <p className="text-[9px] text-slate-500">{infra.tagline}</p>
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-slate-400 leading-relaxed">{infra.description}</p>
-                  <div className="space-y-1.5">
-                    {infra.features.map((feat, i) => (
-                      <div key={i} className="flex items-center gap-2">
-                        <CheckCircle2 className={`w-3 h-3 ${infra.id === "trust" ? "text-emerald-500" : "text-blue-500"} shrink-0`} />
-                        <span className="text-[10px] text-slate-500">{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="rounded-lg bg-slate-800/30 border border-slate-700/20 p-3">
-              <p className="text-[9px] text-slate-500 uppercase tracking-wider mb-3">Trilha de Custodia AuraTRUST</p>
-              <div className="flex items-center gap-0">
-                {CUSTODY_STEPS.map((step, i) => (
-                  <div key={step.label} className="flex items-center flex-1">
-                    <div className={`flex-1 rounded-md border ${step.bg} p-2 text-center`}>
-                      <p className={`text-[10px] font-medium ${step.color}`}>{step.label}</p>
-                      <p className="text-[8px] text-slate-500 mt-0.5">{step.sub}</p>
-                    </div>
-                    {i < CUSTODY_STEPS.length - 1 && <ArrowRight className="w-3 h-3 text-slate-600 mx-1 shrink-0" />}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="text-[10px] text-slate-500 text-center">Cada evidencia recebe identificacao unica, hash de integridade e registro imutavel — admissivel para Compliance, Juridico e Auditoria Interna</p>
-          </div>
-        </div>
-
-        <Separator />
-
-        <div className="space-y-4" data-testid="section-verification">
-          <div className="flex items-center gap-2">
-            <Search className="w-4 h-4 text-primary" />
-            <h2 className="text-sm font-semibold">Modulos de Verificacao & Analise</h2>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Motores de verificacao baseados em evidencias, cada um cobrindo um dominio distinto de compliance.
-          </p>
-          <div className="space-y-3">
-            {VERIFICATION_MODULES.map((mod) => (
-              <Card key={mod.id} className={mod.borderColor} data-testid={`card-verification-${mod.id}`}>
-                <CardHeader className="pb-3">
-                  <div className="flex items-start gap-3">
-                    <div className={`flex items-center justify-center w-10 h-10 rounded-lg ${mod.bgColor} shrink-0`}>
-                      <mod.icon className={`w-5 h-5 ${mod.color}`} />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <CardTitle className="text-sm">{mod.name}</CardTitle>
-                        <Badge variant="secondary" className="text-[10px]">{mod.tagline}</Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-0.5">{mod.description}</p>
-                    </div>
-                  </div>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        <Separator />
-
-        <div className="space-y-4" data-testid="section-specialized">
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-primary" />
-            <h2 className="text-sm font-semibold">Modulos Especializados de Validacao</h2>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Verticais especificas por industria — a mesma infraestrutura de confianca aplicada onde verificacao baseada em evidencias e necessaria.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {SPECIALIZED_MODULES.map((mod) => (
-              <Card key={mod.id} data-testid={`card-specialized-${mod.id}`}>
-                <CardContent className="p-4 space-y-2">
-                  <div className="flex items-center gap-2">
-                    <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${mod.bgColor}`}>
-                      <mod.icon className={`w-4 h-4 ${mod.color}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xs font-semibold">{mod.name}</h3>
-                      <p className="text-[10px] text-muted-foreground">{mod.tagline}</p>
-                    </div>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">{mod.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-
-        <Separator />
-
+        {/* SECTION 6: Aura Trust Index */}
         <div className="relative overflow-hidden rounded-xl border border-blue-200 dark:border-blue-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="section-trust-index">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(59,130,246,0.06),transparent_50%)]" />
           <div className="relative p-5 space-y-4">
@@ -648,18 +655,50 @@ export default function LandingPageTest() {
           </div>
         </div>
 
+        {/* SECTION 7: Market Application */}
+        <div className="space-y-4" data-testid="section-market-application">
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Aplicacao de Mercado</h2>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            A mesma infraestrutura de confianca aplicada em verticais onde verificacao baseada em evidencias e necessaria.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {MARKET_SECTORS.map((sector) => (
+              <Card key={sector.name} data-testid={`card-sector-${sector.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                <CardContent className="p-3 space-y-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-semibold">{sector.name}</h3>
+                    <Badge className="text-[8px] px-1 py-0 bg-emerald-500/15 text-emerald-400 border-emerald-500/30">{sector.status}</Badge>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{sector.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
         <Separator />
 
+        <div className="flex items-center justify-center gap-3 py-2">
+          <p className="text-xs text-muted-foreground">Infraestrutura com <strong className="text-foreground">cadeia de custodia</strong> e <strong className="text-foreground">rastreabilidade juridica</strong></p>
+          <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/subscription")} data-testid="button-cta-plan">
+            Ver plano
+            <ArrowRight className="w-3 h-3 ml-1" />
+          </Button>
+        </div>
+
+        {/* SECTION 8: Footer */}
         <div className="flex items-center justify-between text-xs text-muted-foreground pb-4" data-testid="section-footer">
           <div className="flex items-center gap-2">
             <Shield className="w-3 h-3" />
             <span>Cadeia de Custodia Digital - Lei 13.964/2019</span>
           </div>
-          <span>AuraTECH — Trust Infrastructure Platform</span>
+          <span>AuraTECH — Infrastructure for Evidence-Based Trust</span>
         </div>
 
       </div>
     </div>
   );
 }
-
