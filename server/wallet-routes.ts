@@ -14,7 +14,7 @@ const TOPUP_PACKAGES = [
 ];
 
 const VIP_USERS = ["stabia"];
-const VIP_INITIAL_CREDITS = 3000;
+const VIP_INITIAL_CREDITS = 300;
 
 async function getOrCreateWallet(userId: string) {
   const existing = await db.select().from(wallets).where(eq(wallets.userId, userId)).limit(1);
@@ -284,6 +284,39 @@ export function registerWalletRoutes(app: Express) {
     } catch (error: any) {
       console.error("Error updating caps:", error.message);
       res.status(500).json({ error: "Failed to update caps" });
+    }
+  });
+
+  app.patch("/api/admin/wallet/set-balance", requireAuth, async (req: Request, res: Response) => {
+    try {
+      if (req.session.role !== "admin") {
+        return res.status(403).json({ error: "Admin only" });
+      }
+
+      const { username, balance } = req.body;
+      if (!username || balance === undefined) {
+        return res.status(400).json({ error: "username and balance required" });
+      }
+
+      const userRows = await db.select().from(users).where(eq(users.username, username)).limit(1);
+      if (userRows.length === 0) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const wallet = await db.select().from(wallets).where(eq(wallets.userId, userRows[0].id)).limit(1);
+      if (wallet.length === 0) {
+        return res.status(404).json({ error: "Wallet not found" });
+      }
+
+      const [updated] = await db.update(wallets)
+        .set({ balanceCredits: String(balance) })
+        .where(eq(wallets.id, wallet[0].id))
+        .returning();
+
+      console.log(`[ADMIN] Wallet balance set: ${username} → $${balance}`);
+      res.json({ success: true, wallet: updated });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
     }
   });
 }
