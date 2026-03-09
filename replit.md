@@ -1,73 +1,48 @@
 # AuraTECH — Trust Infrastructure Platform
 
 ## Overview
-AuraTECH is the institutional trust infrastructure platform that houses all evidence-based verification, validation and certification modules. The ecosystem evolves from AuraAUDIT (forensic audit for corporate travel) into a modular platform serving multiple sectors. It handles significant financial volumes (e.g., R$ 51.3M in 2024, R$ 39.6M in 2025), ensures compliance with Brazilian Law 13.964/2019 (Digital Chain of Custody), and provides robust tools for comprehensive audits, data governance, legal compliance, and asset verification.
-
-## AuraTECH Ecosystem Architecture
-- **AuraTRUST**: Transversal certification & validation layer (Evidence Tracking Infrastructure) — certifies, validates and monitors every process. SHA-256 chained chain of custody, active seal monitoring, automatic certificate issuance.
-- **AuraDATA**: Data Governance Hub — centralized ingestion, normalization and data cross-referencing with cryptographic integrity.
-- **AuraAUDIT**: Corporate Expense Review — forensic audit of corporate expenses (travel & events). Currently active module.
-- **AuraDUE**: Digital Due Diligence — risk and compliance analysis.
-- **AuraRISK**: Compliance Score Analysis — risk scoring and compliance assessment.
-- **AuraCARBO**: Carbon Project Validation — carbon credit project validation.
-- **AuraLOA**: Precatory Research Validation — precatory research validation.
-- **AuraTAX**: Tax Credit Recovery — tax credit recovery analysis.
-- **AuraMARKET**: Verified Asset Exchange — marketplace for verified assets.
-- **AuraTRACK**: Audit Timeline Engine — audit timeline with operational transparency.
-- **AuraLEGAL**: Legal & Regulatory Compliance — legal obligations and regulatory adequacy monitoring.
-- **AuraBID**: Procurement & RFP Analysis — automated analysis of procurement, bids and RFPs.
-- **Aura Trust Index™**: Dynamic trust score model with 5 levels (Excellent/Good/Fair/Review/Critical).
-
-All modules operate under the AuraTRUST layer, ensuring legal traceability, digital chain of custody, and compliance with Law 13.964/2019.
+AuraTECH is an institutional trust infrastructure platform designed to provide evidence-based verification, validation, and certification across various sectors. It originated from AuraAUDIT, a forensic audit tool for corporate travel, and has expanded into a modular ecosystem. The platform handles substantial financial volumes, ensures compliance with Brazilian Law 13.964/2019 (Digital Chain of Custody), and offers tools for comprehensive audits, data governance, legal compliance, and asset verification. Its core vision is to establish a dynamic trust infrastructure, enhancing transparency and compliance in financial and operational processes.
 
 ## User Preferences
 I prefer clear and concise communication. For any proposed changes, please provide a high-level overview first, explaining the rationale and potential impact. I value iterative development, with regular updates on progress and opportunities for feedback. When implementing features, prioritize maintainability and scalability. I prefer detailed explanations for complex technical decisions. Do not make changes to files related to billing and subscription logic without explicit approval.
 
 ## System Architecture
-Aura Audit uses a modern full-stack architecture.
-**Frontend:** React, Vite, TailwindCSS, shadcn/ui, Recharts for UI, Wouter for routing, and TanStack React Query for state management.
-**Backend:** Express.js and Node.js.
-**Database:** PostgreSQL with Drizzle ORM.
-**AI Integration:** OpenAI via Replit AI Integrations (gpt-5.2) for advanced analytics.
+AuraTECH utilizes a modern full-stack architecture. The frontend is built with React, Vite, TailwindCSS, shadcn/ui, Recharts for data visualization, Wouter for routing, and TanStack React Query for state management. The backend is powered by Express.js and Node.js, with PostgreSQL and Drizzle ORM for database management. AI capabilities are integrated via OpenAI through Replit AI Integrations.
 
-**Key Features:**
-- **AuraTECH Landing Page:** Institutional landing page (`/landingpage-test` and `/teste-agora`) with 8 sections: Hero, Module Catalog (12 modules with access buttons), Performance Stats, Dashboard Banner (4 recharts), AuraTRUST Certification Layer, Trust Index™ (5 levels), Market Application, Free Diagnostic Trial. Visual DNA matches AuraAUDIT home.tsx (slate-950/900 dark banners, Open Sans, recharts). Module cards display "Ativo" badge and "Entrar" button for active modules (AuraAUDIT/AuraTRUST/AuraTRACK via /login, AuraDUE/AuraCARBO/AuraLOA/AuraRISK/AuraMARKET via external .replit.app URLs). Inactive modules (AuraBID/AuraDATA/AuraLEGAL/AuraTAX) show disabled "Entrar" button. File: `client/src/pages/landingpage-test.tsx`.
-- **Modular Dashboard:** Home page with 8 audit categories, performance metrics, and methodology stages. Detailed dashboard with KPIs, system overviews, financial volumes, and audit scope. Client Project Panel displays real data with "Aguardando dados" placeholders for pending information, enforcing CP-01.
-- **Client Management:** Registration and management of travel agencies and corporate entities, including `contractedServices` tracking.
-- **Contract & Proposal PDF Export:** Admin and client endpoints for generating professional A4 PDFs of contracts and proposals with SHA-256 hashes and metadata.
-- **Document Requirements System:** Detailed requirements for expected documents, enriched by IA Knowledge Base (Documentos IA). Uploaded files automatically set to "Em analise".
-- **Data Integration Hub:** Centralized integration for financial institutions, travel providers (agencies, airlines, hotels, car rentals), GDS systems (Sabre, Amadeus), and BSPlink.
-- **Expense and Audit Case Management:** CRUD operations for expenses with risk identification, full audit case lifecycle, and anomaly detection.
-- **Data Reconciliation:** Advanced reconciliation across OBT, Backoffice, billing systems, and virtual credit cards.
-- **Immutable Audit Trail:** Ensures data integrity and compliance with SHA-256 hashes.
-- **Structured Reporting:** Generates comprehensive audit reports (executive, technical, risk mapping, action plan).
-- **AI Desk (11 Services) & Wallet System:** AI-powered services (Reconciliation, Contract Review, RFP/RFP, etc.) with a full lifecycle, audit envelope (SHA-256), approval flows, and credit-based wallet system (4 packages + custom amounts).
-- **Dashboard Studio:** Customizable dashboard views with 8 widget types, global filters, versioning, and admin publication workflow.
-- **Reports Library (Artifacts):** Centralized artifact management with SHA-256 integrity and status workflow.
-- **Billing Overview:** Unified billing page for AuraAudit Pass subscription and Wallet balance.
-- **Company Billing Config:** Configurable limits (auto-approve threshold, per-job limit, monthly cap).
-- **AuraTRACK (Audit Timeline Engine):** Standalone transparency dashboard module available to both admin and client panels. Provides 3 views: (A) Timeline linear — visual phase-by-phase project timeline with traffic-light status indicators (completed/in_progress/delayed/not_started), calculated schedule dates per phase, (B) Status Dashboard — Project Health Score (on_track/attention/critical), phase counters, Audit Efficiency Score (Client Delay Impact / Audit Team Time / System Processing %), executive summary with contract-based scheduling, (C) Timesheet operacional — operational time breakdown (Client Response Time, Audit Analysis Time, System Processing Time) with hour logging. **Schedule Engine:** business-day-only calculations with configurable dedication (daysPerWeek, default 5), grace period from contract signature date (gracePeriodDays, default 5 business days), auto-calculated phase start/end dates based on dedication ratio, projected end date accounting for partial weekly dedication. Admin can create projects, manage phases, and log time entries; clients can view their assigned projects with full transparency. Auto-calculates health score based on phase delays and effective work days consumed. **DB Tables:** `tracker_projects` (includes `contractSignedAt`, `gracePeriodDays`, `daysPerWeek`), `tracker_phases`, `tracker_time_entries`. **Routes:** `server/tracker-routes.ts`. **Frontend:** `client/src/pages/aura-tracker.tsx`. Available at `/tracker` in both admin and client routers.
-- **AuraTRUST (Pre-Payment Audit v2):** Module for pre-payment auditing with full chain validation (request, reservation, financial, agreements & commissions, bank reconciliation) and daily monitoring. Includes Agency and Corporate profiles (corporate: solicitation → approval → reservation → agency invoice vs card statement + corporate agreement, NO commission/incentive/rebate; agency: full commission/incentive/rebate chain), typed findings, and a 24-item policy checklist (semi-ready templates based on Petrobras/Odebrecht/Copastur models, 8 categories, configurable per client, custom policy upload). **Alert Engine v2 (Reinforced):** `generateAlert()` auto-escalates severity based on financial thresholds (R$10k high, R$50k critical) even without per-company config; CRITICAL/HIGH alerts always force email channel; admin auto-CC'd on CRITICAL/HIGH; SHA-256 integrity hash per alert with audit trail; structured console logging. **Alert Config:** per-company alert preferences (platform/email/SMS channels, financial thresholds, trigger types, data source preference API/upload/both). **Automated Reconciliation Engine (Blocos A/B/C):** (A) Pre-Authorized Supplier Registry — CNPJ whitelist with auto-validation via BrasilAPI, auto-block + CRITICAL alert when unauthorized supplier detected, commission/incentive/rebate tracking per supplier; (B) Pre-Approved Data Sources — configurable integration points (OBT/GDS/ERP/Email/WhatsApp/Bank) via API/SFTP/IMAP/Webhook/OFX/CNAB, trusted source flag, schedule configuration; (C) Service Types & Fee Configuration — configurable service categories with commission/incentive check flags, FEE (service fee) with fixed/percent types and separate invoice flag, payment methods (faturado/PIX/depósito/cartão/boleto/TED) with bank reconciliation flag. All operations are segment-agnostic (not hardcoded for travel). **Frontend:** Dashboard tab, Cases tab, Policies tab, Alerts tab, Monitoring tab, Integrações tab (5 sub-tabs: Fornecedores, Fontes de Dados, Serviços, Taxas FEE, Pagamentos). **DB Tables:** `audit_pag_cases`, `audit_pag_documents`, `audit_pag_monitoring`, `audit_pag_policies`, `audit_pag_policy_items`, `audit_pag_alerts`, `audit_pag_alert_config`, `audit_pag_suppliers`, `audit_pag_data_sources`, `audit_pag_service_types`, `audit_pag_supplier_services`, `audit_pag_fee_config`, `audit_pag_payment_methods`. **Config Component:** `client/src/pages/audit-pag-config.tsx`. **Bloco D — Pipeline de Reconciliação Automática (3 Camadas):** Full reconciliation pipeline with 3-layer data ingestion: Camada 1 (pedido do cliente — OBT/GDS/email/approval workflow), Camada 2 (ERP/fatura — SAP/TOTVS/Oracle + cross-match C1×C2), Camada 3 (extrato bancário — conta corrente/cartão crédito/cartão virtual VCN + cruzamento triplo pedido×ERP×banco). Auto-validates: pagamento cliente confirmado, pagamento fornecedor < cliente (invariante), comissões/incentivos recebidos, FEE reconciliada, documentos fiscais (NF/Recibo/Fatura) vs banco. Auto-alerts on divergences (CRITICAL/HIGH/MEDIUM). Immutable reconciliation log with SHA-256 integrity per step. **DB Tables:** `audit_pag_transactions`, `audit_pag_reconciliation_log`. **Routes:** POST/GET `/api/audit-pag/transactions`, layer1/layer2/layer3 ingestion, reconcile, log, summary. **Frontend:** `client/src/pages/audit-pag-reconciliation.tsx` — Reconciliação tab with summary cards, transaction list with pipeline indicators, create/layer ingestion dialogs, detail view with reconciliation timeline.
-- **AuraTRUST Evidence Tracking Infrastructure:** Module that finalizes the continuous monitoring process — does not analyze, only formalizes results. Two certification types: (A) Trust Seal (active_monitoring) — active while real-time monitoring subscription is maintained ($149/month minimum); (B) Period Certificate (period_validated) — issued when monitoring ends, valid exclusively for the monitored period and transactions. Pricing: $149/month base + 500 transactions included; above 500: progressive per-transaction pricing ($0.99 at 501-2000, $0.79 at 2001-5000, $0.59 at 5001-10000, $0.39 at 10001-25000, $0.29 at 25001-50000, $0.19 at 50001+). Transaction = 1 reconciled line across 2 or 3 sources (order × ERP × bank). Chained SHA-256 chain of custody: each certificate references the hash of the previous one. Automatic metering with progressive tier calculation. Public seal validation endpoint (no auth). Billing simulator. **DB Tables:** `aura_trust_certificates`, `aura_trust_metering`. **Frontend:** `client/src/pages/audit-pag-trust.tsx` — "Certificação" tab in AuraTRUST with KPIs, active seal card, pricing table, certificate list, metering history, issue/revoke/simulate/calculate dialogs.
-- **Contract v5.5.0:** Technical master contract with 32 clauses (including Alert Engine v2 cl.29, CP-01 Health Check Pipeline cl.30, AuraTRUST Monitoramento Contínuo cl.31, Evidence Tracking Infrastructure cl.32), 29 evidences (E24-E29: alerts, health check, AI formatting, AuraTRACK, AuraTRUST Bloco D, Evidence Tracking), 5 annexes (Anexo IV: Registro de Progresso, Anexo V: Tabela de Precificação AuraTRUST), 33-item compliance checklist (28 conformes, 5 em observacao), 13 implemented modules (M1-M13), and dual-signature system.
-- **Subscription System:** Self-service subscription model (AuraAudit Pass) with tiered pricing based on Value Under Management (VAM), integrated with Stripe.
-- **Identity and Access Management:** Role-based authentication (Admin, Client) using express-session, bcrypt, and connect-pg-simple.
-- **Data Validation:** CNPJ/CPF mathematical validation and BrasilAPI integration for real-time company data lookup.
-- **IA Knowledge Base (Documentos IA):** Admin-only system for uploading and categorizing audit expertise (16+ years of materials). Automatically extracts text from various file formats and injects it into the AI system prompt, enforcing confidentiality and compliance with CP-01, CP-02, and CP-03 (LGPD anonymization).
-- **Integration Ecosystem:** Client-facing page detailing 149+ platforms across 15 segments (GDS, NDC Airlines, Hotels, Car Rental, etc.), with search and integration methods.
-- **CP-01 Compliance & Anti-Regression Defense System:** Multi-layered protection against seed data contamination and CP-01 violations, including seed cleanup on boot, a health check pipeline with auto-remediation, frontend guards displaying "Aguardando dados" for empty states, and AI anti-hallucination protocols.
-- **UI/UX:** Prioritizes clear navigation and data visualization with a consistent theme across public, admin, and client portals.
+The platform is structured around a modular ecosystem, with AuraTRUST serving as a transversal certification and validation layer ensuring legal traceability and digital chain of custody. Key architectural components and features include:
+
+- **AuraTECH Ecosystem Modules:** A suite of modules including AuraAUDIT (corporate expense review), AuraDATA (data governance), AuraDUE (digital due diligence), AuraRISK (compliance scoring), AuraCARBO (carbon project validation), AuraLOA (precatory research validation), AuraTAX (tax credit recovery), AuraMARKET (verified asset exchange), AuraTRACK (audit timeline engine), AuraLEGAL (legal & regulatory compliance), and AuraBID (procurement analysis). All modules are underpinned by AuraTRUST.
+- **Aura Trust Index™:** A dynamic five-level trust score model.
+- **AuraTECH Landing Page:** An institutional landing page featuring a module catalog, performance statistics, and information about AuraTRUST and the Trust Index™.
+- **Modular Dashboard:** Provides performance metrics, methodology stages, and client project panels with real-time data.
+- **Client and Contract Management:** Systems for registering and managing clients and travel agencies, alongside PDF generation for contracts and proposals with SHA-256 hashes.
+- **Document Requirements System & IA Knowledge Base:** Manages required documents and uses an AI-powered knowledge base for expertise and compliance.
+- **Data Integration Hub:** Centralized integration for various financial institutions, travel providers, and GDS systems.
+- **Expense and Audit Case Management:** Features CRUD operations for expenses, risk identification, and anomaly detection.
+- **Data Reconciliation & "Conciliar Contas" Module:** Advanced reconciliation capabilities, including triple cross-matching for accounts payable and receivable, supporting various import formats and identifying divergences.
+- **Immutable Audit Trail:** Ensures data integrity and compliance through SHA-256 hashes.
+- **Structured Reporting:** Generation of comprehensive audit reports.
+- **AI Desk & Wallet System:** AI-powered services with audit envelopes, approval workflows, and a credit-based wallet system.
+- **Dashboard Studio & Reports Library:** Customizable dashboards and centralized management of audit artifacts with integrity checks.
+- **AuraTRACK (Audit Timeline Engine):** Provides visual project timelines, health scores, and operational timesheets, with an intelligent scheduling engine.
+- **AuraTRUST (Pre-Payment Audit v2) & Evidence Tracking Infrastructure:** Advanced pre-payment auditing with comprehensive chain validation, policy checklists, a reinforced alert engine, and an automated reconciliation pipeline (3-layered data ingestion). The Evidence Tracking Infrastructure formalizes results with Trust Seals and Period Certificates, featuring chained SHA-256 custody and usage-based pricing.
+- **Subscription System:** Self-service model for AuraAudit Pass with tiered pricing.
+- **Identity and Access Management:** Role-based authentication (Admin, Client).
+- **Data Validation:** Utilizes BrasilAPI for CNPJ/CPF validation.
+- **Integration Ecosystem:** A client-facing page detailing extensive platform integrations.
+- **CP-01 Compliance & Anti-Regression Defense System:** Multi-layered protection against data contamination and compliance violations, including health checks and AI anti-hallucination protocols.
+- **UI/UX:** Consistent and clear design across all portals with a focus on data visualization.
 
 ## External Dependencies
-- **OpenAI:** Replit AI Integrations (gpt-5.2) for AI capabilities.
-- **PostgreSQL:** Primary database.
-- **Stripe:** Subscription management and payment processing.
-- **BrasilAPI:** CNPJ/CPF lookup and validation.
-- **Banco Bradesco EBTA:** Corporate credit card transaction data.
-- **Travel Agencies:** CVC, Flytour, BRT for monthly management files.
-- **Airlines:** LATAM, GOL, Azul for ticket data.
-- **Hotel Chains:** Accor, Atlantica for reservations and billing.
-- **Car Rental Companies:** Localiza, Movida.
-- **Insurers:** Porto Seguro.
-- **GDS Systems:** Sabre, Amadeus for PNR/reservation data.
-- **BSPlink:** IATA BSP billing and settlement data.
+- **OpenAI:** Used for AI capabilities through Replit AI Integrations.
+- **PostgreSQL:** The primary relational database.
+- **Stripe:** For subscription management and payment processing.
+- **BrasilAPI:** Provides CNPJ/CPF lookup and validation services.
+- **Banco Bradesco EBTA:** Integrated for corporate credit card transaction data.
+- **Travel Agencies:** Integration with CVC, Flytour, BRT for management files.
+- **Airlines:** Integrations with LATAM, GOL, Azul for ticket data.
+- **Hotel Chains:** Connectivity with Accor, Atlantica for reservations and billing.
+- **Car Rental Companies:** Integration with Localiza, Movida.
+- **Insurers:** Porto Seguro is integrated.
+- **GDS Systems:** Utilizes Sabre and Amadeus for PNR/reservation data.
+- **BSPlink:** For IATA BSP billing and settlement data.

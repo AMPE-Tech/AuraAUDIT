@@ -47,6 +47,7 @@ import IaKnowledge from "@/pages/ia-knowledge";
 import EmailCampaigns from "@/pages/email-campaigns";
 import AuditPag from "@/pages/audit-pag";
 import AuraTracker from "@/pages/aura-tracker";
+import ConciliarContas from "@/pages/conciliar-contas";
 import LandingPageTest from "@/pages/landingpage-test";
 import AuraCarboHome from "@/pages/auracarbo-home";
 import DesignSystemPage from "@/pages/design-system";
@@ -82,6 +83,7 @@ function AdminRouter() {
       <Route path="/email-campaigns" component={EmailCampaigns} />
       <Route path="/audit-pag" component={AuditPag} />
       <Route path="/tracker" component={AuraTracker} />
+      <Route path="/conciliar-contas" component={ConciliarContas} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={NotFound} />
     </Switch>
@@ -108,6 +110,7 @@ function ClientRouter() {
       <Route path="/dashboard-studio" component={DashboardStudio} />
       <Route path="/audit-pag" component={AuditPag} />
       <Route path="/tracker" component={AuraTracker} />
+      <Route path="/conciliar-contas" component={ConciliarContas} />
       <Route path="/ai-assistant" component={AiAssistant} />
       <Route component={ClientDashboard} />
     </Switch>
