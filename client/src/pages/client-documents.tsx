@@ -439,14 +439,23 @@ export default function ClientDocuments() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/uploads"] });
       setUploadingKey(null);
-      toast({ title: "Arquivo enviado", description: "Marque como conferido quando estiver pronto" });
+      toast({
+        title: "✅ Arquivo carregado com sucesso!",
+        description: `"${variables.file.name}" foi enviado e esta em analise. Marque "Dados conferidos" quando estiver pronto.`,
+        duration: 8000,
+      });
     },
     onError: (error: any) => {
       setUploadingKey(null);
-      toast({ title: "Erro no upload", description: error.message, variant: "destructive" });
+      toast({
+        title: "❌ Erro ao enviar arquivo",
+        description: error.message || "Tente novamente ou entre em contato com o suporte.",
+        variant: "destructive",
+        duration: 10000,
+      });
     },
   });
 
