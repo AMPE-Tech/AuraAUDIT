@@ -321,37 +321,46 @@ function DocumentUploadRow({ doc, uploads, onUpload, onCheck, onDelete, uploadin
       {hasUpload && (
         <div className="mt-2.5 ml-6 space-y-2">
           {docUploads.map((u: any) => (
-            <div key={u.id} className="flex items-center justify-between gap-3 p-2 rounded-md bg-background border" data-testid={`upload-item-${u.id}`}>
-              <div className="flex items-center gap-2 min-w-0">
-                <File className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-[11px] font-medium truncate">{u.originalName}</p>
-                  <p className="text-[10px] text-muted-foreground">
-                    {formatFileSize(u.fileSize)} · {new Date(u.uploadedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
-                  </p>
+            <div key={u.id} className="p-2.5 rounded-md bg-background border space-y-1.5" data-testid={`upload-item-${u.id}`}>
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <File className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-medium truncate">{u.originalName}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {formatFileSize(u.fileSize)} · {new Date(u.uploadedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <Checkbox
+                      id={`check-${u.id}`}
+                      checked={u.clientChecked}
+                      onCheckedChange={(checked) => onCheck(u.id, checked === true)}
+                      data-testid={`checkbox-validate-${u.id}`}
+                    />
+                    <label htmlFor={`check-${u.id}`} className="text-[10px] text-muted-foreground cursor-pointer select-none">
+                      Dados conferidos
+                    </label>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+                    onClick={() => onDelete(u.id)}
+                    data-testid={`button-delete-${u.id}`}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
                 </div>
               </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <div className="flex items-center gap-1.5">
-                  <Checkbox
-                    id={`check-${u.id}`}
-                    checked={u.clientChecked}
-                    onCheckedChange={(checked) => onCheck(u.id, checked === true)}
-                    data-testid={`checkbox-validate-${u.id}`}
-                  />
-                  <label htmlFor={`check-${u.id}`} className="text-[10px] text-muted-foreground cursor-pointer select-none">
-                    Dados conferidos
-                  </label>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                  onClick={() => onDelete(u.id)}
-                  data-testid={`button-delete-${u.id}`}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </Button>
+              <div className="flex items-center gap-2 ml-5.5 pl-0.5">
+                <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0" />
+                <span className="text-[9px] text-emerald-600 dark:text-emerald-400 font-medium">Recebido pela AuraAUDIT</span>
+                {u.sha256 && (
+                  <span className="text-[9px] text-muted-foreground font-mono">SHA-256: {u.sha256.slice(0, 12)}...</span>
+                )}
               </div>
             </div>
           ))}
