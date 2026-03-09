@@ -8,6 +8,7 @@ import {
   Shield,
   ShieldCheck,
   ArrowRightLeft,
+  ArrowDownUp,
   Users,
   Plug,
   Briefcase,
@@ -42,6 +43,7 @@ const mainItems = [
   { title: "Casos de Auditoria", url: "/cases", icon: FolderSearch },
   { title: "Anomalias", url: "/anomalies", icon: AlertTriangle },
   { title: "AuraTRUST", url: "/audit-pag", icon: ShieldCheck },
+  { title: "Conciliar Contas", url: "/conciliar-contas", icon: ArrowDownUp },
   { title: "AuraTRACK", url: "/tracker", icon: Activity },
 ];
 

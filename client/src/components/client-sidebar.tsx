@@ -45,7 +45,6 @@ const projetoItems = [
 
 const auditoriaItems = [
   { title: "AuraTRUST", url: "/audit-pag", icon: ShieldCheck, enabled: true },
-  { title: "Conciliar Contas", url: "/conciliar-contas", icon: ArrowDownUp, enabled: true },
   { title: "Tipos de Despesas", url: "/expense-types", icon: Receipt, enabled: false },
   { title: "Integracoes", url: "/integrations", icon: Plug, enabled: true },
 ];
