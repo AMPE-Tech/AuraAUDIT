@@ -376,21 +376,17 @@ export default function LandingPageTest() {
               <Target className="w-4 h-4 text-primary" />
               <h2 className="text-sm font-semibold">Trust Infrastructure for Evidence-Based Verification</h2>
             </div>
-            <div className="text-xs text-muted-foreground leading-relaxed max-w-4xl space-y-2">
-              <p>
-                A plataforma <span className="font-medium text-foreground">estrutura evidencias</span>, mantem{" "}
-                <span className="font-medium text-foreground">cadeia de custodia digital verificavel</span> e aplica{" "}
-                <span className="font-medium text-foreground">monitoramento continuo</span> para gerar{" "}
-                <span className="font-medium text-foreground">scores dinamicos de conformidade</span>.
-              </p>
-              <p>
-                Cada organizacao pode configurar <span className="font-medium text-foreground">frameworks de verificacao personalizados</span>, definindo exatamente quais processos, documentos ou operacoes devem ser auditados e a Plataforma garante a{" "}
-                <span className="font-medium text-foreground">preservacao intacta das evidencias de origem</span>, com{" "}
-                <span className="font-medium text-foreground">rastreabilidade juridica</span>,{" "}
-                <span className="font-medium text-foreground">registro imutavel</span> e{" "}
-                <span className="font-medium text-foreground">integridade dos dados</span>.
-              </p>
-            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed max-w-4xl">
+              A plataforma <span className="font-medium text-foreground">estrutura evidencias</span>, mantem{" "}
+              <span className="font-medium text-foreground">cadeia de custodia digital verificavel</span> e aplica{" "}
+              <span className="font-medium text-foreground">monitoramento continuo</span> para gerar{" "}
+              <span className="font-medium text-foreground">scores dinamicos de conformidade</span>.{" "}
+              Cada organizacao pode configurar <span className="font-medium text-foreground">frameworks de verificacao personalizados</span>, definindo exatamente quais processos, documentos ou operacoes devem ser auditados e a Plataforma garante a{" "}
+              <span className="font-medium text-foreground">preservacao intacta das evidencias de origem</span>, com{" "}
+              <span className="font-medium text-foreground">rastreabilidade juridica</span>,{" "}
+              <span className="font-medium text-foreground">registro imutavel</span> e{" "}
+              <span className="font-medium text-foreground">integridade dos dados</span>.
+            </p>
             <div className="flex flex-wrap gap-3 pt-1">
               <Button variant="default" size="sm" className="text-xs" onClick={() => navigate("/trial")} data-testid="button-hero-explore">
                 Teste Agora
