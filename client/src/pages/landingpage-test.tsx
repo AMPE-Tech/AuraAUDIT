@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +8,7 @@ import {
   Shield, ShieldCheck, Search, Database, Layers, Eye,
   CheckCircle2, AlertTriangle, BarChart3, ArrowRight, Globe,
   Leaf, Scale, Receipt, TrendingUp, Award,
-  Briefcase, LogIn, Target, FileText, Activity
+  Briefcase, LogIn, Target, FileText, Activity, Menu, X
 } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -345,6 +346,26 @@ function ModuleCard({ mod }: { mod: typeof ALL_MODULES[0] }) {
 
 export default function LandingPageTest() {
   const [, navigate] = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    document.title = "AuraTECH — Trust Infrastructure Platform";
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute("content", "AuraTECH - Plataforma de infraestrutura de confiança baseada em evidências.");
+  }, []);
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -359,12 +380,32 @@ export default function LandingPageTest() {
               <p className="text-[10px] text-muted-foreground">Trust Infrastructure Platform</p>
             </div>
           </div>
+          
+          <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-muted-foreground">
+            <button onClick={() => scrollTo('modulos')} className="hover:text-foreground transition-colors">Módulos</button>
+            <button onClick={() => scrollTo('performance')} className="hover:text-foreground transition-colors">Performance</button>
+            <button onClick={() => scrollTo('trust-index')} className="hover:text-foreground transition-colors">Trust Index</button>
+            <button onClick={() => scrollTo('contato')} className="hover:text-foreground transition-colors">Contato</button>
+          </nav>
+
           <div className="flex items-center gap-3">
-            <Button size="sm" onClick={() => navigate("/login")} data-testid="button-nav-login">
+            <Button size="sm" onClick={() => navigate("/login")} data-testid="button-nav-login" className="hidden sm:inline-flex">
               Acessar Plataforma
+            </Button>
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
           </div>
         </div>
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t bg-background/95 p-4 space-y-4 text-sm font-medium">
+            <button onClick={() => scrollTo('modulos')} className="block w-full text-left text-muted-foreground hover:text-foreground">Módulos</button>
+            <button onClick={() => scrollTo('performance')} className="block w-full text-left text-muted-foreground hover:text-foreground">Performance</button>
+            <button onClick={() => scrollTo('trust-index')} className="block w-full text-left text-muted-foreground hover:text-foreground">Trust Index</button>
+            <button onClick={() => scrollTo('contato')} className="block w-full text-left text-muted-foreground hover:text-foreground">Contato</button>
+            <Button size="sm" className="w-full mt-4" onClick={() => navigate("/login")}>Acessar Plataforma</Button>
+          </div>
+        )}
       </header>
 
       <div className="p-6 space-y-8 max-w-[1400px] mx-auto">
@@ -460,7 +501,7 @@ export default function LandingPageTest() {
         </div>
 
         {/* SECTION 3: All 12 Modules — Grouped by Category */}
-        <div className="space-y-6" data-testid="section-modules-catalog">
+        <div id="modulos" className="space-y-6" data-testid="section-modules-catalog">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-primary" />
             <h2 className="text-sm font-semibold">Modulos do Ecossistema</h2>
@@ -507,7 +548,7 @@ export default function LandingPageTest() {
         </div>
 
         {/* SECTION 4: Performance Dashboard */}
-        <div className="space-y-3">
+        <div id="performance" className="space-y-3">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" />
             <h2 className="text-sm font-semibold" data-testid="text-performance-title">Performance da Infraestrutura</h2>
@@ -678,7 +719,7 @@ export default function LandingPageTest() {
         </div>
 
         {/* SECTION 6: Aura Trust Index */}
-        <div className="relative overflow-hidden rounded-xl border border-blue-200 dark:border-blue-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="section-trust-index">
+        <div id="trust-index" className="relative overflow-hidden rounded-xl border border-blue-200 dark:border-blue-900/50 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950" data-testid="section-trust-index">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(59,130,246,0.06),transparent_50%)]" />
           <div className="relative p-5 space-y-4">
             <div className="flex items-center justify-between">
@@ -751,22 +792,125 @@ export default function LandingPageTest() {
 
         <Separator />
 
-        <div className="flex items-center justify-center gap-3 py-2">
-          <p className="text-xs text-muted-foreground">Infraestrutura com <strong className="text-foreground">cadeia de custodia</strong> e <strong className="text-foreground">rastreabilidade juridica</strong></p>
-          <Button variant="outline" size="sm" className="text-xs" onClick={() => navigate("/subscription")} data-testid="button-cta-plan">
-            Ver plano
-            <ArrowRight className="w-3 h-3 ml-1" />
-          </Button>
+        {/* SECTION 8: Quem Somos */}
+        <div className="space-y-6" data-testid="section-about">
+          <div className="max-w-2xl">
+            <div className="flex items-center gap-2 mb-2">
+              <ShieldCheck className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold">Quem Somos</h2>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              A AuraTECH é a principal infraestrutura de confiança baseada em evidências. Fornecemos as ferramentas necessárias para empresas validarem dados, garantirem compliance e manterem uma cadeia de custódia inquebrável, protegendo operações e assegurando integridade jurídica.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="bg-muted/50 border-muted">
+              <CardContent className="p-4 flex flex-col items-center text-center space-y-2">
+                <Scale className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <h3 className="text-[11px] font-semibold">Lei 13.964/2019</h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Aderência jurídica total</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-muted/50 border-muted">
+              <CardContent className="p-4 flex flex-col items-center text-center space-y-2">
+                <Database className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <h3 className="text-[11px] font-semibold">SHA-256 Custody</h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Integridade criptográfica</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-muted/50 border-muted">
+              <CardContent className="p-4 flex flex-col items-center text-center space-y-2">
+                <Target className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <h3 className="text-[11px] font-semibold">AI-Powered</h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Detecção de anomalias</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="bg-muted/50 border-muted">
+              <CardContent className="p-4 flex flex-col items-center text-center space-y-2">
+                <Layers className="w-5 h-5 text-muted-foreground" />
+                <div>
+                  <h3 className="text-[11px] font-semibold">Multi-module</h3>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Ecossistema integrado</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* SECTION 8: Footer */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground pb-4" data-testid="section-footer">
-          <div className="flex items-center gap-2">
-            <Shield className="w-3 h-3" />
-            <span>Cadeia de Custodia Digital - Lei 13.964/2019</span>
+        {/* SECTION 9: CTA */}
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent mt-8" data-testid="section-cta">
+          <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2 text-center md:text-left">
+              <h2 className="text-sm font-bold text-foreground">Pronto para elevar a confiança da sua operação?</h2>
+              <p className="text-xs text-muted-foreground max-w-xl">
+                Inicie agora e construa sua própria infraestrutura de verificação e compliance em poucos minutos.
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <Button onClick={() => navigate("/trial")} data-testid="button-cta-trial" size="sm" className="text-xs">
+                Teste Agora
+              </Button>
+              <Button onClick={() => {
+                const el = document.getElementById('contato');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }} variant="outline" size="sm" className="text-xs" data-testid="button-cta-contact">
+                Fale Conosco
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* SECTION 10: Enhanced Footer */}
+        <footer id="contato" className="pt-8 pb-6 border-t border-border/40 mt-12" data-testid="section-footer">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary">
+                  <Shield className="w-4 h-4 text-primary-foreground" />
+                </div>
+                <span className="text-sm font-semibold tracking-tight">AuraTECH</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground max-w-xs leading-relaxed">
+                Infrastructure for Evidence-Based Trust. A plataforma definitiva para estruturação de evidências e auditoria com cadeia de custódia digital.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="text-xs font-semibold mb-3">Links Rápidos</h4>
+              <ul className="space-y-2 text-[11px] text-muted-foreground">
+                <li><button onClick={() => { const el = document.getElementById('modulos'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-foreground transition-colors">Plataforma e Módulos</button></li>
+                <li><button onClick={() => { const el = document.getElementById('performance'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-foreground transition-colors">Performance</button></li>
+                <li><button onClick={() => { const el = document.getElementById('trust-index'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }} className="hover:text-foreground transition-colors">Aura Trust Index</button></li>
+                <li><button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth'})} className="hover:text-foreground transition-colors">Voltar ao topo</button></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-xs font-semibold mb-3">Legal & Compliance</h4>
+              <ul className="space-y-2 text-[11px] text-muted-foreground">
+                <li><a href="#" className="hover:text-foreground transition-colors">Política de Privacidade</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Conformidade LGPD</a></li>
+                <li><a href="#" className="hover:text-foreground transition-colors">Termos de Uso</a></li>
+              </ul>
+            </div>
           </div>
-          <span>AuraTECH — Infrastructure for Evidence-Based Trust</span>
-        </div>
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-6 border-t border-border/40">
+            <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+              <Shield className="w-3 h-3" />
+              <span>Cadeia de Custódia Digital - Lei 13.964/2019</span>
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              © 2025 AuraTECH. Todos os direitos reservados.
+            </p>
+          </div>
+        </footer>
 
       </div>
     </div>
