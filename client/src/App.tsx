@@ -48,7 +48,7 @@ import EmailCampaigns from "@/pages/email-campaigns";
 import AuditPag from "@/pages/audit-pag";
 import AuraTracker from "@/pages/aura-tracker";
 import ConciliarContas from "@/pages/conciliar-contas";
-import LandingPageTest from "@/pages/landingpage-test";
+import LandingPageTest from "@/pages/HomeOficial_AuraTech";
 import AuraCarboHome from "@/pages/auracarbo-home";
 import DesignSystemPage from "@/pages/design-system";
 import TrialPage from "@/pages/trial";
