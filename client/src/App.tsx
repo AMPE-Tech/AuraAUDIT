@@ -52,6 +52,7 @@ import LandingPageTest from "@/pages/landingpage-test";
 import AuraCarboHome from "@/pages/auracarbo-home";
 import DesignSystemPage from "@/pages/design-system";
 import TrialPage from "@/pages/trial";
+import CompliancePolicyPage from "@/pages/compliance-policy";
 import { FloatingAiChat } from "@/components/floating-ai-chat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -266,6 +267,10 @@ function AppContent() {
 
   if (location === "/design-system") {
     return <DesignSystemPage />;
+  }
+
+  if (location === "/compliance-policy") {
+    return <CompliancePolicyPage />;
   }
 
   if (location === "/trial") {

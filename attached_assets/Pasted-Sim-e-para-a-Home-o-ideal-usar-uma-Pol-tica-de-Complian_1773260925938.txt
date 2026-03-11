@@ -1,0 +1,117 @@
+Sim — e, para a **Home**, o ideal é usar uma **Política de Compliance e Privacidade / LGPD em versão institucional curta**, com linguagem premium, clara e juridicamente prudente.
+
+Vou te entregar em **2 camadas**:
+
+1. um **texto curto para a Home**;
+2. uma **versão expandida** para usar em página própria ou modal.
+
+Base legal: a LGPD regula o tratamento de dados pessoais no Brasil e exige observância de princípios como finalidade, adequação, necessidade, transparência, segurança, prevenção, não discriminação e responsabilização/prestação de contas. A ANPD também publica guias orientativos sobre agentes de tratamento, encarregado e hipóteses legais, que ajudam a estruturar governança e boas práticas. ([Planalto][1])
+
+## Versão recomendada para a Home
+
+### Compliance e Privacidade
+
+A AuraTECH opera com compromisso permanente com integridade, governança, rastreabilidade e proteção de dados.
+Nossa atuação observa princípios de conformidade, segurança da informação, cadeia de custódia e tratamento responsável de dados pessoais, em alinhamento com a LGPD e com diretrizes de boas práticas aplicáveis.
+
+Adotamos controles proporcionais para proteger informações, preservar evidências, reforçar transparência e sustentar processos auditáveis em todo o ecossistema da plataforma.
+
+**Pilares do compromisso AuraTECH**
+
+* Integridade e governança em todos os processos
+* Proteção de dados e privacidade desde a concepção
+* Rastreabilidade e cadeia de custódia das evidências
+* Segurança, prevenção e controle de acesso
+* Responsabilização e prestação de contas
+
+Para mais informações, consulte nossa **Política de Privacidade**, **Termos de Uso** e canal de contato do encarregado/DPO.
+
+## Versão expandida para página própria
+
+# Política de Compliance, Privacidade e Proteção de Dados
+
+A AuraTECH mantém um compromisso institucional com ética, conformidade, governança e proteção de dados em todas as atividades da plataforma e de seus módulos.
+
+## 1. Compromisso institucional
+
+A AuraTECH estrutura seus processos com foco em:
+
+* integridade e conformidade;
+* proteção de dados pessoais;
+* segurança da informação;
+* rastreabilidade de evidências;
+* cadeia de custódia;
+* transparência e responsabilização.
+
+## 2. Proteção de dados e LGPD
+
+O tratamento de dados pessoais realizado no contexto da plataforma busca observar os princípios aplicáveis da Lei Geral de Proteção de Dados Pessoais (LGPD), incluindo:
+
+* finalidade;
+* adequação;
+* necessidade;
+* livre acesso;
+* qualidade dos dados;
+* transparência;
+* segurança;
+* prevenção;
+* não discriminação;
+* responsabilização e prestação de contas.
+
+## 3. Governança e controles
+
+A AuraTECH adota medidas técnicas, organizacionais e administrativas proporcionais para:
+
+* proteger dados e informações sob sua custódia;
+* restringir acessos conforme necessidade e perfil de uso;
+* reforçar a integridade de registros e evidências;
+* manter trilhas de auditoria e rastreabilidade;
+* apoiar a prevenção de uso indevido, perda, alteração ou acesso não autorizado.
+
+## 4. Cadeia de custódia e evidências
+
+Sempre que aplicável ao contexto do módulo, a plataforma pode empregar mecanismos de cadeia de custódia, registro de integridade, versionamento, trilhas de processamento e monitoramento de evidências, com o objetivo de reforçar confiabilidade, verificabilidade e governança operacional.
+
+## 5. Bases legais e finalidade
+
+A coleta e o tratamento de dados devem estar vinculados a finalidades legítimas, específicas e compatíveis com o contexto de uso da plataforma, observadas as bases legais aplicáveis e o princípio da minimização.
+
+## 6. Direitos dos titulares
+
+A AuraTECH busca oferecer meios adequados para atendimento de solicitações relacionadas aos direitos dos titulares, na forma da legislação aplicável e conforme a natureza da relação jurídica e operacional existente.
+
+## 7. Agentes de tratamento e responsabilização
+
+As responsabilidades relacionadas ao tratamento de dados são definidas conforme o papel exercido em cada operação, observadas as diretrizes legais e regulatórias aplicáveis, bem como as orientações da ANPD.
+
+## 8. Atualização e aprimoramento
+
+Esta política poderá ser atualizada para refletir evolução regulatória, aprimoramento de governança, mudanças operacionais ou novas exigências legais e de segurança.
+
+## 9. Contato
+
+Questões relacionadas a compliance, privacidade, proteção de dados ou exercício de direitos poderão ser encaminhadas pelos canais institucionais indicados na plataforma.
+
+## Recomendação estratégica
+
+Para a **Home**, use a **versão curta**.
+Para dar segurança jurídica e institucional, complemente com links no footer para:
+
+* **Privacy Policy**
+* **Terms of Use**
+* **Compliance Policy**
+* **DPO / Privacy Contact**
+
+## Ajuste importante
+
+Esse texto funciona muito bem como **posicionamento institucional**, mas não substitui sozinho:
+
+* política de privacidade completa;
+* termos de uso;
+* aviso de cookies, se houver;
+* cláusulas específicas de tratamento por módulo;
+* definição formal do canal do encarregado/DPO.
+
+Se quiser, eu posso agora te entregar a **versão em inglês**, já no mesmo padrão premium para a Home da AuraTECH.
+
+[1]: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm?utm_source=chatgpt.com "L13709 - Planalto"

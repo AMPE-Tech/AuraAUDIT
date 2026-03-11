@@ -880,7 +880,52 @@ export default function LandingPageTest() {
           </CardContent>
         </Card>
 
-        {/* SECTION 10: Contact Form */}
+        {/* SECTION 10: Compliance e Privacidade */}
+        <div id="compliance" className="space-y-4" data-testid="section-compliance">
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Compliance e Privacidade</h2>
+          </div>
+          <Card>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-3">
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  A AuraTECH opera com compromisso permanente com <span className="font-medium text-foreground">integridade, governanca, rastreabilidade e protecao de dados</span>. Nossa atuacao observa principios de conformidade, seguranca da informacao, cadeia de custodia e tratamento responsavel de dados pessoais, em alinhamento com a <span className="font-medium text-foreground">LGPD</span> e com diretrizes de boas praticas aplicaveis.
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Adotamos controles proporcionais para proteger informacoes, preservar evidencias, reforcar transparencia e sustentar processos auditaveis em todo o ecossistema da plataforma.
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold text-foreground mb-2">Pilares do compromisso AuraTECH</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {[
+                    "Integridade e governanca em todos os processos",
+                    "Protecao de dados e privacidade desde a concepcao",
+                    "Rastreabilidade e cadeia de custodia das evidencias",
+                    "Seguranca, prevencao e controle de acesso",
+                    "Responsabilizacao e prestacao de contas",
+                  ].map((pilar, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-500 shrink-0 mt-0.5" />
+                      <span className="text-[11px] text-muted-foreground">{pilar}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="text-[10px] text-muted-foreground italic">
+                Para mais informacoes, consulte nossa{" "}
+                <button onClick={() => navigate("/compliance-policy")} className="text-primary hover:underline">Politica de Compliance</button>,{" "}
+                <button onClick={() => navigate("/compliance-policy")} className="text-primary hover:underline">Politica de Privacidade</button>,{" "}
+                <button onClick={() => navigate("/compliance-policy")} className="text-primary hover:underline">Termos de Uso</button>{" "}
+                e canal de contato do encarregado/DPO em{" "}
+                <a href="mailto:privacidade@auradue.com" className="text-primary hover:underline">privacidade@auradue.com</a>.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* SECTION 11: Contact Form */}
         <div id="contato" className="space-y-4" data-testid="section-contact">
           <div className="flex items-center gap-2">
             <Mail className="w-4 h-4 text-primary" />
@@ -968,9 +1013,11 @@ export default function LandingPageTest() {
             <div>
               <h4 className="text-xs font-semibold mb-3">Legal & Compliance</h4>
               <ul className="space-y-2 text-[11px] text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-colors">Política de Privacidade</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Conformidade LGPD</a></li>
-                <li><a href="#" className="hover:text-foreground transition-colors">Termos de Uso</a></li>
+                <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Politica de Privacidade</button></li>
+                <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Conformidade LGPD</button></li>
+                <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Termos de Uso</button></li>
+                <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Politica de Compliance</button></li>
+                <li><a href="mailto:privacidade@auradue.com" className="hover:text-foreground transition-colors">DPO / Privacidade</a></li>
               </ul>
             </div>
           </div>
