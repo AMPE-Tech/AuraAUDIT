@@ -473,7 +473,6 @@ export default function LandingPageTest() {
                 {idx > 0 && <div className="border-t border-border/40" />}
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{idx + 1}.</span>
                     <h3 className="text-xs font-semibold">{group.title}</h3>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">{group.subtitle}</p>
