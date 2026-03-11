@@ -952,8 +952,18 @@ export default function LandingPageTest() {
             <div className="space-y-4">
               <Card>
                 <CardContent className="p-6 space-y-3">
-                  <h3 className="text-xs font-semibold">Suporte & Dúvidas</h3>
-                  <p className="text-[11px] text-muted-foreground">Para questões técnicas, comerciais ou informações sobre a plataforma.</p>
+                  <h3 className="text-xs font-semibold">Comercial</h3>
+                  <p className="text-[11px] text-muted-foreground">Para informacoes comerciais, planos, parcerias e propostas.</p>
+                  <a href="mailto:comercial@auradue.com" className="inline-flex items-center gap-2 text-xs text-primary hover:underline" data-testid="link-email-commercial">
+                    <Mail className="w-3.5 h-3.5" />
+                    comercial@auradue.com
+                  </a>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xs font-semibold">Suporte & Duvidas</h3>
+                  <p className="text-[11px] text-muted-foreground">Para questoes tecnicas ou informacoes sobre a plataforma.</p>
                   <a href="mailto:suporte@auradue.com" className="inline-flex items-center gap-2 text-xs text-primary hover:underline" data-testid="link-email-support">
                     <Mail className="w-3.5 h-3.5" />
                     suporte@auradue.com
@@ -963,7 +973,7 @@ export default function LandingPageTest() {
               <Card>
                 <CardContent className="p-6 space-y-3">
                   <h3 className="text-xs font-semibold">Legal & Compliance</h3>
-                  <p className="text-[11px] text-muted-foreground">Para questões de privacidade, LGPD, termos de uso e conformidade regulatória.</p>
+                  <p className="text-[11px] text-muted-foreground">Para questoes de privacidade, LGPD e conformidade regulatoria.</p>
                   <a href="mailto:privacidade@auradue.com" className="inline-flex items-center gap-2 text-xs text-primary hover:underline" data-testid="link-email-privacy">
                     <Mail className="w-3.5 h-3.5" />
                     privacidade@auradue.com
