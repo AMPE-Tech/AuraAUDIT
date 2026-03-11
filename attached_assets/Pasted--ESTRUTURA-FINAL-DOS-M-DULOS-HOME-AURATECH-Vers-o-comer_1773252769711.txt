@@ -1,0 +1,60 @@
+# ESTRUTURA FINAL DOS MÓDULOS — HOME AURATECH
+
+## Versão comercial e premium
+
+### 1. Core Infrastructure
+
+A base que sustenta todo o ecossistema AuraTECH com rastreabilidade, integridade e governança de dados.
+
+* **AuraTRUST** — Cadeia de custódia, certificação e monitoramento de evidências.
+* **AuraDATA** — Ingestão, normalização, conciliação e governança de dados multi-fonte.
+
+---
+
+### 2. Due Diligence, Legal and Regulatory
+
+Diligência, estruturação documental e conformidade para suportar decisões críticas com segurança e rastreabilidade.
+
+* **AuraDUE** — Coleta e verificação de evidências para due diligence digital.
+* **AuraLEGAL** — Gestão jurídica e regulatória com drafting, revisão e controle de obrigações.
+* **AuraTAX** — Identificação e validação de créditos tributários recuperáveis.
+
+---
+
+### 3. Asset Validation
+
+Validação técnica de ativos críticos com evidências, integridade e prontidão para decisão.
+
+* **AuraLOA** — Pesquisa e validação de precatórios.
+* **AuraCARBO** — Verificação independente de projetos de carbono.
+* **AuraRISK** — Score de compliance para priorização e criticidade de ativos.
+
+---
+
+### 4. Audit and Expense Review
+
+Revisão forense, controle de despesas e acompanhamento da execução com visão analítica e cronológica.
+
+* **AuraAUDIT** — Revisão forense de despesas corporativas, com foco em viagens e eventos.
+* **AuraTRACK** — Timeline de auditoria e gestão de prazos, fases e SLA.
+
+---
+
+### 5. Procurement and RFP Control
+
+Compras e RFPs com validação documental, análise comparativa e suporte à decisão com rastreabilidade.
+
+* **AuraBID** — Análise de editais, RFPs e propostas com foco em conformidade e aderência.
+
+**Camada complementar:** a validação dos fornecedores é suportada pelo **AuraTRUST**, que verifica perfil, integridade, elegibilidade e condições reais de atendimento ao BID.
+Para avaliações mais amplas, **AuraDUE** e **AuraTRACK** podem ser acionados para compor uma visão 360º do processo.
+
+---
+
+### 6. Exchange and Transactions
+
+Ambiente controlado para negociação de ativos validados, com proveniência, lastro e segurança transacional.
+
+* **AuraMARKET** — Exchange de ativos certificados e auditados, incluindo precatórios, créditos de carbono, créditos de ICMS e outros ativos higienizados.
+
+**Regra da plataforma:** somente compradores autorizados, vendedores qualificados e ativos certificados poderão acessar e negociar.
