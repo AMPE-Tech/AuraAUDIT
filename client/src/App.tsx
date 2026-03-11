@@ -248,11 +248,7 @@ function AppContent() {
     );
   }
 
-  if (location === "/" || location === "") {
-    return <PublicHome />;
-  }
-
-  if (location === "/teste-agora" || location === "/landingpage-test") {
+  if (location === "/" || location === "" || location === "/teste-agora" || location === "/landingpage-test") {
     return (
       <div className="min-h-screen bg-background">
         <LandingPageTest />
