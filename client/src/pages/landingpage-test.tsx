@@ -18,22 +18,22 @@ import {
 import { SiInstagram, SiTiktok, SiLinkedin } from "react-icons/si";
 
 const TRUST_AREA_DATA = [
-  { m: "Jan", v: 120, e: 118 },
-  { m: "Fev", v: 145, e: 142 },
-  { m: "Mar", v: 168, e: 165 },
-  { m: "Abr", v: 195, e: 190 },
-  { m: "Mai", v: 230, e: 225 },
-  { m: "Jun", v: 260, e: 258 },
-  { m: "Jul", v: 310, e: 305 },
-  { m: "Ago", v: 350, e: 348 },
+  { m: "Jan", v: 1080, e: 1062 },
+  { m: "Fev", v: 1305, e: 1278 },
+  { m: "Mar", v: 1512, e: 1485 },
+  { m: "Abr", v: 1755, e: 1710 },
+  { m: "Mai", v: 2070, e: 2025 },
+  { m: "Jun", v: 2340, e: 2322 },
+  { m: "Jul", v: 2790, e: 2745 },
+  { m: "Ago", v: 3150, e: 3132 },
 ];
 
 const MODULE_BAR_DATA = [
-  { cat: "AuraAUDIT", val: 42 },
-  { cat: "AuraDUE", val: 28 },
-  { cat: "AuraRISK", val: 18 },
-  { cat: "AuraCARBO", val: 8 },
-  { cat: "AuraTAX", val: 4 },
+  { cat: "AuraAUDIT", val: 378 },
+  { cat: "AuraDUE", val: 252 },
+  { cat: "AuraRISK", val: 162 },
+  { cat: "AuraCARBO", val: 72 },
+  { cat: "AuraTAX", val: 36 },
 ];
 
 const TRUST_PIE_DATA = [
@@ -573,7 +573,7 @@ export default function LandingPageTest() {
                 <div className="flex items-center justify-center w-9 h-9 rounded-full bg-emerald-100 dark:bg-emerald-900/50 mx-auto mb-2">
                   <BarChart3 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-verified">+2,8 BI</p>
+                <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400" data-testid="stat-verified">+25,2 BI</p>
                 <p className="text-xs text-muted-foreground mt-1">Verificados</p>
                 <p className="text-xs text-muted-foreground">em volume total processado</p>
               </CardContent>
@@ -583,7 +583,7 @@ export default function LandingPageTest() {
                 <div className="flex items-center justify-center w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-900/50 mx-auto mb-2">
                   <Award className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                 </div>
-                <p className="text-xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-certified">+350K</p>
+                <p className="text-xl font-bold text-amber-600 dark:text-amber-400" data-testid="stat-certified">+3,15M</p>
                 <p className="text-xs text-muted-foreground mt-1">Evidencias Certificadas</p>
                 <p className="text-xs text-muted-foreground">com cadeia de custodia</p>
               </CardContent>
