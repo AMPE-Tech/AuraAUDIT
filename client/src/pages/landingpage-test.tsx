@@ -213,38 +213,38 @@ const MODULE_GROUPS = [
   {
     id: "core-infrastructure",
     title: "Core Infrastructure",
-    subtitle: "A base que sustenta todo o ecossistema AuraTECH com rastreabilidade, integridade e governanca de dados.",
+    subtitle: "Rastreabilidade, integridade e governanca de dados como base de todo o ecossistema.",
     category: "infrastructure",
   },
   {
     id: "due-diligence",
     title: "Due Diligence, Legal & Regulatory",
-    subtitle: "Diligencia, estruturacao documental e conformidade para suportar decisoes criticas com seguranca e rastreabilidade.",
+    subtitle: "Estruturacao documental e conformidade para decisoes criticas com seguranca e rastreabilidade.",
     category: "due_diligence",
   },
   {
     id: "asset-validation",
     title: "Asset Validation",
-    subtitle: "Validacao tecnica de ativos criticos com evidencias, integridade e prontidao para decisao.",
+    subtitle: "Evidencias, integridade e prontidao para decisao na validacao de ativos criticos.",
     category: "asset_validation",
   },
   {
     id: "audit-expense",
     title: "Audit & Expense Review",
-    subtitle: "Revisao forense, controle de despesas e acompanhamento da execucao com visao analitica e cronologica.",
+    subtitle: "Controle de despesas e acompanhamento da execucao com visao analitica e cronologica.",
     category: "audit_expense",
   },
   {
     id: "procurement",
     title: "Procurement & RFP Control",
-    subtitle: "Compras e RFPs com validacao documental, analise comparativa e suporte a decisao com rastreabilidade.",
+    subtitle: "Validacao documental e analise comparativa com suporte a decisao rastreavel.",
     category: "procurement",
     note: "Camada complementar: a validacao dos fornecedores e suportada pelo AuraTRUST. Para avaliacoes mais amplas, AuraDUE e AuraTRACK podem compor uma visao 360° do processo.",
   },
   {
     id: "exchange",
     title: "Exchange & Transactions",
-    subtitle: "Ambiente controlado para negociacao de ativos validados, com proveniencia, lastro e seguranca transacional.",
+    subtitle: "Negociacao de ativos validados com proveniencia, lastro e seguranca transacional.",
     category: "exchange",
     note: "Somente compradores autorizados, vendedores qualificados e ativos certificados poderao acessar e negociar.",
   },
@@ -466,7 +466,7 @@ export default function LandingPageTest() {
             <h2 className="text-sm font-semibold">Modulos do Ecossistema</h2>
             <Badge variant="secondary" className="text-[10px]">12 modulos</Badge>
           </div>
-          {MODULE_GROUPS.map((group, idx) => {
+          {MODULE_GROUPS.filter((g) => g.category !== "procurement" && g.category !== "exchange").map((group, idx) => {
             const groupModules = ALL_MODULES.filter((m) => m.category === group.category);
             return (
               <div key={group.id} className="space-y-3" data-testid={`module-group-${group.id}`}>
@@ -482,12 +482,28 @@ export default function LandingPageTest() {
                     <ModuleCard key={mod.id} mod={mod} />
                   ))}
                 </div>
-                {"note" in group && group.note && (
-                  <p className="text-[10px] text-muted-foreground/70 italic pl-2 border-l-2 border-border/30">{group.note}</p>
-                )}
               </div>
             );
           })}
+          <div className="border-t border-border/40" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {MODULE_GROUPS.filter((g) => g.category === "procurement" || g.category === "exchange").map((group) => {
+              const groupModules = ALL_MODULES.filter((m) => m.category === group.category);
+              return (
+                <div key={group.id} className="space-y-3" data-testid={`module-group-${group.id}`}>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-xs font-semibold">{group.title}</h3>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">{group.subtitle}</p>
+                  </div>
+                  {groupModules.map((mod) => (
+                    <ModuleCard key={mod.id} mod={mod} />
+                  ))}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* SECTION 4: Performance Dashboard */}
