@@ -1013,10 +1013,9 @@ export default function LandingPageTest() {
             <div>
               <h4 className="text-xs font-semibold mb-3">Legal & Compliance</h4>
               <ul className="space-y-2 text-[11px] text-muted-foreground">
-                <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Politica de Privacidade</button></li>
+                <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Politica de Privacidade / Compliance</button></li>
                 <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Conformidade LGPD</button></li>
                 <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Termos de Uso</button></li>
-                <li><button onClick={() => navigate("/compliance-policy")} className="hover:text-foreground transition-colors">Politica de Compliance</button></li>
                 <li><a href="mailto:privacidade@auradue.com" className="hover:text-foreground transition-colors">DPO / Privacidade</a></li>
               </ul>
             </div>
