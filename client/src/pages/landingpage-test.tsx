@@ -351,7 +351,7 @@ export default function LandingPageTest() {
   const [lang, setLang] = useState<"pt" | "en">("pt");
 
   useEffect(() => {
-    document.title = "AuraTECH — Trust Infrastructure Platform";
+    document.title = "AuraTECH — Digital Trust Infrastructure";
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
       metaDescription = document.createElement('meta');
@@ -379,7 +379,7 @@ export default function LandingPageTest() {
             </div>
             <div>
               <h1 className="text-sm font-semibold tracking-tight">AuraTECH</h1>
-              <p className="text-[10px] text-muted-foreground">Trust Infrastructure Platform</p>
+              <p className="text-[12px] text-muted-foreground">Digital Trust Infrastructure</p>
             </div>
           </div>
           
