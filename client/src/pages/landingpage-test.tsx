@@ -384,40 +384,40 @@ export default function LandingPageTest() {
           </div>
           
           <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-muted-foreground">
+            <button onClick={() => scrollTo('sobre-nos')} className="hover:text-foreground transition-colors">Sobre Nós</button>
             <button onClick={() => scrollTo('modulos')} className="hover:text-foreground transition-colors">Módulos</button>
             <button onClick={() => scrollTo('performance')} className="hover:text-foreground transition-colors">Performance</button>
             <button onClick={() => scrollTo('trust-index')} className="hover:text-foreground transition-colors">Trust Index</button>
-            <button onClick={() => scrollTo('sobre-nos')} className="hover:text-foreground transition-colors">Sobre Nós</button>
             <button onClick={() => scrollTo('contato')} className="hover:text-foreground transition-colors">Contato</button>
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-xs text-muted-foreground hover:text-foreground" 
+              className="text-xs font-medium text-muted-foreground hover:text-foreground h-8 px-2" 
               onClick={() => setLang(lang === "pt" ? "en" : "pt")}
               data-testid="button-lang-toggle"
             >
-              <Globe className="w-4 h-4 mr-1.5" />
+              <Globe className="w-3.5 h-3.5 mr-1.5" />
               {lang === "pt" ? "EN" : "PT"}
             </Button>
-            <Button size="sm" onClick={() => navigate("/login")} data-testid="button-nav-login" className="hidden sm:inline-flex">
+            <Button size="sm" className="h-8 text-xs font-medium hidden sm:inline-flex" onClick={() => navigate("/login")} data-testid="button-nav-login">
               Acessar Plataforma
             </Button>
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <Button variant="ghost" size="icon" className="md:hidden h-8 w-8" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+              {isMobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </Button>
           </div>
         </div>
         {isMobileMenuOpen && (
           <div className="md:hidden border-t bg-background/95 p-4 space-y-4 text-sm font-medium">
+            <button onClick={() => scrollTo('sobre-nos')} className="block w-full text-left text-muted-foreground hover:text-foreground">Sobre Nós</button>
             <button onClick={() => scrollTo('modulos')} className="block w-full text-left text-muted-foreground hover:text-foreground">Módulos</button>
             <button onClick={() => scrollTo('performance')} className="block w-full text-left text-muted-foreground hover:text-foreground">Performance</button>
             <button onClick={() => scrollTo('trust-index')} className="block w-full text-left text-muted-foreground hover:text-foreground">Trust Index</button>
-            <button onClick={() => scrollTo('sobre-nos')} className="block w-full text-left text-muted-foreground hover:text-foreground">Sobre Nós</button>
             <button onClick={() => scrollTo('contato')} className="block w-full text-left text-muted-foreground hover:text-foreground">Contato</button>
-            <Button size="sm" className="w-full mt-4" onClick={() => navigate("/login")}>Acessar Plataforma</Button>
+            <Button size="sm" className="w-full mt-4 h-8 text-xs font-medium" onClick={() => navigate("/login")}>Acessar Plataforma</Button>
           </div>
         )}
       </header>
@@ -463,8 +463,8 @@ export default function LandingPageTest() {
                   <ShieldCheck className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-100">Infraestrutura Central</p>
-                  <p className="text-[10px] text-slate-400">Camada transversal que certifica, valida e monitora todos os modulos AuraTECH</p>
+                  <h2 className="text-sm font-semibold text-slate-100">Infraestrutura Central</h2>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Camada transversal que certifica, valida e monitora todos os modulos AuraTECH</p>
                 </div>
               </div>
               <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px]">Core</Badge>
@@ -611,8 +611,8 @@ export default function LandingPageTest() {
                   <Shield className="w-4 h-4 text-emerald-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-100">Dashboard AuraTECH</p>
-                  <p className="text-[10px] text-slate-400">Visao executiva da infraestrutura de confianca</p>
+                  <h2 className="text-sm font-semibold text-slate-100">Dashboard AuraTECH</h2>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Visao executiva da infraestrutura de confianca</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -742,8 +742,8 @@ export default function LandingPageTest() {
                   <Award className="w-4 h-4 text-blue-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-100">Aura Trust Index™</p>
-                  <p className="text-[10px] text-slate-400">Score composto derivado de certificacao, evidencias, compliance e anomalias</p>
+                  <h2 className="text-sm font-semibold text-slate-100">Aura Trust Index™</h2>
+                  <p className="text-[11px] text-slate-400 mt-0.5">Score composto derivado de certificacao, evidencias, compliance e anomalias</p>
                 </div>
               </div>
               <Badge className="bg-blue-500/15 text-blue-400 border-blue-500/30 text-[10px]">Dynamic Model</Badge>
@@ -861,7 +861,7 @@ export default function LandingPageTest() {
         <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-transparent to-transparent mt-8" data-testid="section-cta">
           <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2 text-center md:text-left">
-              <h2 className="text-sm font-bold text-foreground">Pronto para elevar a confiança da sua operação?</h2>
+              <h2 className="text-sm font-semibold text-foreground">Pronto para elevar a confiança da sua operação?</h2>
               <p className="text-xs text-muted-foreground max-w-xl">
                 Inicie agora e construa sua própria infraestrutura de verificação e compliance em poucos minutos.
               </p>
