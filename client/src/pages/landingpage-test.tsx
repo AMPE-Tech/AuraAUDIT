@@ -379,7 +379,7 @@ export default function LandingPageTest() {
             </div>
             <div>
               <h1 className="text-sm font-semibold tracking-tight">AuraTECH</h1>
-              <p className="text-[12px] text-muted-foreground">Digital Trust Infrastructure</p>
+              <p className="text-[12px] text-muted-foreground font-semibold">Digital Trust Infrastructure</p>
             </div>
           </div>
           
