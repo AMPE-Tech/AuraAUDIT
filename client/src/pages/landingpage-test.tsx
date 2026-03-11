@@ -8,7 +8,7 @@ import {
   Shield, ShieldCheck, Search, Database, Layers, Eye,
   CheckCircle2, AlertTriangle, BarChart3, ArrowRight, Globe,
   Leaf, Scale, Receipt, TrendingUp, Award,
-  Briefcase, LogIn, Target, FileText, Activity, Menu, X
+  Briefcase, LogIn, Target, FileText, Activity, Menu, X, Mail, Send
 } from "lucide-react";
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -880,8 +880,57 @@ export default function LandingPageTest() {
           </CardContent>
         </Card>
 
-        {/* SECTION 10: Enhanced Footer */}
-        <footer id="contato" className="pt-8 pb-6 border-t border-border/40 mt-12" data-testid="section-footer">
+        {/* SECTION 10: Contact Form */}
+        <div id="contato" className="space-y-4" data-testid="section-contact">
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold">Contato</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                <p className="text-xs text-muted-foreground">Envie sua dúvida ou solicitação. Nossa equipe responde em até 24h úteis.</p>
+                <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <input type="text" placeholder="Nome" className="w-full px-3 py-2 text-xs bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary" data-testid="input-contact-name" />
+                    <input type="text" placeholder="Empresa" className="w-full px-3 py-2 text-xs bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary" data-testid="input-contact-company" />
+                  </div>
+                  <input type="email" placeholder="Email" className="w-full px-3 py-2 text-xs bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary" data-testid="input-contact-email" />
+                  <textarea placeholder="Sua mensagem..." rows={4} className="w-full px-3 py-2 text-xs bg-background border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary resize-none" data-testid="input-contact-message" />
+                  <Button size="sm" className="text-xs w-full" data-testid="button-contact-submit">
+                    <Send className="w-3 h-3 mr-2" />
+                    Enviar Mensagem
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+            <div className="space-y-4">
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xs font-semibold">Suporte & Dúvidas</h3>
+                  <p className="text-[11px] text-muted-foreground">Para questões técnicas, comerciais ou informações sobre a plataforma.</p>
+                  <a href="mailto:suporte@auradue.com" className="inline-flex items-center gap-2 text-xs text-primary hover:underline" data-testid="link-email-support">
+                    <Mail className="w-3.5 h-3.5" />
+                    suporte@auradue.com
+                  </a>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 space-y-3">
+                  <h3 className="text-xs font-semibold">Legal & Compliance</h3>
+                  <p className="text-[11px] text-muted-foreground">Para questões de privacidade, LGPD, termos de uso e conformidade regulatória.</p>
+                  <a href="mailto:privacidade@auradue.com" className="inline-flex items-center gap-2 text-xs text-primary hover:underline" data-testid="link-email-privacy">
+                    <Mail className="w-3.5 h-3.5" />
+                    privacidade@auradue.com
+                  </a>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 11: Enhanced Footer */}
+        <footer className="pt-8 pb-6 border-t border-border/40 mt-12" data-testid="section-footer">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
