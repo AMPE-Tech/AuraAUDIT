@@ -52,49 +52,23 @@ const TRUST_RADAR_DATA = [
 
 const ALL_MODULES = [
   {
-    id: "audit",
-    name: "AuraAUDIT",
-    tagline: "Corporate Expense Review",
-    description: "Analise forense de despesas corporativas de viagens e eventos. Conciliacao multi-sistema, deteccao de anomalias e recuperacao de overcharge.",
-    icon: Receipt,
-    color: "text-amber-500",
-    bgColor: "bg-amber-500/15",
-    borderColor: "border-amber-500/30",
+    id: "trust",
+    name: "AuraTRUST",
+    tagline: "Evidence Tracking Infrastructure",
+    description: "Cadeia de custodia, certificacao e monitoramento de evidencias.",
+    icon: ShieldCheck,
+    color: "text-emerald-500",
+    bgColor: "bg-emerald-500/15",
+    borderColor: "border-emerald-500/30",
     status: "active" as const,
     url: "/login",
-    category: "verification",
-  },
-  {
-    id: "bid",
-    name: "AuraBID",
-    tagline: "Procurement & RFP Analysis",
-    description: "Analise automatizada de editais, licitacoes e processos de compras. Validacao de conformidade documental, comparativo de propostas e deteccao de irregularidades.",
-    icon: Briefcase,
-    color: "text-teal-500",
-    bgColor: "bg-teal-500/15",
-    borderColor: "border-teal-500/30",
-    status: "coming_soon" as const,
-    url: null,
-    category: "specialized",
-  },
-  {
-    id: "carbo",
-    name: "AuraCARBO",
-    tagline: "Carbon Project Validation",
-    description: "Verificacao independente de projetos de credito de carbono — adicionalidade, permanencia e integridade de registro.",
-    icon: Leaf,
-    color: "text-green-500",
-    bgColor: "bg-green-500/15",
-    borderColor: "border-green-500/30",
-    status: "active" as const,
-    url: "https://auracarbo.replit.app",
-    category: "specialized",
+    category: "infrastructure",
   },
   {
     id: "data",
     name: "AuraDATA",
     tagline: "Data Governance Hub",
-    description: "Motor centralizado de ingestao, normalizacao e cruzamento de dados. Conciliacao multi-fonte com integridade criptografica em cada etapa.",
+    description: "Ingestao, normalizacao, conciliacao e governanca de dados multi-fonte.",
     icon: Database,
     color: "text-blue-500",
     bgColor: "bg-blue-500/15",
@@ -107,105 +81,172 @@ const ALL_MODULES = [
     id: "due",
     name: "AuraDUE",
     tagline: "Digital Due Diligence",
-    description: "Coleta e verificacao automatizada de evidencias para transacoes corporativas, parcerias e submissoes regulatorias.",
+    description: "Coleta e verificacao de evidencias para due diligence digital.",
     icon: Search,
     color: "text-violet-500",
     bgColor: "bg-violet-500/15",
     borderColor: "border-violet-500/30",
     status: "active" as const,
     url: "https://auradue.replit.app",
-    category: "verification",
+    category: "due_diligence",
   },
   {
     id: "legal",
     name: "AuraLEGAL",
     tagline: "Legal & Regulatory Compliance",
-    description: "Gestao de conformidade juridica e regulatoria. Monitoramento de obrigacoes legais, prazos processuais e adequacao normativa com rastreabilidade completa.",
+    description: "Gestao juridica e regulatoria com drafting, revisao e controle de obrigacoes.",
     icon: Scale,
     color: "text-rose-500",
     bgColor: "bg-rose-500/15",
     borderColor: "border-rose-500/30",
     status: "coming_soon" as const,
     url: null,
-    category: "specialized",
-  },
-  {
-    id: "loa",
-    name: "AuraLOA",
-    tagline: "Precatory Research Validation",
-    description: "Due diligence automatizada para precatorios judiciais — verificacao de origem, analise do devedor e cadeia de cessao.",
-    icon: FileText,
-    color: "text-indigo-500",
-    bgColor: "bg-indigo-500/15",
-    borderColor: "border-indigo-500/30",
-    status: "active" as const,
-    url: "https://auraloa.replit.app",
-    category: "specialized",
-  },
-  {
-    id: "market",
-    name: "AuraMARKET",
-    tagline: "Verified Asset Exchange",
-    description: "Marketplace com trust score para ativos verificados — certificados, creditos e instrumentos validados com proveniencia completa.",
-    icon: TrendingUp,
-    color: "text-cyan-500",
-    bgColor: "bg-cyan-500/15",
-    borderColor: "border-cyan-500/30",
-    status: "active" as const,
-    url: "https://auradue.replit.app",
-    category: "specialized",
-  },
-  {
-    id: "risk",
-    name: "AuraRISK",
-    tagline: "Compliance Score Analysis",
-    description: "Monitoramento continuo de compliance com scoring dinamico de risco. Acompanhamento de aderencia a politicas e escalacao automatica de alertas.",
-    icon: AlertTriangle,
-    color: "text-red-500",
-    bgColor: "bg-red-500/15",
-    borderColor: "border-red-500/30",
-    status: "active" as const,
-    url: "https://aurarisk.replit.app",
-    category: "verification",
+    category: "due_diligence",
   },
   {
     id: "tax",
     name: "AuraTAX",
     tagline: "Tax Credit Recovery",
-    description: "Identificacao e validacao de creditos tributarios recuperaveis em estruturas corporativas e jurisdicoes complexas.",
+    description: "Identificacao e validacao de creditos tributarios recuperaveis.",
     icon: Receipt,
     color: "text-orange-500",
     bgColor: "bg-orange-500/15",
     borderColor: "border-orange-500/30",
     status: "coming_soon" as const,
     url: null,
-    category: "specialized",
+    category: "due_diligence",
+  },
+  {
+    id: "loa",
+    name: "AuraLOA",
+    tagline: "Precatory Research Validation",
+    description: "Pesquisa e validacao de precatorios.",
+    icon: FileText,
+    color: "text-indigo-500",
+    bgColor: "bg-indigo-500/15",
+    borderColor: "border-indigo-500/30",
+    status: "active" as const,
+    url: "https://auraloa.replit.app",
+    category: "asset_validation",
+  },
+  {
+    id: "carbo",
+    name: "AuraCARBO",
+    tagline: "Carbon Project Validation",
+    description: "Verificacao independente de projetos de carbono.",
+    icon: Leaf,
+    color: "text-green-500",
+    bgColor: "bg-green-500/15",
+    borderColor: "border-green-500/30",
+    status: "active" as const,
+    url: "https://auracarbo.replit.app",
+    category: "asset_validation",
+  },
+  {
+    id: "risk",
+    name: "AuraRISK",
+    tagline: "Compliance Score Analysis",
+    description: "Score de compliance para priorizacao e criticidade de ativos.",
+    icon: AlertTriangle,
+    color: "text-red-500",
+    bgColor: "bg-red-500/15",
+    borderColor: "border-red-500/30",
+    status: "active" as const,
+    url: "https://aurarisk.replit.app",
+    category: "asset_validation",
+  },
+  {
+    id: "audit",
+    name: "AuraAUDIT",
+    tagline: "Corporate Expense Review",
+    description: "Revisao forense de despesas corporativas, com foco em viagens e eventos.",
+    icon: Receipt,
+    color: "text-amber-500",
+    bgColor: "bg-amber-500/15",
+    borderColor: "border-amber-500/30",
+    status: "active" as const,
+    url: "/login",
+    category: "audit_expense",
   },
   {
     id: "track",
     name: "AuraTRACK",
     tagline: "Audit Timeline Engine",
-    description: "Motor de timeline de auditoria com rastreamento completo de fases, entregas e prazos. Visao cronologica de cada projeto com alertas automaticos e controle de SLA.",
+    description: "Timeline de auditoria e gestao de prazos, fases e SLA.",
     icon: Activity,
     color: "text-sky-500",
     bgColor: "bg-sky-500/15",
     borderColor: "border-sky-500/30",
     status: "active" as const,
     url: "/login",
-    category: "verification",
+    category: "audit_expense",
   },
   {
-    id: "trust",
-    name: "AuraTRUST",
-    tagline: "Evidence Tracking Infrastructure",
-    description: "Camada transversal que certifica, valida e monitora cada processo do ecossistema. Cadeia de custodia SHA-256, monitoramento ativo de selos e emissao automatica de certificados.",
-    icon: ShieldCheck,
-    color: "text-emerald-500",
-    bgColor: "bg-emerald-500/15",
-    borderColor: "border-emerald-500/30",
+    id: "bid",
+    name: "AuraBID",
+    tagline: "Procurement & RFP Analysis",
+    description: "Analise de editais, RFPs e propostas com foco em conformidade e aderencia.",
+    icon: Briefcase,
+    color: "text-teal-500",
+    bgColor: "bg-teal-500/15",
+    borderColor: "border-teal-500/30",
+    status: "coming_soon" as const,
+    url: null,
+    category: "procurement",
+  },
+  {
+    id: "market",
+    name: "AuraMARKET",
+    tagline: "Verified Asset Exchange",
+    description: "Exchange de ativos certificados e auditados, incluindo precatorios, creditos de carbono, creditos de ICMS e outros ativos higienizados.",
+    icon: TrendingUp,
+    color: "text-cyan-500",
+    bgColor: "bg-cyan-500/15",
+    borderColor: "border-cyan-500/30",
     status: "active" as const,
-    url: "/login",
+    url: "https://auradue.replit.app",
+    category: "exchange",
+  },
+];
+
+const MODULE_GROUPS = [
+  {
+    id: "core-infrastructure",
+    title: "Core Infrastructure",
+    subtitle: "A base que sustenta todo o ecossistema AuraTECH com rastreabilidade, integridade e governanca de dados.",
     category: "infrastructure",
+  },
+  {
+    id: "due-diligence",
+    title: "Due Diligence, Legal & Regulatory",
+    subtitle: "Diligencia, estruturacao documental e conformidade para suportar decisoes criticas com seguranca e rastreabilidade.",
+    category: "due_diligence",
+  },
+  {
+    id: "asset-validation",
+    title: "Asset Validation",
+    subtitle: "Validacao tecnica de ativos criticos com evidencias, integridade e prontidao para decisao.",
+    category: "asset_validation",
+  },
+  {
+    id: "audit-expense",
+    title: "Audit & Expense Review",
+    subtitle: "Revisao forense, controle de despesas e acompanhamento da execucao com visao analitica e cronologica.",
+    category: "audit_expense",
+  },
+  {
+    id: "procurement",
+    title: "Procurement & RFP Control",
+    subtitle: "Compras e RFPs com validacao documental, analise comparativa e suporte a decisao com rastreabilidade.",
+    category: "procurement",
+    note: "Camada complementar: a validacao dos fornecedores e suportada pelo AuraTRUST. Para avaliacoes mais amplas, AuraDUE e AuraTRACK podem compor uma visao 360° do processo.",
+  },
+  {
+    id: "exchange",
+    title: "Exchange & Transactions",
+    subtitle: "Ambiente controlado para negociacao de ativos validados, com proveniencia, lastro e seguranca transacional.",
+    category: "exchange",
+    note: "Somente compradores autorizados, vendedores qualificados e ativos certificados poderao acessar e negociar.",
   },
 ];
 
@@ -422,18 +463,36 @@ export default function LandingPageTest() {
           </div>
         </div>
 
-        {/* SECTION 3: All 12 Modules */}
-        <div className="space-y-4" data-testid="section-modules-catalog">
+        {/* SECTION 3: All 12 Modules — Grouped by Category */}
+        <div className="space-y-6" data-testid="section-modules-catalog">
           <div className="flex items-center gap-2">
             <Layers className="w-4 h-4 text-primary" />
             <h2 className="text-sm font-semibold">Modulos do Ecossistema</h2>
             <Badge variant="secondary" className="text-[10px]">12 modulos</Badge>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {ALL_MODULES.sort((a, b) => a.name.localeCompare(b.name)).map((mod) => (
-              <ModuleCard key={mod.id} mod={mod} />
-            ))}
-          </div>
+          {MODULE_GROUPS.map((group, idx) => {
+            const groupModules = ALL_MODULES.filter((m) => m.category === group.category);
+            return (
+              <div key={group.id} className="space-y-3" data-testid={`module-group-${group.id}`}>
+                {idx > 0 && <div className="border-t border-border/40" />}
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{idx + 1}.</span>
+                    <h3 className="text-xs font-semibold">{group.title}</h3>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">{group.subtitle}</p>
+                </div>
+                <div className={`grid gap-4 ${groupModules.length === 1 ? 'grid-cols-1 max-w-md' : groupModules.length === 2 ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'}`}>
+                  {groupModules.map((mod) => (
+                    <ModuleCard key={mod.id} mod={mod} />
+                  ))}
+                </div>
+                {"note" in group && group.note && (
+                  <p className="text-[10px] text-muted-foreground/70 italic pl-2 border-l-2 border-border/30">{group.note}</p>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* SECTION 4: Performance Dashboard */}
