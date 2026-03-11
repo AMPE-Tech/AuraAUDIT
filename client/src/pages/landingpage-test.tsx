@@ -15,6 +15,7 @@ import {
   RadarChart, PolarGrid, PolarAngleAxis, Radar,
   XAxis, YAxis, CartesianGrid, ResponsiveContainer
 } from "recharts";
+import { SiInstagram, SiTiktok, SiLinkedin } from "react-icons/si";
 
 const TRUST_AREA_DATA = [
   { m: "Jan", v: 120, e: 118 },
@@ -347,6 +348,7 @@ function ModuleCard({ mod }: { mod: typeof ALL_MODULES[0] }) {
 export default function LandingPageTest() {
   const [, navigate] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [lang, setLang] = useState<"pt" | "en">("pt");
 
   useEffect(() => {
     document.title = "AuraTECH — Trust Infrastructure Platform";
@@ -385,10 +387,21 @@ export default function LandingPageTest() {
             <button onClick={() => scrollTo('modulos')} className="hover:text-foreground transition-colors">Módulos</button>
             <button onClick={() => scrollTo('performance')} className="hover:text-foreground transition-colors">Performance</button>
             <button onClick={() => scrollTo('trust-index')} className="hover:text-foreground transition-colors">Trust Index</button>
+            <button onClick={() => scrollTo('sobre-nos')} className="hover:text-foreground transition-colors">Sobre Nós</button>
             <button onClick={() => scrollTo('contato')} className="hover:text-foreground transition-colors">Contato</button>
           </nav>
 
           <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-xs text-muted-foreground hover:text-foreground" 
+              onClick={() => setLang(lang === "pt" ? "en" : "pt")}
+              data-testid="button-lang-toggle"
+            >
+              <Globe className="w-4 h-4 mr-1.5" />
+              {lang === "pt" ? "EN" : "PT"}
+            </Button>
             <Button size="sm" onClick={() => navigate("/login")} data-testid="button-nav-login" className="hidden sm:inline-flex">
               Acessar Plataforma
             </Button>
@@ -402,6 +415,7 @@ export default function LandingPageTest() {
             <button onClick={() => scrollTo('modulos')} className="block w-full text-left text-muted-foreground hover:text-foreground">Módulos</button>
             <button onClick={() => scrollTo('performance')} className="block w-full text-left text-muted-foreground hover:text-foreground">Performance</button>
             <button onClick={() => scrollTo('trust-index')} className="block w-full text-left text-muted-foreground hover:text-foreground">Trust Index</button>
+            <button onClick={() => scrollTo('sobre-nos')} className="block w-full text-left text-muted-foreground hover:text-foreground">Sobre Nós</button>
             <button onClick={() => scrollTo('contato')} className="block w-full text-left text-muted-foreground hover:text-foreground">Contato</button>
             <Button size="sm" className="w-full mt-4" onClick={() => navigate("/login")}>Acessar Plataforma</Button>
           </div>
@@ -793,7 +807,7 @@ export default function LandingPageTest() {
         <Separator />
 
         {/* SECTION 8: Quem Somos */}
-        <div className="space-y-6" data-testid="section-about">
+        <div id="sobre-nos" className="space-y-6" data-testid="section-about">
           <div className="max-w-2xl">
             <div className="flex items-center gap-2 mb-2">
               <ShieldCheck className="w-4 h-4 text-primary" />
@@ -879,6 +893,17 @@ export default function LandingPageTest() {
               <p className="text-[11px] text-muted-foreground max-w-xs leading-relaxed">
                 Infrastructure for Evidence-Based Trust. A plataforma definitiva para estruturação de evidências e auditoria com cadeia de custódia digital.
               </p>
+              <div className="flex items-center gap-4 pt-2">
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-social-instagram">
+                  <SiInstagram className="w-4 h-4" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-social-tiktok">
+                  <SiTiktok className="w-4 h-4" />
+                </a>
+                <a href="#" className="text-muted-foreground hover:text-foreground transition-colors" data-testid="link-social-linkedin">
+                  <SiLinkedin className="w-4 h-4" />
+                </a>
+              </div>
             </div>
             
             <div>
