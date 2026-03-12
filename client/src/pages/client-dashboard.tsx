@@ -73,9 +73,13 @@ export default function ClientDashboard() {
     queryKey: ["/api/client/project-overview"],
   });
 
+  const { data: phasesData } = useQuery<{ phases: Array<{ phase: string; status: string; detail?: string }> | null }>({
+    queryKey: ["/api/client/project-phases"],
+  });
+
   const contractSigned = signatureData?.signed === true;
 
-  const PROJECT_PHASES = [
+  const BASE_PHASES = [
     {
       phase: "Fase 01",
       title: "Proposta Comercial",
@@ -138,6 +142,18 @@ export default function ClientDashboard() {
         : "Bloqueado — requer assinatura do contrato",
     },
   ];
+
+  const adminPhases = phasesData?.phases;
+  const PROJECT_PHASES = BASE_PHASES.map((base) => {
+    if (!adminPhases) return base;
+    const override = adminPhases.find((p) => p.phase === base.phase);
+    if (!override) return base;
+    return {
+      ...base,
+      status: (override.status as any) ?? base.status,
+      detail: override.detail ?? base.detail,
+    };
+  });
 
   function getPhaseStyle(status: string) {
     switch (status) {

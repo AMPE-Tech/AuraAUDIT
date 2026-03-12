@@ -1020,6 +1020,17 @@ ${auditor?.contactPhone || ""}`;
     });
   });
 
+  app.get("/api/client/project-phases", requireAuth, async (req: Request, res: Response) => {
+    try {
+      const userId = req.session.userId!;
+      const client = await getClientProfile(userId);
+      if (!client) return res.json({ phases: null });
+      res.json({ phases: (client as any).projectPhases || null });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
   app.get("/api/client/project-overview", requireAuth, async (req: Request, res: Response) => {
     try {
       const userId = req.session.userId!;

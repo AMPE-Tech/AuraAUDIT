@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -42,6 +44,7 @@ import {
   XCircle,
   Loader2,
   Sparkles,
+  ListChecks,
 } from "lucide-react";
 import { formatDate } from "@/lib/formatters";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -406,12 +409,177 @@ function ClientFormFields({ form, toast }: { form: ReturnType<typeof useForm<Cli
   );
 }
 
+const PHASE_DEFINITIONS = [
+  { phase: "Fase 01", title: "Proposta Comercial" },
+  { phase: "Fase 02", title: "Assinatura do Contrato" },
+  { phase: "Fase 03", title: "Onboarding & Acessos" },
+  { phase: "Fase 04", title: "Coleta de Dados" },
+  { phase: "Fase 05", title: "Reconciliacao & Analise" },
+  { phase: "Fase 06", title: "Apresentacao dos Resultados" },
+  { phase: "Fase 07", title: "Entrega Final" },
+];
+
+const STATUS_OPTIONS = [
+  { value: "completed", label: "Concluido", color: "text-emerald-600" },
+  { value: "in_progress", label: "Em Andamento", color: "text-amber-600" },
+  { value: "pending", label: "Pendente", color: "text-muted-foreground" },
+  { value: "blocking", label: "Bloqueante", color: "text-red-600" },
+  { value: "locked", label: "Bloqueado (lock)", color: "text-muted-foreground" },
+];
+
+function PhaseManagerDialog({ client, open, onClose }: { client: Client | null; open: boolean; onClose: () => void }) {
+  const { toast } = useToast();
+  const [phases, setPhases] = useState<Array<{ phase: string; status: string; detail: string }>>([]);
+
+  const phaseMutation = useMutation({
+    mutationFn: async (data: typeof phases) => {
+      const res = await apiRequest("PATCH", `/api/admin/clients/${client?.id}/phases`, { phases: data });
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/clients"] });
+      toast({ title: "Fases atualizadas com sucesso" });
+      onClose();
+    },
+    onError: () => {
+      toast({ title: "Erro ao atualizar fases", variant: "destructive" });
+    },
+  });
+
+  const { data: currentPhases, isLoading: isLoadingPhases } = useQuery<{ phases: Array<{ phase: string; status: string; detail?: string }> | null }>({
+    queryKey: ["/api/admin/clients", client?.id, "phases"],
+    enabled: !!client?.id && open,
+  });
+
+  const getDefaultDetail = (phase: string) => {
+    switch (phase) {
+      case "Fase 01": return "Proposta aceita pelo cliente";
+      case "Fase 02": return "Assinatura do contrato pendente";
+      case "Fase 03": return "Acesso ao portal concedido";
+      case "Fase 04": return "Aguardando envio pelo cliente";
+      case "Fase 05": return "Inicia apos recebimento dos dados";
+      case "Fase 06": return "Inicia apos conclusao das analises";
+      case "Fase 07": return "Etapa final do projeto";
+      default: return "";
+    }
+  };
+
+  const getDefaultStatus = (phase: string) => {
+    if (phase === "Fase 01") return "completed";
+    if (phase === "Fase 02") return "completed";
+    if (phase === "Fase 03") return "in_progress";
+    return "pending";
+  };
+
+  const initPhases = (savedPhases: typeof phases | null) => {
+    return PHASE_DEFINITIONS.map((def) => {
+      const saved = savedPhases?.find((p) => p.phase === def.phase);
+      return {
+        phase: def.phase,
+        status: saved?.status ?? getDefaultStatus(def.phase),
+        detail: saved?.detail ?? getDefaultDetail(def.phase),
+      };
+    });
+  };
+
+  useEffect(() => {
+    if (open && currentPhases !== undefined && !isLoadingPhases) {
+      setPhases(initPhases(currentPhases.phases as typeof phases | null));
+    }
+  }, [open, currentPhases, isLoadingPhases]);
+
+  useEffect(() => {
+    if (!open) setPhases([]);
+  }, [open]);
+
+  if (!open || !client) return null;
+
+  const updatePhase = (phaseKey: string, field: "status" | "detail", value: string) => {
+    setPhases((prev) => prev.map((p) => p.phase === phaseKey ? { ...p, [field]: value } : p));
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <ListChecks className="w-4 h-4 text-primary" />
+            Andamento do Projeto — {client.name}
+          </DialogTitle>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Atualize o status e o detalhe de cada fase. O cliente vera as mudancas em tempo real no portal.
+          </p>
+        </DialogHeader>
+        {isLoadingPhases ? (
+          <div className="flex items-center justify-center py-10">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+          <div className="space-y-3 mt-2">
+            {phases.map((p) => {
+              const def = PHASE_DEFINITIONS.find((d) => d.phase === p.phase);
+              return (
+                <div key={p.phase} className="rounded-lg border bg-muted/20 p-3 space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-[10px] font-mono shrink-0">{p.phase}</Badge>
+                    <span className="text-xs font-medium">{def?.title}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">Status</Label>
+                      <Select value={p.status} onValueChange={(v) => updatePhase(p.phase, "status", v)}>
+                        <SelectTrigger className="h-8 text-xs" data-testid={`select-phase-status-${p.phase}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {STATUS_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              <span className={opt.color}>{opt.label}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">Detalhe (visivel ao cliente)</Label>
+                      <Input
+                        value={p.detail}
+                        onChange={(e) => updatePhase(p.phase, "detail", e.target.value)}
+                        className="h-8 text-xs"
+                        placeholder="Ex: Concluido em 10/01/2025"
+                        data-testid={`input-phase-detail-${p.phase}`}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+        <DialogFooter className="mt-4">
+          <Button variant="outline" onClick={onClose} disabled={phaseMutation.isPending}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={() => phaseMutation.mutate(phases)}
+            disabled={phaseMutation.isPending || isLoadingPhases}
+            data-testid="button-save-phases"
+          >
+            {phaseMutation.isPending ? <><Loader2 className="w-3 h-3 mr-1 animate-spin" />Salvando...</> : "Salvar Fases"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function Clients() {
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [phasingClient, setPhasingClient] = useState<Client | null>(null);
   const { toast } = useToast();
 
   const { data: clients, isLoading } = useQuery<Client[]>({
@@ -712,14 +880,25 @@ export default function Clients() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => openEditDialog(client)}
-                            data-testid={`button-edit-client-${client.id}`}
-                          >
-                            <Pencil className="w-4 h-4" />
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => setPhasingClient(client)}
+                              title="Gerenciar Fases do Projeto"
+                              data-testid={`button-phases-client-${client.id}`}
+                            >
+                              <ListChecks className="w-4 h-4 text-primary" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => openEditDialog(client)}
+                              data-testid={`button-edit-client-${client.id}`}
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -840,6 +1019,12 @@ export default function Clients() {
           )}
         </DialogContent>
       </Dialog>
+
+      <PhaseManagerDialog
+        client={phasingClient}
+        open={!!phasingClient}
+        onClose={() => setPhasingClient(null)}
+      />
     </div>
   );
 }

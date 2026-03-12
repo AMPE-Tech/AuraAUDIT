@@ -384,6 +384,30 @@ export async function registerRoutes(
     res.json({ message: "Fonte de dados removida" });
   });
 
+  app.get("/api/admin/clients/:id/phases", async (req, res) => {
+    try {
+      const client = await storage.getClient(req.params.id);
+      if (!client) return res.status(404).json({ message: "Cliente nao encontrado" });
+      res.json({ phases: (client as any).projectPhases || null });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/admin/clients/:id/phases", async (req, res) => {
+    try {
+      const { phases } = req.body;
+      if (!Array.isArray(phases)) return res.status(400).json({ message: "phases deve ser um array" });
+      const existing = await storage.getClient(req.params.id);
+      if (!existing) return res.status(404).json({ message: "Cliente nao encontrado" });
+      const updated = await storage.updateClient(req.params.id, { projectPhases: phases } as any);
+      await logAuditTrail("admin", "update", "client_phases", req.params.id, existing, updated, req.ip);
+      res.json({ phases });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   registerAiChatRoutes(app);
 
   return httpServer;

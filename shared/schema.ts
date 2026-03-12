@@ -75,6 +75,7 @@ export const clients = pgTable("clients", {
   status: text("status").notNull().default("pending"),
   contractedServices: text("contracted_services").array().default(sql`ARRAY[]::text[]`),
   notes: text("notes"),
+  projectPhases: jsonb("project_phases"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
