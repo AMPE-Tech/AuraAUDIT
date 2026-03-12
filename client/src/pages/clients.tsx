@@ -503,7 +503,10 @@ export default function Clients() {
     });
   }
 
-  const filtered = clients?.filter((c) => {
+  const realClients = clients?.filter((c) => c.type !== "auditor") || [];
+  const partners = clients?.filter((c) => c.type === "auditor") || [];
+
+  const filtered = realClients.filter((c) => {
     const matchSearch =
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.cnpj.includes(searchTerm) ||
@@ -513,9 +516,9 @@ export default function Clients() {
     return matchSearch && matchType && matchStatus;
   });
 
-  const activeCount = clients?.filter((c) => c.status === "active").length || 0;
-  const agencyCount = clients?.filter((c) => c.type === "travel_agency").length || 0;
-  const corporateCount = clients?.filter((c) => c.type === "corporate_company").length || 0;
+  const activeCount = realClients.filter((c) => c.status === "active").length || 0;
+  const agencyCount = realClients.filter((c) => c.type === "travel_agency").length || 0;
+  const corporateCount = realClients.filter((c) => c.type === "corporate_company").length || 0;
 
   return (
     <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
@@ -562,7 +565,7 @@ export default function Clients() {
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Total Clientes</p>
-              <p className="text-xl font-bold" data-testid="text-total-clients">{clients?.length || 0}</p>
+              <p className="text-xl font-bold" data-testid="text-total-clients">{realClients.length}</p>
               <p className="text-[11px] text-muted-foreground">{activeCount} ativos</p>
             </div>
           </CardContent>
@@ -733,6 +736,81 @@ export default function Clients() {
           )}
         </CardContent>
       </Card>
+
+      {partners.length > 0 && (
+        <Card className="border-amber-500/30 bg-amber-500/5">
+          <CardHeader className="pb-2">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+              <CardTitle className="text-sm font-medium text-amber-700 dark:text-amber-400">
+                Parceiros AuraTECH — Uso Interno
+              </CardTitle>
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Empresas auditoras credenciadas que operam em nome da AuraTECH. Informação restrita — não visível para clientes.
+            </p>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-10"></TableHead>
+                  <TableHead>Nome</TableHead>
+                  <TableHead>CNPJ</TableHead>
+                  <TableHead>Contato</TableHead>
+                  <TableHead>Cidade/UF</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="w-10"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {partners.map((partner) => (
+                  <TableRow key={partner.id} data-testid={`row-partner-${partner.id}`}>
+                    <TableCell>
+                      <div className="flex items-center justify-center w-8 h-8 rounded-md bg-amber-500/10">
+                        <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-sm font-medium" data-testid={`text-partner-name-${partner.id}`}>{partner.name}</p>
+                      <p className="text-xs text-muted-foreground">{partner.contactEmail}</p>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm font-mono">{formatCNPJ(partner.cnpj)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <p className="text-sm">{partner.contactName}</p>
+                      <p className="text-xs text-muted-foreground">{partner.contactPhone}</p>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm">{partner.city}/{partner.state}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1.5">
+                        <StatusIcon status={partner.status} />
+                        <Badge variant={getStatusBadgeVariant(partner.status)} className="text-[10px]">
+                          {getStatusLabel(partner.status)}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => openEditDialog(partner)}
+                        data-testid={`button-edit-partner-${partner.id}`}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
 
       <Dialog open={!!editingClient} onOpenChange={() => setEditingClient(null)}>
         <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
