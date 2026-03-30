@@ -12,3 +12,9 @@ id = "iLhE49YtI4O1tmfUK0yLO"
 uri = "file://docs/STRIPE_COMPLETO.md"
 type = "text"
 title = "STRIPE_COMPLETO.md — AuraTECH Stripe Reference"
+
+[[outputs]]
+id = "qMGABSN_VKhnsp6sASDB-"
+uri = "file://docs/DASHBOARD_DESIGN_SYSTEM.md"
+type = "text"
+title = "DASHBOARD_DESIGN_SYSTEM.md — AuraAUDIT Design Reference"
