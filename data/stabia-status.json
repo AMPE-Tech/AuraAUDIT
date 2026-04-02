@@ -1,0 +1,28 @@
+{
+  "sources": [
+    { "id": "obt", "status": "pending" },
+    { "id": "erp", "status": "pending" },
+    { "id": "cards", "status": "pending" },
+    { "id": "gds", "status": "pending" },
+    { "id": "bsp", "status": "pending" },
+    { "id": "agencies", "status": "pending" },
+    { "id": "contracts", "status": "pending" },
+    { "id": "reports", "status": "pending" }
+  ],
+  "reconciliations": [
+    { "id": "obt-erp", "status": "pending" },
+    { "id": "cards-reservations", "status": "pending" },
+    { "id": "bsp-airlines", "status": "pending" },
+    { "id": "hotel-invoices", "status": "pending" },
+    { "id": "fees-rebates", "status": "pending" }
+  ],
+  "deliverables": [
+    { "id": "exec-report", "status": "pending" },
+    { "id": "tech-report", "status": "pending" },
+    { "id": "risk-matrix", "status": "pending" },
+    { "id": "legal-opinion", "status": "pending" },
+    { "id": "action-plan", "status": "pending" },
+    { "id": "dashboard", "status": "pending" },
+    { "id": "custody-chain", "status": "pending" }
+  ]
+}
