@@ -352,7 +352,7 @@ export default function AuraAuditStabiaPanel() {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-amber-400">Aguardando envio de {pendingCount} fonte{pendingCount > 1 ? "s" : ""} de dados</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Envie os dados pelo <strong>upload direto</strong> abaixo ou via <strong>WeTransfer</strong> para <strong>marcos@auratech.com.br</strong>.
+                    Envie os dados pelo <strong>upload direto</strong> abaixo ou via <strong>WeTransfer</strong> para <strong>suporte@auradue.com</strong>.
                     Quanto antes recebermos, mais rápido iniciamos a auditoria.
                   </p>
                   <div className="flex gap-2 mt-3">
@@ -361,7 +361,7 @@ export default function AuraAuditStabiaPanel() {
                         <ExternalLink className="w-3 h-3" />WeTransfer
                       </Button>
                     </a>
-                    <a href="mailto:marcos@auratech.com.br?subject=Dados%20Auditoria%20Grupo%20Stabia">
+                    <a href="mailto:suporte@auradue.com?subject=Dados%20Auditoria%20Grupo%20Stabia">
                       <Button variant="outline" size="sm" className="gap-2 text-xs">
                         <Send className="w-3 h-3" />Email
                       </Button>
@@ -463,7 +463,7 @@ export default function AuraAuditStabiaPanel() {
                 <p className="text-[10px] text-muted-foreground mt-2">
                   Envie via canal seguro (email criptografado ou upload direto na plataforma). Sem essas credenciais, a integração fiscal ficará pendente.
                 </p>
-                <a href="mailto:marcos@auratech.com.br?subject=Credenciais%20NFS-e%20Prefeitura%20Curitiba%20-%20Grupo%20Stabia">
+                <a href="mailto:suporte@auradue.com?subject=Credenciais%20NFS-e%20Prefeitura%20Curitiba%20-%20Grupo%20Stabia">
                   <Button variant="outline" size="sm" className="gap-2 text-xs mt-2 border-red-500/30 text-red-400 hover:bg-red-500/10">
                     <Send className="w-3 h-3" />Enviar credenciais por email seguro
                   </Button>
@@ -481,7 +481,7 @@ export default function AuraAuditStabiaPanel() {
               <div>
                 <p className="text-sm font-medium text-blue-400">Prefere enviar por WeTransfer?</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Envie para <strong>marcos@auratech.com.br</strong> indicando o nome da fonte no assunto.
+                  Envie para <strong>suporte@auradue.com</strong> indicando o nome da fonte no assunto.
                   Marcaremos como recebido assim que validarmos o arquivo.
                 </p>
                 <a href="https://wetransfer.com" target="_blank" rel="noopener noreferrer" className="inline-block mt-2">
