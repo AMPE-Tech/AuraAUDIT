@@ -63,6 +63,7 @@ function AdminRouter() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/home" component={Home} />
       <Route path="/expenses" component={Expenses} />
       <Route path="/reconciliation" component={Reconciliation} />
       <Route path="/cases" component={AuditCases} />
@@ -248,7 +249,16 @@ function AppContent() {
     );
   }
 
-  if (location === "/" || location === "" || location === "/teste-agora" || location === "/landingpage-test") {
+  if (location === "/" || location === "") {
+    return (
+      <div className="min-h-screen bg-background">
+        <Home />
+        <FloatingAiChat />
+      </div>
+    );
+  }
+
+  if (location === "/auratech" || location === "/teste-agora" || location === "/landingpage-test") {
     return (
       <div className="min-h-screen bg-background">
         <LandingPageTest />
