@@ -510,6 +510,7 @@ export default function AuraAuditStabiaPanel() {
               <TabsTrigger value="cronograma" className="flex-1 text-xs">Cronograma</TabsTrigger>
               <TabsTrigger value="reconciliacoes" className="flex-1 text-xs">Reconciliações</TabsTrigger>
               <TabsTrigger value="entregaveis" className="flex-1 text-xs">Entregáveis</TabsTrigger>
+              <TabsTrigger value="contrato" className="flex-1 text-xs">Contrato</TabsTrigger>
             </TabsList>
 
             {/* ── Cronograma ── */}
@@ -636,6 +637,123 @@ export default function AuraAuditStabiaPanel() {
                 </div>
               ))}
             </TabsContent>
+
+            {/* ── Contrato & Comercial ── */}
+            <TabsContent value="contrato" className="space-y-3 mt-3">
+              <p className="text-xs text-muted-foreground">Termos contratados — Grupo Stabia / AuraTECH · Contrato assinado</p>
+
+              {/* Módulos contratados */}
+              <Card className="border-emerald-500/20">
+                <CardContent className="p-3">
+                  <p className="text-xs font-semibold text-emerald-400 mb-2">Módulos Contratados</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 rounded-md bg-muted/20">
+                      <div className="flex items-center gap-2"><Shield className="w-3.5 h-3.5 text-blue-400" /><span className="text-xs font-medium">AuraAUDIT</span></div>
+                      <Badge variant="outline" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-emerald-500/30">Ativo</Badge>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground px-2">Auditoria forense retroativa 2024/2025 de despesas corporativas com foco em viagens e eventos. Conciliação automatizada entre NFS-e, ERP e extratos bancários.</div>
+                    <div className="flex items-center justify-between p-2 rounded-md bg-muted/20">
+                      <div className="flex items-center gap-2"><Shield className="w-3.5 h-3.5 text-amber-400" /><span className="text-xs font-medium">AuraDUE</span></div>
+                      <Badge variant="outline" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-emerald-500/30">Ativo</Badge>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground px-2">Monitoramento em tempo real e due diligence contínua dos processos financeiros. Operação permanente pós go-live.</div>
+                    <div className="flex items-center justify-between p-2 rounded-md bg-muted/20">
+                      <div className="flex items-center gap-2"><Award className="w-3.5 h-3.5 text-teal-400" /><span className="text-xs font-medium">AuraCERTIFIED</span></div>
+                      <Badge variant="outline" className="text-[9px] bg-emerald-500/20 text-emerald-400 border-emerald-500/30">Ativo</Badge>
+                    </div>
+                    <div className="text-[10px] text-muted-foreground px-2">Certificação e cadeia de custódia digital. UUID + SHA-256 em todas as evidências auditadas. Registro imutável admissível para Compliance, Jurídico e Auditoria Interna.</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* 4 Agentes de IA */}
+              <Card>
+                <CardContent className="p-3">
+                  <p className="text-xs font-semibold text-blue-400 mb-2">4 Agentes de Inteligência — Operação Contínua</p>
+                  <div className="space-y-1.5">
+                    <div className="p-2 rounded-md bg-muted/20">
+                      <div className="flex items-center gap-2 mb-0.5"><span className="text-xs font-bold text-emerald-400">GUARDIAN</span><span className="text-[9px] text-muted-foreground">Validação · Entrada</span></div>
+                      <p className="text-[10px] text-muted-foreground">Validação de campos mínimos em bookings · Bloqueio de lançamentos incompletos · Alertas em tempo real · Integração Stur Web Full</p>
+                    </div>
+                    <div className="p-2 rounded-md bg-muted/20">
+                      <div className="flex items-center gap-2 mb-0.5"><span className="text-xs font-bold text-amber-400">LAUNCHER</span><span className="text-[9px] text-muted-foreground">Lançamentos · Stur Web</span></div>
+                      <p className="text-[10px] text-muted-foreground">Lançamentos automáticos no Stur Web · Emissão e cobrança bancária (Itaú / Bradesco / Clara) · Conciliação de pagamentos · Alertas de inadimplência</p>
+                    </div>
+                    <div className="p-2 rounded-md bg-muted/20">
+                      <div className="flex items-center gap-2 mb-0.5"><span className="text-xs font-bold text-blue-400">CONCILIATOR</span><span className="text-[9px] text-muted-foreground">Reconciliação · Contínua</span></div>
+                      <p className="text-[10px] text-muted-foreground">Cruzamento OBT x Stur x Extrato bancário · Detecção de overcharges · Alertas de remuneração de fornecedores · Base centralizada</p>
+                    </div>
+                    <div className="p-2 rounded-md bg-muted/20">
+                      <div className="flex items-center gap-2 mb-0.5"><span className="text-xs font-bold text-indigo-400">REPORTER</span><span className="text-[9px] text-muted-foreground">Executivo · Diretoria</span></div>
+                      <p className="text-[10px] text-muted-foreground">Briefings diários via WhatsApp à Diretoria · Dashboard Metabase · Alertas críticos em tempo real · Relatórios automatizados</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Modelo Comercial */}
+              <Card className="border-amber-500/20">
+                <CardContent className="p-3">
+                  <p className="text-xs font-semibold text-amber-400 mb-2">Modelo Comercial — Parceria no Resultado</p>
+                  <p className="text-[10px] text-muted-foreground mb-3">A AuraTECH somente é remunerada na proporção em que gera valor comprovado e verificável para o Grupo Stabia.</p>
+                  <div className="space-y-2">
+                    <div className="p-2 rounded-md border border-amber-500/20 bg-amber-500/5">
+                      <p className="text-[9px] font-semibold text-amber-400">Parcela 1 · Entrada</p>
+                      <p className="text-sm font-bold text-amber-400">R$ 6.500</p>
+                      <p className="text-[10px] text-muted-foreground">Custo de infraestrutura técnica — cobertura dos primeiros 30 dias de operação (GCP, bancos de dados, IAs generativas e agentes virtuais)</p>
+                    </div>
+                    <div className="p-2 rounded-md border border-emerald-500/20 bg-emerald-500/5">
+                      <p className="text-[9px] font-semibold text-emerald-400">Parcela 2 · Êxito</p>
+                      <p className="text-sm font-bold text-emerald-400">% Economia Operacional</p>
+                      <p className="text-[10px] text-muted-foreground">Percentual da economia operacional gerada e certificada · Apuração aos 60 dias · Base: 24 meses de operação projetada</p>
+                    </div>
+                    <div className="p-2 rounded-md border border-emerald-500/20 bg-emerald-500/5">
+                      <p className="text-[9px] font-semibold text-emerald-400">Parcela 3 · Êxito</p>
+                      <p className="text-sm font-bold text-emerald-400">% Economia Operacional</p>
+                      <p className="text-[10px] text-muted-foreground">Economia acumulada · Apuração ao término dos 90 dias · Base: 24 meses de operação projetada. Percentuais definidos em contrato formal.</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Cláusula de Sustentabilidade */}
+              <Card className="border-red-500/15">
+                <CardContent className="p-3">
+                  <p className="text-xs font-semibold text-red-400 mb-1">Cláusula de Sustentabilidade — vigência a partir de 03/07/2026</p>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">
+                    Durante os 90 dias do MVP (04/04 a 03/07/2026), os custos operacionais dos 2 meses de infraestrutura subsequentes à parcela de entrada serão integralmente absorvidos pela AuraTECH, sem qualquer cobrança ao Grupo Stabia.
+                    A partir de 03/07/2026, caso a plataforma AuraDUE não gere economia operacional superior a R$ 3.000/mês — valor referente exclusivamente aos custos estruturais de infraestrutura — e o Grupo Stabia opte pela continuidade, a AuraTECH cobrará a diferença entre o custo de infraestrutura apurado e a economia gerada.
+                    Todos os valores calculados com base em evidências auditadas e certificadas pelo AuraCERTIFIED.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Infraestrutura */}
+              <Card>
+                <CardContent className="p-3">
+                  <p className="text-xs font-semibold mb-2">Infraestrutura Técnica</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-center p-2 rounded-md bg-muted/20"><p className="text-xs font-bold text-amber-400">NestJS</p><p className="text-[9px] text-muted-foreground">Backend</p></div>
+                    <div className="text-center p-2 rounded-md bg-muted/20"><p className="text-xs font-bold text-amber-400">PostgreSQL</p><p className="text-[9px] text-muted-foreground">Banco</p></div>
+                    <div className="text-center p-2 rounded-md bg-muted/20"><p className="text-xs font-bold text-amber-400">GCP</p><p className="text-[9px] text-muted-foreground">Cloud Run</p></div>
+                    <div className="text-center p-2 rounded-md bg-muted/20"><p className="text-xs font-bold text-amber-400">4</p><p className="text-[9px] text-muted-foreground">IAs integradas</p></div>
+                    <div className="text-center p-2 rounded-md bg-muted/20"><p className="text-xs font-bold text-amber-400">22</p><p className="text-[9px] text-muted-foreground">Agentes virtuais</p></div>
+                    <div className="text-center p-2 rounded-md bg-muted/20"><p className="text-xs font-bold text-amber-400">R$6,5k</p><p className="text-[9px] text-muted-foreground">Infra/mês</p></div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Go-live */}
+              <Card className="border-emerald-500/20 bg-emerald-500/5">
+                <CardContent className="p-3 text-center">
+                  <p className="text-lg">🚀</p>
+                  <p className="text-sm font-bold text-emerald-400">Go-live AuraDUE MVP</p>
+                  <p className="text-xs font-semibold text-emerald-400">03 de julho de 2026</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">4 agentes ativos · Integrações validadas · AuraCERTIFIED operacional · Dashboard Metabase e alertas WhatsApp à Diretoria</p>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
           </Tabs>
         </div>
       )}
