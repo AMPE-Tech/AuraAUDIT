@@ -1,0 +1,1866 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de Ação — AuraDUE · Grupo Stabia</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* ── AuraTECH Brand Palette ── */
+    --bg: #060e1a;
+    --surface: #0a1628;
+    --surface2: #0d1e35;
+    --border: rgba(26,107,189,0.15);
+    --border2: rgba(26,107,189,0.28);
+    --text: #e4edf8;
+    --muted: #6b8aab;
+    /* Primary — AuraTECH Blue */
+    --accent: #1a6bbd;
+    --accent2: #4d9de0;
+    /* Gold — capas e badges primários */
+    --gold: #fbbf24;
+    --gold2: #fcd34d;
+    /* Semantic */
+    --amber: #d97706;
+    --amber2: #fbbf24;
+    --green: #059669;
+    --green2: #34d399;
+    --red: #dc2626;
+    --red2: #f87171;
+    --blue: #1a6bbd;
+    --blue2: #4d9de0;
+    /* Tag backgrounds */
+    --tag-ti: rgba(26,107,189,0.15);
+    --tag-fin: rgba(251,191,36,0.12);
+    --tag-dir: rgba(5,150,105,0.13);
+    --tag-cnt: rgba(77,157,224,0.13);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* COVER PAGE */
+  .cover {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 56px 64px;
+    background: linear-gradient(160deg, #071526 0%, #0a2540 55%, #071120 100%);
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -180px; right: -180px;
+    width: 580px; height: 580px;
+    background: radial-gradient(circle, rgba(26,107,189,0.14) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(251,191,36,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cover-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .brand-mark {
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .brand-mark span {
+    color: rgba(255,255,255,0.4);
+    font-weight: 400;
+  }
+
+  .cover-meta {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .cover-center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 56px 0 32px;
+  }
+
+  .cover-eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    margin-bottom: 24px;
+  }
+
+  .cover-title {
+    font-family: 'Lora', serif;
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .cover-title span {
+    color: var(--accent2);
+  }
+
+  .cover-subtitle {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 40px;
+  }
+
+  .cover-divider {
+    width: 64px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-bottom: 40px;
+  }
+
+  .cover-desc {
+    max-width: 540px;
+    font-size: 14px;
+    color: #ffffff;
+    line-height: 1.8;
+  }
+
+  .cover-tags {
+    display: flex;
+    gap: 10px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  .cover-tag {
+    padding: 5px 14px;
+    border: 1px solid rgba(251,191,36,0.35);
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--gold2);
+  }
+
+  .cover-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+  }
+
+  .cover-client {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .cover-client strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    font-family: 'Lora', serif;
+    margin-bottom: 2px;
+  }
+
+  .cover-dates {
+    text-align: right;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .cover-dates strong {
+    color: var(--green2);
+    font-weight: 600;
+  }
+
+  /* ALERT BOX */
+  .page {
+    padding: 56px 64px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(26,107,189,0.2);
+  }
+
+  .alert-box {
+    background: rgba(251,191,36,0.05);
+    border: 1px solid rgba(251,191,36,0.22);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+  }
+
+  .alert-box h3 {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gold2);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .alert-box p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+
+  .alert-box p:last-child { margin-bottom: 0; }
+
+  .alert-box strong { color: var(--text); }
+
+  .upload-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.28);
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gold2);
+    text-decoration: none;
+    margin-top: 4px;
+    transition: all 0.2s;
+  }
+
+  .upload-link:hover {
+    background: rgba(251,191,36,0.18);
+  }
+
+  /* FONTES DE DADOS */
+  .sources-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .source-card {
+    background: var(--surface);
+    border: 1px solid rgba(26,107,189,0.18);
+    border-radius: 10px;
+    padding: 16px 20px;
+    transition: border-color 0.2s;
+  }
+
+  .source-card:hover { border-color: rgba(26,107,189,0.35); }
+
+  .source-icon {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .source-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .source-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* CRONOGRAMA */
+  .timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .timeline-title {
+    font-family: 'Lora', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .timeline-badge {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  .badge-passado {
+    background: rgba(245,158,11,0.12);
+    color: var(--amber2);
+    border: 1px solid rgba(245,158,11,0.25);
+  }
+
+  .badge-futuro {
+    background: rgba(26,107,189,0.12);
+    color: var(--accent2);
+    border: 1px solid rgba(26,107,189,0.28);
+  }
+
+  .phase-block {
+    margin-bottom: 32px;
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 10px 10px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+  }
+
+  .phase-0 { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.2); }
+  .phase-1 { background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.2); }
+  .phase-2 { background: rgba(99,102,241,0.06); border-color: rgba(99,102,241,0.2); }
+  .phase-3 { background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.2); }
+
+  .phase-num {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 700;
+    width: 36px;
+    text-align: center;
+  }
+
+  .p0-num { color: var(--red2); }
+  .p1-num { color: var(--amber2); }
+  .p2-num { color: var(--accent2); }
+  .p3-num { color: var(--green2); }
+
+  .phase-info { flex: 1; }
+
+  .phase-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1px;
+  }
+
+  .phase-period {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .phase-tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .pt-urgente { background: rgba(239,68,68,0.12); color: var(--red2); }
+  .pt-setup { background: rgba(245,158,11,0.12); color: var(--amber2); }
+  .pt-exec { background: rgba(99,102,241,0.12); color: var(--accent2); }
+  .pt-entrega { background: rgba(16,185,129,0.12); color: var(--green2); }
+
+  .phase-tasks {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+  }
+
+  .task-row {
+    display: grid;
+    grid-template-columns: 1fr 120px 80px;
+    gap: 16px;
+    align-items: center;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+
+  .task-row:last-child { border-bottom: none; }
+  .task-row:hover { background: rgba(255,255,255,0.02); }
+
+  .task-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .task-desc {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .task-date {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .resp-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-align: center;
+  }
+
+  .r-ti { background: var(--tag-ti); color: var(--accent2); }
+  .r-fin { background: var(--tag-fin); color: var(--amber2); }
+  .r-dir { background: var(--tag-dir); color: var(--green2); }
+  .r-cnt { background: var(--tag-cnt); color: var(--blue2); }
+
+  /* PARALELO */
+  .parallel-box {
+    background: rgba(26,107,189,0.06);
+    border: 1px solid rgba(26,107,189,0.22);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 40px 0;
+  }
+
+  .parallel-box h3 {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .parallel-box p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 12px;
+  }
+
+  .parallel-box p:last-child { margin-bottom: 0; }
+  .parallel-box strong { color: var(--text); }
+
+  .modules-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .module-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(26,107,189,0.1);
+    border: 1px solid rgba(26,107,189,0.22);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent2);
+  }
+
+  /* AGENTES */
+  .agents-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .agent-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+  }
+
+  .agent-name {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .g-name { color: #34d399; }
+  .l-name { color: var(--amber2); }
+  .c-name { color: var(--accent2); }
+  .r-name { color: var(--blue2); }
+
+  .agent-role {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .agent-items {
+    list-style: none;
+  }
+
+  .agent-items li {
+    font-size: 12px;
+    color: var(--muted);
+    padding: 4px 0;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .agent-items li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: var(--border2);
+  }
+
+  /* GOLIVE */
+  .golive-box {
+    background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(99,102,241,0.08) 100%);
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 14px;
+    padding: 36px 40px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-top: 40px;
+  }
+
+  .golive-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+  }
+
+  .golive-title {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--green2);
+    margin-bottom: 8px;
+  }
+
+  .golive-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+  }
+
+  /* INFRA */
+  .infra-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .infra-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .infra-value {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .infra-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+  }
+
+  /* LEGEND */
+  .legend {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .legend-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-right: 4px;
+  }
+
+  .legend-items {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .page-break { page-break-before: always; }
+
+  /* ── TOPBAR AuraTECH ── */
+  .aura-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 52px;
+    background: rgba(6,14,26,0.96);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(26,107,189,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 64px;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .topbar-shield {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #0a2540, #1a6bbd);
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .topbar-brand {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+  }
+
+  .topbar-sep {
+    width: 1px;
+    height: 18px;
+    background: rgba(26,107,189,0.3);
+    margin: 0 4px;
+  }
+
+  .topbar-module {
+    font-family: 'Poppins', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent2);
+    letter-spacing: 0.05em;
+  }
+
+  .topbar-modules {
+    font-family: 'Poppins', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .topbar-badge {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background: rgba(251,191,36,0.1);
+    border: 1px solid rgba(251,191,36,0.25);
+    color: var(--gold2);
+  }
+
+  .topbar-client {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .topbar-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green2);
+    box-shadow: 0 0 6px rgba(52,211,153,0.5);
+  }
+
+  /* ── FOOTER AuraTECH ── */
+  .aura-footer {
+    border-top: 1px solid rgba(26,107,189,0.18);
+    margin-top: 40px;
+    padding: 28px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    background: rgba(10,22,40,0.6);
+  }
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .footer-shield {
+    width: 26px;
+    height: 26px;
+    background: linear-gradient(135deg, #0a2540, #1a6bbd);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .footer-brand-name {
+    font-family: 'Lora', serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .footer-brand-sub {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.05em;
+    margin-top: 1px;
+  }
+
+  .footer-center {
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    line-height: 1.5;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.03em;
+  }
+
+  .footer-right {
+    text-align: right;
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.5;
+  }
+
+  .footer-version {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: rgba(26,107,189,0.5);
+  }
+
+  /* MODELO COMERCIAL */
+  .comercial-box {
+    background: rgba(16,185,129,0.05);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 12px;
+    padding: 32px 36px;
+    margin: 40px 0;
+  }
+
+  .comercial-box h3 {
+    font-family: 'Lora', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--green2);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .comercial-box .comercial-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.7;
+  }
+
+  .parcelas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .parcela-card {
+    border-radius: 10px;
+    padding: 18px 20px;
+    border: 1px solid;
+  }
+
+  .parcela-entrada {
+    background: rgba(251,191,36,0.07);
+    border-color: rgba(251,191,36,0.25);
+  }
+
+  .parcela-exito {
+    background: rgba(16,185,129,0.06);
+    border-color: rgba(16,185,129,0.2);
+  }
+
+  .parcela-num {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .parcela-entrada .parcela-num { color: var(--gold2); }
+  .parcela-exito .parcela-num { color: var(--green2); }
+
+  .parcela-valor {
+    font-family: 'Lora', serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .parcela-entrada .parcela-valor { color: var(--gold2); }
+  .parcela-exito .parcela-valor { color: var(--green2); }
+
+  .parcela-desc {
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .comercial-note {
+    background: rgba(26,107,189,0.06);
+    border: 1px solid rgba(26,107,189,0.18);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .comercial-note strong { color: var(--text); }
+
+  /* SECTION DIVIDER */
+  .section-gap { margin-top: 40px; }
+
+  @media print {
+    body { background: #09090f; }
+    .cover { page-break-after: always; min-height: 100vh; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════ LOGIN -->
+<div id="login-screen" style="
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background:var(--bg); font-family:'Poppins',sans-serif;
+">
+  <div style="
+    background:var(--surface); border:1px solid var(--border2); border-radius:16px;
+    padding:40px 36px; width:100%; max-width:380px; text-align:center;
+  ">
+    <div style="
+      width:48px; height:48px; border-radius:12px; background:var(--accent);
+      display:flex; align-items:center; justify-content:center; margin:0 auto 16px;
+    ">
+      <svg viewBox="0 0 16 16" fill="none" width="22" height="22">
+        <path d="M8 1.5L2 4v5c0 3.3 2.6 6.2 6 6.5 3.4-.3 6-3.2 6-6.5V4L8 1.5z" fill="rgba(255,255,255,0.15)" stroke="#fff" stroke-width="1"/>
+        <path d="M5.5 8l1.8 1.8L11 6" stroke="#fbbf24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div style="font-family:'Lora',serif; font-size:20px; font-weight:700; color:#fff; margin-bottom:4px;">AuraAUDIT</div>
+    <div style="font-size:12px; color:var(--muted); margin-bottom:28px;">Due Diligence Platform</div>
+    <div style="text-align:left; margin-bottom:12px;">
+      <label style="font-size:12px; font-weight:600; color:var(--text); display:block; margin-bottom:6px;">Usuário</label>
+      <input id="login-user" type="text" placeholder="Digite seu usuário" style="
+        width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border2);
+        background:var(--surface2); color:var(--text); font-size:14px; font-family:'Poppins',sans-serif;
+        box-sizing:border-box;
+      ">
+    </div>
+    <div style="text-align:left; margin-bottom:20px;">
+      <label style="font-size:12px; font-weight:600; color:var(--text); display:block; margin-bottom:6px;">Senha</label>
+      <input id="login-pass" type="password" placeholder="Digite sua senha" style="
+        width:100%; padding:10px 14px; border-radius:8px; border:1px solid var(--border2);
+        background:var(--surface2); color:var(--text); font-size:14px; font-family:'Poppins',sans-serif;
+        box-sizing:border-box;
+      ">
+    </div>
+    <div id="login-error" style="color:var(--red2); font-size:12px; margin-bottom:12px; display:none;"></div>
+    <button id="login-btn" onclick="fazerLogin()" style="
+      width:100%; padding:12px; border:none; border-radius:8px; background:var(--accent);
+      color:#fff; font-size:14px; font-weight:600; cursor:pointer; font-family:'Poppins',sans-serif;
+    ">Entrar</button>
+    <div style="margin-top:20px; font-size:10px; color:var(--muted);">Cadeia de Custódia Digital — Lei 13.964/2019</div>
+  </div>
+</div>
+
+<div id="plano-content" style="display:none;">
+<!-- ═══════════════════════════════════════════ TOPBAR -->
+<header class="aura-topbar">
+  <div class="topbar-left">
+    <div class="topbar-shield">
+      <svg viewBox="0 0 16 16" fill="none" width="14" height="14">
+        <path d="M8 1.5L2 4v5c0 3.3 2.6 6.2 6 6.5 3.4-.3 6-3.2 6-6.5V4L8 1.5z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.7)" stroke-width="1"/>
+        <path d="M5.5 8l1.8 1.8L11 6" stroke="#fbbf24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="topbar-brand">AuraTECH</div>
+
+  </div>
+  <div class="topbar-modules">
+    AuraDUE &nbsp;·&nbsp; AuraAUDIT &nbsp;·&nbsp; AuraCERTIFIED
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-dot"></div>
+    <div class="topbar-client">Grupo Stabia</div>
+    <div class="topbar-badge">Confidencial</div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════ CAPA -->
+<div class="cover">
+  <div class="cover-center">
+    <div class="cover-eyebrow">Plano de Ação Formal</div>
+    <div class="cover-title">Aura<span>DUE</span></div>
+    <div class="cover-subtitle">Auditoria, Due Diligence &amp; Certificação dos Processos Financeiros</div>
+    <div class="cover-divider"></div>
+    <div class="cover-desc">
+      Implementação da plataforma AuraDUE para o Grupo Stabia, contemplando
+      a auditoria retroativa dos exercícios 2024 e 2025, a integração com
+      sistemas financeiros, bancários e fiscais, e a operação contínua
+      dos módulos de Due Diligence, Auditoria e Conciliação em tempo real
+      com selo de certificação AuraCERTIFIED.
+    </div>
+    <div class="cover-tags">
+      <div class="cover-tag">AuraDUE</div>
+      <div class="cover-tag">AuraAUDIT</div>
+      <div class="cover-tag">AuraCERTIFIED</div>
+      <div class="cover-tag">Grupo Stabia</div>
+      <div class="cover-tag">Confidencial</div>
+    </div>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-client">
+      <strong>Grupo Stabia</strong>
+      Agência de Viagens e Eventos Corporativos · Curitiba, PR
+    </div>
+    <div class="cover-dates">
+      Kickoff <strong>06 de abril de 2026</strong><br>
+      Go-live <strong>03 de julho de 2026</strong><br>
+      Duração <strong>90 dias</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ CORPO -->
+<div class="page">
+
+  <!-- ALERTA DE ENVIO -->
+  <div class="section-label">Solicitação Formal de Dados</div>
+
+  <div class="alert-box">
+    <h3>⚠ Envio de Dados — Prazo: 06 de abril de 2026</h3>
+    <p>
+      Para viabilizar o início da auditoria retroativa e a configuração simultânea da plataforma AuraDUE,
+      solicita-se ao Grupo Stabia o envio das fontes de dados listadas neste documento até
+      <strong>06 de abril de 2026</strong>.
+    </p>
+    <p>
+      Os dados enviados serão utilizados para dois fins concomitantes: a <strong>auditoria forense retroativa
+      dos exercícios 2024 e 2025</strong> (AuraAUDIT) e a <strong>configuração e parametrização da plataforma
+      AuraDUE</strong> para operação em tempo real — eliminando a necessidade de qualquer envio duplicado.
+    </p>
+    <a class="upload-link" href="https://audit.auradue.com/stabia">
+      ↑ Portal Seguro de Upload · audit.auradue.com/stabia
+    </a>
+  </div>
+
+  <!-- FONTES DE DADOS -->
+  <div class="section-label">Fontes de Dados Requeridas</div>
+
+  <div class="sources-grid">
+    <div class="source-card">
+      <div class="source-icon">🏦</div>
+      <div class="source-name">Extratos Bancários</div>
+      <div class="source-desc">Itaú e Bradesco — exercícios 2024 e 2025 completos (OFX / XLSX)</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">💳</div>
+      <div class="source-name">Fatura Clara (Mastercard)</div>
+      <div class="source-desc">Cartão corporativo — faturas mensais 2024 e 2025</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">💼</div>
+      <div class="source-name">Exportação Stur Web</div>
+      <div class="source-desc">Lançamentos financeiros — FTP / Webhook XML ou JSON (versão Full)</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">🧾</div>
+      <div class="source-name">Notas Fiscais 2025</div>
+      <div class="source-desc">NFS-e ABRASF emitidas e recebidas — Prefeitura de Curitiba</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">✈️</div>
+      <div class="source-name">BSPLink IATA</div>
+      <div class="source-desc">Relatórios BSP — bilhetes emitidos e reconciliações aéreas</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">🖥️</div>
+      <div class="source-name">OBTs (Argo / Reserve / TravelPerk)</div>
+      <div class="source-desc">Exportação de reservas — períodos 2024 e 2025</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">🏨</div>
+      <div class="source-name">Fornecedores de Hospedagem</div>
+      <div class="source-desc">Accor, Atlântica, Omnibees, CM.net — comissionamentos e faturas</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">🚗</div>
+      <div class="source-name">Locadoras e Seguros</div>
+      <div class="source-desc">Localiza, Movida, AssistCard — faturas e comissões</div>
+    </div>
+    <div class="source-card">
+      <div class="source-icon">📂</div>
+      <div class="source-name">Contratos e Acordos Comerciais</div>
+      <div class="source-desc">BV, overcommissions, DU/RAV vigentes com fornecedores</div>
+    </div>
+  </div>
+
+  <!-- ═══════ CRONOGRAMA 90 DIAS -->
+  <div class="section-gap"></div>
+  <div class="section-label">Cronograma — 90 Dias · MVP</div>
+
+  <div class="timeline-header">
+    <div class="timeline-title">AuraDUE · AuraAUDIT — Plano de Implementação MVP</div>
+    <div class="timeline-badge badge-passado">04 abr → 03 jul 2026 · 90 dias</div>
+  </div>
+
+  <!-- FASE 1 — DIAS 1–15 -->
+  <div class="phase-block">
+    <div class="phase-header phase-0">
+      <div class="phase-num p0-num">1</div>
+      <div class="phase-info">
+        <div class="phase-name">Fase 1 — Coleta, Acesso e Integrações Críticas</div>
+        <div class="phase-period">04–18 de abril de 2026 · Dias 1–15</div>
+      </div>
+      <div class="phase-tag pt-urgente">Fundação</div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">Confirmação e ativação do Stur Web Full (FTP / Webhook)</div>
+          <div class="task-desc">Confirmar versão Full com AGI Sistemas · Configurar exportação XML/JSON · Testar primeiro ciclo de envio</div>
+        </div>
+        <div class="task-date">04–07/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Integração bancária — Itaú e Bradesco</div>
+          <div class="task-desc">Conexão via Open Finance / API · Leitura automática de extratos · Validação de formato e período</div>
+        </div>
+        <div class="task-date">04–10/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Integração Clara (Mastercard) — cartão corporativo</div>
+          <div class="task-desc">Conexão API Clara · Importação de faturas mensais 2024 e 2025</div>
+        </div>
+        <div class="task-date">07–11/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Integração NFS-e ABRASF — Prefeitura de Curitiba</div>
+          <div class="task-desc">Certificado digital · Homologação ABRASF · Importação de notas emitidas e recebidas 2025</div>
+        </div>
+        <div class="task-date">08–14/04</div>
+        <div class="resp-badge r-cnt">Contador</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Coleta manual — BSPLink IATA, OBTs (Argo / Reserve / TravelPerk)</div>
+          <div class="task-desc">Exportação de relatórios BSP e reservas 2024/2025 · Padronização de formato para ingestão</div>
+        </div>
+        <div class="task-date">10–18/04</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Coleta manual — Fornecedores (Accor, Atlântica, Omnibees, CM.net, Localiza, Movida, AssistCard)</div>
+          <div class="task-desc">Faturas, comissões e acordos BV/overcommission/DU/RAV · Upload via portal seguro</div>
+        </div>
+        <div class="task-date">10–18/04</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2 — DIAS 16–45 -->
+  <div class="phase-block">
+    <div class="phase-header phase-1">
+      <div class="phase-num p1-num">2</div>
+      <div class="phase-info">
+        <div class="phase-name">Fase 2 — Ingestão, Normalização e Agente GUARDIAN</div>
+        <div class="phase-period">19 de abril — 18 de maio de 2026 · Dias 16–45</div>
+      </div>
+      <div class="phase-tag pt-setup">Setup</div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">AuraDATA — Ingestão e normalização multi-fonte</div>
+          <div class="task-desc">Pipeline de ingestão: Stur Web + bancos + OBTs + fornecedores · Deduplicação e validação de integridade</div>
+        </div>
+        <div class="task-date">19–25/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Agente GUARDIAN — validação de bookings em tempo real</div>
+          <div class="task-desc">Regras de campos mínimos · Alertas de lançamentos incompletos · Integração com Stur Web Full</div>
+        </div>
+        <div class="task-date">25/04–05/05</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Parametrização de contratos e acordos comerciais</div>
+          <div class="task-desc">Cadastro de BV, overcommissions e DU/RAV na base de referência · Mapeamento por fornecedor</div>
+        </div>
+        <div class="task-date">25/04–09/05</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Provisionamento GCP Cloud Run + PostgreSQL</div>
+          <div class="task-desc">Ambiente de produção · Variáveis de ambiente seguras · CI/CD pipeline básico</div>
+        </div>
+        <div class="task-date">19–28/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Testes de integração — ciclo 1</div>
+          <div class="task-desc">Validação end-to-end das integrações ativas · Correção de erros de parsing e mapeamento</div>
+        </div>
+        <div class="task-date">09–18/05</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3 — DIAS 46–75 -->
+  <div class="phase-block">
+    <div class="phase-header phase-2">
+      <div class="phase-num p2-num">3</div>
+      <div class="phase-info">
+        <div class="phase-name">Fase 3 — Reconciliação, LAUNCHER e CONCILIATOR</div>
+        <div class="phase-period">19 de maio — 17 de junho de 2026 · Dias 46–75</div>
+      </div>
+      <div class="phase-tag pt-exec">Execução</div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">Agente LAUNCHER — lançamentos financeiros automáticos</div>
+          <div class="task-desc">Lançamentos no Stur Web · Emissão e cobrança bancária (Itaú / Bradesco / Clara) · Alertas de inadimplência</div>
+        </div>
+        <div class="task-date">19–29/05</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Agente CONCILIATOR — reconciliação contínua multi-fonte</div>
+          <div class="task-desc">Cruzamento banco vs Stur vs OBTs · Detecção de overcharges e divergências · Alertas de remuneração</div>
+        </div>
+        <div class="task-date">26/05–05/06</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Reconciliação retroativa 2024 / 2025 — ciclo inicial</div>
+          <div class="task-desc">Primeiro cruzamento: Itaú + Bradesco + Clara vs Stur Web · Levantamento de divergências</div>
+        </div>
+        <div class="task-date">29/05–12/06</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">AuraCERTIFIED — cadeia de custódia nas evidências</div>
+          <div class="task-desc">UUID Registry + SHA-256 em todos os registros reconciliados · Registro imutável de evidência</div>
+        </div>
+        <div class="task-date">05–17/06</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Testes de integração — ciclo 2</div>
+          <div class="task-desc">Validação dos agentes GUARDIAN + LAUNCHER + CONCILIATOR em conjunto · Ajustes de regras</div>
+        </div>
+        <div class="task-date">10–17/06</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 4 — DIAS 76–90 -->
+  <div class="phase-block">
+    <div class="phase-header phase-3">
+      <div class="phase-num p3-num">4</div>
+      <div class="phase-info">
+        <div class="phase-name">Fase 4 — REPORTER, Validação e Go-live MVP</div>
+        <div class="phase-period">18 de junho — 03 de julho de 2026 · Dias 76–90</div>
+      </div>
+      <div class="phase-tag pt-entrega">Go-live</div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">Agente REPORTER — briefings e dashboard</div>
+          <div class="task-desc">Alertas diários via WhatsApp à Diretoria · Dashboard Metabase com painéis de reconciliação e due diligence</div>
+        </div>
+        <div class="task-date">18–25/06</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Validação funcional do MVP com equipe Stabia</div>
+          <div class="task-desc">Testes com Financeiro e Diretoria · Aprovação dos fluxos de reconciliação e alertas</div>
+        </div>
+        <div class="task-date">23–28/06</div>
+        <div class="resp-badge r-dir">Diretoria</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Treinamento operacional das equipes</div>
+          <div class="task-desc">Capacitação de Financeiro, Operações e Diretoria na plataforma · Documentação de uso</div>
+        </div>
+        <div class="task-date">28/06–02/07</div>
+        <div class="resp-badge r-dir">Diretoria</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Go-live MVP — ativação em produção</div>
+          <div class="task-desc">4 agentes ativos · Integrações validadas · AuraCERTIFIED operacional · Monitoramento contínuo iniciado</div>
+        </div>
+        <div class="task-date">03/07</div>
+        <div class="resp-badge r-dir">Diretoria</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GO-LIVE -->
+  <div class="golive-box">
+    <div class="golive-icon">🚀</div>
+    <div>
+      <div class="golive-title">Go-live AuraDUE MVP — 03 de julho de 2026</div>
+      <div class="golive-desc">
+        4 agentes ativos (GUARDIAN · LAUNCHER · CONCILIATOR · REPORTER) ·
+        Integrações validadas: Stur Web · Itaú · Bradesco · Clara · BSPLink · OBTs · NFS-e ABRASF ·
+        AuraCERTIFIED operacional · Dashboard Metabase e alertas WhatsApp à Diretoria.
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENTES -->
+  <div class="section-gap"></div>
+  <div class="section-label">Os 4 Agentes de Inteligência</div>
+
+  <div class="agents-grid">
+    <div class="agent-card">
+      <div class="agent-name g-name">GUARDIAN</div>
+      <div class="agent-role">Validação de Dados · Entrada</div>
+      <ul class="agent-items">
+        <li>Validação de campos mínimos em novos bookings</li>
+        <li>Bloqueio automático de lançamentos incompletos</li>
+        <li>Alertas em tempo real para operações</li>
+        <li>Integração direta com Stur Web Full</li>
+      </ul>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name l-name">LAUNCHER</div>
+      <div class="agent-role">Lançamentos Financeiros · Stur Web</div>
+      <ul class="agent-items">
+        <li>Lançamentos automáticos no Stur Web</li>
+        <li>Emissão e cobrança bancária (Itaú / Bradesco / Clara)</li>
+        <li>Conciliação automática de pagamentos</li>
+        <li>Alertas de inadimplência e vencimento</li>
+      </ul>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name c-name">CONCILIATOR</div>
+      <div class="agent-role">Reconciliação Multi-fonte · Contínua</div>
+      <ul class="agent-items">
+        <li>Cruzamento: OBT vs Stur Web vs Extrato Bancário</li>
+        <li>Detecção de overcharges e divergências</li>
+        <li>Alertas de remuneração de fornecedores</li>
+        <li>Base de reconciliação centralizada</li>
+      </ul>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name r-name">REPORTER</div>
+      <div class="agent-role">Inteligência Executiva · Diretoria</div>
+      <ul class="agent-items">
+        <li>Briefings diários via WhatsApp à Diretoria</li>
+        <li>Dashboard Metabase — painéis estratégicos</li>
+        <li>Alertas críticos em tempo real</li>
+        <li>Relatórios periódicos automatizados</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ANTIGO FASE 0 placeholder removido -->
+  <div class="phase-block">
+    <div class="phase-header phase-0">
+      <div class="phase-num p0-num">0</div>
+      <div class="phase-info">
+        <div class="phase-name">Fase 0 — Integrações Urgentes</div>
+        <div class="phase-period">04–07 de abril de 2026</div>
+      </div>
+      <div class="phase-tag pt-urgente">Urgente</div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">Conexão Itaú, Bradesco e Clara (Mastercard)</div>
+          <div class="task-desc">Integração via Open Finance / API bancária para leitura automática de extratos</div>
+        </div>
+        <div class="task-date">04–05/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Conexão Stur Web Full — FTP / Webhook</div>
+          <div class="task-desc">Confirmar versão Full contratada com AGI Sistemas · Configurar exportação XML/JSON</div>
+        </div>
+        <div class="task-date">04–05/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Conexão NFS-e ABRASF — Prefeitura de Curitiba</div>
+          <div class="task-desc">Homologação do certificado digital e integração fiscal com a Prefeitura</div>
+        </div>
+        <div class="task-date">04–07/04</div>
+        <div class="resp-badge r-cnt">Contador</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Coleta e organização de todas as fontes de dados</div>
+          <div class="task-desc">Recebimento via portal seguro · Validação de formato e completude</div>
+        </div>
+        <div class="task-date">06/04</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INFRA -->
+  <div class="section-label">Infraestrutura Técnica</div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">Provisionamento de ambiente GCP Cloud Run</div>
+          <div class="task-desc">NestJS + PostgreSQL · Variáveis de ambiente seguras · CI/CD pipeline</div>
+        </div>
+        <div class="task-date">04–05/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Ativação dos agentes GUARDIAN e LAUNCHER</div>
+          <div class="task-desc">Validação de campos mínimos em novos bookings · Lançamentos no Stur Web</div>
+        </div>
+        <div class="task-date">06–08/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Parametrização de fornecedores e contratos</div>
+          <div class="task-desc">Cadastro de BV, overcommissions, DU/RAV na base de referência</div>
+        </div>
+        <div class="task-date">06–10/04</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Carga inicial das fontes de dados</div>
+          <div class="task-desc">Normalização e ingestão no AuraDATA · Deduplicação e validação de integridade</div>
+        </div>
+        <div class="task-date">07–10/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2 -->
+  <div class="phase-block">
+    <div class="phase-header phase-2">
+      <div class="phase-num p2-num">2</div>
+      <div class="phase-info">
+        <div class="phase-name">Fase 2 — Reconciliação e Auditoria Forense</div>
+        <div class="phase-period">11–24 de abril de 2026</div>
+      </div>
+      <div class="phase-tag pt-exec">Execução</div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">Ativação do agente CONCILIATOR</div>
+          <div class="task-desc">Reconciliação automática multi-fonte · Alertas de remuneração de fornecedores</div>
+        </div>
+        <div class="task-date">11–12/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Reconciliação bancária 2024 / 2025</div>
+          <div class="task-desc">Cruzamento extratos Itaú, Bradesco e Clara com lançamentos Stur Web</div>
+        </div>
+        <div class="task-date">11–17/04</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Reconciliação fiscal — NFS-e vs Stur vs Bancário</div>
+          <div class="task-desc">Validação de notas fiscais emitidas e recebidas em 2025 contra movimentações</div>
+        </div>
+        <div class="task-date">14–18/04</div>
+        <div class="resp-badge r-cnt">Contador</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Auditoria de fornecedores — BSP, OBTs, Hotéis, Locadoras</div>
+          <div class="task-desc">Verificação de overcharges, comissões não recebidas e divergências contratuais</div>
+        </div>
+        <div class="task-date">14–22/04</div>
+        <div class="resp-badge r-fin">Financeiro</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Ativação do agente REPORTER</div>
+          <div class="task-desc">Briefings diários via WhatsApp para a Diretoria · Painel Metabase ativado</div>
+        </div>
+        <div class="task-date">18–20/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Emissão de cadeia de custódia AuraCERTIFIED</div>
+          <div class="task-desc">UUID + SHA-256 retroativo em todas as evidências auditadas</div>
+        </div>
+        <div class="task-date">20–24/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 3 -->
+  <div class="phase-block">
+    <div class="phase-header phase-3">
+      <div class="phase-num p3-num">3</div>
+      <div class="phase-info">
+        <div class="phase-name">Fase 3 — Relatórios, Go-live e Entrega Formal</div>
+        <div class="phase-period">25 de abril — 04 de maio de 2026</div>
+      </div>
+      <div class="phase-tag pt-entrega">Entrega</div>
+    </div>
+    <div class="phase-tasks">
+      <div class="task-row">
+        <div>
+          <div class="task-name">Elaboração do Relatório Executivo</div>
+          <div class="task-desc">Síntese para Diretoria: achados, riscos, recomendações e impacto financeiro</div>
+        </div>
+        <div class="task-date">25–28/04</div>
+        <div class="resp-badge r-dir">Diretoria</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Elaboração do Relatório Técnico e Parecer Legal</div>
+          <div class="task-desc">Plano de ações corretivas · Documentação das evidências auditadas</div>
+        </div>
+        <div class="task-date">25–30/04</div>
+        <div class="resp-badge r-ti">TI</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Validação e aprovação interna</div>
+          <div class="task-desc">Revisão dos relatórios pela Diretoria e área Contábil · Ajustes finais</div>
+        </div>
+        <div class="task-date">28/04–01/05</div>
+        <div class="resp-badge r-dir">Diretoria</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Treinamento operacional das equipes</div>
+          <div class="task-desc">Capacitação de Financeiro, Operações e Diretoria na plataforma AuraDUE</div>
+        </div>
+        <div class="task-date">01–03/05</div>
+        <div class="resp-badge r-dir">Diretoria</div>
+      </div>
+      <div class="task-row">
+        <div>
+          <div class="task-name">Entrega formal ao Grupo Stabia</div>
+          <div class="task-desc">Documentação técnica completa · Relatório final de implantação · Assinatura de aceite</div>
+        </div>
+        <div class="task-date">04/05</div>
+        <div class="resp-badge r-dir">Diretoria</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GO-LIVE AUDIT -->
+  <div class="golive-box">
+    <div class="golive-icon">✅</div>
+    <div>
+      <div class="golive-title">Entrega AuraAUDIT — 04 de maio de 2026</div>
+      <div class="golive-desc">
+        Auditoria retroativa 2024 / 2025 concluída · 7 entregáveis formais entregues ·
+        Cadeia de custódia AuraCERTIFIED ativa em todas as evidências ·
+        Plano de ações corretivas documentado e aprovado pela Diretoria.
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOCO PARALELO -->
+  <div class="section-gap"></div>
+  <div class="parallel-box">
+    <h3>⚡ Configuração em Paralelo — AuraDUE Operação Contínua</h3>
+    <p>
+      Concomitantemente à execução da auditoria retroativa, os mesmos dados fornecidos pelo Grupo Stabia
+      serão utilizados para a <strong>parametrização e configuração da plataforma AuraDUE</strong> para
+      operação em tempo real. Não haverá necessidade de envio duplicado de informações.
+    </p>
+    <p>
+      A plataforma contempla os módulos de <strong>Due Diligence contínua</strong>,
+      <strong>Auditoria operacional</strong> e <strong>Conciliação em tempo real</strong>,
+      com os 4 agentes de inteligência operando de forma autônoma e integrada desde o go-live.
+    </p>
+    <div class="modules-row">
+      <div class="module-pill">⚡ GUARDIAN — Validação de Bookings</div>
+      <div class="module-pill">⚡ LAUNCHER — Lançamentos Financeiros</div>
+      <div class="module-pill">⚡ CONCILIATOR — Reconciliação Contínua</div>
+      <div class="module-pill">⚡ REPORTER — Briefings à Diretoria</div>
+    </div>
+  </div>
+
+  <!-- ═══════ CRONOGRAMA FUTURO -->
+  <div class="section-gap"></div>
+
+  <div class="timeline-header">
+    <div class="timeline-title">AuraDUE — Implantação e Go-live</div>
+    <div class="timeline-badge badge-futuro">Implantação · Futuro</div>
+  </div>
+
+  <div class="agents-grid">
+    <div class="agent-card">
+      <div class="agent-name g-name">GUARDIAN</div>
+      <div class="agent-role">Validação de Dados · Entrada</div>
+      <ul class="agent-items">
+        <li>Validação de campos mínimos em novos bookings</li>
+        <li>Bloqueio automático de lançamentos incompletos</li>
+        <li>Alertas em tempo real para operações</li>
+        <li>Registro de evidências no AuraCERTIFIED</li>
+      </ul>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name l-name">LAUNCHER</div>
+      <div class="agent-role">Lançamentos Financeiros · Stur Web</div>
+      <ul class="agent-items">
+        <li>Lançamentos automáticos no Stur Web</li>
+        <li>Emissão e cobrança bancária (Itaú / Bradesco / Clara)</li>
+        <li>Conciliação automática de pagamentos</li>
+        <li>Alertas de inadimplência e vencimento</li>
+      </ul>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name c-name">CONCILIATOR</div>
+      <div class="agent-role">Reconciliação Multi-fonte · Contínua</div>
+      <ul class="agent-items">
+        <li>Reconciliação contínua banco vs Stur vs OBTs</li>
+        <li>Alertas de remuneração de fornecedores</li>
+        <li>Detecção de overcharges e divergências</li>
+        <li>Base de dados de reconciliação centralizada</li>
+      </ul>
+    </div>
+    <div class="agent-card">
+      <div class="agent-name r-name">REPORTER</div>
+      <div class="agent-role">Inteligência Executiva · Diretoria</div>
+      <ul class="agent-items">
+        <li>Briefings diários via WhatsApp à Diretoria</li>
+        <li>Dashboard Metabase com 5 painéis estratégicos</li>
+        <li>Alertas críticos em tempo real</li>
+        <li>Relatórios periódicos automatizados</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- INFRA -->
+  <div class="section-label">Infraestrutura Técnica</div>
+
+  <div class="infra-row">
+    <div class="infra-card">
+      <div class="infra-value">NestJS</div>
+      <div class="infra-label">Backend Framework</div>
+    </div>
+    <div class="infra-card">
+      <div class="infra-value">PostgreSQL</div>
+      <div class="infra-label">Banco de Dados</div>
+    </div>
+    <div class="infra-card">
+      <div class="infra-value">GCP</div>
+      <div class="infra-label">Cloud Run · Infra</div>
+    </div>
+    <div class="infra-card">
+      <div class="infra-value">4</div>
+      <div class="infra-label">IAs Generativas · Integradas</div>
+    </div>
+    <div class="infra-card">
+      <div class="infra-value">22</div>
+      <div class="infra-label">Agentes Virtuais · Supervisão Humana</div>
+    </div>
+    <div class="infra-card">
+      <div class="infra-value">R$ 6.500</div>
+      <div class="infra-label">Custo mensal · Infra técnica</div>
+    </div>
+  </div>
+
+  <!-- MODELO COMERCIAL -->
+  <div class="section-gap"></div>
+  <div class="section-label">Modelo Comercial · Parceria no Resultado</div>
+
+  <div class="comercial-box">
+    <h3>🤝 Proposta de Parceria no Resultado</h3>
+    <p class="comercial-sub">
+      Os serviços de implantação, configuração e operação da plataforma AuraDUE durante os 90 dias de MVP
+      <strong>não serão cobrados como honorários fixos</strong>. O modelo proposto é de
+      <strong>parceria no resultado</strong> — o investimento da AuraTECH é remunerado a partir das
+      economias geradas e identificadas pela própria plataforma no Grupo Stabia.
+    </p>
+
+    <div class="parcelas-grid">
+      <div class="parcela-card parcela-entrada">
+        <div class="parcela-num">Parcela 1 · Entrada</div>
+        <div class="parcela-valor">R$ 6.500</div>
+        <div class="parcela-desc">Custo de infraestrutura técnica · Cobertura dos primeiros 30 dias de operação da plataforma (GCP, bancos de dados, IAs generativas e agentes virtuais)</div>
+      </div>
+      <div class="parcela-card parcela-exito">
+        <div class="parcela-num">Parcela 2 · Êxito</div>
+        <div class="parcela-valor">% Economia Operacional</div>
+        <div class="parcela-desc">Percentual da economia operacional gerada e certificada · Apuração aos 60 dias · Base: 24 meses de operação projetada</div>
+      </div>
+      <div class="parcela-card parcela-exito">
+        <div class="parcela-num">Parcela 3 · Êxito</div>
+        <div class="parcela-valor">% Economia Operacional</div>
+        <div class="parcela-desc">Percentual da economia operacional acumulada · Apuração ao término dos 90 dias · Base: 24 meses de operação projetada</div>
+      </div>
+    </div>
+
+    <div class="comercial-note">
+      <strong>Princípio do modelo:</strong> a AuraTECH somente é remunerada na proporção em que gera valor
+      comprovado e verificável para o Grupo Stabia. As parcelas 2 e 3 correspondem a um
+      <strong>percentual da economia operacional projetada para 24 meses</strong>, calculado sobre
+      resultados <strong>auditados, certificados e registrados na cadeia de custódia AuraCERTIFIED</strong> —
+      garantindo rastreabilidade e transparência total. Os percentuais exatos serão definidos em
+      contrato formal antes do kickoff.
+    </div>
+    <div class="comercial-note" style="margin-top: 12px; background: rgba(239,68,68,0.04); border-color: rgba(239,68,68,0.15);">
+      <strong style="color: var(--red2);">Cláusula de Sustentabilidade — vigência a partir de 03/07/2026:</strong>
+      durante os 90 dias do MVP (06/04 a 03/07/2026), os custos operacionais dos <strong>2 meses de infraestrutura</strong>
+      subsequentes à parcela de entrada serão integralmente <strong>absorvidos pela AuraTECH</strong>,
+      sem qualquer cobrança ao Grupo Stabia — independentemente do resultado apurado neste período.
+      A partir de 03/07/2026, caso a plataforma AuraDUE não gere economia operacional superior a
+      <strong>R$ 3.000/mês</strong> — valor referente exclusivamente aos custos estruturais de infraestrutura,
+      sem incidência de consultoria, hora/homem ou trabalho humano — e o Grupo Stabia opte pela
+      continuidade da operação, a AuraTECH cobrará a diferença entre o custo de infraestrutura apurado
+      e a economia gerada no período. Todos os valores serão calculados com base em evidências
+      <strong>auditadas e certificadas pelo AuraCERTIFIED</strong>, assegurando total transparência para ambas as partes.
+    </div>
+  </div>
+
+  <!-- GO-LIVE DUE -->
+  <div class="golive-box">
+    <div class="golive-icon">🚀</div>
+    <div>
+      <div class="golive-title">Go-live AuraDUE — 04 de maio de 2026</div>
+      <div class="golive-desc">
+        Plataforma operacional com os 4 agentes ativos (GUARDIAN · LAUNCHER · CONCILIATOR · REPORTER) ·
+        Conciliação em tempo real iniciada · AuraCERTIFIED ativo em todas as operações ·
+        Dashboard Metabase e alertas WhatsApp funcionando para a Diretoria.
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGENDA -->
+  <div class="section-gap"></div>
+  <div class="legend">
+    <span class="legend-label">Responsável:</span>
+    <div class="legend-items">
+      <span class="resp-badge r-ti">TI</span>
+      <span class="resp-badge r-fin">Financeiro</span>
+      <span class="resp-badge r-dir">Diretoria</span>
+      <span class="resp-badge r-cnt">Contador</span>
+    </div>
+    <span style="margin-left:16px; color: var(--border2);">|</span>
+    <span style="font-size:11px; color: var(--muted); margin-left:12px;">
+      Cada tarefa concluída gera registro imutável com UUID + SHA-256 na cadeia de custódia
+      <strong style="color: var(--accent2);">AuraCERTIFIED</strong>.
+    </span>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ FOOTER -->
+<footer class="aura-footer">
+  <div class="footer-left">
+    <div class="footer-shield">
+      <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
+        <path d="M8 1.5L2 4v5c0 3.3 2.6 6.2 6 6.5 3.4-.3 6-3.2 6-6.5V4L8 1.5z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
+        <path d="M5.5 8l1.8 1.8L11 6" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="footer-brand-name">AuraTECH</div>
+      <div class="footer-brand-sub">Trust Infrastructure Platform</div>
+    </div>
+  </div>
+  <div class="footer-center">
+    Confidencial · Grupo Stabia · Curitiba, Brasil · Abril 2026
+  </div>
+  <div class="footer-right">
+    <span class="footer-version">v1.0</span>
+  </div>
+</footer>
+
+</div><!-- fim plano-content -->
+
+<script>
+async function fazerLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-btn');
+
+  if (!user || !pass) {
+    errEl.textContent = 'Preencha usuário e senha.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.textContent = 'Autenticando...';
+  btn.disabled = true;
+  errEl.style.display = 'none';
+
+  try {
+    const res = await fetch('https://audit.auradue.com/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: user, password: pass })
+    });
+
+    if (res.ok) {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('plano-content').style.display = 'block';
+    } else {
+      errEl.textContent = 'Usuário ou senha incorretos.';
+      errEl.style.display = 'block';
+    }
+  } catch (e) {
+    errEl.textContent = 'Erro de conexão. Tente novamente.';
+    errEl.style.display = 'block';
+  }
+
+  btn.textContent = 'Entrar';
+  btn.disabled = false;
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') {
+    fazerLogin();
+  }
+});
+</script>
+</body>
+</html>
