@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de Ação — Grupo Stabia</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#0b0f1a;color:#e2e8f0;line-height:1.6;padding:16px;max-width:800px;margin:0 auto}
+h1{font-size:20px;color:#fbbf24;margin-bottom:4px}
+h2{font-size:16px;color:#fbbf24;margin:28px 0 12px;border-bottom:1px solid #1e3a5f;padding-bottom:6px}
+h3{font-size:14px;color:#a78bfa;margin:18px 0 8px}
+.subtitle{font-size:12px;color:#64748b;margin-bottom:20px}
+.info{background:#1a2f4a;border:1px solid #1e3a5f;border-radius:8px;padding:14px;margin-bottom:16px}
+.info-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;flex-wrap:wrap;gap:4px}
+.info-label{color:#64748b}
+.info-value{color:#e2e8f0;font-weight:600}
+.highlight{color:#fbbf24}
+.green{color:#34d399}
+table{width:100%;border-collapse:collapse;margin:8px 0 16px;font-size:12px}
+th{text-align:left;padding:8px 6px;color:#64748b;font-size:10px;text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid #1e3a5f}
+td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,0.04);color:#94a3b8}
+td:first-child{color:#e2e8f0;font-weight:500}
+.badge{display:inline-block;font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.04em}
+.b-ti{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.b-fin{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+.b-dir{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.b-cnt{background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+.phase-badge{display:inline-block;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:8px}
+.pb-1{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}
+.pb-2{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.25)}
+.pb-3{background:rgba(124,58,237,.1);color:#a5b4fc;border:1px solid rgba(124,58,237,.25)}
+.pb-4{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.25)}
+.fonte{background:#1a2f4a;border:1px solid #1e3a5f;border-radius:6px;padding:10px 12px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px}
+.fonte-nome{font-size:13px;font-weight:600;color:#e2e8f0}
+.fonte-desc{font-size:11px;color:#64748b;width:100%}
+.status-pend{font-size:9px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(245,158,11,.1);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+.agent{background:#1a2f4a;border:1px solid #1e3a5f;border-radius:8px;padding:14px;margin-bottom:10px}
+.agent-name{font-size:14px;font-weight:700;font-family:monospace;margin-bottom:2px}
+.ag-g{color:#34d399}.ag-l{color:#fbbf24}.ag-c{color:#a78bfa}.ag-r{color:#60a5fa}
+.agent-role{font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.agent ul{list-style:none}
+.agent li{font-size:12px;color:#94a3b8;padding:2px 0 2px 14px;position:relative}
+.agent li::before{content:'—';position:absolute;left:0;color:#333}
+.entrega{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);flex-wrap:wrap;gap:4px}
+.entrega:last-child{border-bottom:none}
+.entrega-nome{font-size:13px;color:#e2e8f0;font-weight:500}
+.footer{margin-top:30px;text-align:center;font-size:10px;color:#64748b;padding:16px 0;border-top:1px solid #1e3a5f}
+</style>
+</head>
+<body>
+
+<h1>AuraAUDIT — Grupo Stabia</h1>
+<div class="subtitle">Corporate Expense Review &middot; Plano de Ação</div>
+
+<div class="info">
+  <div class="info-row"><span class="info-label">Cliente:</span><span class="info-value">Grupo Stabia</span></div>
+  <div class="info-row"><span class="info-label">Segmento:</span><span class="info-value">Viagens e Eventos Corporativos</span></div>
+  <div class="info-row"><span class="info-label">Kickoff:</span><span class="info-value highlight">06 de abril de 2026</span></div>
+  <div class="info-row"><span class="info-label">Go-live:</span><span class="info-value green">03 de julho de 2026</span></div>
+  <div class="info-row"><span class="info-label">Duração:</span><span class="info-value">90 dias (MVP)</span></div>
+  <div class="info-row"><span class="info-label">Módulos:</span><span class="info-value">AuraDUE · AuraAUDIT · AuraCERTIFIED</span></div>
+</div>
+
+<!-- CRONOGRAMA -->
+<h2>Cronograma</h2>
+
+<h3><span class="phase-badge pb-1">Fundação · Dias 1–15</span></h3>
+<p style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:6px">Fase 1 — Coleta, Acesso e Integrações Críticas</p>
+<table>
+  <tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr>
+  <tr><td>Confirmação Stur Web Full (FTP/Webhook)</td><td>06–09/04</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Integração bancária — Itaú</td><td>06–12/04</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Integração Clara (Mastercard)</td><td>09–13/04</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Integração NFS-e ABRASF — Prefeitura CWB</td><td>10–16/04</td><td><span class="badge b-cnt">Contador</span></td></tr>
+  <tr><td>Coleta manual — BSPLink IATA, OBTs</td><td>12–18/04</td><td><span class="badge b-fin">Financeiro</span></td></tr>
+  <tr><td>Coleta manual — Fornecedores e Contratos</td><td>12–18/04</td><td><span class="badge b-fin">Financeiro</span></td></tr>
+</table>
+
+<h3><span class="phase-badge pb-2">Setup · Dias 16–45</span></h3>
+<p style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:6px">Fase 2 — Ingestão, Normalização e GUARDIAN</p>
+<table>
+  <tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr>
+  <tr><td>AuraDATA — Ingestão multi-fonte</td><td>19–25/04</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Agente GUARDIAN — validação de bookings</td><td>25/04–05/05</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Parametrização de contratos</td><td>25/04–09/05</td><td><span class="badge b-fin">Financeiro</span></td></tr>
+  <tr><td>Provisionamento GCP Cloud Run</td><td>19–28/04</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Testes de integração — ciclo 1</td><td>09–18/05</td><td><span class="badge b-ti">TI</span></td></tr>
+</table>
+
+<h3><span class="phase-badge pb-3">Execução · Dias 46–75</span></h3>
+<p style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:6px">Fase 3 — Reconciliação, LAUNCHER e CONCILIATOR</p>
+<table>
+  <tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr>
+  <tr><td>Agente LAUNCHER — lançamentos financeiros</td><td>19–29/05</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Agente CONCILIATOR — reconciliação contínua</td><td>26/05–05/06</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Reconciliação retroativa 2024/2025</td><td>29/05–12/06</td><td><span class="badge b-fin">Financeiro</span></td></tr>
+  <tr><td>AuraCERTIFIED — cadeia de custódia</td><td>05–17/06</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Testes de integração — ciclo 2</td><td>10–17/06</td><td><span class="badge b-ti">TI</span></td></tr>
+</table>
+
+<h3><span class="phase-badge pb-4">Go-live · Dias 76–90</span></h3>
+<p style="font-size:13px;font-weight:600;color:#e2e8f0;margin-bottom:6px">Fase 4 — REPORTER, Validação e Go-live MVP</p>
+<table>
+  <tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr>
+  <tr><td>Agente REPORTER — briefings e dashboard</td><td>18–25/06</td><td><span class="badge b-ti">TI</span></td></tr>
+  <tr><td>Validação funcional do MVP</td><td>23–28/06</td><td><span class="badge b-dir">Diretoria</span></td></tr>
+  <tr><td>Treinamento operacional</td><td>28/06–02/07</td><td><span class="badge b-dir">Diretoria</span></td></tr>
+  <tr><td>Go-live MVP — ativação em produção</td><td>03/07</td><td><span class="badge b-dir">Diretoria</span></td></tr>
+</table>
+
+<!-- FONTES DE DADOS -->
+<h2>Fontes de Dados Requeridas</h2>
+
+<div class="fonte"><div><div class="fonte-nome">🏦 Extratos Bancários</div><div class="fonte-desc">Itaú — 2024/2025</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">💳 Fatura Clara (Mastercard)</div><div class="fonte-desc">Cartão corporativo 2024/2025</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">💼 Exportação Stur Web</div><div class="fonte-desc">FTP/Webhook XML/JSON</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">🧾 Notas Fiscais 2025</div><div class="fonte-desc">NFS-e ABRASF — Prefeitura CWB</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">✈️ BSPLink IATA</div><div class="fonte-desc">Bilhetes e reconciliações aéreas</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">🖥️ OBTs</div><div class="fonte-desc">Argo / Reserve / TravelPerk</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">🏨 Hospedagem</div><div class="fonte-desc">Accor, Atlântica, Omnibees, CM.net</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">🚗 Locadoras e Seguros</div><div class="fonte-desc">Localiza, Movida, AssistCard</div></div><span class="status-pend">Pendente</span></div>
+<div class="fonte"><div><div class="fonte-nome">📂 Contratos e Acordos</div><div class="fonte-desc">BV, overcommissions, DU/RAV</div></div><span class="status-pend">Pendente</span></div>
+
+<!-- AGENTES -->
+<h2>Agentes de IA</h2>
+
+<div class="agent"><div class="agent-name ag-g">GUARDIAN</div><div class="agent-role">Validação de Dados · Entrada</div><ul><li>Validação de campos mínimos em bookings</li><li>Bloqueio de lançamentos incompletos</li><li>Alertas em tempo real</li><li>Integração com Stur Web Full</li></ul></div>
+<div class="agent"><div class="agent-name ag-l">LAUNCHER</div><div class="agent-role">Lançamentos Financeiros · Stur Web</div><ul><li>Lançamentos automáticos no Stur Web</li><li>Cobrança bancária (Itaú/Clara)</li><li>Conciliação de pagamentos</li><li>Alertas de inadimplência</li></ul></div>
+<div class="agent"><div class="agent-name ag-c">CONCILIATOR</div><div class="agent-role">Reconciliação Multi-fonte · Contínua</div><ul><li>OBT vs Stur Web vs Extrato Bancário</li><li>Detecção de overcharges</li><li>Alertas de remuneração</li><li>Base centralizada</li></ul></div>
+<div class="agent"><div class="agent-name ag-r">REPORTER</div><div class="agent-role">Inteligência Executiva · Diretoria</div><ul><li>Briefings diários via WhatsApp</li><li>Dashboard Metabase estratégico</li><li>Alertas críticos em tempo real</li><li>Relatórios automatizados</li></ul></div>
+
+<!-- ENTREGÁVEIS -->
+<h2>Entregáveis</h2>
+
+<div class="entrega"><span class="entrega-nome">Relatório Executivo de Auditoria</span><span class="status-pend">Aguardando</span></div>
+<div class="entrega"><span class="entrega-nome">Relatório Técnico Detalhado</span><span class="status-pend">Aguardando</span></div>
+<div class="entrega"><span class="entrega-nome">Matriz de Riscos e Anomalias</span><span class="status-pend">Aguardando</span></div>
+<div class="entrega"><span class="entrega-nome">Parecer de Conformidade Legal</span><span class="status-pend">Aguardando</span></div>
+<div class="entrega"><span class="entrega-nome">Plano de Recomendações e Ações Corretivas</span><span class="status-pend">Aguardando</span></div>
+<div class="entrega"><span class="entrega-nome">Dashboard Interativo de Resultados</span><span class="status-pend">Aguardando</span></div>
+<div class="entrega"><span class="entrega-nome">Cadeia de Custódia Digital Completa</span><span class="status-pend">Aguardando</span></div>
+
+<div class="footer">AuraAUDIT · Cadeia de Custódia Digital · Lei 13.964/2019</div>
+
+</body>
+</html>
