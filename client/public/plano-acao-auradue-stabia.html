@@ -3,390 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plano de Ação — AuraDUE · Grupo Stabia</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>AuraAUDIT — Grupo Stabia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface2: #334155;
-    --border: rgba(124,58,237,0.15);
-    --border2: rgba(124,58,237,0.28);
-    --text: #f1f5f9;
-    --muted: #94a3b8;
-    --accent: #7c3aed;
-    --accent2: #a78bfa;
-    --green: #059669;
-    --green2: #34d399;
-    --amber: #d97706;
-    --amber2: #fbbf24;
-    --red: #dc2626;
-    --red2: #f87171;
-    --blue: #2563eb;
-    --blue2: #60a5fa;
-    --tag-ti: rgba(124,58,237,0.15);
-    --tag-fin: rgba(217,119,6,0.12);
-    --tag-dir: rgba(5,150,105,0.13);
-    --tag-cnt: rgba(37,99,235,0.13);
-  }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:hsl(225 10% 6%);--bg2:#0c1120;--topbar-bg:#112240;--sidebar-bg:hsl(225 10% 7%);
+  --card:#1a2f4a;--card2:#142038;--border:#1e3a5f;--border2:#2a4a72;
+  --brand-from:#d97706;--brand-to:#fbbf24;--brand-grad:linear-gradient(135deg,#d97706,#fbbf24);
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --emerald:#10b981;--amber:#f59e0b;--amber-d:#d97706;--red:#ef4444;--indigo:#6366f1;
+  --cyan:#06b6d4;--violet:#7c3aed;--blue:#3b82f6;--label:#fbbf24;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"JetBrains Mono",monospace;
+  --r:8px;--r-sm:3px;--r-md:6px;--r-lg:9px;--r-full:9999px;
+  --sidebar-w:220px;--topbar-px:1.75rem;--card-p:1.25rem;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.2);--shadow-md:0 4px 6px -1px rgba(0,0,0,.3);
+}
+html,body{height:100%;overflow:hidden;font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+body.logged-in{display:flex}
+*{scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fadeIn .35s ease-out both}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── LOGIN ── */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.login-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:36px 32px;width:100%;max-width:380px;text-align:center}
+.login-icon{width:44px;height:44px;border-radius:var(--r-lg);background:var(--brand-grad);display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.login-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:2px}
+.login-sub{font-size:11px;color:var(--text3);margin-bottom:24px;font-family:var(--mono);letter-spacing:.04em}
+.login-lbl{font-size:11px;font-weight:600;color:var(--text2);display:block;margin-bottom:4px;text-align:left}
+.login-inp{width:100%;padding:9px 12px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:13px;font-family:var(--sans);outline:none;transition:border-color .2s}
+.login-inp:focus{border-color:var(--amber)}
+.login-grp{text-align:left;margin-bottom:12px}
+#login-error{color:#f87171;font-size:11px;margin-bottom:10px;display:none}
+.login-btn{width:100%;padding:10px;border:none;border-radius:var(--r-md);background:var(--brand-grad);color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:opacity .2s}
+.login-btn:hover{opacity:.9}
+.login-btn:disabled{opacity:.5;cursor:not-allowed}
+.login-foot{margin-top:16px;font-size:9px;color:var(--text3);font-family:var(--mono);letter-spacing:.04em}
 
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 13px;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
-  }
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);display:flex;flex-direction:column;position:relative}
+.sidebar::after{content:'';position:absolute;top:0;right:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent 0%,rgba(217,119,6,.3) 30%,rgba(251,191,36,.3) 70%,transparent 100%)}
+.logo-wrap{padding:16px 16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;border-radius:var(--r-lg);background:var(--brand-grad);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:16px;height:16px;color:#fff}
+.logo-name{font-size:13px;font-weight:700;color:var(--text);letter-spacing:-.2px;line-height:1.2}
+.logo-tag{font-size:9px;font-family:var(--mono);color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+.nav{padding:10px 8px;flex:1}
+.nav-gl{font-size:9px;font-family:var(--mono);color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin:10px 0 4px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r-md);cursor:pointer;color:var(--text2);font-size:13px;margin-bottom:1px;transition:all .15s;border:1px solid transparent;position:relative;user-select:none}
+.nav-item:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-item.active{background:rgba(217,119,6,.12);border-color:rgba(217,119,6,.2);color:var(--label);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:3px;height:16px;background:var(--brand-grad);border-radius:0 2px 2px 0}
+.nav-icon{width:14px;font-size:12px;text-align:center;flex-shrink:0;opacity:.7}
+.nav-count{margin-left:auto;font-family:var(--mono);font-size:10px;font-weight:600;background:rgba(217,119,6,.15);color:#fbbf24;border:1px solid rgba(217,119,6,.25);border-radius:var(--r-full);padding:0 6px;line-height:17px}
+.sidebar-foot{padding:10px 8px 14px;border-top:1px solid var(--border)}
+.user-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:var(--r-md)}
+.avatar{width:26px;height:26px;border-radius:var(--r-full);background:var(--brand-grad);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.user-name{font-size:12px;font-weight:500;color:var(--text)}
+.user-role{font-size:10px;color:var(--text3)}
+@media(max-width:768px){.sidebar{display:none}}
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .fade-in { animation: fadeIn 0.5s ease-out both; }
-  .fade-in-d1 { animation-delay: 0.1s; }
-  .fade-in-d2 { animation-delay: 0.2s; }
-  .fade-in-d3 { animation-delay: 0.3s; }
-  .fade-in-d4 { animation-delay: 0.4s; }
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;min-width:0}
+.topbar{background:var(--topbar-bg);border-bottom:1px solid var(--border);backdrop-filter:blur(8px);flex-shrink:0}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:1rem var(--topbar-px);gap:12px}
+.bc{display:flex;align-items:center;gap:6px;font-size:13px}
+.bc-dim{color:var(--text3)} .bc-sep{color:var(--text3);font-size:11px} .bc-cur{color:var(--text);font-weight:500}
+.topbar-right{display:flex;gap:8px;align-items:center}
+.pill{display:flex;align-items:center;gap:5px;padding:4px 12px;border-radius:var(--r-full);font-size:11px;font-weight:500;font-family:var(--mono);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.22);color:#fcd34d}
+.dot{width:6px;height:6px;border-radius:var(--r-full);background:var(--amber);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:var(--r-full);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;border:none;font-family:var(--sans)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:rgba(255,255,255,.05);color:var(--text)}
 
-  /* ── LOGIN ── */
-  #login-screen {
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    background: var(--bg);
-  }
-  .login-card {
-    background: var(--surface); border: 1px solid var(--border2); border-radius: 16px;
-    padding: 40px 36px; width: 100%; max-width: 380px; text-align: center;
-  }
-  .login-shield {
-    width: 52px; height: 52px; border-radius: 14px; background: var(--accent);
-    display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;
-  }
-  .login-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-  .login-sub { font-size: 12px; color: var(--muted); margin-bottom: 28px; }
-  .login-label { font-size: 12px; font-weight: 600; color: var(--text); display: block; margin-bottom: 6px; text-align: left; }
-  .login-input {
-    width: 100%; padding: 11px 14px; border-radius: 8px; border: 1px solid var(--border2);
-    background: var(--surface2); color: var(--text); font-size: 14px; font-family: 'Poppins', sans-serif;
-    box-sizing: border-box; outline: none; transition: border-color 0.2s;
-  }
-  .login-input:focus { border-color: var(--accent); }
-  .login-input-group { text-align: left; margin-bottom: 14px; }
-  #login-error { color: var(--red2); font-size: 12px; margin-bottom: 12px; display: none; }
-  .login-btn {
-    width: 100%; padding: 12px; border: none; border-radius: 8px; background: var(--accent);
-    color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
-    transition: background 0.2s;
-  }
-  .login-btn:hover { background: #6d28d9; }
-  .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-  .login-footer { margin-top: 20px; font-size: 10px; color: var(--muted); }
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:18px var(--topbar-px);display:flex;flex-direction:column;gap:14px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.page{display:none} .page.active{display:flex;flex-direction:column;gap:14px}
 
-  /* ── TOPBAR ── */
-  .topbar {
-    position: sticky; top: 0; z-index: 100;
-    background: rgba(15,23,42,0.97); backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    padding: 0 24px; height: 52px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .topbar-left { display: flex; align-items: center; gap: 10px; }
-  .topbar-shield {
-    width: 28px; height: 28px; border-radius: 6px;
-    background: linear-gradient(135deg, #1e293b, #0f172a);
-    border: 1px solid rgba(124,58,237,0.3);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .topbar-brand { font-family: 'Lora', serif; font-size: 14px; font-weight: 700; color: var(--accent2); }
-  .topbar-sep { color: rgba(255,255,255,0.15); margin: 0 4px; }
-  .topbar-client { font-size: 11px; color: var(--muted); }
-  .topbar-right { display: flex; align-items: center; gap: 10px; }
-  .topbar-badge {
-    font-size: 9px; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.8px;
-    background: rgba(124,58,237,0.12); color: var(--accent2); border: 1px solid rgba(124,58,237,0.25);
-    text-transform: uppercase; font-weight: 600;
-  }
-  .topbar-modules { font-size: 10px; color: var(--muted); letter-spacing: 0.5px; }
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:var(--card-p);box-shadow:var(--shadow-sm);transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow-md)}
+.card-title{font-size:9px;font-family:var(--mono);font-weight:600;color:var(--label);text-transform:uppercase;letter-spacing:.1em;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.card-meta{font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:11px}
 
-  /* ── DASHBOARD ── */
-  .dashboard { padding: 24px; max-width: 1100px; margin: 0 auto; }
-  .dash-header { margin-bottom: 24px; }
-  .dash-title { font-family: 'Lora', serif; font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-  .dash-sub { font-size: 12px; color: var(--muted); }
-  .dash-updated { font-size: 10px; color: var(--muted); margin-top: 4px; opacity: 0.7; }
+/* KPIs */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;transition:box-shadow .2s}
+.kpi-card:hover{box-shadow:var(--shadow-md)}
+.kpi-icon{width:28px;height:28px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:13px;margin-bottom:8px}
+.kpi-val{font-size:24px;font-weight:700;font-family:var(--mono);margin-bottom:1px}
+.kpi-lbl{font-size:10px;color:var(--text3);font-weight:500}
 
-  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
-  @media (max-width: 768px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .kpi-grid { grid-template-columns: 1fr; } }
+/* Progress */
+.bar-bg{width:100%;height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.bar-amber{background:var(--brand-grad)}
+.bar-r{background:#f87171}.bar-a{background:#fbbf24}.bar-v{background:#a78bfa}.bar-g{background:#34d399}
 
-  .kpi-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    padding: 18px 20px; transition: box-shadow 0.2s, border-color 0.2s;
-  }
-  .kpi-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.3); border-color: var(--border2); }
-  .kpi-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; margin-bottom: 12px;
-  }
-  .kpi-icon-violet { background: rgba(124,58,237,0.15); }
-  .kpi-icon-green { background: rgba(5,150,105,0.15); }
-  .kpi-icon-amber { background: rgba(217,119,6,0.15); }
-  .kpi-icon-blue { background: rgba(37,99,235,0.15); }
-  .kpi-value { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; margin-bottom: 2px; }
-  .kpi-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+/* Phase cards */
+.ph-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:8px;transition:box-shadow .2s}
+.ph-card:hover{box-shadow:var(--shadow-md)}
+.ph-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ph-left{display:flex;align-items:center;gap:8px}
+.ph-num{width:24px;height:24px;border-radius:var(--r-sm);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--mono)}
+.pn1{background:rgba(239,68,68,.12);color:#f87171} .pn2{background:rgba(245,158,11,.12);color:#fbbf24}
+.pn3{background:rgba(124,58,237,.12);color:#a78bfa} .pn4{background:rgba(16,185,129,.12);color:#34d399}
+.ph-title{font-size:12px;font-weight:600;color:var(--text)}
+.ph-dates{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--r-full);font-size:9px;font-weight:600;font-family:var(--mono);letter-spacing:.06em}
+.b-fund{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}
+.b-setup{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.25)}
+.b-exec{background:rgba(124,58,237,.1);color:#a5b4fc;border:1px solid rgba(124,58,237,.25)}
+.b-go{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.25)}
+.ph-stats{display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--text3);font-family:var(--mono)}
 
-  .phases-section { margin-bottom: 28px; }
-  .section-title { font-family: 'Lora', serif; font-size: 16px; font-weight: 600; color: #fff; margin-bottom: 14px; }
+/* Sources */
+.src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:900px){.src-grid{grid-template-columns:repeat(2,1fr)}}
+.src{background:var(--card);border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;transition:border-color .2s}
+.src:hover{border-color:var(--border2)}
+.src-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.src-ic{font-size:15px}
+.src-st{font-size:9px;font-family:var(--mono);font-weight:600;padding:1px 6px;border-radius:var(--r-full)}
+.st-pend{background:rgba(245,158,11,.1);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+.st-ok{background:rgba(16,185,129,.1);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.src-nm{font-size:11px;font-weight:600;color:var(--text);margin-bottom:1px}
+.src-ds{font-size:10px;color:var(--text3);line-height:1.4}
 
-  .phase-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    padding: 16px 20px; margin-bottom: 10px; transition: box-shadow 0.2s;
-  }
-  .phase-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-  .phase-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .phase-card-left { display: flex; align-items: center; gap: 10px; }
-  .phase-num-sm {
-    width: 28px; height: 28px; border-radius: 6px; font-family: 'Lora', serif;
-    font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center;
-  }
-  .pn-1 { background: rgba(220,38,38,0.12); color: var(--red2); }
-  .pn-2 { background: rgba(217,119,6,0.12); color: var(--amber2); }
-  .pn-3 { background: rgba(124,58,237,0.12); color: var(--accent2); }
-  .pn-4 { background: rgba(5,150,105,0.12); color: var(--green2); }
-  .phase-card-title { font-size: 12px; font-weight: 600; color: var(--text); }
-  .phase-card-dates { font-size: 10px; color: var(--muted); }
-  .phase-card-badge {
-    font-size: 9px; padding: 3px 10px; border-radius: 20px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .pb-1 { background: rgba(220,38,38,0.1); color: var(--red2); }
-  .pb-2 { background: rgba(217,119,6,0.1); color: var(--amber2); }
-  .pb-3 { background: rgba(124,58,237,0.1); color: var(--accent2); }
-  .pb-4 { background: rgba(5,150,105,0.1); color: var(--green2); }
-  .progress-bar-bg {
-    width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden;
-  }
-  .progress-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
-  .pf-1 { background: var(--red2); }
-  .pf-2 { background: var(--amber2); }
-  .pf-3 { background: var(--accent2); }
-  .pf-4 { background: var(--green2); }
-  .phase-card-stats { display: flex; justify-content: space-between; margin-top: 6px; }
-  .phase-card-stat { font-size: 10px; color: var(--muted); }
+/* Agents */
+.ag-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(max-width:900px){.ag-grid{grid-template-columns:1fr}}
+.ag{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;transition:box-shadow .2s}
+.ag:hover{box-shadow:var(--shadow-md)}
+.ag-nm{font-size:13px;font-weight:700;letter-spacing:.04em;margin-bottom:2px;font-family:var(--mono)}
+.ag-g{color:#34d399}.ag-l{color:#fbbf24}.ag-c{color:#a78bfa}.ag-r{color:#60a5fa}
+.ag-rl{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:8px;font-family:var(--mono)}
+.ag ul{list-style:none}
+.ag li{font-size:11px;color:var(--text2);padding:2px 0 2px 12px;position:relative;line-height:1.5}
+.ag li::before{content:'–';position:absolute;left:0;color:rgba(255,255,255,.12)}
 
-  .overall-progress {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    padding: 20px 24px; margin-bottom: 28px;
-  }
-  .overall-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .overall-label { font-size: 13px; font-weight: 600; color: var(--text); }
-  .overall-pct { font-family: 'Lora', serif; font-size: 20px; font-weight: 700; color: var(--accent2); }
-  .overall-bar-bg { width: 100%; height: 10px; background: rgba(255,255,255,0.06); border-radius: 5px; overflow: hidden; }
-  .overall-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 5px; transition: width 0.8s ease; }
+/* Tasks table */
+.task-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.task-tbl th{padding:6px 10px;text-align:left;font-size:9px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-family:var(--mono);border-bottom:1px solid var(--border)}
+.task-tbl td{padding:8px 10px;color:var(--text2);border-bottom:1px solid rgba(255,255,255,.035)}
+.task-tbl tr:hover td{background:rgba(255,255,255,.02)}
+.task-tbl tr:last-child td{border-bottom:none}
+.tn{color:var(--text);font-weight:500}
+.rb{font-size:9px;font-weight:600;padding:2px 8px;border-radius:var(--r-full);font-family:var(--mono)}
+.r-ti{background:rgba(59,130,246,.12);color:#60a5fa;border:1px solid rgba(59,130,246,.2)}
+.r-fin{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.2)}
+.r-dir{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.2)}
+.r-cnt{background:rgba(124,58,237,.12);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
 
-  .btn-plano {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 24px; border: 1px solid var(--border2); border-radius: 10px;
-    background: rgba(124,58,237,0.08); color: var(--accent2);
-    font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Poppins', sans-serif;
-    transition: all 0.2s; text-decoration: none;
-  }
-  .btn-plano:hover { background: rgba(124,58,237,0.18); border-color: var(--accent); }
-
-  /* ── PLAN CONTENT ── */
-  .page { padding: 24px; max-width: 1100px; margin: 0 auto; }
-  .section-label {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--accent2); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
-  }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .section-gap { margin-top: 48px; }
-
-  /* COVER */
-  .cover {
-    min-height: 70vh; display: flex; flex-direction: column; justify-content: center;
-    padding: 48px 24px;
-    background: linear-gradient(160deg, #0f172a 0%, #1a1045 55%, #0f172a 100%);
-    position: relative; overflow: hidden;
-  }
-  .cover::before {
-    content: ''; position: absolute; top: -180px; right: -180px;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .cover-eyebrow {
-    font-size: 11px; font-weight: 500; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--accent2); margin-bottom: 20px;
-  }
-  .cover-title {
-    font-family: 'Lora', serif; font-size: 44px; font-weight: 700; line-height: 1.15;
-    color: #fff; margin-bottom: 8px;
-  }
-  .cover-title span { color: var(--accent2); }
-  .cover-subtitle { font-family: 'Lora', serif; font-size: 18px; color: var(--muted); margin-bottom: 32px; }
-  .cover-divider { width: 56px; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); margin-bottom: 28px; }
-  .cover-desc { max-width: 540px; font-size: 13px; color: var(--muted); line-height: 1.8; }
-  .cover-tags { display: flex; gap: 8px; margin-top: 28px; flex-wrap: wrap; }
-  .cover-tag {
-    padding: 4px 12px; border: 1px solid var(--border2); border-radius: 20px;
-    font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
-  }
-  .cover-bottom {
-    display: flex; justify-content: space-between; align-items: flex-end;
-    margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
-  }
-  .cover-client { font-size: 12px; color: var(--muted); }
-  .cover-client strong { display: block; font-size: 15px; font-weight: 600; color: var(--text); font-family: 'Lora', serif; margin-bottom: 2px; }
-  .cover-dates { text-align: right; font-size: 11px; color: var(--muted); line-height: 2; }
-  .cover-dates strong { color: var(--green2); font-weight: 600; }
-
-  @media (max-width: 600px) {
-    .cover { padding: 32px 20px; min-height: 60vh; }
-    .cover-title { font-size: 28px; }
-    .cover-subtitle { font-size: 15px; }
-    .cover-bottom { flex-direction: column; align-items: flex-start; gap: 16px; }
-    .cover-dates { text-align: left; }
-  }
-
-  /* ALERT */
-  .alert-box {
-    background: rgba(124,58,237,0.06); border: 1px solid rgba(124,58,237,0.25);
-    border-radius: 12px; padding: 24px 28px; margin-bottom: 32px;
-  }
-  .alert-box h3 {
-    font-family: 'Lora', serif; font-size: 15px; font-weight: 600;
-    color: var(--accent2); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
-  }
-  .alert-box p { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 14px; }
-  .alert-box p:last-of-type { margin-bottom: 0; }
-  .alert-box strong { color: var(--text); }
-  .upload-link {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.3);
-    border-radius: 8px; padding: 10px 18px; font-size: 12px; font-weight: 500;
-    color: var(--accent2); text-decoration: none; margin-top: 10px; transition: all 0.2s;
-  }
-  .upload-link:hover { background: rgba(124,58,237,0.22); }
-
-  /* SOURCES */
-  .sources-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 32px; }
-  @media (max-width: 768px) { .sources-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .sources-grid { grid-template-columns: 1fr; } }
-  .source-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-    padding: 14px 18px; transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .source-card:hover { border-color: var(--border2); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-  .source-icon { font-size: 18px; margin-bottom: 6px; }
-  .source-name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-  .source-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
-
-  /* TIMELINE */
-  .timeline-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 8px; }
-  .timeline-title { font-family: 'Lora', serif; font-size: 18px; font-weight: 600; color: #fff; }
-  .timeline-badge {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 4px 12px; border-radius: 20px;
-    background: rgba(124,58,237,0.12); color: var(--accent2); border: 1px solid rgba(124,58,237,0.25);
-  }
-
-  /* PHASES */
-  .phase-block { margin-bottom: 24px; }
-  .phase-header {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 20px; border-radius: 10px 10px 0 0;
-    border: 1px solid var(--border); border-bottom: none;
-  }
-  .phase-0 { background: rgba(220,38,38,0.06); border-color: rgba(220,38,38,0.2); }
-  .phase-1 { background: rgba(217,119,6,0.06); border-color: rgba(217,119,6,0.2); }
-  .phase-2 { background: rgba(124,58,237,0.06); border-color: rgba(124,58,237,0.2); }
-  .phase-3 { background: rgba(5,150,105,0.06); border-color: rgba(5,150,105,0.2); }
-  .phase-num {
-    font-family: 'Lora', serif; font-size: 20px; font-weight: 700;
-    width: 32px; text-align: center;
-  }
-  .p0-num { color: var(--red2); }
-  .p1-num { color: var(--amber2); }
-  .p2-num { color: var(--accent2); }
-  .p3-num { color: var(--green2); }
-  .phase-info { flex: 1; }
-  .phase-name { font-size: 13px; font-weight: 600; color: var(--text); }
-  .phase-period { font-size: 11px; color: var(--muted); }
-  .phase-tag {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 3px 10px; border-radius: 20px;
-  }
-  .pt-urgente { background: rgba(220,38,38,0.12); color: var(--red2); }
-  .pt-setup { background: rgba(217,119,6,0.12); color: var(--amber2); }
-  .pt-exec { background: rgba(124,58,237,0.12); color: var(--accent2); }
-  .pt-entrega { background: rgba(5,150,105,0.12); color: var(--green2); }
-
-  .phase-tasks { border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; overflow: hidden; }
-  .task-row {
-    display: grid; grid-template-columns: 1fr 100px 70px; gap: 12px; align-items: center;
-    padding: 12px 20px; border-bottom: 1px solid var(--border); transition: background 0.15s;
-  }
-  @media (max-width: 600px) { .task-row { grid-template-columns: 1fr; gap: 6px; } }
-  .task-row:last-child { border-bottom: none; }
-  .task-row:hover { background: rgba(255,255,255,0.02); }
-  .task-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
-  .task-desc { font-size: 11px; color: var(--muted); }
-  .task-date { font-size: 11px; color: var(--muted); text-align: center; }
-  .resp-badge { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 20px; text-align: center; }
-  .r-ti { background: var(--tag-ti); color: var(--accent2); }
-  .r-fin { background: var(--tag-fin); color: var(--amber2); }
-  .r-dir { background: var(--tag-dir); color: var(--green2); }
-  .r-cnt { background: var(--tag-cnt); color: var(--blue2); }
-
-  /* GOLIVE */
-  .golive-box {
-    background: linear-gradient(135deg, rgba(5,150,105,0.08) 0%, rgba(124,58,237,0.08) 100%);
-    border: 1px solid rgba(5,150,105,0.25); border-radius: 14px;
-    padding: 28px 32px; display: flex; align-items: center; gap: 24px; margin-top: 32px;
-  }
-  @media (max-width: 600px) { .golive-box { flex-direction: column; text-align: center; padding: 24px 20px; } }
-  .golive-icon { font-size: 36px; flex-shrink: 0; }
-  .golive-title { font-family: 'Lora', serif; font-size: 18px; font-weight: 700; color: var(--green2); margin-bottom: 6px; }
-  .golive-desc { font-size: 12px; color: var(--muted); line-height: 1.8; }
-
-  /* AGENTS */
-  .agents-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 32px; }
-  @media (max-width: 600px) { .agents-grid { grid-template-columns: 1fr; } }
-  .agent-card {
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    padding: 18px 22px; transition: box-shadow 0.2s;
-  }
-  .agent-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-  .agent-name { font-family: 'Lora', serif; font-size: 15px; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .g-name { color: var(--green2); }
-  .l-name { color: var(--amber2); }
-  .c-name { color: var(--accent2); }
-  .r-name { color: var(--blue2); }
-  .agent-role { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-  .agent-items { list-style: none; }
-  .agent-items li { font-size: 12px; color: var(--muted); padding: 3px 0 3px 14px; position: relative; line-height: 1.5; }
-  .agent-items li::before { content: '–'; position: absolute; left: 0; color: rgba(255,255,255,0.15); }
-
-  /* FOOTER */
-  .footer {
-    border-top: 1px solid var(--border);
-    background: rgba(15,23,42,0.6);
-    padding: 20px 24px;
-    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
-    font-size: 10px; color: var(--muted);
-  }
-  .footer-left { display: flex; align-items: center; gap: 8px; }
-  .footer-brand { font-family: 'Lora', serif; font-size: 11px; font-weight: 600; color: var(--accent2); }
-  .footer-badges { display: flex; gap: 8px; }
-  .footer-badge-g {
-    font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
-    background: rgba(5,150,105,0.1); color: var(--green2); border: 1px solid rgba(5,150,105,0.2);
-  }
-  .footer-badge-b {
-    font-size: 9px; padding: 2px 8px; border-radius: 10px; font-weight: 600;
-    background: rgba(37,99,235,0.1); color: var(--blue2); border: 1px solid rgba(37,99,235,0.2);
-  }
+/* Deliverables */
+.del-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.del-item:last-child{border-bottom:none}
+.del-nm{font-size:12px;font-weight:500;color:var(--text)}
+.del-st{font-size:9px;font-family:var(--mono);font-weight:600;padding:2px 8px;border-radius:var(--r-full)}
 </style>
 </head>
 <body>
@@ -394,410 +174,239 @@
 <!-- ═══ LOGIN ═══ -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-shield">
-      <svg viewBox="0 0 16 16" fill="none" width="24" height="24">
-        <path d="M8 1.5L2 4v5c0 3.3 2.6 6.2 6 6.5 3.4-.3 6-3.2 6-6.5V4L8 1.5z" fill="rgba(255,255,255,0.15)" stroke="#fff" stroke-width="1"/>
-        <path d="M5.5 8l1.8 1.8L11 6" stroke="#fbbf24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
+    <div class="login-icon"><svg viewBox="0 0 24 24" fill="none" width="22" height="22" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 .6-.92l7-3.11a1 1 0 0 1 .8 0l7 3.11A1 1 0 0 1 20 6z"/><path d="m9 12 2 2 4-4"/></svg></div>
     <div class="login-title">AuraAUDIT</div>
-    <div class="login-sub">Due Diligence Platform</div>
-    <div class="login-input-group">
-      <label class="login-label">Usuário</label>
-      <input id="login-user" type="text" placeholder="Digite seu usuário" class="login-input">
-    </div>
-    <div class="login-input-group">
-      <label class="login-label">Senha</label>
-      <input id="login-pass" type="password" placeholder="Digite sua senha" class="login-input">
-    </div>
+    <div class="login-sub">Corporate Expense Review</div>
+    <div class="login-grp"><label class="login-lbl">Usuário</label><input id="login-user" type="text" placeholder="Digite seu usuário" class="login-inp"></div>
+    <div class="login-grp"><label class="login-lbl">Senha</label><input id="login-pass" type="password" placeholder="Digite sua senha" class="login-inp"></div>
     <div id="login-error"></div>
-    <button id="login-btn" onclick="fazerLogin()" class="login-btn">Entrar</button>
-    <div class="login-footer">Cadeia de Custódia Digital — Lei 13.964/2019</div>
+    <button id="login-btn" onclick="doLogin()" class="login-btn">Entrar</button>
+    <div class="login-foot">Cadeia de Custódia Digital — Lei 13.964/2019</div>
   </div>
 </div>
 
-<!-- ═══ MAIN CONTENT (hidden until login) ═══ -->
-<div id="main-content" style="display:none;">
-
-<!-- TOPBAR -->
-<header class="topbar">
-  <div class="topbar-left">
-    <div class="topbar-shield">
-      <svg viewBox="0 0 16 16" fill="none" width="14" height="14">
-        <path d="M8 1.5L2 4v5c0 3.3 2.6 6.2 6 6.5 3.4-.3 6-3.2 6-6.5V4L8 1.5z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.6)" stroke-width="1"/>
-        <path d="M5.5 8l1.8 1.8L11 6" stroke="#fbbf24" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div class="topbar-brand">AuraDUE</div>
-    <span class="topbar-sep">·</span>
-    <div class="topbar-client">Grupo Stabia</div>
+<!-- ═══ APP (hidden until login) ═══ -->
+<aside class="sidebar" id="sidebar" style="display:none">
+  <div class="logo-wrap">
+    <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 .6-.92l7-3.11a1 1 0 0 1 .8 0l7 3.11A1 1 0 0 1 20 6z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <div><div class="logo-name">AuraAUDIT</div><div class="logo-tag">Corporate Expense Review</div></div>
   </div>
-  <div class="topbar-modules">AuraDUE · AuraAUDIT · AuraCERTIFIED</div>
-  <div class="topbar-right">
-    <div class="topbar-badge">Confidencial</div>
-  </div>
-</header>
-
-<!-- ═══ DASHBOARD ═══ -->
-<div class="dashboard">
-  <div class="dash-header fade-in">
-    <div class="dash-title">Visão Executiva</div>
-    <div class="dash-sub">Grupo Stabia — Auditoria Forense Financeira</div>
-    <div class="dash-updated" id="dash-updated"></div>
-  </div>
-
-  <div class="kpi-grid">
-    <div class="kpi-card fade-in fade-in-d1">
-      <div class="kpi-icon kpi-icon-violet">📊</div>
-      <div class="kpi-value" id="kpi-sources" style="color:var(--accent2);">–</div>
-      <div class="kpi-label">Fontes Recebidas</div>
-    </div>
-    <div class="kpi-card fade-in fade-in-d2">
-      <div class="kpi-icon kpi-icon-amber">🔄</div>
-      <div class="kpi-value" id="kpi-recon" style="color:var(--amber2);">–</div>
-      <div class="kpi-label">Reconciliações</div>
-    </div>
-    <div class="kpi-card fade-in fade-in-d3">
-      <div class="kpi-icon kpi-icon-green">📋</div>
-      <div class="kpi-value" id="kpi-deliv" style="color:var(--green2);">–</div>
-      <div class="kpi-label">Entregáveis</div>
-    </div>
-    <div class="kpi-card fade-in fade-in-d4">
-      <div class="kpi-icon kpi-icon-blue">⏱️</div>
-      <div class="kpi-value" id="kpi-days" style="color:var(--blue2);">–</div>
-      <div class="kpi-label">Dias Restantes</div>
+  <nav class="nav">
+    <div class="nav-gl">Projeto</div>
+    <div class="nav-item active" onclick="go('dashboard',this)"><span class="nav-icon">◈</span> Visão Executiva</div>
+    <div class="nav-item" onclick="go('cronograma',this)"><span class="nav-icon">⊞</span> Cronograma <span class="nav-count">4</span></div>
+    <div class="nav-item" onclick="go('fontes',this)"><span class="nav-icon">◻</span> Fontes de Dados <span class="nav-count" id="src-count">0/9</span></div>
+    <div class="nav-item" onclick="go('agentes',this)"><span class="nav-icon">◎</span> Agentes</div>
+    <div class="nav-item" onclick="go('entregas',this)"><span class="nav-icon">◇</span> Entregáveis <span class="nav-count" id="del-count">0/7</span></div>
+    <div class="nav-gl">Ações</div>
+    <div class="nav-item" onclick="window.open('https://audit.auradue.com/stabia','_blank')"><span class="nav-icon">↑</span> Upload de Dados</div>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="user-row">
+      <div class="avatar" id="user-avatar">GS</div>
+      <div><div class="user-name" id="user-name">Grupo Stabia</div><div class="user-role">Cliente</div></div>
     </div>
   </div>
+</aside>
 
-  <!-- OVERALL PROGRESS -->
-  <div class="overall-progress fade-in">
-    <div class="overall-top">
-      <div class="overall-label">Progresso Geral do Projeto</div>
-      <div class="overall-pct" id="overall-pct">0%</div>
+<div class="main" id="main-panel" style="display:none">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="bc"><span class="bc-dim">AuraAUDIT</span><span class="bc-sep">›</span><span class="bc-cur" id="tb-page">Visão Executiva</span><span class="bc-sep">·</span><span class="bc-dim">Grupo Stabia</span></div>
+      <div class="topbar-right"><div class="pill"><div class="dot"></div><span id="tb-status">Carregando</span></div></div>
     </div>
-    <div class="overall-bar-bg"><div class="overall-bar-fill" id="overall-bar" style="width:0%"></div></div>
-  </div>
+  </header>
 
-  <!-- PHASES -->
-  <div class="phases-section">
-    <div class="section-title">Andamento por Fase</div>
-    <div id="phases-container"></div>
-  </div>
+  <div class="content">
 
-  <div style="text-align:center; margin-top:8px;">
-    <a class="btn-plano" href="#plano-section" onclick="document.getElementById('plano-section').style.display='block'">
-      ↓ Ver Plano Completo
-    </a>
+    <!-- ══ PAGE: DASHBOARD ══ -->
+    <div id="page-dashboard" class="page active">
+      <div class="kpi-grid fi d1">
+        <div class="kpi-card"><div class="kpi-icon" style="background:rgba(245,158,11,.12)">📊</div><div class="kpi-val" style="color:#fbbf24" id="k-src">–</div><div class="kpi-lbl">Fontes Recebidas</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:rgba(124,58,237,.12)">🔄</div><div class="kpi-val" style="color:#a78bfa" id="k-rec">–</div><div class="kpi-lbl">Reconciliações</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:rgba(16,185,129,.12)">📋</div><div class="kpi-val" style="color:#34d399" id="k-del">–</div><div class="kpi-lbl">Entregáveis</div></div>
+        <div class="kpi-card"><div class="kpi-icon" style="background:rgba(59,130,246,.12)">⏱️</div><div class="kpi-val" style="color:#60a5fa" id="k-day">–</div><div class="kpi-lbl">Dias Restantes</div></div>
+      </div>
+
+      <div class="card fi d2">
+        <div class="card-title"><span>Progresso Geral</span><span class="card-meta" id="ov-pct">0%</span></div>
+        <div class="bar-bg"><div class="bar-fill bar-amber" id="ov-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="card fi d3">
+        <div class="card-title">Andamento por Fase</div>
+        <div id="ph-ctn"></div>
+      </div>
+
+      <div class="card fi d4">
+        <div class="card-title"><span>Informações do Projeto</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
+          <div><span style="color:var(--text3)">Cliente:</span> <strong>Grupo Stabia</strong></div>
+          <div><span style="color:var(--text3)">Segmento:</span> Viagens e Eventos Corporativos</div>
+          <div><span style="color:var(--text3)">Kickoff:</span> <strong style="color:#fbbf24">06 de abril de 2026</strong></div>
+          <div><span style="color:var(--text3)">Go-live:</span> <strong style="color:#34d399">03 de julho de 2026</strong></div>
+          <div><span style="color:var(--text3)">Duração:</span> 90 dias (MVP)</div>
+          <div><span style="color:var(--text3)">Módulos:</span> AuraDUE · AuraAUDIT · AuraCERTIFIED</div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;color:var(--text3);text-align:right;font-family:var(--mono)" id="dash-upd"></div>
+    </div>
+
+    <!-- ══ PAGE: CRONOGRAMA ══ -->
+    <div id="page-cronograma" class="page">
+      <div class="card fi">
+        <div class="card-title"><span>Fase 1 — Coleta, Acesso e Integrações Críticas</span><span class="badge b-fund">Fundação · Dias 1–15</span></div>
+        <table class="task-tbl"><thead><tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr></thead><tbody>
+          <tr><td class="tn">Confirmação Stur Web Full (FTP/Webhook)</td><td style="font-family:var(--mono);font-size:11px">06–09/04</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Integração bancária — Itaú e Bradesco</td><td style="font-family:var(--mono);font-size:11px">06–12/04</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Integração Clara (Mastercard)</td><td style="font-family:var(--mono);font-size:11px">09–13/04</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Integração NFS-e ABRASF — Prefeitura CWB</td><td style="font-family:var(--mono);font-size:11px">10–16/04</td><td><span class="rb r-cnt">Contador</span></td></tr>
+          <tr><td class="tn">Coleta manual — BSPLink IATA, OBTs</td><td style="font-family:var(--mono);font-size:11px">12–18/04</td><td><span class="rb r-fin">Financeiro</span></td></tr>
+          <tr><td class="tn">Coleta manual — Fornecedores e Contratos</td><td style="font-family:var(--mono);font-size:11px">12–18/04</td><td><span class="rb r-fin">Financeiro</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card fi d1">
+        <div class="card-title"><span>Fase 2 — Ingestão, Normalização e GUARDIAN</span><span class="badge b-setup">Setup · Dias 16–45</span></div>
+        <table class="task-tbl"><thead><tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr></thead><tbody>
+          <tr><td class="tn">AuraDATA — Ingestão multi-fonte</td><td style="font-family:var(--mono);font-size:11px">19–25/04</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Agente GUARDIAN — validação de bookings</td><td style="font-family:var(--mono);font-size:11px">25/04–05/05</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Parametrização de contratos</td><td style="font-family:var(--mono);font-size:11px">25/04–09/05</td><td><span class="rb r-fin">Financeiro</span></td></tr>
+          <tr><td class="tn">Provisionamento GCP Cloud Run</td><td style="font-family:var(--mono);font-size:11px">19–28/04</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Testes de integração — ciclo 1</td><td style="font-family:var(--mono);font-size:11px">09–18/05</td><td><span class="rb r-ti">TI</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card fi d2">
+        <div class="card-title"><span>Fase 3 — Reconciliação, LAUNCHER e CONCILIATOR</span><span class="badge b-exec">Execução · Dias 46–75</span></div>
+        <table class="task-tbl"><thead><tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr></thead><tbody>
+          <tr><td class="tn">Agente LAUNCHER — lançamentos financeiros</td><td style="font-family:var(--mono);font-size:11px">19–29/05</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Agente CONCILIATOR — reconciliação contínua</td><td style="font-family:var(--mono);font-size:11px">26/05–05/06</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Reconciliação retroativa 2024/2025</td><td style="font-family:var(--mono);font-size:11px">29/05–12/06</td><td><span class="rb r-fin">Financeiro</span></td></tr>
+          <tr><td class="tn">AuraCERTIFIED — cadeia de custódia</td><td style="font-family:var(--mono);font-size:11px">05–17/06</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Testes de integração — ciclo 2</td><td style="font-family:var(--mono);font-size:11px">10–17/06</td><td><span class="rb r-ti">TI</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card fi d3">
+        <div class="card-title"><span>Fase 4 — REPORTER, Validação e Go-live MVP</span><span class="badge b-go">Go-live · Dias 76–90</span></div>
+        <table class="task-tbl"><thead><tr><th>Tarefa</th><th>Período</th><th>Resp.</th></tr></thead><tbody>
+          <tr><td class="tn">Agente REPORTER — briefings e dashboard</td><td style="font-family:var(--mono);font-size:11px">18–25/06</td><td><span class="rb r-ti">TI</span></td></tr>
+          <tr><td class="tn">Validação funcional do MVP</td><td style="font-family:var(--mono);font-size:11px">23–28/06</td><td><span class="rb r-dir">Diretoria</span></td></tr>
+          <tr><td class="tn">Treinamento operacional</td><td style="font-family:var(--mono);font-size:11px">28/06–02/07</td><td><span class="rb r-dir">Diretoria</span></td></tr>
+          <tr><td class="tn">Go-live MVP — ativação em produção</td><td style="font-family:var(--mono);font-size:11px">03/07</td><td><span class="rb r-dir">Diretoria</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: FONTES ══ -->
+    <div id="page-fontes" class="page">
+      <div class="card fi">
+        <div class="card-title"><span>Fontes de Dados Requeridas</span><span class="card-meta" id="src-meta">0 de 9 recebidas</span></div>
+        <div class="src-grid" id="src-grid">
+          <div class="src"><div class="src-top"><span class="src-ic">🏦</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">Extratos Bancários</div><div class="src-ds">Itaú e Bradesco — 2024/2025</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">💳</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">Fatura Clara (Mastercard)</div><div class="src-ds">Cartão corporativo 2024/2025</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">💼</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">Exportação Stur Web</div><div class="src-ds">FTP/Webhook XML/JSON</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">🧾</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">Notas Fiscais 2025</div><div class="src-ds">NFS-e ABRASF — Prefeitura CWB</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">✈️</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">BSPLink IATA</div><div class="src-ds">Bilhetes e reconciliações aéreas</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">🖥️</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">OBTs</div><div class="src-ds">Argo / Reserve / TravelPerk</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">🏨</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">Hospedagem</div><div class="src-ds">Accor, Atlântica, Omnibees, CM.net</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">🚗</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">Locadoras e Seguros</div><div class="src-ds">Localiza, Movida, AssistCard</div></div>
+          <div class="src"><div class="src-top"><span class="src-ic">📂</span><span class="src-st st-pend">Pendente</span></div><div class="src-nm">Contratos e Acordos</div><div class="src-ds">BV, overcommissions, DU/RAV</div></div>
+        </div>
+      </div>
+      <div class="card fi d1">
+        <div class="card-title">Como Enviar</div>
+        <p style="font-size:12px;color:var(--text2);line-height:1.7">Os dados podem ser enviados via integração (API/SFTP), upload controlado na plataforma ou exportação em CSV/XLSX.</p>
+        <a href="https://audit.auradue.com/stabia" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 16px;background:rgba(217,119,6,.1);border:1px solid rgba(217,119,6,.25);border-radius:var(--r-full);color:#fbbf24;font-size:11px;font-weight:600;text-decoration:none;font-family:var(--mono);transition:background .2s">↑ Portal Seguro de Upload</a>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: AGENTES ══ -->
+    <div id="page-agentes" class="page">
+      <div class="ag-grid">
+        <div class="ag fi"><div class="ag-nm ag-g">GUARDIAN</div><div class="ag-rl">Validação de Dados · Entrada</div><ul><li>Validação de campos mínimos em bookings</li><li>Bloqueio de lançamentos incompletos</li><li>Alertas em tempo real</li><li>Integração com Stur Web Full</li></ul></div>
+        <div class="ag fi d1"><div class="ag-nm ag-l">LAUNCHER</div><div class="ag-rl">Lançamentos Financeiros · Stur Web</div><ul><li>Lançamentos automáticos no Stur Web</li><li>Cobrança bancária (Itaú/Bradesco/Clara)</li><li>Conciliação de pagamentos</li><li>Alertas de inadimplência</li></ul></div>
+        <div class="ag fi d2"><div class="ag-nm ag-c">CONCILIATOR</div><div class="ag-rl">Reconciliação Multi-fonte · Contínua</div><ul><li>OBT vs Stur Web vs Extrato Bancário</li><li>Detecção de overcharges</li><li>Alertas de remuneração</li><li>Base centralizada</li></ul></div>
+        <div class="ag fi d3"><div class="ag-nm ag-r">REPORTER</div><div class="ag-rl">Inteligência Executiva · Diretoria</div><ul><li>Briefings diários via WhatsApp</li><li>Dashboard Metabase estratégico</li><li>Alertas críticos em tempo real</li><li>Relatórios automatizados</li></ul></div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: ENTREGÁVEIS ══ -->
+    <div id="page-entregas" class="page">
+      <div class="card fi">
+        <div class="card-title"><span>Acompanhamento de Entregáveis</span><span class="card-meta" id="del-meta">0 de 7 entregues</span></div>
+        <div id="del-list">
+          <div class="del-item"><span class="del-nm">Relatório Executivo de Auditoria</span><span class="del-st st-pend">Aguardando</span></div>
+          <div class="del-item"><span class="del-nm">Relatório Técnico Detalhado</span><span class="del-st st-pend">Aguardando</span></div>
+          <div class="del-item"><span class="del-nm">Matriz de Riscos e Anomalias</span><span class="del-st st-pend">Aguardando</span></div>
+          <div class="del-item"><span class="del-nm">Parecer de Conformidade Legal</span><span class="del-st st-pend">Aguardando</span></div>
+          <div class="del-item"><span class="del-nm">Plano de Recomendações e Ações Corretivas</span><span class="del-st st-pend">Aguardando</span></div>
+          <div class="del-item"><span class="del-nm">Dashboard Interativo de Resultados</span><span class="del-st st-pend">Aguardando</span></div>
+          <div class="del-item"><span class="del-nm">Cadeia de Custódia Digital Completa</span><span class="del-st st-pend">Aguardando</span></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
-
-<!-- ═══ PLAN SECTION (hidden, shown on click) ═══ -->
-<div id="plano-section" style="display:none;">
-
-<!-- COVER -->
-<div class="cover">
-  <div class="cover-eyebrow fade-in">Plano de Ação Formal</div>
-  <div class="cover-title fade-in fade-in-d1">Aura<span>DUE</span></div>
-  <div class="cover-subtitle fade-in fade-in-d2">Auditoria, Due Diligence &amp; Certificação dos Processos Financeiros</div>
-  <div class="cover-divider fade-in fade-in-d2"></div>
-  <div class="cover-desc fade-in fade-in-d3">
-    Implementação da plataforma AuraDUE para o Grupo Stabia, contemplando
-    a auditoria retroativa dos exercícios 2024 e 2025, a integração com
-    sistemas financeiros, bancários e fiscais, e a operação contínua
-    dos módulos de Due Diligence, Auditoria e Conciliação em tempo real
-    com selo de certificação AuraCERTIFIED.
-  </div>
-  <div class="cover-tags fade-in fade-in-d4">
-    <div class="cover-tag">AuraDUE</div>
-    <div class="cover-tag">AuraAUDIT</div>
-    <div class="cover-tag">AuraCERTIFIED</div>
-    <div class="cover-tag">Grupo Stabia</div>
-    <div class="cover-tag">Confidencial</div>
-  </div>
-  <div class="cover-bottom fade-in fade-in-d4">
-    <div class="cover-client">
-      <strong>Grupo Stabia</strong>
-      Agência de Viagens e Eventos Corporativos · Curitiba, PR
-    </div>
-    <div class="cover-dates">
-      Kickoff <strong>06 de abril de 2026</strong><br>
-      Go-live <strong>03 de julho de 2026</strong><br>
-      Duração <strong>90 dias</strong>
-    </div>
-  </div>
-</div>
-
-<div class="page">
-
-  <div class="section-label">Solicitação Formal de Dados</div>
-  <div class="alert-box">
-    <h3>⚠ Envio de Dados — Prazo: 06 de abril de 2026</h3>
-    <p>Para viabilizar o início da auditoria retroativa e a configuração simultânea da plataforma AuraDUE, solicita-se ao Grupo Stabia o envio das fontes de dados listadas neste documento até <strong>06 de abril de 2026</strong>.</p>
-    <p>Os dados enviados serão utilizados para dois fins concomitantes: a <strong>auditoria forense retroativa dos exercícios 2024 e 2025</strong> (AuraAUDIT) e a <strong>configuração e parametrização da plataforma AuraDUE</strong> para operação em tempo real.</p>
-    <a class="upload-link" href="https://audit.auradue.com/stabia">↑ Portal Seguro de Upload · audit.auradue.com/stabia</a>
-  </div>
-
-  <div class="section-label">Fontes de Dados Requeridas</div>
-  <div class="sources-grid">
-    <div class="source-card"><div class="source-icon">🏦</div><div class="source-name">Extratos Bancários</div><div class="source-desc">Itaú e Bradesco — exercícios 2024 e 2025 completos (OFX / XLSX)</div></div>
-    <div class="source-card"><div class="source-icon">💳</div><div class="source-name">Fatura Clara (Mastercard)</div><div class="source-desc">Cartão corporativo — faturas mensais 2024 e 2025</div></div>
-    <div class="source-card"><div class="source-icon">💼</div><div class="source-name">Exportação Stur Web</div><div class="source-desc">Lançamentos financeiros — FTP / Webhook XML ou JSON (versão Full)</div></div>
-    <div class="source-card"><div class="source-icon">🧾</div><div class="source-name">Notas Fiscais 2025</div><div class="source-desc">NFS-e ABRASF emitidas e recebidas — Prefeitura de Curitiba</div></div>
-    <div class="source-card"><div class="source-icon">✈️</div><div class="source-name">BSPLink IATA</div><div class="source-desc">Relatórios BSP — bilhetes emitidos e reconciliações aéreas</div></div>
-    <div class="source-card"><div class="source-icon">🖥️</div><div class="source-name">OBTs (Argo / Reserve / TravelPerk)</div><div class="source-desc">Exportação de reservas — períodos 2024 e 2025</div></div>
-    <div class="source-card"><div class="source-icon">🏨</div><div class="source-name">Fornecedores de Hospedagem</div><div class="source-desc">Accor, Atlântica, Omnibees, CM.net — comissionamentos e faturas</div></div>
-    <div class="source-card"><div class="source-icon">🚗</div><div class="source-name">Locadoras e Seguros</div><div class="source-desc">Localiza, Movida, AssistCard — faturas e comissões</div></div>
-    <div class="source-card"><div class="source-icon">📂</div><div class="source-name">Contratos e Acordos Comerciais</div><div class="source-desc">BV, overcommissions, DU/RAV vigentes com fornecedores</div></div>
-  </div>
-
-  <div class="section-gap"></div>
-  <div class="section-label">Cronograma — 90 Dias · MVP</div>
-  <div class="timeline-header">
-    <div class="timeline-title">AuraDUE · AuraAUDIT — Plano de Implementação MVP</div>
-    <div class="timeline-badge">06 abr → 03 jul 2026 · 90 dias</div>
-  </div>
-
-  <!-- FASE 1 -->
-  <div class="phase-block">
-    <div class="phase-header phase-0">
-      <div class="phase-num p0-num">1</div>
-      <div class="phase-info"><div class="phase-name">Fase 1 — Coleta, Acesso e Integrações Críticas</div><div class="phase-period">06–18 de abril de 2026 · Dias 1–15</div></div>
-      <div class="phase-tag pt-urgente">Fundação</div>
-    </div>
-    <div class="phase-tasks">
-      <div class="task-row"><div><div class="task-name">Confirmação e ativação do Stur Web Full (FTP / Webhook)</div><div class="task-desc">Confirmar versão Full com AGI Sistemas · Configurar exportação XML/JSON</div></div><div class="task-date">06–09/04</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Integração bancária — Itaú e Bradesco</div><div class="task-desc">Conexão via Open Finance / API · Leitura automática de extratos</div></div><div class="task-date">06–12/04</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Integração Clara (Mastercard)</div><div class="task-desc">Conexão API Clara · Importação de faturas mensais 2024 e 2025</div></div><div class="task-date">09–13/04</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Integração NFS-e ABRASF — Prefeitura de Curitiba</div><div class="task-desc">Certificado digital · Homologação ABRASF · Importação de notas 2025</div></div><div class="task-date">10–16/04</div><div class="resp-badge r-cnt">Contador</div></div>
-      <div class="task-row"><div><div class="task-name">Coleta manual — BSPLink IATA, OBTs</div><div class="task-desc">Exportação de relatórios BSP e reservas 2024/2025</div></div><div class="task-date">12–18/04</div><div class="resp-badge r-fin">Financeiro</div></div>
-      <div class="task-row"><div><div class="task-name">Coleta manual — Fornecedores e Contratos</div><div class="task-desc">Faturas, comissões, acordos BV/overcommission/DU/RAV</div></div><div class="task-date">12–18/04</div><div class="resp-badge r-fin">Financeiro</div></div>
-    </div>
-  </div>
-
-  <!-- FASE 2 -->
-  <div class="phase-block">
-    <div class="phase-header phase-1">
-      <div class="phase-num p1-num">2</div>
-      <div class="phase-info"><div class="phase-name">Fase 2 — Ingestão, Normalização e Agente GUARDIAN</div><div class="phase-period">19 de abril — 18 de maio de 2026 · Dias 16–45</div></div>
-      <div class="phase-tag pt-setup">Setup</div>
-    </div>
-    <div class="phase-tasks">
-      <div class="task-row"><div><div class="task-name">AuraDATA — Ingestão e normalização multi-fonte</div><div class="task-desc">Pipeline: Stur Web + bancos + OBTs + fornecedores · Deduplicação e validação</div></div><div class="task-date">19–25/04</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Agente GUARDIAN — validação de bookings</div><div class="task-desc">Regras de campos mínimos · Alertas de lançamentos incompletos</div></div><div class="task-date">25/04–05/05</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Parametrização de contratos e acordos comerciais</div><div class="task-desc">Cadastro de BV, overcommissions e DU/RAV na base de referência</div></div><div class="task-date">25/04–09/05</div><div class="resp-badge r-fin">Financeiro</div></div>
-      <div class="task-row"><div><div class="task-name">Provisionamento GCP Cloud Run + PostgreSQL</div><div class="task-desc">Ambiente de produção · Variáveis de ambiente seguras · CI/CD</div></div><div class="task-date">19–28/04</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Testes de integração — ciclo 1</div><div class="task-desc">Validação end-to-end das integrações ativas · Correção de erros</div></div><div class="task-date">09–18/05</div><div class="resp-badge r-ti">TI</div></div>
-    </div>
-  </div>
-
-  <!-- FASE 3 -->
-  <div class="phase-block">
-    <div class="phase-header phase-2">
-      <div class="phase-num p2-num">3</div>
-      <div class="phase-info"><div class="phase-name">Fase 3 — Reconciliação, LAUNCHER e CONCILIATOR</div><div class="phase-period">19 de maio — 17 de junho de 2026 · Dias 46–75</div></div>
-      <div class="phase-tag pt-exec">Execução</div>
-    </div>
-    <div class="phase-tasks">
-      <div class="task-row"><div><div class="task-name">Agente LAUNCHER — lançamentos financeiros</div><div class="task-desc">Lançamentos no Stur Web · Emissão e cobrança bancária</div></div><div class="task-date">19–29/05</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Agente CONCILIATOR — reconciliação contínua</div><div class="task-desc">Cruzamento banco vs Stur vs OBTs · Detecção de overcharges</div></div><div class="task-date">26/05–05/06</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Reconciliação retroativa 2024 / 2025</div><div class="task-desc">Cruzamento: Itaú + Bradesco + Clara vs Stur Web</div></div><div class="task-date">29/05–12/06</div><div class="resp-badge r-fin">Financeiro</div></div>
-      <div class="task-row"><div><div class="task-name">AuraCERTIFIED — cadeia de custódia</div><div class="task-desc">UUID Registry + SHA-256 em todos os registros reconciliados</div></div><div class="task-date">05–17/06</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Testes de integração — ciclo 2</div><div class="task-desc">Validação dos agentes em conjunto · Ajustes de regras</div></div><div class="task-date">10–17/06</div><div class="resp-badge r-ti">TI</div></div>
-    </div>
-  </div>
-
-  <!-- FASE 4 -->
-  <div class="phase-block">
-    <div class="phase-header phase-3">
-      <div class="phase-num p3-num">4</div>
-      <div class="phase-info"><div class="phase-name">Fase 4 — REPORTER, Validação e Go-live MVP</div><div class="phase-period">18 de junho — 03 de julho de 2026 · Dias 76–90</div></div>
-      <div class="phase-tag pt-entrega">Go-live</div>
-    </div>
-    <div class="phase-tasks">
-      <div class="task-row"><div><div class="task-name">Agente REPORTER — briefings e dashboard</div><div class="task-desc">Alertas diários via WhatsApp à Diretoria · Dashboard Metabase</div></div><div class="task-date">18–25/06</div><div class="resp-badge r-ti">TI</div></div>
-      <div class="task-row"><div><div class="task-name">Validação funcional do MVP com equipe Stabia</div><div class="task-desc">Testes com Financeiro e Diretoria · Aprovação dos fluxos</div></div><div class="task-date">23–28/06</div><div class="resp-badge r-dir">Diretoria</div></div>
-      <div class="task-row"><div><div class="task-name">Treinamento operacional das equipes</div><div class="task-desc">Capacitação na plataforma · Documentação de uso</div></div><div class="task-date">28/06–02/07</div><div class="resp-badge r-dir">Diretoria</div></div>
-      <div class="task-row"><div><div class="task-name">Go-live MVP — ativação em produção</div><div class="task-desc">4 agentes ativos · Integrações validadas · AuraCERTIFIED operacional</div></div><div class="task-date">03/07</div><div class="resp-badge r-dir">Diretoria</div></div>
-    </div>
-  </div>
-
-  <div class="golive-box">
-    <div class="golive-icon">🚀</div>
-    <div>
-      <div class="golive-title">Go-live AuraDUE MVP — 03 de julho de 2026</div>
-      <div class="golive-desc">4 agentes ativos (GUARDIAN · LAUNCHER · CONCILIATOR · REPORTER) · Integrações validadas · AuraCERTIFIED operacional · Dashboard e alertas WhatsApp à Diretoria.</div>
-    </div>
-  </div>
-
-  <div class="section-gap"></div>
-  <div class="section-label">Os 4 Agentes de Inteligência</div>
-  <div class="agents-grid">
-    <div class="agent-card">
-      <div class="agent-name g-name">GUARDIAN</div>
-      <div class="agent-role">Validação de Dados · Entrada</div>
-      <ul class="agent-items">
-        <li>Validação de campos mínimos em novos bookings</li>
-        <li>Bloqueio automático de lançamentos incompletos</li>
-        <li>Alertas em tempo real para operações</li>
-        <li>Integração direta com Stur Web Full</li>
-      </ul>
-    </div>
-    <div class="agent-card">
-      <div class="agent-name l-name">LAUNCHER</div>
-      <div class="agent-role">Lançamentos Financeiros · Stur Web</div>
-      <ul class="agent-items">
-        <li>Lançamentos automáticos no Stur Web</li>
-        <li>Emissão e cobrança bancária (Itaú / Bradesco / Clara)</li>
-        <li>Conciliação automática de pagamentos</li>
-        <li>Alertas de inadimplência e vencimento</li>
-      </ul>
-    </div>
-    <div class="agent-card">
-      <div class="agent-name c-name">CONCILIATOR</div>
-      <div class="agent-role">Reconciliação Multi-fonte · Contínua</div>
-      <ul class="agent-items">
-        <li>Cruzamento: OBT vs Stur Web vs Extrato Bancário</li>
-        <li>Detecção de overcharges e divergências</li>
-        <li>Alertas de remuneração de fornecedores</li>
-        <li>Base de reconciliação centralizada</li>
-      </ul>
-    </div>
-    <div class="agent-card">
-      <div class="agent-name r-name">REPORTER</div>
-      <div class="agent-role">Inteligência Executiva · Diretoria</div>
-      <ul class="agent-items">
-        <li>Briefings diários via WhatsApp à Diretoria</li>
-        <li>Dashboard Metabase — painéis estratégicos</li>
-        <li>Alertas críticos em tempo real</li>
-        <li>Relatórios periódicos automatizados</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="section-label">Legenda de Responsáveis</div>
-  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:32px;">
-    <span class="resp-badge r-ti">TI</span>
-    <span class="resp-badge r-fin">Financeiro</span>
-    <span class="resp-badge r-dir">Diretoria</span>
-    <span class="resp-badge r-cnt">Contador</span>
-    <span style="margin-left:12px; font-size:11px; color:var(--muted);">Cada tarefa gera registro imutável com UUID + SHA-256 — <strong style="color:var(--accent2);">AuraCERTIFIED</strong></span>
-  </div>
-
-</div>
-</div><!-- fim plano-section -->
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-left">
-    <div class="topbar-shield">
-      <svg viewBox="0 0 16 16" fill="none" width="12" height="12">
-        <path d="M8 1.5L2 4v5c0 3.3 2.6 6.2 6 6.5 3.4-.3 6-3.2 6-6.5V4L8 1.5z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.5)" stroke-width="1"/>
-        <path d="M5.5 8l1.8 1.8L11 6" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <div class="footer-brand">AuraTECH · Trust Infrastructure Platform</div>
-  </div>
-  <div>Confidencial · Grupo Stabia · Curitiba, Brasil · 2026</div>
-  <div class="footer-badges">
-    <span class="footer-badge-g">SHA-256</span>
-    <span class="footer-badge-b">Lei 13.964/2019</span>
-  </div>
-</footer>
-
-</div><!-- fim main-content -->
 
 <script>
-async function fazerLogin() {
-  const user = document.getElementById('login-user').value.trim();
-  const pass = document.getElementById('login-pass').value;
-  const errEl = document.getElementById('login-error');
-  const btn = document.getElementById('login-btn');
+const pageNames = {dashboard:'Visão Executiva',cronograma:'Cronograma',fontes:'Fontes de Dados',agentes:'Agentes',entregas:'Entregáveis'};
 
-  if (!user || !pass) { errEl.textContent = 'Preencha usuário e senha.'; errEl.style.display = 'block'; return; }
-
-  btn.textContent = 'Autenticando...'; btn.disabled = true; errEl.style.display = 'none';
-
-  try {
-    const res = await fetch('/api/auth/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', body: JSON.stringify({ username: user, password: pass })
-    });
-    if (res.ok) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('main-content').style.display = 'block';
-      carregarDashboard();
-    } else {
-      errEl.textContent = 'Usuário ou senha incorretos.'; errEl.style.display = 'block';
-    }
-  } catch (e) {
-    errEl.textContent = 'Erro de conexão. Tente novamente.'; errEl.style.display = 'block';
-  }
-  btn.textContent = 'Entrar'; btn.disabled = false;
+function go(id, el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById('page-' + id);
+  if (target) { target.classList.add('active'); target.querySelectorAll('.fi').forEach((e,i) => { e.style.animation='none'; e.offsetHeight; e.style.animation=''; }); }
+  document.getElementById('tb-page').textContent = pageNames[id] || id;
 }
 
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none') fazerLogin();
-});
-
-async function carregarDashboard() {
+async function doLogin() {
+  const u=document.getElementById('login-user').value.trim(),p=document.getElementById('login-pass').value;
+  const e=document.getElementById('login-error'),b=document.getElementById('login-btn');
+  if(!u||!p){e.textContent='Preencha usuário e senha.';e.style.display='block';return}
+  b.textContent='Autenticando...';b.disabled=true;e.style.display='none';
   try {
-    const res = await fetch('/api/stabia/status', { credentials: 'include' });
-    if (!res.ok) return;
-    const d = await res.json();
+    const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({username:u,password:p})});
+    if(r.ok){
+      const data=await r.json();
+      document.getElementById('login-screen').style.display='none';
+      document.getElementById('sidebar').style.display='';
+      document.getElementById('main-panel').style.display='';
+      document.body.classList.add('logged-in');
+      if(data.fullName){document.getElementById('user-name').textContent=data.fullName;document.getElementById('user-avatar').textContent=data.fullName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()}
+      loadDash();
+    } else {e.textContent='Usuário ou senha incorretos.';e.style.display='block'}
+  } catch(x){e.textContent='Erro de conexão.';e.style.display='block'}
+  b.textContent='Entrar';b.disabled=false;
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none')doLogin()});
 
-    // KPIs
-    document.getElementById('kpi-sources').textContent = d.sources.received + '/' + d.sources.total;
-    document.getElementById('kpi-recon').textContent = d.reconciliations.done + '/' + d.reconciliations.total;
-    document.getElementById('kpi-deliv').textContent = d.deliverables.delivered + '/' + d.deliverables.total;
-
-    const golive = new Date(d.project.golive);
-    const today = new Date();
-    const dias = Math.max(0, Math.ceil((golive - today) / (1000 * 60 * 60 * 24)));
-    document.getElementById('kpi-days').textContent = dias;
-
-    // Updated
-    if (d.updated_at) {
-      const upd = new Date(d.updated_at);
-      document.getElementById('dash-updated').textContent = 'Atualizado em ' + upd.toLocaleDateString('pt-BR') + ' às ' + upd.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
-    }
-
-    // Overall progress
-    let totalTasks = 0, doneTasks = 0;
-    d.phases.forEach(p => { totalTasks += p.tasks_total; doneTasks += p.tasks_done; });
-    const overallPct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
-    document.getElementById('overall-pct').textContent = overallPct + '%';
-    document.getElementById('overall-bar').style.width = overallPct + '%';
-
-    // Phases
-    const container = document.getElementById('phases-container');
-    container.innerHTML = '';
-    const colors = ['1','2','3','4'];
-    d.phases.forEach((p, i) => {
-      const pct = p.tasks_total > 0 ? Math.round((p.tasks_done / p.tasks_total) * 100) : 0;
-      const c = colors[i] || '1';
-      container.innerHTML += `
-        <div class="phase-card fade-in" style="animation-delay:${i*0.1}s">
-          <div class="phase-card-top">
-            <div class="phase-card-left">
-              <div class="phase-num-sm pn-${c}">${i+1}</div>
-              <div>
-                <div class="phase-card-title">${p.title}</div>
-                <div class="phase-card-dates">${p.dates} · ${p.days}</div>
-              </div>
-            </div>
-            <div class="phase-card-badge pb-${c}">${p.badge}</div>
-          </div>
-          <div class="progress-bar-bg"><div class="progress-bar-fill pf-${c}" style="width:${pct}%"></div></div>
-          <div class="phase-card-stats">
-            <div class="phase-card-stat">${p.tasks_done}/${p.tasks_total} tarefas</div>
-            <div class="phase-card-stat">${pct}%</div>
-          </div>
-        </div>`;
+async function loadDash(){
+  try{
+    const r=await fetch('/api/stabia/status',{credentials:'include'});if(!r.ok){document.getElementById('tb-status').textContent='Offline';return}
+    const d=await r.json();
+    document.getElementById('tb-status').textContent='Em Andamento';
+    document.getElementById('k-src').textContent=d.sources.received+'/'+d.sources.total;
+    document.getElementById('k-rec').textContent=d.reconciliations.done+'/'+d.reconciliations.total;
+    document.getElementById('k-del').textContent=d.deliverables.delivered+'/'+d.deliverables.total;
+    document.getElementById('src-count').textContent=d.sources.received+'/'+d.sources.total;
+    document.getElementById('del-count').textContent=d.deliverables.delivered+'/'+d.deliverables.total;
+    document.getElementById('src-meta').textContent=d.sources.received+' de '+d.sources.total+' recebidas';
+    document.getElementById('del-meta').textContent=d.deliverables.delivered+' de '+d.deliverables.total+' entregues';
+    const gl=new Date(d.project.golive),now=new Date(),days=Math.max(0,Math.ceil((gl-now)/864e5));
+    document.getElementById('k-day').textContent=days;
+    if(d.updated_at){const u=new Date(d.updated_at);document.getElementById('dash-upd').textContent='Atualizado em '+u.toLocaleDateString('pt-BR')+' às '+u.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+    let tt=0,td=0;d.phases.forEach(p=>{tt+=p.tasks_total;td+=p.tasks_done});
+    const op=tt>0?Math.round(td/tt*100):0;
+    document.getElementById('ov-pct').textContent=op+'%';
+    document.getElementById('ov-bar').style.width=op+'%';
+    const c=document.getElementById('ph-ctn'),cls=['1','2','3','4'],bars=['bar-r','bar-a','bar-v','bar-g'],bcs=['b-fund','b-setup','b-exec','b-go'];
+    c.innerHTML='';
+    d.phases.forEach((p,i)=>{const pct=p.tasks_total>0?Math.round(p.tasks_done/p.tasks_total*100):0;
+      c.innerHTML+=`<div class="ph-card fi" style="animation-delay:${i*.06}s"><div class="ph-top"><div class="ph-left"><div class="ph-num pn${cls[i]}">${i+1}</div><div><div class="ph-title">${p.title}</div><div class="ph-dates">${p.dates}</div></div></div><span class="badge ${bcs[i]}">${p.badge}</span></div><div class="bar-bg"><div class="bar-fill ${bars[i]}" style="width:${pct}%"></div></div><div class="ph-stats"><span>${p.tasks_done}/${p.tasks_total} tarefas</span><span>${pct}%</span></div></div>`;
     });
-
-  } catch (e) {
-    console.error('Erro ao carregar dashboard:', e);
-  }
+  }catch(e){console.error(e);document.getElementById('tb-status').textContent='Erro'}
 }
 </script>
 </body>
