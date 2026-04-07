@@ -64,7 +64,25 @@ body.logged-in{display:flex}
 .avatar{width:26px;height:26px;border-radius:var(--r-full);background:var(--brand-grad);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
 .user-name{font-size:12px;font-weight:500;color:var(--text)}
 .user-role{font-size:10px;color:var(--text3)}
-@media(max-width:768px){.sidebar{display:none}}
+/* ── MOBILE NAV ── */
+.mobile-menu-btn{display:none;background:none;border:none;color:var(--text);font-size:22px;cursor:pointer;padding:4px 8px;line-height:1}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90}
+.sidebar-overlay.open{display:block}
+@media(max-width:768px){
+  .mobile-menu-btn{display:flex;align-items:center}
+  .sidebar{position:fixed;left:-280px;top:0;z-index:100;width:260px;min-width:260px;transition:left .25s ease}
+  .sidebar.open{left:0;display:flex!important}
+  .topbar-inner{padding:0.75rem 1rem}
+  .content{padding:14px 1rem}
+  .kpi-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px}
+  .src-grid{grid-template-columns:1fr!important}
+  .ag-grid{grid-template-columns:1fr!important}
+  .task-tbl{font-size:11px}
+  .task-tbl th,.task-tbl td{padding:6px 6px}
+  .card{padding:14px}
+  div[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}
+  .kpi-val{font-size:20px}
+}
 
 /* ── MAIN ── */
 .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;min-width:0}
@@ -209,10 +227,11 @@ body.logged-in{display:flex}
   </div>
 </aside>
 
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileMenu()"></div>
 <div class="main" id="main-panel" style="display:none">
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="bc"><span class="bc-dim">AuraAUDIT</span><span class="bc-sep">›</span><span class="bc-cur" id="tb-page">Visão Executiva</span><span class="bc-sep">·</span><span class="bc-dim">Grupo Stabia</span></div>
+      <div class="bc"><button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">☰</button><span class="bc-dim">AuraAUDIT</span><span class="bc-sep">›</span><span class="bc-cur" id="tb-page">Visão Executiva</span><span class="bc-sep">·</span><span class="bc-dim">Grupo Stabia</span></div>
       <div class="topbar-right"><div class="pill"><div class="dot"></div><span id="tb-status">Carregando</span></div></div>
     </div>
   </header>
@@ -352,6 +371,12 @@ body.logged-in{display:flex}
 <script>
 const pageNames = {dashboard:'Visão Executiva',cronograma:'Cronograma',fontes:'Fontes de Dados',agentes:'Agentes',entregas:'Entregáveis'};
 
+function toggleMobileMenu(){
+  const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebar-overlay');
+  const open=sb.classList.toggle('open');
+  if(open){sb.style.display='flex';ov.classList.add('open')}else{ov.classList.remove('open');setTimeout(()=>{if(!sb.classList.contains('open')&&window.innerWidth<=768)sb.style.display=''},250)}
+}
+
 function go(id, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if (el) el.classList.add('active');
@@ -359,6 +384,7 @@ function go(id, el) {
   const target = document.getElementById('page-' + id);
   if (target) { target.classList.add('active'); target.querySelectorAll('.fi').forEach((e,i) => { e.style.animation='none'; e.offsetHeight; e.style.animation=''; }); }
   document.getElementById('tb-page').textContent = pageNames[id] || id;
+  if(window.innerWidth<=768){const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebar-overlay');sb.classList.remove('open');ov.classList.remove('open');setTimeout(()=>{if(!sb.classList.contains('open'))sb.style.display=''},250)}
 }
 
 async function doLogin() {
