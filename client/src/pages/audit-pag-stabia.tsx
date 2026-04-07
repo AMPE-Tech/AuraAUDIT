@@ -53,7 +53,7 @@ const DATA_SOURCES = [
     id: "cards",
     icon: <CreditCard className="w-5 h-5 text-emerald-400" />,
     title: "Extratos Bancários",
-    subtitle: "Itaú e Bradesco",
+    subtitle: "Itaú",
     description: "Extratos completos dos exercícios 2024 e 2025 em formato OFX ou XLSX.",
     format: "OFX / XLSX",
     period: "Jan/2024 – Dez/2025",
@@ -153,7 +153,7 @@ const DATA_SOURCES = [
 // ── Reconciliations ───────────────────────────────────────────────────
 const RECONCILIATIONS = [
   { id: "obt-erp", title: "OBT vs Backoffice", description: "Cruzamento de reservas OBT com emissões e faturamento no Stur Web.", status: "pending" as ReconciliationStatus, sources: ["OBT", "Stur Web"] },
-  { id: "cards-reservations", title: "Cartões vs Reservas", description: "Conciliação de lançamentos nos extratos de cartão com reservas confirmadas.", status: "pending" as ReconciliationStatus, sources: ["Clara", "Itaú", "Bradesco", "OBTs"] },
+  { id: "cards-reservations", title: "Cartões vs Reservas", description: "Conciliação de lançamentos nos extratos de cartão com reservas confirmadas.", status: "pending" as ReconciliationStatus, sources: ["Clara", "Itaú", "OBTs"] },
   { id: "bsp-airlines", title: "BSP vs Cias Aéreas", description: "Validação do settlement BSP contra bilhetes emitidos e comissões.", status: "pending" as ReconciliationStatus, sources: ["BSPLink", "GDS"] },
   { id: "hotel-invoices", title: "Hotel vs Faturas", description: "Comparação entre vouchers hoteleiros e faturas das redes.", status: "pending" as ReconciliationStatus, sources: ["Accor", "Atlântica", "Omnibees"] },
   { id: "fees-rebates", title: "Fees e Rebates", description: "Auditoria de taxas de serviço, BV, DU/RAV, overcommission.", status: "pending" as ReconciliationStatus, sources: ["Stur Web", "Contratos", "BSPLink"] },
@@ -677,7 +677,7 @@ export default function AuraAuditStabiaPanel() {
                     </div>
                     <div className="p-2 rounded-md bg-muted/20">
                       <div className="flex items-center gap-2 mb-0.5"><span className="text-xs font-bold text-amber-400">LAUNCHER</span><span className="text-[9px] text-muted-foreground">Lançamentos · Stur Web</span></div>
-                      <p className="text-[10px] text-muted-foreground">Lançamentos automáticos no Stur Web · Emissão e cobrança bancária (Itaú / Bradesco / Clara) · Conciliação de pagamentos · Alertas de inadimplência</p>
+                      <p className="text-[10px] text-muted-foreground">Lançamentos automáticos no Stur Web · Emissão e cobrança bancária (Itaú / Clara) · Conciliação de pagamentos · Alertas de inadimplência</p>
                     </div>
                     <div className="p-2 rounded-md bg-muted/20">
                       <div className="flex items-center gap-2 mb-0.5"><span className="text-xs font-bold text-blue-400">CONCILIATOR</span><span className="text-[9px] text-muted-foreground">Reconciliação · Contínua</span></div>

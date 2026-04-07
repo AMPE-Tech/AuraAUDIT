@@ -62,7 +62,7 @@ export const AUDIT_ROADMAP: RoadmapPhase[] = [
       },
       {
         id: "f1-t2",
-        title: "Integração bancária — Itaú e Bradesco",
+        title: "Integração bancária — Itaú",
         description: "Conexão via Open Finance / API · Leitura automática de extratos · Validação de formato e período",
         start: "04/04", end: "10/04",
         responsible: "TI",
@@ -173,7 +173,7 @@ export const AUDIT_ROADMAP: RoadmapPhase[] = [
       {
         id: "f3-t1",
         title: "Agente LAUNCHER — lançamentos financeiros automáticos",
-        description: "Lançamentos no Stur Web · Emissão e cobrança bancária (Itaú / Bradesco / Clara) · Alertas de inadimplência",
+        description: "Lançamentos no Stur Web · Emissão e cobrança bancária (Itaú / Clara) · Alertas de inadimplência",
         start: "19/05", end: "29/05",
         responsible: "TI",
         status: "pending",
@@ -189,7 +189,7 @@ export const AUDIT_ROADMAP: RoadmapPhase[] = [
       {
         id: "f3-t3",
         title: "Reconciliação retroativa 2024 / 2025 — ciclo inicial",
-        description: "Primeiro cruzamento: Itaú + Bradesco + Clara vs Stur Web · Levantamento de divergências",
+        description: "Primeiro cruzamento: Itaú + Clara vs Stur Web · Levantamento de divergências",
         start: "29/05", end: "12/06",
         responsible: "Financeiro",
         status: "pending",
