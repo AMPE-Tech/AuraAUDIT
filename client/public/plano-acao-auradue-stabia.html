@@ -20,8 +20,9 @@
   --sidebar-w:220px;--topbar-px:1.75rem;--card-p:1.25rem;
   --shadow-sm:0 1px 2px rgba(0,0,0,.2);--shadow-md:0 4px 6px -1px rgba(0,0,0,.3);
 }
-html,body{height:100%;overflow:hidden;font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
-body.logged-in{display:flex}
+html,body{height:100%;font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);line-height:1.5;-webkit-font-smoothing:antialiased}
+body{overflow:hidden}
+body.logged-in{display:flex;overflow:hidden}
 *{scrollbar-width:thin;scrollbar-color:var(--border) transparent}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .fi{animation:fadeIn .35s ease-out both}
@@ -70,8 +71,9 @@ body.logged-in{display:flex}
 .sidebar-overlay.open{display:block}
 @media(max-width:768px){
   .mobile-menu-btn{display:flex;align-items:center}
-  .sidebar{position:fixed;left:-280px;top:0;z-index:100;width:260px;min-width:260px;transition:left .25s ease}
+  .sidebar{position:fixed;left:-280px;top:0;z-index:100;width:260px;min-width:260px;transition:left .25s ease;display:none}
   .sidebar.open{left:0;display:flex!important}
+  .main{width:100%!important;min-width:100%!important}
   .topbar-inner{padding:0.75rem 1rem}
   .content{padding:14px 1rem}
   .kpi-grid{grid-template-columns:repeat(2,1fr)!important;gap:8px}
