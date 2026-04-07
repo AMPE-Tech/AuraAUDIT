@@ -187,24 +187,10 @@ body.logged-in{display:flex}
 .del-st{font-size:9px;font-family:var(--mono);font-weight:600;padding:2px 8px;border-radius:var(--r-full)}
 </style>
 </head>
-<body>
+<body class="logged-in">
 
-<!-- ═══ LOGIN ═══ -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-icon"><svg viewBox="0 0 24 24" fill="none" width="22" height="22" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 .6-.92l7-3.11a1 1 0 0 1 .8 0l7 3.11A1 1 0 0 1 20 6z"/><path d="m9 12 2 2 4-4"/></svg></div>
-    <div class="login-title">AuraAUDIT</div>
-    <div class="login-sub">Corporate Expense Review</div>
-    <div class="login-grp"><label class="login-lbl">Usuário</label><input id="login-user" type="text" placeholder="Digite seu usuário" class="login-inp"></div>
-    <div class="login-grp"><label class="login-lbl">Senha</label><input id="login-pass" type="password" placeholder="Digite sua senha" class="login-inp"></div>
-    <div id="login-error"></div>
-    <button id="login-btn" onclick="doLogin()" class="login-btn">Entrar</button>
-    <div class="login-foot">Cadeia de Custódia Digital — Lei 13.964/2019</div>
-  </div>
-</div>
-
-<!-- ═══ APP (hidden until login) ═══ -->
-<aside class="sidebar" id="sidebar" style="display:none">
+<!-- ═══ APP ═══ -->
+<aside class="sidebar" id="sidebar">
   <div class="logo-wrap">
     <div class="logo-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 .6-.92l7-3.11a1 1 0 0 1 .8 0l7 3.11A1 1 0 0 1 20 6z"/><path d="m9 12 2 2 4-4"/></svg></div>
     <div><div class="logo-name">AuraAUDIT</div><div class="logo-tag">Corporate Expense Review</div></div>
@@ -228,11 +214,11 @@ body.logged-in{display:flex}
 </aside>
 
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileMenu()"></div>
-<div class="main" id="main-panel" style="display:none">
+<div class="main" id="main-panel">
   <header class="topbar">
     <div class="topbar-inner">
       <div class="bc"><button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menu">☰</button><span class="bc-dim">AuraAUDIT</span><span class="bc-sep">›</span><span class="bc-cur" id="tb-page">Visão Executiva</span><span class="bc-sep">·</span><span class="bc-dim">Grupo Stabia</span></div>
-      <div class="topbar-right"><div class="pill"><div class="dot"></div><span id="tb-status">Carregando</span></div></div>
+      <div class="topbar-right"><div class="pill"><div class="dot"></div><span id="tb-status">Em Andamento</span></div></div>
     </div>
   </header>
 
